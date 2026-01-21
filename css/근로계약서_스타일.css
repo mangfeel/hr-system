@@ -1,0 +1,331 @@
+/**
+ * 근로계약서_스타일.css - 근로계약서 전용 스타일
+ * 
+ * @version 2.0
+ * @since 2025-12-09
+ * @location css/근로계약서_스타일.css
+ * 
+ * [사용 위치]
+ * - 근로계약서_인사.js의 미리보기
+ * - 근로계약서 인쇄
+ */
+
+/* ===== 기본 리셋 ===== */
+.contract-page * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== A4 페이지 컨테이너 ===== */
+.contract-page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 10mm 12mm 10mm 12mm;
+    margin: 0 auto 20px auto;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #000;
+}
+
+/* ===== 제목 ===== */
+.contract-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 15px;
+    margin-bottom: 18px;
+}
+
+.contract-subtitle {
+    text-align: center;
+    font-size: 13px;
+    margin-bottom: 12px;
+    color: #666;
+}
+
+/* ===== 서문 (당사자 표시) ===== */
+.contract-intro {
+    margin-bottom: 12px;
+    line-height: 1.7;
+}
+
+.employer-name {
+    font-weight: bold;
+}
+
+.employee-name {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* ===== 조항 스타일 ===== */
+.contract-section {
+    margin-bottom: 6px;
+}
+
+.section-title {
+    font-weight: normal;
+}
+
+.section-content {
+    padding-left: 12px;
+}
+
+/* ===== 데이터 필드 (동적 값) ===== */
+.data-field {
+    font-weight: bold;
+    color: #0066cc;
+}
+
+/* 인쇄 시 파란색 제거 */
+@media print {
+    .data-field {
+        color: #000;
+    }
+}
+
+/* ===== 서명란 성명 힌트 ===== */
+.sign-name-hint {
+    color: #ccc;
+    font-weight: normal;
+    letter-spacing: 3px;
+}
+
+/* ===== 급여 섹션 ===== */
+.salary-section {
+    padding-left: 12px;
+}
+
+.salary-row {
+    margin-bottom: 2px;
+}
+
+/* ===== 호봉 테이블 ===== */
+.rank-table {
+    border-collapse: collapse;
+    display: inline-table;
+    margin: 3px 0;
+    vertical-align: middle;
+}
+
+.rank-table td {
+    border: 1px solid #000;
+    padding: 3px 10px;
+    text-align: center;
+    font-size: 11px;
+}
+
+/* ===== 수당 목록 ===== */
+.allowance-list {
+    padding-left: 12px;
+}
+
+.allowance-item {
+    margin-bottom: 1px;
+}
+
+/* ===== 사회보험 체크박스 ===== */
+.insurance-list {
+    padding-left: 12px;
+}
+
+/* ===== 수습기간 섹션 ===== */
+.probation-section {
+    padding-left: 15px;
+    margin-top: 3px;
+}
+
+.probation-section div {
+    margin-bottom: 1px;
+}
+
+/* ===== 서명 영역 ===== */
+.signature-section {
+    margin-top: 20px;
+}
+
+.signature-date {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.signature-block {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.signature-party {
+    flex: 1;
+}
+
+.signature-party-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.signature-row {
+    display: flex;
+    min-height: 28px;
+    margin-bottom: 5px;
+    align-items: flex-start;
+}
+
+.signature-label {
+    min-width: 55px;
+}
+
+.signature-value {
+    flex: 1;
+}
+
+.signature-line {
+    border-bottom: 1px solid #000;
+    min-width: 180px;
+    display: inline-block;
+}
+
+/* ===== 계약 날짜 (구버전 호환) ===== */
+.contract-date {
+    text-align: center;
+    margin: 25px 0;
+    font-size: 13px;
+}
+
+/* ===== 미리보기 컨테이너 ===== */
+#contractPreviewContainer {
+    margin-top: 20px;
+}
+
+/* ===== 탭 스타일 ===== */
+.contract-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.contract-tab-btn {
+    padding: 12px 24px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    margin-bottom: -2px;
+}
+
+.contract-tab-btn:hover {
+    color: #111827;
+    background: #f9fafb;
+}
+
+.contract-tab-btn.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+}
+
+.contract-tab-btn.active span {
+    background: #2563eb !important;
+}
+
+.contract-tab-content {
+    display: none;
+}
+
+.contract-tab-content.active {
+    display: block;
+}
+
+/* ===== 인쇄 스타일 ===== */
+@media print {
+    body {
+        background: white;
+        padding: 0;
+        margin: 0;
+    }
+
+    .contract-page {
+        width: 100% !important;
+        min-height: auto;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none;
+        page-break-after: always;
+        font-size: 14px !important;
+    }
+
+    .contract-page:last-child {
+        page-break-after: avoid;
+    }
+
+    @page {
+        size: A4 portrait;
+        margin: 10mm 12mm 10mm 12mm;
+    }
+
+    /* 인쇄 시 제목 크기 */
+    .contract-title {
+        font-size: 24px !important;
+        letter-spacing: 15px !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* 인쇄 시 본문 크기 */
+    .contract-section {
+        margin-bottom: 5px !important;
+        font-size: 14px !important;
+    }
+
+    .section-title {
+        font-size: 14px !important;
+    }
+
+    /* 인쇄 시 서명란 */
+    .signature-section {
+        font-size: 14px !important;
+    }
+
+    /* 인쇄 시 숨김 */
+    .preview-controls,
+    .page-divider {
+        display: none !important;
+    }
+}
+
+/* ===== 편집 가능 필드 ===== */
+.editable-field {
+    cursor: text;
+    border-bottom: 1px dashed #0066cc;
+    padding: 0 2px;
+    min-width: 50px;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.editable-field:hover {
+    background: #fff3cd;
+    border-bottom-color: #ff9800;
+}
+
+.editable-field:focus {
+    outline: none;
+    background: #fff9e6;
+    border-bottom: 2px solid #ff9800;
+}
+
+/* 인쇄 시 편집 스타일 제거 */
+@media print {
+    .editable-field {
+        border-bottom: none !important;
+        background: transparent !important;
+        cursor: default !important;
+    }
+}

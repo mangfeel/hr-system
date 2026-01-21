@@ -1,0 +1,543 @@
+/**
+ * 포상관리_스타일.css - 포상 관리 모듈 전용 스타일
+ * 
+ * @version 1.0.0
+ * @since 2025-01-15
+ */
+
+/* ===== 모달 오버레이 ===== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-overlay .modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-overlay .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-overlay .modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.modal-overlay .modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.modal-overlay .modal-close:hover {
+    background: #f0f0f0;
+}
+
+.modal-overlay .modal-body {
+    padding: 20px;
+}
+
+.modal-overlay .modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* ===== 컨테이너 ===== */
+
+.awards-container {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ===== 툴바 ===== */
+
+.awards-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.awards-toolbar h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.toolbar-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* ===== 필터 영역 ===== */
+
+.awards-filters {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.awards-filters .filter-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.awards-filters .filter-row + .filter-row {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.awards-filters .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 140px;
+}
+
+.awards-filters .filter-group label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+}
+
+.awards-filters .filter-group select,
+.awards-filters .filter-group input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fff;
+    transition: border-color 0.2s;
+}
+
+.awards-filters .filter-group select:focus,
+.awards-filters .filter-group input:focus {
+    outline: none;
+    border-color: #4F81BD;
+}
+
+/* ===== 요약 영역 ===== */
+
+.awards-summary {
+    padding: 12px 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* ===== 결과 테이블 ===== */
+
+.awards-result {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.awards-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.awards-table thead th {
+    padding: 12px 10px;
+    text-align: center;
+    font-weight: 600;
+    background: #4F81BD;
+    color: white;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.awards-table tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.awards-table tbody tr:hover {
+    background: #f5f8ff;
+}
+
+.awards-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* 선정여부 배지 */
+.status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-badge.selected {
+    background: #E8F5E9;
+    color: #2E7D32;
+    border: 1px solid #4CAF50;
+}
+
+.status-badge.not-selected {
+    background: #F5F5F5;
+    color: #757575;
+    border: 1px solid #BDBDBD;
+}
+
+.status-badge.pending {
+    background: #FFF3E0;
+    color: #E65100;
+    border: 1px solid #FF9800;
+}
+
+/* ===== 액션 버튼 ===== */
+
+.awards-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: flex-end;
+}
+
+/* ===== 모달 ===== */
+
+.awards-modal .modal-content {
+    max-width: 600px;
+}
+
+.awards-modal .form-row {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.awards-modal .form-row.cols-2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.awards-modal .form-row.cols-3 {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.awards-modal .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.awards-modal .form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+}
+
+.awards-modal .form-group input,
+.awards-modal .form-group select {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.awards-modal .form-group input:focus,
+.awards-modal .form-group select:focus {
+    outline: none;
+    border-color: #4F81BD;
+    box-shadow: 0 0 0 3px rgba(79, 129, 189, 0.1);
+}
+
+/* ===== 업로드 영역 ===== */
+
+.upload-summary {
+    padding: 10px;
+}
+
+.upload-summary h4 {
+    margin: 0 0 15px;
+    color: #333;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.stat-item {
+    padding: 12px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-item .stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1976D2;
+}
+
+.stat-item .stat-label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-top: 3px;
+}
+
+.unmatched-info {
+    margin-top: 15px;
+    padding: 12px;
+    background: #FFF3E0;
+    border-radius: 8px;
+    border-left: 4px solid #FF9800;
+}
+
+.unmatched-info strong {
+    color: #E65100;
+}
+
+.file-upload-area {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.file-upload-area:hover {
+    border-color: #4F81BD;
+    background: #f8f9ff;
+}
+
+.file-upload-area .upload-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+/* ===== 인쇄 스타일 ===== */
+
+@media print {
+    .awards-container {
+        padding: 0;
+    }
+    
+    .awards-toolbar,
+    .awards-filters,
+    .awards-actions,
+    .toolbar-actions {
+        display: none !important;
+    }
+    
+    .awards-result {
+        box-shadow: none;
+    }
+    
+    .awards-table thead th {
+        background: #4F81BD !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .awards-table tbody td {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+    
+    .status-badge {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* ===== 인사카드 내 포상 이력 ===== */
+
+.employee-awards-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.employee-awards-list .award-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.employee-awards-list .award-item:last-child {
+    border-bottom: none;
+}
+
+.employee-awards-list .award-title {
+    font-weight: 500;
+    color: #333;
+}
+
+.employee-awards-list .award-meta {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+}
+
+/* ===== 반응형 ===== */
+
+@media (max-width: 768px) {
+    .awards-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .awards-filters .filter-row {
+        flex-direction: column;
+    }
+    
+    .awards-filters .filter-group {
+        width: 100%;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .awards-modal .form-row.cols-2,
+    .awards-modal .form-row.cols-3 {
+        grid-template-columns: 1fr;
+    }
+    
+    .awards-table {
+        font-size: 12px;
+    }
+    
+    .awards-table thead th,
+    .awards-table tbody td {
+        padding: 6px 4px;
+    }
+}
+
+/* ===== 빈 상태 ===== */
+
+.awards-empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: #666;
+}
+
+.awards-empty .empty-icon {
+    font-size: 64px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.awards-empty .empty-message {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* ===== 로딩 상태 ===== */
+
+.awards-loading {
+    padding: 40px;
+    text-align: center;
+    color: #666;
+}
+
+.awards-loading .spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #4F81BD;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ===== 상장 사진 뷰어 ===== */
+
+.award-photo-viewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.award-photo-viewer img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+}
+
+.award-photo-viewer .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.award-photo-viewer .close-btn:hover {
+    background: rgba(255,255,255,0.3);
+}

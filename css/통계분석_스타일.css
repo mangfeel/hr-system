@@ -1,0 +1,701 @@
+/* 통계 분석 스타일 */
+.statistics-container {
+    padding: 20px;
+    max-width: 1400px;
+}
+
+.statistics-header {
+    margin-bottom: 20px;
+}
+
+.statistics-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+/* ========================================
+   v1.2.0: 새로운 목적 기반 UI 스타일
+   ======================================== */
+
+/* 기본 조건 영역 */
+.stats-conditions {
+    margin-bottom: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.stats-conditions .card-body {
+    padding: 16px 20px;
+}
+
+.stats-conditions-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.stats-condition-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stats-condition-item label {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+}
+
+.stats-condition-item .form-control {
+    min-width: 150px;
+    height: 44px;
+    line-height: 1.5;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    padding: 8px 12px;
+    font-size: 0.95em;
+}
+
+.stats-condition-checks {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 6px;
+}
+
+.stats-check-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9em;
+    color: #4b5563;
+    cursor: pointer;
+    margin: 0;
+}
+
+.stats-check-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #4f46e5;
+}
+
+/* 빠른 분석 섹션 */
+.stats-quick-section {
+    margin-bottom: 20px;
+}
+
+.stats-section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.stats-section-hint {
+    font-size: 0.8em;
+    font-weight: 400;
+    color: #6b7280;
+}
+
+.stats-quick-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.stats-quick-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 16px;
+    background: #fff;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.stats-quick-card:hover {
+    border-color: #4f46e5;
+    background: #f5f3ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+.stats-quick-card:active {
+    transform: translateY(0);
+}
+
+.stats-quick-icon {
+    font-size: 2em;
+    margin-bottom: 8px;
+}
+
+.stats-quick-title {
+    font-size: 1em;
+    font-weight: 600;
+    color: #1f2937;
+    line-height: 1.2;
+}
+
+.stats-quick-subtitle {
+    font-size: 0.85em;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+/* 상세 설정 섹션 (아코디언) */
+.stats-advanced-section {
+    margin-bottom: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #f9fafb;
+    overflow: hidden;
+}
+
+.stats-advanced-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #4b5563;
+    transition: background 0.2s;
+}
+
+.stats-advanced-header:hover {
+    background: #f3f4f6;
+}
+
+.stats-advanced-toggle {
+    font-size: 0.85em;
+    color: #6b7280;
+}
+
+.stats-advanced-body {
+    padding: 20px;
+    background: #fff;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* 설정 그룹 */
+.stats-setting-group {
+    margin-bottom: 24px;
+}
+
+.stats-setting-group:last-of-type {
+    margin-bottom: 16px;
+}
+
+.stats-setting-title {
+    font-weight: 600;
+    font-size: 0.95em;
+    color: #374151;
+    margin-bottom: 12px;
+}
+
+.stats-setting-content {
+    padding-left: 8px;
+}
+
+/* 행 기준 선택 (드롭다운) */
+.stats-row-selects {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.stats-select-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stats-select-group label {
+    font-size: 0.85em;
+    color: #6b7280;
+    margin: 0;
+}
+
+.stats-select-group .form-control {
+    min-width: 200px;
+    width: auto;
+    height: 44px;
+    line-height: 1.5;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 0.95em;
+    padding: 8px 30px 8px 12px;  /* 상하 패딩 충분히 */
+}
+
+.stats-select-multiply {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #9ca3af;
+    padding-bottom: 8px;
+}
+
+.stats-example-hint {
+    margin-top: 12px;
+    font-size: 0.85em;
+    color: #6b7280;
+    background: #f9fafb;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+/* 분석 항목 체크박스 */
+.stats-column-presets {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.stats-column-presets .btn {
+    padding: 4px 12px;
+    font-size: 0.85em;
+    border-radius: 6px;
+}
+
+.stats-column-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+}
+
+.stats-column-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9em;
+    color: #374151;
+    cursor: pointer;
+    padding: 6px 10px;
+    background: #f9fafb;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    margin: 0;
+}
+
+.stats-column-check:hover {
+    background: #f3f4f6;
+}
+
+.stats-column-check:has(input:checked) {
+    background: #ede9fe;
+    border-color: #c4b5fd;
+}
+
+.stats-column-check input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #4f46e5;
+}
+
+/* 생성 버튼 영역 */
+.stats-generate-area {
+    display: flex;
+    justify-content: center;
+    padding-top: 8px;
+}
+
+.stats-generate-area .btn {
+    padding: 12px 40px;
+    font-size: 1em;
+    border-radius: 8px;
+}
+
+/* 결과 영역 */
+.stats-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.stats-result-title {
+    font-weight: 600;
+    font-size: 1.05em;
+    color: #1f2937;
+}
+
+.stats-result-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.stats-result-actions .btn {
+    padding: 6px 12px;
+    font-size: 0.85em;
+    border-radius: 6px;
+}
+
+/* ========================================
+   기존 테이블 스타일 (유지)
+   ======================================== */
+
+.statistics-settings {
+    margin-bottom: 20px;
+}
+
+.row-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px 12px;
+    margin-top: 10px;
+}
+
+.column-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.custom-control-inline {
+    margin-right: 0;
+}
+
+.statistics-result {
+    display: none;
+}
+
+.statistics-result.show {
+    display: block;
+}
+
+/* 테이블 스타일 */
+#stats-table {
+    margin-top: 20px;
+    width: 100%;
+}
+
+#stats-table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+    padding: 12px 8px;
+    word-break: keep-all;  /* 헤더 텍스트 줄바꿈 방지 */
+    white-space: nowrap;
+}
+
+#stats-table tbody td {
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+    padding: 10px 8px;
+    font-weight: 400;  /* 일반 글자 굵기 통일 */
+    word-break: keep-all;  /* 단어 단위로 줄바꿈 (2016년 분리 방지) */
+    white-space: nowrap;   /* 가능한 한 줄로 유지 */
+    min-width: 60px;       /* 최소 너비 확보 */
+}
+
+#stats-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* 1차원 테이블: 첫 번째 열 (그룹명) */
+#stats-table tbody td:first-child {
+    font-weight: 600;
+    text-align: left;
+    padding-left: 16px;
+    word-break: keep-all;  /* 그룹명 줄바꿈 방지 */
+    white-space: nowrap;
+    min-width: 100px;      /* 그룹명은 더 넓게 */
+}
+
+/* 2차원 테이블: 두 번째 열 (2차 그룹명) */
+/* rowspan이 있는 행에서만 2열이 2차 그룹명 */
+#stats-table tbody tr:has(td[rowspan]) td:nth-child(2) {
+    font-weight: 400 !important;
+    text-align: left !important;
+    padding-left: 24px !important;
+}
+
+/* rowspan이 없는 행 (2차원 테이블의 나머지 행) */
+/* 첫 번째 셀이 2차 그룹명 */
+#stats-table tbody tr:not(:has(td[rowspan])):not(.table-light):not(.table-secondary) td:first-child {
+    font-weight: 400 !important;
+    text-align: left !important;
+    padding-left: 24px !important;
+}
+
+/* 소계 행의 첫 번째 열 */
+#stats-table tbody tr.table-light td:first-child {
+    font-weight: 600 !important;
+    text-align: left !important;
+    padding-left: 24px !important;
+}
+
+/* 합계 행 */
+#stats-table tbody tr.table-secondary td:first-child,
+#stats-table tbody tr.table-secondary td:nth-child(2) {
+    font-weight: 700 !important;
+}
+
+/* 소계 행 */
+#stats-table .table-light td {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    font-style: italic;
+}
+
+/* 합계 행 */
+#stats-table .table-secondary td {
+    background-color: #f8f9fa;
+    font-weight: 700;
+}
+
+/* 2차원 분석 - 2차 행 기준 옵션 */
+#row2-options {
+    /* display는 JavaScript가 제어 (display: none/block) */
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px 12px;
+    margin-top: 10px;
+    padding: 10px;
+    border-left: 3px solid #e5e7eb;
+}
+
+/* 보이는 상태일 때만 grid 적용 */
+#row2-options[style*="display: block"],
+#row2-options[style*="display: grid"] {
+    display: grid !important;
+}
+
+#row2-options .custom-control {
+    opacity: 0.6;
+}
+
+#row2-options .custom-control-input:not(:disabled) ~ .custom-control-label {
+    opacity: 1;
+    cursor: pointer;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .statistics-container {
+        padding: 12px;
+    }
+    
+    /* 기본 조건 */
+    .stats-conditions-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .stats-condition-item .form-control {
+        width: 100%;
+    }
+    
+    .stats-condition-checks {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    /* 빠른 분석 카드 */
+    .stats-quick-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .stats-quick-card {
+        padding: 16px 12px;
+    }
+    
+    .stats-quick-icon {
+        font-size: 1.6em;
+    }
+    
+    /* 상세 설정 */
+    .stats-row-selects {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .stats-select-multiply {
+        display: none;
+    }
+    
+    .stats-select-group {
+        width: 100%;
+    }
+    
+    .stats-select-group .form-control {
+        width: 100%;
+    }
+    
+    .stats-column-checks {
+        flex-direction: column;
+    }
+    
+    /* 결과 헤더 */
+    .stats-result-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    
+    .stats-result-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    
+    .stats-result-actions .btn {
+        flex: 1;
+        min-width: 80px;
+    }
+    
+    /* 기존 스타일 */
+    .row-options {
+        flex-direction: column;
+    }
+    
+    .column-options {
+        flex-direction: column;
+    }
+    
+    #row2-options {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+
+/* ========================================
+   인쇄 스타일 (Phase 2-4)
+   ======================================== */
+
+/* 인쇄 시 기본 설정 */
+@media print {
+    /* 불필요한 요소 숨김 */
+    .sidebar,
+    .top-navbar,
+    button,
+    .statistics-settings,
+    .no-print {
+        display: none !important;
+    }
+    
+    /* 인쇄 활성화된 요소만 표시 */
+    .print-active {
+        display: block !important;
+    }
+    
+    /* 페이지 설정 */
+    @page {
+        margin: 15mm 10mm;
+        size: A4;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* 테이블 인쇄 최적화 - 통계분석 전용 */
+    #statistics-print-area table {
+        width: 100%;
+        border-collapse: collapse;
+        page-break-before: avoid;
+        page-break-after: auto;
+    }
+    
+    #statistics-print-area thead {
+        display: table-header-group;
+    }
+    
+    #statistics-print-area th,
+    #statistics-print-area td {
+        padding: 6px 4px;
+        font-size: 10px;
+    }
+    
+    #statistics-print-area th {
+        background-color: #f0f0f0 !important;
+        font-weight: 700;
+        text-align: center;
+    }
+    
+    /* 비고 컬럼 인쇄 스타일 */
+    #statistics-print-area td[style*="font-size: 0.85em"],
+    #statistics-print-area td[style*="font-size: 0.75em"],
+    #statistics-print-area td[style*="white-space: pre-line"] {
+        font-size: 8px !important;
+        line-height: 1.3;
+        white-space: pre-line;
+        word-break: break-word;
+        text-align: left !important;
+    }
+    
+    /* 일반 셀 가운데 정렬 */
+    #statistics-print-area td[style*="text-align: center"] {
+        text-align: center !important;
+    }
+    
+    /* 소계 행 강조 */
+    #statistics-print-area .table-light td {
+        background-color: #f8f8f8 !important;
+        font-weight: 600;
+    }
+    
+    /* 합계 행 강조 */
+    #statistics-print-area .table-secondary td {
+        background-color: #e0e0e0 !important;
+        font-weight: 700;
+    }
+    
+    /* 제목 스타일 */
+    #statistics-print-area h2 {
+        page-break-after: avoid;
+        margin-bottom: 10px;
+    }
+    
+    /* 정보 스타일 */
+    #statistics-print-area .statistics-content > div {
+        page-break-after: avoid;
+        margin-bottom: 15px;
+    }
+    
+    /* 정보 박스 - 테이블 연속 출력 */
+    #statistics-print-area > div[style*="background-color: #f8f9fa"] {
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+    }
+}
+
+/* A4 세로 방향 최적화 - 통계분석 전용 */
+@media print and (orientation: portrait) {
+    #statistics-print-area table {
+        font-size: 9px;
+    }
+    
+    #statistics-print-area th,
+    #statistics-print-area td {
+        padding: 5px 3px;
+    }
+}
+
+/* A4 가로 방향 최적화 - 통계분석 전용 */
+@media print and (orientation: landscape) {
+    #statistics-print-area table {
+        font-size: 10px;
+    }
+    
+    #statistics-print-area th,
+    #statistics-print-area td {
+        padding: 6px 4px;
+    }
+}
