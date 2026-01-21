@@ -20,8 +20,8 @@
  * 
  * [변경 이력]
  * v4.0.0 (2026-01-21) ⭐ API 연동 버전
- *   - saveAssignment() 비동기 처리
- *   - 호봉/근속기간 계산 API 우선 사용
+ *   - saveAssignmentEdit() async 변경
+ *   - 호봉 계산 API 우선 사용 (API_인사)
  *   - 서버 API로 계산 로직 보호
  * 
  * v3.5.0 (2026-01-07) ⭐ 퇴사자/종료 발령 수정 시 즉시 반영
@@ -450,10 +450,8 @@ function loadEmployeeForAssignment() {
  * 
  * @example
  * saveAssignment(); // 발령 등록
- * 
- * @version 4.0.0 - async API 버전
  */
-async function saveAssignment() {
+function saveAssignment() {
     try {
         로거_인사?.debug('인사발령 저장 시작');
         
@@ -924,7 +922,7 @@ function closeEditAssignmentModal() {
  * @example
  * saveAssignmentEdit(); // 발령 수정 저장
  */
-function saveAssignmentEdit() {
+async function saveAssignmentEdit() {
     try {
         로거_인사?.debug('발령 수정 저장 시작', {
             empId: currentEmployeeIdForAssignment,
@@ -1122,33 +1120,33 @@ function saveAssignmentEdit() {
                     });
                     
                     try {
-                        if (typeof RankCalculator !== 'undefined' && typeof DateUtils !== 'undefined') {
-                            const today = DateUtils.formatDate(new Date());
-                            
-                            // ✅ v4.0.0: API 우선 사용
-                            let currentRank, nextUpgradeDate;
-                            if (typeof API_인사 !== 'undefined') {
-                                currentRank = await API_인사.calculateCurrentRank(
-                                    emp.rank.startRank,
-                                    emp.rank.firstUpgradeDate,
-                                    today
-                                );
-                                nextUpgradeDate = await API_인사.calculateNextUpgradeDate(
-                                    emp.rank.firstUpgradeDate,
-                                    today
-                                );
-                            } else {
-                                currentRank = RankCalculator.calculateCurrentRank(
-                                    emp.rank.startRank,
-                                    emp.rank.firstUpgradeDate,
-                                    today
-                                );
-                                nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(
-                                    emp.rank.firstUpgradeDate,
-                                    today
-                                );
-                            }
-                            
+                        // ✅ v4.0.0: API 우선 사용
+                        const today = DateUtils.formatDate(new Date());
+                        let currentRank, nextUpgradeDate;
+                        
+                        if (typeof API_인사 !== 'undefined') {
+                            currentRank = await API_인사.calculateCurrentRank(
+                                emp.rank.startRank,
+                                emp.rank.firstUpgradeDate,
+                                today
+                            );
+                            nextUpgradeDate = await API_인사.calculateNextUpgradeDate(
+                                emp.rank.firstUpgradeDate,
+                                today
+                            );
+                        } else if (typeof RankCalculator !== 'undefined' && typeof DateUtils !== 'undefined') {
+                            currentRank = RankCalculator.calculateCurrentRank(
+                                emp.rank.startRank,
+                                emp.rank.firstUpgradeDate,
+                                today
+                            );
+                            nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(
+                                emp.rank.firstUpgradeDate,
+                                today
+                            );
+                        }
+                        
+                        if (currentRank !== undefined) {
                             emp.rank.currentRank = currentRank;
                             emp.rank.nextUpgradeDate = nextUpgradeDate;
                             
@@ -1173,27 +1171,17 @@ function saveAssignmentEdit() {
                             
                             로거_인사?.debug('경력 데이터', { entryDate, careersCount: careers.length });
                             
-                            // 과거 경력 합산 (입사 전 경력만 사용) - ✅ v4.0.0: API 우선
+                            // 과거 경력 합산 (입사 전 경력만 사용)
                             let totalYears = 0;
                             let totalMonths = 0;
                             let totalDays = 0;
                             
-                            for (let index = 0; index < careers.length; index++) {
-                                const career = careers[index];
+                            careers.forEach((career, index) => {
                                 try {
-                                    // ✅ v4.0.0: API 우선 사용
-                                    let period;
-                                    if (typeof API_인사 !== 'undefined') {
-                                        period = await API_인사.calculateTenure(
-                                            career.startDate,
-                                            career.endDate
-                                        );
-                                    } else {
-                                        period = TenureCalculator.calculate(
-                                            career.startDate,
-                                            career.endDate
-                                        );
-                                    }
+                                    const period = TenureCalculator.calculate(
+                                        career.startDate,
+                                        career.endDate
+                                    );
                                     
                                     // rate가 "100%" 형식의 문자열일 수 있음 → 숫자로 변환
                                     let rateValue = career.rate || 100;
@@ -1201,13 +1189,7 @@ function saveAssignmentEdit() {
                                         rateValue = parseInt(rateValue.replace('%', '')) || 100;
                                     }
                                     
-                                    // ✅ v4.0.0: API 우선 사용
-                                    let converted;
-                                    if (typeof API_인사 !== 'undefined') {
-                                        converted = await API_인사.applyConversionRate(period, rateValue);
-                                    } else {
-                                        converted = CareerCalculator.applyConversionRate(period, rateValue);
-                                    }
+                                    const converted = CareerCalculator.applyConversionRate(period, rateValue);
                                     
                                     totalYears += converted.years;
                                     totalMonths += converted.months;
@@ -1220,7 +1202,7 @@ function saveAssignmentEdit() {
                                 } catch (err) {
                                     로거_인사?.warn(`경력 ${index + 1} 계산 실패`, err);
                                 }
-                            }
+                            });
                             
                             // 정규화
                             if (totalDays >= 30) {
@@ -1240,8 +1222,7 @@ function saveAssignmentEdit() {
                             
                             로거_인사?.debug(`입사호봉 계산: 1 + ${totalYears} = ${startRank}호봉`);
                             
-                            // 첫승급일 = 입사일 + (12개월 - 과거경력의 남은 개월/일)
-                            // ✅ v4.0.0: API 우선 사용
+                            // ✅ v4.0.0: 첫승급일 계산 - API 우선 사용
                             let firstUpgradeDate;
                             if (typeof API_인사 !== 'undefined') {
                                 firstUpgradeDate = await API_인사.calculateFirstUpgradeDate(
@@ -1261,11 +1242,8 @@ function saveAssignmentEdit() {
                             
                             로거_인사?.debug(`첫승급일 계산: ${firstUpgradeDate}`);
                             
-                            // 현재 호봉 = 입사호봉 + (첫승급일~오늘까지 경과연수)
-                            // ⭐ 현재 기관 재직기간은 여기서 자동으로 반영됨!
+                            // ✅ v4.0.0: 현재 호봉 계산 - API 우선 사용
                             const today = DateUtils.formatDate(new Date());
-                            
-                            // ✅ v4.0.0: API 우선 사용
                             let currentRank;
                             if (typeof API_인사 !== 'undefined') {
                                 currentRank = await API_인사.calculateCurrentRank(
@@ -1283,7 +1261,7 @@ function saveAssignmentEdit() {
                             
                             로거_인사?.debug(`현재 호봉 계산: ${currentRank}호봉`);
                             
-                            // ✅ v4.0.0: API 우선 사용
+                            // ✅ v4.0.0: 차기승급일 계산 - API 우선 사용
                             let nextUpgradeDate;
                             if (typeof API_인사 !== 'undefined') {
                                 nextUpgradeDate = await API_인사.calculateNextUpgradeDate(

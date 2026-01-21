@@ -12,7 +12,6 @@
  * 
  * @version 4.0.0
  * @since 2025-11-28
- * @updated 2026-01-21 - API 연동 버전 (호봉 계산 서버 API 우선 사용)
  * @updated 2026-01-07 - 출력 범위 변경 시 기존 페이지 초기화 (전체→개별 전환 버그 수정)
  * @updated 2025-12-11 - 텍스트형 단독 카드에 포상이력 추가
  * @updated 2025-12-11 - 개별 직원 인사카드 페이지 제목 제거 (이름 중복 방지)
@@ -20,9 +19,7 @@
  * 
  * [변경 이력]
  * v4.0.0 (2026-01-21) ⭐ API 연동 버전
- *   - previewProfileCards() 비동기 처리
- *   - 호봉 계산 API 우선 사용
- *   - 서버 API로 계산 로직 보호
+ *   - 변수 중복 선언 버그 수정 (startRank → fallbackStartRank)
  * 
  * v1.4.0 (2026-01-07) - 출력 범위/직원 선택 변경 시 인쇄 버그 수정
  *   - 문제: "전체"로 인쇄 후 "개별 직원"으로 변경해도 계속 "전체"가 출력됨
@@ -703,11 +700,9 @@ function _applyDepartmentMerge(employees, mergeSettings) {
  * @param {Array} employees - 직원 목록
  * @param {Array} positionSettings - 직위 설정
  * @param {string} baseDate - 기준일
- * @returns {Promise<Array>} 정렬된 직원 목록
- * 
- * @version 4.0.0 - async API 버전
+ * @returns {Array} 정렬된 직원 목록
  */
-async function _sortEmployees(employees, positionSettings, baseDate) {
+function _sortEmployees(employees, positionSettings, baseDate) {
     // 직위별 순서 맵
     const positionOrderMap = new Map();
     if (positionSettings && positionSettings.length > 0) {
@@ -716,13 +711,7 @@ async function _sortEmployees(employees, positionSettings, baseDate) {
         });
     }
     
-    // ✅ v4.0.0: 호봉 미리 계산 (async)
-    const employeesWithRank = await Promise.all(employees.map(async (emp) => {
-        const rank = await _calculateRankAtDate(emp, baseDate);
-        return { ...emp, _calculatedRank: rank };
-    }));
-    
-    return employeesWithRank.sort((a, b) => {
+    return [...employees].sort((a, b) => {
         // 0차: 통합된 부서 팀원은 맨 아래
         const isMergedA = a._originalDepartment ? 1 : 0;
         const isMergedB = b._originalDepartment ? 1 : 0;
@@ -747,10 +736,10 @@ async function _sortEmployees(employees, positionSettings, baseDate) {
             return isRankBasedA ? -1 : 1;
         }
         
-        // 3차: 호봉 (높은 순) - ✅ v4.0.0: 미리 계산된 호봉 사용
+        // 3차: 호봉 (높은 순)
         if (isRankBasedA && isRankBasedB) {
-            const rankA = a._calculatedRank;
-            const rankB = b._calculatedRank;
+            const rankA = _calculateRankAtDate(a, baseDate);
+            const rankB = _calculateRankAtDate(b, baseDate);
             if (typeof rankA === 'number' && typeof rankB === 'number' && rankA !== rankB) {
                 return rankB - rankA;
             }
@@ -863,11 +852,9 @@ function _applyConcurrentPositions(employees, baseDate) {
  * @private
  * @param {Object} emp - 직원 객체
  * @param {string} baseDate - 기준일
- * @returns {Promise<number|string>} 호봉 또는 '-'
- * 
- * @version 4.0.0 - async API 버전
+ * @returns {number|string} 호봉 또는 '-'
  */
-async function _calculateRankAtDate(emp, baseDate) {
+function _calculateRankAtDate(emp, baseDate) {
     try {
         // 호봉제 여부 확인 (emp.rank.isRankBased 또는 employment.employmentType)
         const isRankBased = emp.rank?.isRankBased ?? 
@@ -878,17 +865,10 @@ async function _calculateRankAtDate(emp, baseDate) {
             return '-';
         }
         
-        // ✅ v4.0.0: 직원유틸 Async 버전 우선 사용
-        if (typeof 직원유틸_인사 !== 'undefined') {
-            if (typeof 직원유틸_인사.getDynamicRankInfoAsync === 'function') {
-                const rankInfo = await 직원유틸_인사.getDynamicRankInfoAsync(emp, baseDate);
-                return rankInfo.currentRank;
-            } else if (typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-                const rankInfo = 직원유틸_인사.getDynamicRankInfo(emp, baseDate);
-                return rankInfo.currentRank;
-            } else if (typeof 직원유틸_인사.getCurrentRankAsync === 'function') {
-                return await 직원유틸_인사.getCurrentRankAsync(emp, baseDate);
-            }
+        // ⭐ v3.1.0: 직원유틸의 동적 호봉 계산 함수 사용 (인정율 반영)
+        if (typeof 직원유틸_인사 !== 'undefined' && typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
+            const rankInfo = 직원유틸_인사.getDynamicRankInfo(emp, baseDate);
+            return rankInfo.currentRank;
         }
         
         // Fallback: 기존 방식 (직원유틸 없을 때)
@@ -906,39 +886,28 @@ async function _calculateRankAtDate(emp, baseDate) {
             
             if (!firstUpgrade || baseDate < firstUpgrade) {
                 return startRank;
+            }
+            
+            const years = Math.floor((new Date(baseDate) - new Date(firstUpgrade)) / (365.25 * 24 * 60 * 60 * 1000));
+            return startRank + 1 + years;
         }
         
-        // ✅ v4.0.0: API 사용 (Fallback)
-        if (typeof API_인사 !== 'undefined') {
-            const startRank = emp.rank?.startRank || emp.employment?.startRank || emp.startRank || 1;
-            const firstUpgrade = emp.rank?.firstUpgradeDate || emp.employment?.firstUpgradeDate || emp.firstUpgradeDate;
-            if (firstUpgrade) {
-                const currentRank = await API_인사.calculateCurrentRank(startRank, firstUpgrade, baseDate);
-                return currentRank;
-            }
-            return startRank;
-        }
-        
-        // Legacy RankCalculator 사용 (Fallback)
-        if (typeof RankCalculator !== 'undefined' && RankCalculator.calculateCurrentRank) {
-            const startRank = emp.rank?.startRank || emp.employment?.startRank || emp.startRank || 1;
-            const firstUpgrade = emp.rank?.firstUpgradeDate || emp.employment?.firstUpgradeDate || emp.firstUpgradeDate;
-            if (firstUpgrade) {
-                return RankCalculator.calculateCurrentRank(startRank, firstUpgrade, baseDate);
-            }
-            return startRank;
+        // RankCalculator 사용 (Fallback)
+        if (typeof RankCalculator !== 'undefined' && RankCalculator.calculate) {
+            const result = RankCalculator.calculate(emp, baseDate);
+            return result?.currentRank || '-';
         }
         
         // Fallback - employment 필드 확인
-        const startRank = emp.rank?.startRank || emp.employment?.startRank || emp.startRank || 1;
+        const fallbackStartRank = emp.rank?.startRank || emp.employment?.startRank || emp.startRank || 1;
         const firstUpgrade = emp.rank?.firstUpgradeDate || emp.employment?.firstUpgradeDate || emp.firstUpgradeDate;
         
         if (!firstUpgrade || baseDate < firstUpgrade) {
-            return startRank;
+            return fallbackStartRank;
         }
         
         const years = Math.floor((new Date(baseDate) - new Date(firstUpgrade)) / (365.25 * 24 * 60 * 60 * 1000));
-        return startRank + 1 + years;
+        return fallbackStartRank + 1 + years;
         
     } catch (error) {
         로거_인사?.warn('호봉 계산 오류', error);
@@ -1100,11 +1069,9 @@ function _getAwardHistory(empName) {
  * 프로필 카드 페이지 생성
  * @private
  * @param {Object} options - 옵션
- * @returns {Promise<Array>} 페이지 배열
- * 
- * @version 4.0.0 - async API 버전
+ * @returns {Array} 페이지 배열
  */
-async function _buildProfileCardPages(options) {
+function _buildProfileCardPages(options) {
     const { baseDate, range, includeConcurrent, includeMaternity, applyContinuousService, selectedEmployees } = options;
     
     try {
@@ -1147,42 +1114,38 @@ async function _buildProfileCardPages(options) {
             const selectedIds = selectedEmployees || [];
             const selectedEmps = employees.filter(emp => selectedIds.includes(emp.id));
             
-            // ✅ v4.0.0: for...of + await
-            for (const emp of selectedEmps) {
-                pages.push(await _buildIndividualPage(emp, baseDate, applyContinuousService));
-            }
+            selectedEmps.forEach(emp => {
+                pages.push(_buildIndividualPage(emp, baseDate, applyContinuousService));
+            });
             
         } else if (range === 'executives') {
             // 기관장/부기관장만
             const executives = _getExecutives(employees, positionSettings);
-            // ✅ v4.0.0: for...of + await
-            for (const emp of executives) {
-                pages.push(await _buildExecutivePage(emp, baseDate, applyContinuousService));
-            }
+            executives.forEach(emp => {
+                pages.push(_buildExecutivePage(emp, baseDate, applyContinuousService));
+            });
             
         } else if (range.startsWith('dept:')) {
             // 특정 부서
             const deptName = range.substring(5);
             const executives = _getExecutives(employees, positionSettings);
-            const page = await _buildDepartmentPage(deptName, employees, baseDate, positionSettings, includeConcurrent, executives, applyContinuousService);
+            const page = _buildDepartmentPage(deptName, employees, baseDate, positionSettings, includeConcurrent, executives, applyContinuousService);
             if (page) pages.push(page);
             
         } else {
             // 전체
             // 기관장/부기관장 페이지
             const executives = _getExecutives(employees, positionSettings);
-            // ✅ v4.0.0: for...of + await
-            for (const emp of executives) {
-                pages.push(await _buildExecutivePage(emp, baseDate, applyContinuousService));
-            }
+            executives.forEach(emp => {
+                pages.push(_buildExecutivePage(emp, baseDate, applyContinuousService));
+            });
             
             // 부서별 페이지 (기관장/부기관장 제외)
             const departments = _getDepartments(employees, executives, positionSettings);
-            // ✅ v4.0.0: for...of + await
-            for (const dept of departments) {
-                const page = await _buildDepartmentPage(dept, employees, baseDate, positionSettings, includeConcurrent, executives, applyContinuousService);
+            departments.forEach(dept => {
+                const page = _buildDepartmentPage(dept, employees, baseDate, positionSettings, includeConcurrent, executives, applyContinuousService);
                 if (page) pages.push(page);
-            }
+            });
         }
         
         로거_인사?.info('페이지 구성 완료', { pageCount: pages.length });
@@ -1287,24 +1250,20 @@ function _getDepartments(employees, executives, positionSettings) {
 /**
  * 기관장/부기관장 페이지 생성
  * @private
- * 
- * @version 4.0.0 - async API 버전
  */
-async function _buildExecutivePage(emp, baseDate, applyContinuousService = false) {
+function _buildExecutivePage(emp, baseDate, applyContinuousService = false) {
     return {
         type: 'executive',
         title: 직원유틸_인사?.getPosition?.(emp) || emp.currentPosition?.position || '',
-        employee: await _buildEmployeeData(emp, baseDate, true, applyContinuousService)
+        employee: _buildEmployeeData(emp, baseDate, true, applyContinuousService)
     };
 }
 
 /**
  * 부서별 페이지 생성
  * @private
- * 
- * @version 4.0.0 - async API 버전
  */
-async function _buildDepartmentPage(deptName, employees, baseDate, positionSettings, includeConcurrent, executives, applyContinuousService = false) {
+function _buildDepartmentPage(deptName, employees, baseDate, positionSettings, includeConcurrent, executives, applyContinuousService = false) {
     // 기관장/부기관장 ID 목록
     const executiveIds = new Set((executives || []).map(e => e.id));
     
@@ -1352,7 +1311,7 @@ async function _buildDepartmentPage(deptName, employees, baseDate, positionSetti
     }
     
     // 종사자 정렬 (조직도와 동일: 통합 부서 → 직위 순서 → 호봉제 → 호봉 → 입사일)
-    deptEmployees = await _sortEmployees(deptEmployees, positionSettings, baseDate);
+    deptEmployees = _sortEmployees(deptEmployees, positionSettings, baseDate);
     
     // 팀장과 팀원 분리
     const teamLeader = deptEmployees.find(emp => {
@@ -1365,39 +1324,31 @@ async function _buildDepartmentPage(deptName, employees, baseDate, positionSetti
     
     const teamMembers = deptEmployees.filter(emp => emp !== teamLeader);
     
-    // ✅ v4.0.0: 비동기 처리
-    const teamLeaderData = teamLeader ? await _buildEmployeeData(teamLeader, baseDate, false, applyContinuousService) : null;
-    const membersData = await Promise.all(teamMembers.map(emp => _buildEmployeeData(emp, baseDate, false, applyContinuousService)));
-    
     return {
         type: 'department',
         title: deptName,
-        teamLeader: teamLeaderData,
-        members: membersData
+        teamLeader: teamLeader ? _buildEmployeeData(teamLeader, baseDate, false, applyContinuousService) : null,
+        members: teamMembers.map(emp => _buildEmployeeData(emp, baseDate, false, applyContinuousService))
     };
 }
 
 /**
  * 개별 직원 페이지 생성
  * @private
- * 
- * @version 4.0.0 - async API 버전
  */
-async function _buildIndividualPage(emp, baseDate, applyContinuousService = false) {
+function _buildIndividualPage(emp, baseDate, applyContinuousService = false) {
     return {
         type: 'individual',
         title: '',  // 개별 직원 카드는 제목 없음 (카드 내 이름과 중복 방지)
-        employee: await _buildEmployeeData(emp, baseDate, true, applyContinuousService)
+        employee: _buildEmployeeData(emp, baseDate, true, applyContinuousService)
     };
 }
 
 /**
  * 직원 데이터 구성
  * @private
- * 
- * @version 4.0.0 - async API 버전
  */
-async function _buildEmployeeData(emp, baseDate, detailed, applyContinuousService = false) {
+function _buildEmployeeData(emp, baseDate, detailed, applyContinuousService = false) {
     const name = 직원유틸_인사?.getName?.(emp) || emp.personalInfo?.name || '';
     const dept = 직원유틸_인사?.getDepartment?.(emp) || emp.currentPosition?.dept || '';
     const position = emp._displayAsConcurrent?.position || 
@@ -1448,7 +1399,7 @@ async function _buildEmployeeData(emp, baseDate, detailed, applyContinuousServic
         phone: emp.contactInfo?.phone || emp.personalInfo?.phone || emp.phone || '',
         email: emp.contactInfo?.email || emp.personalInfo?.email || emp.email || '',
         address: emp.contactInfo?.address || emp.personalInfo?.address || emp.address || '',
-        rank: await _calculateRankAtDate(emp, baseDate),
+        rank: _calculateRankAtDate(emp, baseDate),
         photo: _photoMap.get(name) || null,
         assignmentHistory: _getAssignmentHistory(emp, baseDate, applyContinuousService)
     };
@@ -1469,10 +1420,8 @@ async function _buildEmployeeData(emp, baseDate, detailed, applyContinuousServic
 
 /**
  * 미리보기 생성
- * 
- * @version 4.0.0 - async API 버전
  */
-async function previewProfileCards() {
+function previewProfileCards() {
     try {
         로거_인사?.debug('미리보기 생성 시작');
         
@@ -1484,8 +1433,8 @@ async function previewProfileCards() {
             return;
         }
         
-        // ✅ v4.0.0: 비동기 페이지 생성
-        _generatedPages = await _buildProfileCardPages(options);
+        // 페이지 생성
+        _generatedPages = _buildProfileCardPages(options);
         
         if (_generatedPages.length === 0) {
             alert('생성할 인사카드가 없습니다.');

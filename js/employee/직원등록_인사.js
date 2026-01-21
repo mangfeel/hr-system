@@ -17,8 +17,8 @@
  * 
  * [변경 이력]
  * v4.0.0 (2026-01-21) ⭐ API 연동 버전
- *   - calculateAndSave() 비동기 처리
- *   - 호봉 계산 API 우선 사용
+ *   - calculateAndSave() async 변경
+ *   - 호봉 계산 API 우선 사용 (API_인사)
  *   - 서버 API로 계산 로직 보호
  * 
  * v3.4.2 (2025-12-10) ⭐ 신규 발령 데이터 구조 개선
@@ -367,8 +367,6 @@ function removeCareer(id) {
  * 
  * @example
  * calculateAndSave(); // 폼 데이터 검증 및 저장
- * 
- * @version 4.0.0 - async API 버전
  */
 async function calculateAndSave() {
     try {
@@ -491,7 +489,7 @@ async function calculateAndSave() {
         
         로거_인사?.debug('경력 계산 완료', { totalYears, totalMonths, totalDays });
         
-        // 입사 호봉 계산 - ✅ v4.0.0: API 우선 사용
+        // ✅ v4.0.0: 입사 호봉 계산 - API 우선 사용
         let currentGrade;
         if (typeof API_인사 !== 'undefined') {
             currentGrade = await API_인사.calculateInitialRank(totalYears, totalMonths);
@@ -518,7 +516,7 @@ async function calculateAndSave() {
             return;
         }
         
-        // 첫승급일 계산 - ✅ v4.0.0: API 우선 사용
+        // ✅ v4.0.0: 첫승급일 계산 - API 우선 사용
         let firstUpgradeDate;
         if (typeof API_인사 !== 'undefined') {
             firstUpgradeDate = await API_인사.calculateFirstUpgradeDate(
@@ -532,7 +530,7 @@ async function calculateAndSave() {
         
         로거_인사?.debug('첫승급일 계산 완료', { firstUpgradeDate });
         
-        // 차기승급일 계산 - ✅ v4.0.0: API 우선 사용
+        // ✅ v4.0.0: 차기승급일 계산 - API 우선 사용
         let nextUpgradeDate;
         if (typeof API_인사 !== 'undefined') {
             nextUpgradeDate = await API_인사.calculateNextUpgradeDate(firstUpgradeDate);
