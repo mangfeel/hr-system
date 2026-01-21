@@ -487,7 +487,7 @@ async function saveEmployeeEdit() {
             console.log('✅ 사용자 확인 완료, 급여방식 업데이트 시작');
             
             // 급여 지급 방식 변경
-            _updatePaymentMethod(emp, newPaymentMethod);
+            await _updatePaymentMethod(emp, newPaymentMethod);
         } else {
             console.log('⚠️ 급여방식 변경 조건 불만족');
         }
@@ -1066,7 +1066,7 @@ function _confirmPaymentMethodChange(emp, oldMethod, newMethod) {
  * @param {Object} emp - 직원 객체 (수정됨)
  * @param {string} paymentMethod - 새 급여 지급 방식
  */
-function _updatePaymentMethod(emp, paymentMethod) {
+async function _updatePaymentMethod(emp, paymentMethod) {
     console.log('🔍 _updatePaymentMethod 시작:', { 
         empId: emp.id, 
         paymentMethod: paymentMethod 
