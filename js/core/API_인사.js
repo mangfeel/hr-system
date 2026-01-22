@@ -5,11 +5,14 @@
  * - 핵심 로직은 서버에서만 실행 (코드 보호)
  * - 브라우저는 API 호출만 수행
  * 
- * @version 3.0.0
+ * @version 4.0.0
  * @since 2026-01-21
  * @location js/core/API_인사.js
  * 
  * [변경 이력]
+ * v4.0.0 - 검증 API 추가 (2026-01-22)
+ *   - validateEmployee: 직원 데이터 검증 API
+ *   - validateRegistration, validateEdit, validateCareerPeriod 등
  * v3.0.0 - 호봉계산 유틸 API 추가 (2026-01-21)
  *   - calculateRankUtils: 개별 함수 호출 지원
  *   - TenureCalculator, RankCalculator, CareerCalculator 대체
@@ -203,6 +206,93 @@ const API_인사 = (function() {
         return await call('calculate-overtime', params);
     }
     
+    // ===== 검증 API (v4.0.0 추가) =====
+    
+    /**
+     * 검증 API 호출 공통 함수
+     * @param {string} action - 검증 액션
+     * @param {Object} params - 검증 파라미터
+     * @returns {Promise<Object>} { valid: boolean, errors: string[] }
+     */
+    async function validateEmployee(action, params) {
+        const result = await call('validate-employee', { action, ...params });
+        if (result.success) {
+            return result.data;
+        }
+        throw new Error(result.error || '검증 실패');
+    }
+    
+    /**
+     * 직원 등록 검증
+     * @param {Object} data - 직원 데이터 { name, dept, position, grade, jobType, entryDate, ... }
+     * @param {Array} existingCodes - 기존 고유번호 목록 (중복 체크용)
+     * @param {Array} existingNumbers - 기존 사원번호 목록 (중복 체크용)
+     * @returns {Promise<Object>} { valid: boolean, errors: string[] }
+     */
+    async function validateRegistration(data, existingCodes = [], existingNumbers = []) {
+        return await validateEmployee('validateRegistration', {
+            data,
+            existingCodes,
+            existingNumbers
+        });
+    }
+    
+    /**
+     * 직원 수정 검증
+     * @param {Object} data - 수정할 데이터 { name, email, phone, residentNumber, ... }
+     * @returns {Promise<Object>} { valid: boolean, errors: string[] }
+     */
+    async function validateEdit(data) {
+        return await validateEmployee('validateEdit', { data });
+    }
+    
+    /**
+     * 경력 기간 검증
+     * @param {string} startDate - 시작일
+     * @param {string} endDate - 종료일
+     * @returns {Promise<Object>} { valid: boolean, errors: string[] }
+     */
+    async function validateCareerPeriod(startDate, endDate) {
+        return await validateEmployee('validateCareerPeriod', { startDate, endDate });
+    }
+    
+    /**
+     * 인사발령 검증
+     * @param {Object} data - 발령 데이터 { startDate, dept, position, entryDate?, resignDate? }
+     * @returns {Promise<Object>} { valid: boolean, errors: string[] }
+     */
+    async function validateAssignment(data) {
+        return await validateEmployee('validateAssignment', { data });
+    }
+    
+    /**
+     * 날짜 형식/범위 검증
+     * @param {string} dateStr - 날짜 문자열 (YYYY-MM-DD)
+     * @returns {Promise<Object>} { valid: boolean, errors: string[] }
+     */
+    async function validateDate(dateStr) {
+        return await validateEmployee('validateDate', { dateStr });
+    }
+    
+    /**
+     * 중복 검증
+     * @param {string} code - 검증할 코드
+     * @param {Array} existingCodes - 기존 코드 목록
+     * @returns {Promise<Object>} { valid: boolean, errors: string[] }
+     */
+    async function checkDuplicate(code, existingCodes = []) {
+        return await validateEmployee('checkDuplicate', { code, existingCodes });
+    }
+    
+    /**
+     * 주민등록번호 형식 검증
+     * @param {string} residentNumber - 주민등록번호 (000000-0000000)
+     * @returns {Promise<Object>} { valid: boolean, errors: string[] }
+     */
+    async function isValidResidentNumber(residentNumber) {
+        return await validateEmployee('isValidResidentNumber', { residentNumber });
+    }
+    
     // ===== 유틸리티 =====
     
     /**
@@ -229,7 +319,8 @@ const API_인사 = (function() {
             'calculate-rank': false,
             'calculate-rank-utils': false,
             'calculate-salary': false,
-            'calculate-overtime': false
+            'calculate-overtime': false,
+            'validate-employee': false
         };
         
         try {
@@ -265,6 +356,18 @@ const API_인사 = (function() {
             results['calculate-overtime'] = r5 && r5.success ? true : false;
         } catch (e) { }
         
+        try {
+            const r6 = await validateRegistration({
+                name: '테스트',
+                dept: '테스트부',
+                position: '테스트직',
+                grade: '1급',
+                jobType: '테스트',
+                entryDate: '2024-01-01'
+            });
+            results['validate-employee'] = r6 && typeof r6.valid === 'boolean';
+        } catch (e) { }
+        
         return results;
     }
     
@@ -295,6 +398,16 @@ const API_인사 = (function() {
         // 시간외수당 계산
         calculateOvertime,
         
+        // 검증 (v4.0.0 추가)
+        validateEmployee,
+        validateRegistration,
+        validateEdit,
+        validateCareerPeriod,
+        validateAssignment,
+        validateDate,
+        checkDuplicate,
+        isValidResidentNumber,
+        
         // 유틸리티
         healthCheck,
         checkAllAPIs
@@ -308,6 +421,4 @@ if (typeof window !== 'undefined') {
 }
 
 // 초기화 로그
-if (typeof CONFIG !== 'undefined' && CONFIG.DEBUG) {
-    console.log('✅ API_인사.js 로드 완료 (v3.0.0)');
-}
+console.log('✅ API_인사.js 로드 완료 (v4.0.0 검증 API 추가)');
