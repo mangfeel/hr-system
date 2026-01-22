@@ -9,11 +9,15 @@
  * - 직종별/직위별 인원 현황표
  * - 인쇄 / 엑셀 다운로드
  * 
- * @version 6.0.0
+ * @version 6.0.1
  * @since 2025-11-27
  * 
  * [변경 이력]
- * v6.0.0 (2026-01-22) ⭐ 배치 API 적용 - 성능 최적화
+ * v6.0.1 (2026-01-22) ⭐ 계층형 탭 버그 수정
+ *   - 탭 확인 로직 버그 수정 (계층형이 항상 표 형식으로 인식되던 문제)
+ *   - isHierarchyTab 직접 확인 방식으로 변경
+ *
+ * v6.0.0 (2026-01-22) 배치 API 적용 - 성능 최적화
  *   - 개별 API 호출 → 배치 API (calculateBatchForEmployees)
  *   - N회 API 호출 → 1회로 감소
  *   - 로딩 시간 대폭 단축
@@ -563,11 +567,14 @@ async function generateOrgChart() {
         const hierarchy = categorizeEmployees(employees, orgChartSettings, concurrentPositions, baseDate);
         
         // 현재 탭 확인 (기본값: 표 형식)
+        // ⭐ v6.0.1: 탭 확인 로직 수정 - 계층형 탭이 활성화되었는지 직접 확인
         const tableTab = document.getElementById('tab-table');
         const hierarchyTab = document.getElementById('tab-hierarchy');
-        const isTableTab = tableTab?.classList.contains('active') || 
-                          tableTab?.style.borderBottom?.includes('4f46e5') ||
-                          !hierarchyTab?.style.borderBottom?.includes('4f46e5');
+        
+        // 계층형 탭이 활성화되어 있는지 확인
+        const isHierarchyTab = hierarchyTab?.classList.contains('active') || 
+                              (hierarchyTab?.style.borderBottom && hierarchyTab.style.borderBottom.includes('4f46e5'));
+        const isTableTab = !isHierarchyTab;
         
         console.log('[조직도] 현재 탭:', isTableTab ? '표 형식' : '계층형');
         
