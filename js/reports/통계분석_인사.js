@@ -1443,19 +1443,43 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
         case 'avgTenure': {
             const tenureDetails = [];
             
+            // ⭐ v5.0.0: 로컬에서 직접 근속기간 계산 (async 문제 회피)
             const totalMonths = employees.reduce((sum, e) => {
-                const tenure = TenureCalculator.calculate(e.employment?.entryDate, baseDate);
-                const months = tenure.years * 12 + tenure.months;
+                const entryDate = e.employment?.entryDate;
+                if (!entryDate) return sum;
+                
+                // 로컬 계산
+                const entry = new Date(entryDate);
+                const base = new Date(baseDate);
+                
+                let years = base.getFullYear() - entry.getFullYear();
+                let months = base.getMonth() - entry.getMonth();
+                
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+                
+                // 일자 보정
+                if (base.getDate() < entry.getDate()) {
+                    months--;
+                    if (months < 0) {
+                        years--;
+                        months += 12;
+                    }
+                }
+                
+                const totalMonthsForEmp = years * 12 + months;
                 
                 // ⭐ 비고용 상세 정보
                 const name = e.personalInfo?.name || e.name || '이름없음';
                 tenureDetails.push({
                     name,
-                    years: tenure.years,
-                    months: tenure.months
+                    years: years,
+                    months: months
                 });
                 
-                return sum + months;
+                return sum + totalMonthsForEmp;
             }, 0);
             
             const avgMonths = totalMonths / count;
