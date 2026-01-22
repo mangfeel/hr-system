@@ -7,11 +7,16 @@
  * - 다양한 분석 지표
  * - 엑셀 다운로드
  * 
- * @version 4.0.0
+ * @version 5.0.0
  * @since 2025-11-10
  * 
  * [변경 이력]
- * v4.0.0 (2026-01-22) ⭐ API 연동 버전
+ * v5.0.0 (2026-01-22) ⭐ API 전용 버전
+ *   - 직원유틸_인사.getDynamicRankInfo() await 추가
+ *   - 호봉 계산 forEach → for...of (async/await 지원)
+ *   - 모든 계산 로직 서버 API로 이동
+ *
+ * v4.0.0 (2026-01-22) API 연동 버전
  *   - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
  *   - TenureCalculator.calculate → API_인사.calculateTenure
  *   - _calculateStatValue() async 변경
@@ -1378,20 +1383,21 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                 let validCount = 0;
                 const rankDetails = []; // ⭐ 비고용 상세 정보
                 
-                rankBased.forEach(e => {
+                // ⭐ v5.0.0: forEach → for...of (async/await 지원)
+                for (const e of rankBased) {
                     try {
                         const name = e.personalInfo?.name || e.name;
                         
-                        // ⭐ v3.1.0: 직원유틸의 동적 호봉 계산 함수 사용 (인정율 반영)
+                        // ⭐ v5.0.0: 직원유틸의 동적 호봉 계산 함수 사용 (인정율 반영) - await 추가
                         let currentRank;
                         
                         if (typeof 직원유틸_인사 !== 'undefined' && typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-                            const rankInfo = 직원유틸_인사.getDynamicRankInfo(e, baseDate);
+                            const rankInfo = await 직원유틸_인사.getDynamicRankInfo(e, baseDate);
                             currentRank = rankInfo.currentRank;
                             
                             if (currentRank === '-') {
                                 console.log('필수 데이터 없음 (동적 계산):', name);
-                                return; // 스킵
+                                continue; // 스킵 (return → continue)
                             }
                         } else {
                             // Fallback: 기존 방식
@@ -1401,7 +1407,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                                     entryDate: e.employment?.entryDate,
                                     firstUpgradeDate: e.rank?.firstUpgradeDate
                                 });
-                                return; // 스킵
+                                continue; // 스킵 (return → continue)
                             }
                             
                             const startRank = e.rank.startRank || 1;
@@ -1440,7 +1446,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                         console.error('에러 스택:', err.stack);
                         // 개별 직원 계산 실패는 무시하고 계속
                     }
-                });
+                }
                 
                 if (validCount === 0) {
                     return {

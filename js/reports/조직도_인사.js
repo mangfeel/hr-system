@@ -9,11 +9,15 @@
  * - 직종별/직위별 인원 현황표
  * - 인쇄 / 엑셀 다운로드
  * 
- * @version 4.0.0
+ * @version 5.0.0
  * @since 2025-11-27
  * 
  * [변경 이력]
- * v4.0.0 (2026-01-22) ⭐ API 연동 버전
+ * v5.0.0 (2026-01-22) ⭐ API 전용 버전
+ *   - 직원유틸_인사.getDynamicRankInfo() await 추가
+ *   - 모든 계산 로직 서버 API로 이동
+ * 
+ * v4.0.0 (2026-01-22) API 연동 버전
  *   - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
  *   - getEmployeesAtDate() async 변경
  *   - forEach → for...of (async/await 지원)
@@ -623,13 +627,13 @@ async function getEmployeesAtDate(baseDate) {
         // 기준일 기준 발령 정보 가져오기
         const assignmentInfo = getAssignmentAtDate(emp, baseDate);
         
-        // ⭐ v3.1.0: 기준일 기준 호봉 동적 계산 (인정율 반영)
+        // ⭐ v5.0.0: 기준일 기준 호봉 동적 계산 (인정율 반영) - await 추가
         let currentRank = null;
         if (emp.rank?.isRankBased !== false && emp.rank?.startRank) {
             try {
                 // 직원유틸의 동적 호봉 계산 함수 사용
                 if (typeof 직원유틸_인사 !== 'undefined' && typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-                    const rankInfo = 직원유틸_인사.getDynamicRankInfo(emp, DateUtils.formatDate(baseDate));
+                    const rankInfo = await 직원유틸_인사.getDynamicRankInfo(emp, DateUtils.formatDate(baseDate));
                     currentRank = rankInfo.currentRank;
                 } else if (emp.rank?.firstUpgradeDate) {
                     // ⭐ v4.0.0: fallback - API 우선 사용

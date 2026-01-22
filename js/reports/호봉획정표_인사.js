@@ -9,11 +9,15 @@
  * - 호봉획정표 생성 (대상자, 환산결과, 경력상세)
  * - 인쇄 (A4 세로)
  * 
- * @version 4.0.0
+ * @version 5.0.0
  * @since 2024-11-05
  * 
  * [변경 이력]
- * v4.0.0 (2026-01-21) ⭐ API 연동 버전
+ * v5.0.0 (2026-01-22) ⭐ API 전용 버전
+ *   - 직원유틸_인사.getDynamicRankInfo() await 추가
+ *   - 모든 계산 로직 서버 API로 이동
+ *
+ * v4.0.0 (2026-01-21) API 연동 버전
  *   - loadCertificateEmployeeList(), printHobongCertificate() 비동기 처리
  *   - 호봉 계산 API 우선 사용
  *   - 서버 API로 계산 로직 보호
@@ -242,13 +246,14 @@ async function createCertEmployeeItemHTML(emp, isRetired) {
         try {
             const today = new Date().toISOString().split('T')[0];
             
-            // ✅ v4.0.0: 직원유틸 Async 버전 우선 사용
+            // ✅ v5.0.0: 직원유틸 (모든 함수가 async)
             if (typeof 직원유틸_인사 !== 'undefined') {
                 if (typeof 직원유틸_인사.getDynamicRankInfoAsync === 'function') {
                     const rankInfo = await 직원유틸_인사.getDynamicRankInfoAsync(emp, today);
                     currentRank = rankInfo.currentRank + '호봉';
                 } else if (typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-                    const rankInfo = 직원유틸_인사.getDynamicRankInfo(emp, today);
+                    // ⭐ v5.0.0: await 추가 (getDynamicRankInfo도 async)
+                    const rankInfo = await 직원유틸_인사.getDynamicRankInfo(emp, today);
                     currentRank = rankInfo.currentRank + '호봉';
                 } else if (typeof 직원유틸_인사.getCurrentRankAsync === 'function') {
                     const rank = await 직원유틸_인사.getCurrentRankAsync(emp, today);
@@ -747,7 +752,7 @@ async function printHobongCertificate(employeeId) {
         let nextUpgradeDate = emp.rank?.nextUpgradeDate || '-';
         let currentRank = startRank;  // 현재 호봉 (동적 계산)
         
-        // ✅ v4.0.0: 직원유틸 Async 버전 우선 사용
+        // ✅ v5.0.0: 직원유틸 (모든 함수가 async)
         if (typeof 직원유틸_인사 !== 'undefined') {
             if (typeof 직원유틸_인사.getDynamicRankInfoAsync === 'function') {
                 const rankInfo = await 직원유틸_인사.getDynamicRankInfoAsync(emp, today);
@@ -755,7 +760,8 @@ async function printHobongCertificate(employeeId) {
                 nextUpgradeDate = rankInfo.nextUpgradeDate || nextUpgradeDate;
                 currentRank = rankInfo.currentRank || startRank;
             } else if (typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-                const rankInfo = 직원유틸_인사.getDynamicRankInfo(emp, today);
+                // ⭐ v5.0.0: await 추가 (getDynamicRankInfo도 async)
+                const rankInfo = await 직원유틸_인사.getDynamicRankInfo(emp, today);
                 firstUpgradeDate = rankInfo.firstUpgradeDate || firstUpgradeDate;
                 nextUpgradeDate = rankInfo.nextUpgradeDate || nextUpgradeDate;
                 currentRank = rankInfo.currentRank || startRank;

@@ -10,7 +10,7 @@
  * - 육아휴직자 포함/제외
  * - 인쇄 최적화
  * 
- * @version 4.0.0
+ * @version 5.0.0
  * @since 2025-11-28
  * @updated 2026-01-07 - 출력 범위 변경 시 기존 페이지 초기화 (전체→개별 전환 버그 수정)
  * @updated 2025-12-11 - 텍스트형 단독 카드에 포상이력 추가
@@ -18,7 +18,11 @@
  * @updated 2025-12-11 - 2단 서식 옵션 추가 (인사이력/포상이력/경력사항 2열 배치)
  * 
  * [변경 이력]
- * v4.0.0 (2026-01-21) ⭐ API 연동 버전
+ * v5.0.0 (2026-01-22) ⭐ API 전용 버전
+ *   - 호봉 계산에서 저장된 값 사용 (정렬/데이터 표시)
+ *   - _calculateRankAtDate async로 변경
+ *
+ * v4.0.0 (2026-01-21) API 연동 버전
  *   - 변수 중복 선언 버그 수정 (startRank → fallbackStartRank)
  * 
  * v1.4.0 (2026-01-07) - 출력 범위/직원 선택 변경 시 인쇄 버그 수정
@@ -736,10 +740,10 @@ function _sortEmployees(employees, positionSettings, baseDate) {
             return isRankBasedA ? -1 : 1;
         }
         
-        // 3차: 호봉 (높은 순)
+        // 3차: 호봉 (높은 순) - ⭐ v5.0.0: 저장된 값 사용 (정렬은 동기 함수)
         if (isRankBasedA && isRankBasedB) {
-            const rankA = _calculateRankAtDate(a, baseDate);
-            const rankB = _calculateRankAtDate(b, baseDate);
+            const rankA = a.rank?.currentRank || a.rank?.startRank || 0;
+            const rankB = b.rank?.currentRank || b.rank?.startRank || 0;
             if (typeof rankA === 'number' && typeof rankB === 'number' && rankA !== rankB) {
                 return rankB - rankA;
             }
@@ -849,12 +853,13 @@ function _applyConcurrentPositions(employees, baseDate) {
 
 /**
  * 직원의 기준일 기준 호봉 계산
+ * ⭐ v5.0.0: async로 변경
  * @private
  * @param {Object} emp - 직원 객체
  * @param {string} baseDate - 기준일
- * @returns {number|string} 호봉 또는 '-'
+ * @returns {Promise<number|string>} 호봉 또는 '-'
  */
-function _calculateRankAtDate(emp, baseDate) {
+async function _calculateRankAtDate(emp, baseDate) {
     try {
         // 호봉제 여부 확인 (emp.rank.isRankBased 또는 employment.employmentType)
         const isRankBased = emp.rank?.isRankBased ?? 
@@ -865,9 +870,9 @@ function _calculateRankAtDate(emp, baseDate) {
             return '-';
         }
         
-        // ⭐ v3.1.0: 직원유틸의 동적 호봉 계산 함수 사용 (인정율 반영)
+        // ⭐ v5.0.0: 직원유틸의 동적 호봉 계산 함수 사용 (인정율 반영) - await 추가
         if (typeof 직원유틸_인사 !== 'undefined' && typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-            const rankInfo = 직원유틸_인사.getDynamicRankInfo(emp, baseDate);
+            const rankInfo = await 직원유틸_인사.getDynamicRankInfo(emp, baseDate);
             return rankInfo.currentRank;
         }
         
@@ -1399,7 +1404,8 @@ function _buildEmployeeData(emp, baseDate, detailed, applyContinuousService = fa
         phone: emp.contactInfo?.phone || emp.personalInfo?.phone || emp.phone || '',
         email: emp.contactInfo?.email || emp.personalInfo?.email || emp.email || '',
         address: emp.contactInfo?.address || emp.personalInfo?.address || emp.address || '',
-        rank: _calculateRankAtDate(emp, baseDate),
+        // ⭐ v5.0.0: 저장된 호봉 값 사용 (동적 계산은 별도 async 함수로 분리)
+        rank: emp.rank?.currentRank || emp.rank?.startRank || '-',
         photo: _photoMap.get(name) || null,
         assignmentHistory: _getAssignmentHistory(emp, baseDate, applyContinuousService)
     };

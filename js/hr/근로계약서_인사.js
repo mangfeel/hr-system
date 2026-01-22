@@ -12,18 +12,11 @@
  * - 다중 선택 일괄 인쇄
  * - 업무 내용 미리보기 편집 기능
  * 
- * @version 3.6
+ * @version 3.4
  * @since 2025-12-09
  * @location js/hr/근로계약서_인사.js
  * 
  * [변경 이력]
- * v3.6 - 휴게시간 설정 범위 확장 (2026-01-13)
- *   - 휴게시간 선택 범위: 11시~16시 → 9시~21시로 확장
- *   - 호봉제/연봉제 탭 모두 적용
- * v3.5 - 연봉제/연봉제(단시간) 서식 생성 오류 수정 (2026-01-07)
- *   - _generateSalaryContractHTML: employee 변수 destructuring 누락 수정
- *   - _generateSalaryPartTimeContractHTML: employee 변수 destructuring 누락 수정
- *   - 미리보기/인쇄 시 "ReferenceError: employee is not defined" 오류 해결
  * v3.4 - 업무 내용 편집 기능 추가 (2025-12-12)
  *   - 미리보기에서 "업무의 내용" 직접 수정 가능 (contenteditable)
  *   - 수정된 값은 메모리에 저장되어 선택 인쇄 시 반영
@@ -520,7 +513,7 @@ function _rebuildTabContent(tabType, tabId, tabName) {
             <div class="time-group">
                 <span class="time-group-label">☕ 휴게</span>
                 <select id="contractBreakStartHour${suffix}" onchange="_updatePreviewIfSelected()">
-                    ${Array.from({length: 13}, (_, i) => i + 9).map(h => `<option value="${h}" ${h === 12 ? 'selected' : ''}>${h}시</option>`).join('')}
+                    ${Array.from({length: 6}, (_, i) => i + 11).map(h => `<option value="${h}" ${h === 12 ? 'selected' : ''}>${h}시</option>`).join('')}
                 </select>
                 <select id="contractBreakStartMin${suffix}" onchange="_updatePreviewIfSelected()">
                     <option value="0" selected>00분</option>
@@ -530,7 +523,7 @@ function _rebuildTabContent(tabType, tabId, tabName) {
             <span class="separator">~</span>
             <div class="time-group">
                 <select id="contractBreakEndHour${suffix}" onchange="_updatePreviewIfSelected()">
-                    ${Array.from({length: 13}, (_, i) => i + 9).map(h => `<option value="${h}" ${h === 13 ? 'selected' : ''}>${h}시</option>`).join('')}
+                    ${Array.from({length: 6}, (_, i) => i + 11).map(h => `<option value="${h}" ${h === 13 ? 'selected' : ''}>${h}시</option>`).join('')}
                 </select>
                 <select id="contractBreakEndMin${suffix}" onchange="_updatePreviewIfSelected()">
                     <option value="0" selected>00분</option>
@@ -627,7 +620,7 @@ function _createSalaryPartTimeTab() {
             <div class="time-group">
                 <span class="time-group-label">☕ 휴게</span>
                 <select id="contractBreakStartHour" onchange="_updatePreviewIfSelected()">
-                    ${Array.from({length: 13}, (_, i) => i + 9).map(h => `<option value="${h}" ${h === 12 ? 'selected' : ''}>${h}시</option>`).join('')}
+                    ${Array.from({length: 6}, (_, i) => i + 11).map(h => `<option value="${h}" ${h === 12 ? 'selected' : ''}>${h}시</option>`).join('')}
                 </select>
                 <select id="contractBreakStartMin" onchange="_updatePreviewIfSelected()">
                     <option value="0">00분</option>
@@ -637,7 +630,7 @@ function _createSalaryPartTimeTab() {
             <span class="separator">~</span>
             <div class="time-group">
                 <select id="contractBreakEndHour" onchange="_updatePreviewIfSelected()">
-                    ${Array.from({length: 13}, (_, i) => i + 9).map(h => `<option value="${h}" ${h === 13 ? 'selected' : ''}>${h}시</option>`).join('')}
+                    ${Array.from({length: 6}, (_, i) => i + 11).map(h => `<option value="${h}" ${h === 13 ? 'selected' : ''}>${h}시</option>`).join('')}
                 </select>
                 <select id="contractBreakEndMin" onchange="_updatePreviewIfSelected()">
                     <option value="0" selected>00분</option>
@@ -2065,7 +2058,7 @@ function _generateSalaryContractHTML(data) {
         workTimeInfo,       // ⭐ [v3.3] 근무시간 설정
         year, weeklyHours, monthlyHours,
         hasProbation, probationMonths, probationEnd, probationStartDate,
-        empCategory, employee  // ⭐ [v3.5] employee 추가
+        empCategory
     } = data;
     
     // ⭐ [v3.3] 근무시간 정보 추출 (기본값 포함)
@@ -2216,7 +2209,7 @@ function _generateSalaryPartTimeContractHTML(data) {
         partTimeWorkInfo,   // ⭐ 단시간 근무시간 추가
         year, weeklyHours, monthlyHours, dailyHours,
         hasProbation, probationMonths, probationEnd, probationStartDate,
-        empCategory, employee  // ⭐ [v3.5] employee 추가
+        empCategory
     } = data;
     
     // ⭐ 입력받은 근무시간 사용
@@ -2449,4 +2442,4 @@ function printEmploymentContract() {
     }
 }
 
-console.log('✅ 근로계약서_인사.js 로드 완료 (v3.6 - 휴게시간 범위 확장)');
+console.log('✅ 근로계약서_인사.js 로드 완료 (v3.4 - 업무 내용 편집 기능)');

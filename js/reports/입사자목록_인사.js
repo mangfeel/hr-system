@@ -10,11 +10,15 @@
  * - 인쇄 (A4 세로/가로)
  * - 엑셀 다운로드
  * 
- * @version 4.0.0
+ * @version 5.0.0
  * @since 2024-11-05
  * 
  * [변경 이력]
- * v4.0.0 (2026-01-22) ⭐ API 연동 버전
+ * v5.0.0 (2026-01-22) ⭐ API 전용 버전
+ *   - 직원유틸_인사.getDynamicRankInfo() await 추가
+ *   - 모든 계산 로직 서버 API로 이동
+ * 
+ * v4.0.0 (2026-01-22) API 연동 버전
  *   - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
  *   - TenureCalculator.calculate → API_인사.calculateTenure
  *   - _renderNewEmployeesTable() async 변경
@@ -575,9 +579,9 @@ async function buildNewEmployeeRowData(emp, index, periodEndDate) {
         
         if (isRankBased) {
             try {
-                // ⭐ v3.1.0: 직원유틸의 동적 호봉 계산 함수 사용 (인정율 반영)
+                // ⭐ v5.0.0: 직원유틸의 동적 호봉 계산 함수 사용 (인정율 반영) - await 추가
                 if (typeof 직원유틸_인사 !== 'undefined' && typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-                    const rankInfo = 직원유틸_인사.getDynamicRankInfo(emp, baseDate);
+                    const rankInfo = await 직원유틸_인사.getDynamicRankInfo(emp, baseDate);
                     startRankDisplay = rankInfo.startRank + '호봉';
                     currentRankDisplay = rankInfo.currentRank + '호봉';
                 } else {

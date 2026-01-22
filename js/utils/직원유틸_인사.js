@@ -8,17 +8,22 @@
  * - 호봉제 판단 및 계산
  * - 근속연수 계산
  * 
- * @version 4.0.0
+ * @version 5.0.0
  * @since 2024-11-04
  * 
  * [변경 이력]
- * v4.0.0 (2026-01-21) ⭐ API 연동 버전
- *   - 서버 API 호출 버전 추가 (*Async 접미사)
- *   - getCurrentRankAsync, getNextUpgradeDateAsync 등
- *   - 기존 동기 함수 100% 유지 (하위 호환)
- *   - API_인사 모듈 연동
+ * v5.0.0 (2026-01-22) ⭐ API 전용 버전
+ *   - 모든 Calculator 호출을 async/await로 변경
+ *   - getDynamicRankInfo → async
+ *   - getCurrentRank, getNextUpgradeDate → async
+ *   - getTenure, getTenureFormatted → async
+ *   - 계산 로직 서버에서만 실행 (보안 강화)
  * 
- * v3.1.0 (2025-12-03) ⭐ 기준일별 동적 호봉 계산 지원
+ * v4.0.0 (2026-01-21) API 연동 버전
+ *   - 서버 API 호출 버전 추가 (*Async 접미사)
+ *   - 기존 동기 함수 100% 유지 (하위 호환)
+ * 
+ * v3.1.0 (2025-12-03) 기준일별 동적 호봉 계산 지원
  *   - getDynamicRankInfo() 함수 추가
  *   - 발령별 이전 경력 인정율 반영
  *   - 기준일에 따라 달라지는 호봉 동적 계산
@@ -427,17 +432,18 @@ const 직원유틸_인사 = (function() {
         },
         
         /**
-         * 현재 호봉 계산
+         * 현재 호봉 계산 (API 전용)
+         * ⭐ v5.0.0: async 함수로 변경
          * 
          * @param {Object} emp - 직원 객체
          * @param {string|null} [baseDate=null] - 기준일 (YYYY-MM-DD, null이면 오늘)
-         * @returns {number|string} 현재 호봉 또는 '-'
+         * @returns {Promise<number|string>} 현재 호봉 또는 '-'
          * 
          * @example
-         * const currentRank = 직원유틸_인사.getCurrentRank(emp);
-         * const rankAtDate = 직원유틸_인사.getCurrentRank(emp, '2024-12-31');
+         * const currentRank = await 직원유틸_인사.getCurrentRank(emp);
+         * const rankAtDate = await 직원유틸_인사.getCurrentRank(emp, '2024-12-31');
          */
-        getCurrentRank(emp, baseDate = null) {
+        async getCurrentRank(emp, baseDate = null) {
             // 호봉제가 아니면 '-'
             if (!this.isRankBased(emp)) {
                 return '-';
@@ -463,8 +469,8 @@ const 직원유틸_인사 = (function() {
                 // 기준일 결정
                 const targetDate = baseDate || DateUtils.formatDate(new Date());
                 
-                // 호봉 계산
-                const currentRank = RankCalculator.calculateCurrentRank(
+                // ⭐ v5.0.0: API 호출 (await 추가)
+                const currentRank = await RankCalculator.calculateCurrentRank(
                     emp.rank.startRank,
                     emp.rank.firstUpgradeDate,
                     targetDate
@@ -522,12 +528,12 @@ const 직원유틸_인사 = (function() {
          * 
          * @param {Object} emp - 직원 객체
          * @param {string|null} [baseDate=null] - 기준일 (YYYY-MM-DD, null이면 오늘)
-         * @returns {string} 다음 승급일 (YYYY-MM-DD) 또는 '-'
+         * @returns {Promise<string>} 다음 승급일 (YYYY-MM-DD) 또는 '-'
          * 
          * @example
-         * const nextDate = 직원유틸_인사.getNextUpgradeDate(emp);
+         * const nextDate = await 직원유틸_인사.getNextUpgradeDate(emp);
          */
-        getNextUpgradeDate(emp, baseDate = null) {
+        async getNextUpgradeDate(emp, baseDate = null) {
             // 호봉제가 아니면 '-'
             if (!this.isRankBased(emp)) {
                 return '-';
@@ -547,8 +553,8 @@ const 직원유틸_인사 = (function() {
                 // 기준일 결정
                 const targetDate = baseDate || DateUtils.formatDate(new Date());
                 
-                // 다음 승급일 계산
-                const nextDate = RankCalculator.calculateNextUpgradeDate(
+                // ⭐ v5.0.0: API 호출 (await 추가)
+                const nextDate = await RankCalculator.calculateNextUpgradeDate(
                     emp.rank.firstUpgradeDate,
                     targetDate
                 );
@@ -595,22 +601,22 @@ const 직원유틸_인사 = (function() {
         },
         
         /**
-         * ⭐ v3.1.0: 동적 호봉 정보 계산 (기준일별 인정율 반영)
+         * ⭐ v5.0.0: 동적 호봉 정보 계산 (기준일별 인정율 반영)
+         * async로 변경 - 모든 Calculator가 API 호출
          * 
          * 발령별 이전 경력 인정율이 설정된 경우, 기준일에 따라 호봉이 달라질 수 있음.
          * 이 함수는 기준일 시점의 유효한 인정율을 반영하여 호봉 정보를 동적으로 계산.
          * 
          * @param {Object} emp - 직원 객체
          * @param {string|null} [baseDate=null] - 기준일 (YYYY-MM-DD, null이면 오늘)
-         * @returns {Object} { startRank, firstUpgradeDate, currentRank, nextUpgradeDate, adjusted }
+         * @returns {Promise<Object>} { startRank, firstUpgradeDate, currentRank, nextUpgradeDate, adjusted }
          * 
          * @example
-         * const info = 직원유틸_인사.getDynamicRankInfo(emp, '2025-03-01');
-         * // { startRank: 2, firstUpgradeDate: '2025-04-01', currentRank: 2, nextUpgradeDate: '2025-04-01', adjusted: true }
+         * const info = await 직원유틸_인사.getDynamicRankInfo(emp, '2025-03-01');
          * 
-         * @version 3.1.0
+         * @version 5.0.0
          */
-        getDynamicRankInfo(emp, baseDate = null) {
+        async getDynamicRankInfo(emp, baseDate = null) {
             // 호봉제가 아니면 기본값 반환
             if (!this.isRankBased(emp)) {
                 return {
@@ -628,7 +634,7 @@ const 직원유틸_인사 = (function() {
                     typeof DateUtils === 'undefined' ||
                     typeof TenureCalculator === 'undefined') {
                     // 모듈 없으면 저장된 값 사용
-                    return this._getStoredRankInfo(emp, baseDate);
+                    return await this._getStoredRankInfo(emp, baseDate);
                 }
                 
                 // 기준일 결정
@@ -636,29 +642,29 @@ const 직원유틸_인사 = (function() {
                 const entryDate = this.getEntryDate(emp);
                 
                 if (entryDate === '-') {
-                    return this._getStoredRankInfo(emp, baseDate);
+                    return await this._getStoredRankInfo(emp, baseDate);
                 }
                 
                 // InternalCareerCalculator 없으면 저장된 값 사용
                 if (typeof InternalCareerCalculator === 'undefined') {
-                    return this._getStoredRankInfo(emp, baseDate);
+                    return await this._getStoredRankInfo(emp, baseDate);
                 }
                 
-                // 인정율 적용된 현 기관 경력 계산
-                const internalResult = InternalCareerCalculator.calculateWithPriorCareerRate(emp, targetDate);
+                // ⭐ v5.0.0: await 추가 - 인정율 적용된 현 기관 경력 계산
+                const internalResult = await InternalCareerCalculator.calculateWithPriorCareerRate(emp, targetDate);
                 
                 // 모든 발령이 100% 인정율인지 확인
                 const allFullRate = internalResult.details.every(d => d.rate === 100);
                 
                 // 모든 발령이 100%면 저장된 값 사용 (계산 오차 방지)
                 if (allFullRate) {
-                    return this._getStoredRankInfo(emp, baseDate);
+                    return await this._getStoredRankInfo(emp, baseDate);
                 }
                 
                 // ⭐ 동적 계산 필요 (100% 미만 인정율 존재)
                 
-                // 1. 원본 재직일수
-                const originalPeriod = TenureCalculator.calculate(entryDate, targetDate);
+                // 1. 원본 재직일수 (⭐ v5.0.0: await 추가)
+                const originalPeriod = await TenureCalculator.calculate(entryDate, targetDate);
                 const originalDays = originalPeriod.years * 365 + originalPeriod.months * 30 + originalPeriod.days;
                 
                 // 2. 손실 일수
@@ -695,19 +701,19 @@ const 직원유틸_인사 = (function() {
                 // 5. 입사호봉 = 1 + 과거경력년수
                 const startRank = 1 + totalPastYears;
                 
-                // 6. 동적 첫승급일 계산
-                const dynamicFirstUpgrade = RankCalculator.calculateFirstUpgradeDate(
+                // 6. 동적 첫승급일 계산 (⭐ v5.0.0: await 추가)
+                const dynamicFirstUpgrade = await RankCalculator.calculateFirstUpgradeDate(
                     adjustedEntryDate,
                     totalPastYears,
                     totalPastMonths,
                     totalPastDays
                 );
                 
-                // 7. 현재 호봉 계산
-                const currentRank = RankCalculator.calculateCurrentRank(startRank, dynamicFirstUpgrade, targetDate);
+                // 7. 현재 호봉 계산 (⭐ v5.0.0: await 추가)
+                const currentRank = await RankCalculator.calculateCurrentRank(startRank, dynamicFirstUpgrade, targetDate);
                 
-                // 8. 차기승급일
-                const nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(dynamicFirstUpgrade, targetDate);
+                // 8. 차기승급일 (⭐ v5.0.0: await 추가)
+                const nextUpgradeDate = await RankCalculator.calculateNextUpgradeDate(dynamicFirstUpgrade, targetDate);
                 
                 return {
                     startRank: startRank,
@@ -726,8 +732,8 @@ const 직원유틸_인사 = (function() {
                         error: error.message
                     });
                 }
-                // 오류 시 저장된 값 반환
-                return this._getStoredRankInfo(emp, baseDate);
+                // 오류 시 저장된 값 반환 (⭐ v5.0.0: await 추가)
+                return await this._getStoredRankInfo(emp, baseDate);
             }
         },
         
@@ -841,13 +847,14 @@ const 직원유틸_인사 = (function() {
         
         /**
          * 저장된 호봉 정보 반환 (Private)
+         * ⭐ v5.0.0: async로 변경
          * 
          * @private
          * @param {Object} emp - 직원 객체
          * @param {string|null} baseDate - 기준일
-         * @returns {Object} 호봉 정보
+         * @returns {Promise<Object>} 호봉 정보
          */
-        _getStoredRankInfo(emp, baseDate = null) {
+        async _getStoredRankInfo(emp, baseDate = null) {
             try {
                 const targetDate = baseDate || (typeof DateUtils !== 'undefined' ? DateUtils.formatDate(new Date()) : new Date().toISOString().split('T')[0]);
                 const startRank = emp.rank?.startRank || 1;
@@ -857,8 +864,9 @@ const 직원유틸_인사 = (function() {
                 let nextUpgradeDate = '-';
                 
                 if (firstUpgradeDate !== '-' && typeof RankCalculator !== 'undefined') {
-                    currentRank = RankCalculator.calculateCurrentRank(startRank, firstUpgradeDate, targetDate);
-                    nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(firstUpgradeDate, targetDate);
+                    // ⭐ v5.0.0: await 추가
+                    currentRank = await RankCalculator.calculateCurrentRank(startRank, firstUpgradeDate, targetDate);
+                    nextUpgradeDate = await RankCalculator.calculateNextUpgradeDate(firstUpgradeDate, targetDate);
                 }
                 
                 return {
@@ -925,13 +933,13 @@ const 직원유틸_인사 = (function() {
          * 
          * @param {Object} emp - 직원 객체
          * @param {string|null} [baseDate=null] - 기준일 (YYYY-MM-DD, null이면 오늘)
-         * @returns {Object|null} { years: number, formatted: string } 또는 null
+         * @returns {Promise<Object|null>} { years: number, formatted: string } 또는 null
          * 
          * @example
-         * const tenure = 직원유틸_인사.getTenure(emp);
+         * const tenure = await 직원유틸_인사.getTenure(emp);
          * // { years: 5.5, formatted: '5년 6개월' }
          */
-        getTenure(emp, baseDate = null) {
+        async getTenure(emp, baseDate = null) {
             const entryDate = this.getEntryDate(emp);
             if (entryDate === '-') {
                 return null;
@@ -951,8 +959,8 @@ const 직원유틸_인사 = (function() {
                 // 기준일 결정
                 const targetDate = baseDate || DateUtils.formatDate(new Date());
                 
-                // 근속연수 계산
-                const years = TenureCalculator.calculate(entryDate, targetDate);
+                // ⭐ v5.0.0: await 추가
+                const years = await TenureCalculator.calculate(entryDate, targetDate);
                 const formatted = TenureCalculator.format(years);
                 
                 return {
@@ -1043,7 +1051,8 @@ const 직원유틸_인사 = (function() {
                 entryDate: this.getEntryDate(emp),
                 isActive: this.isActive(emp),
                 isRankBased: this.isRankBased(emp),
-                currentRank: this.isRankBased(emp) ? this.getCurrentRank(emp) : '-',
+                // ⭐ v5.0.0: 저장된 값 사용 (getCurrentRank가 async이므로)
+                currentRank: this.isRankBased(emp) ? (emp.rank?.currentRank || emp.rank?.startRank || '-') : '-',
                 isOnMaternityLeave: this.isOnMaternityLeave(emp)
             };
         },
