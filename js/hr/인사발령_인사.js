@@ -15,10 +15,17 @@
  * - 발령 ID 타입 호환성 ⭐ v3.4.1 추가
  * - 퇴사자/종료 발령 수정 시 currentPosition 반영 ⭐ v3.5.0 추가
  * 
- * @version 4.0.0
+ * @version 4.1.0
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v4.1.0 (2026-01-22) ⭐ 검증/경력환산 API 연동
+ *   - Validator.validateAssignmentDate → API_인사.validateAssignment
+ *   - Validator.isDateInValidRange → API_인사.validateDate
+ *   - TenureCalculator.calculate → API_인사.calculateTenure
+ *   - CareerCalculator.applyConversionRate → API_인사.applyConversionRate
+ *   - forEach → for...of (async/await 지원)
+ * 
  * v4.0.0 (2026-01-21) ⭐ API 연동 버전
  *   - saveAssignmentEdit() async 변경
  *   - 호봉 계산 API 우선 사용 (API_인사)
@@ -451,7 +458,7 @@ function loadEmployeeForAssignment() {
  * @example
  * saveAssignment(); // 발령 등록
  */
-function saveAssignment() {
+async function saveAssignment() {
     try {
         로거_인사?.debug('인사발령 저장 시작');
         
@@ -493,8 +500,22 @@ function saveAssignment() {
             ? 직원유틸_인사.getEntryDate(emp)
             : emp.employment?.entryDate;
         
-        // 발령일 검증
-        const validation = Validator.validateAssignmentDate(entryDate, formData.assignmentDate);
+        // ✅ v4.1.0: 발령일 검증 - API 우선 사용
+        let validation;
+        if (typeof API_인사 !== 'undefined') {
+            try {
+                validation = await API_인사.validateAssignment({
+                    entryDate: entryDate,
+                    assignmentDate: formData.assignmentDate
+                });
+                로거_인사?.debug('발령 검증 (API)', validation);
+            } catch (apiError) {
+                로거_인사?.warn('API 검증 실패, 로컬 검증 사용', apiError);
+                validation = Validator.validateAssignmentDate(entryDate, formData.assignmentDate);
+            }
+        } else {
+            validation = Validator.validateAssignmentDate(entryDate, formData.assignmentDate);
+        }
         
         if (!validation.valid) {
             로거_인사?.warn('발령일 검증 실패', { errors: validation.errors });
@@ -512,8 +533,20 @@ function saveAssignment() {
             return;
         }
         
-        // 날짜 범위 검증
-        if (!Validator.isDateInValidRange(formData.assignmentDate)) {
+        // ✅ v4.1.0: 날짜 범위 검증 - API 우선 사용
+        let dateValid = true;
+        if (typeof API_인사 !== 'undefined') {
+            try {
+                const dateValidation = await API_인사.validateDate(formData.assignmentDate);
+                dateValid = dateValidation.valid;
+            } catch (apiError) {
+                dateValid = Validator.isDateInValidRange(formData.assignmentDate);
+            }
+        } else {
+            dateValid = Validator.isDateInValidRange(formData.assignmentDate);
+        }
+        
+        if (!dateValid) {
             로거_인사?.warn('발령일이 유효 범위를 벗어남', { date: formData.assignmentDate });
             
             if (typeof 에러처리_인사 !== 'undefined') {
@@ -524,8 +557,8 @@ function saveAssignment() {
             return;
         }
         
-        // 부서/직위 검증
-        if (!Validator.isNotEmpty(formData.newDept)) {
+        // 부서/직위 검증 (단순 체크 - 로컬 유지)
+        if (!formData.newDept || formData.newDept.trim() === '') {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('부서를 입력하세요.');
             } else {
@@ -534,7 +567,8 @@ function saveAssignment() {
             return;
         }
         
-        if (!Validator.isNotEmpty(formData.newPosition)) {
+        // 직위 검증 (단순 체크 - 로컬 유지)
+        if (!formData.newPosition || formData.newPosition.trim() === '') {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('직위를 입력하세요.');
             } else {
@@ -992,8 +1026,22 @@ async function saveAssignmentEdit() {
             ? 직원유틸_인사.getEntryDate(emp)
             : emp.employment?.entryDate;
         
-        // 발령일 검증
-        const validation = Validator.validateAssignmentDate(entryDate, formData.newStartDate);
+        // ✅ v4.1.0: 발령일 검증 - API 우선 사용
+        let validation;
+        if (typeof API_인사 !== 'undefined') {
+            try {
+                validation = await API_인사.validateAssignment({
+                    entryDate: entryDate,
+                    assignmentDate: formData.newStartDate
+                });
+                로거_인사?.debug('발령 검증 (API)', validation);
+            } catch (apiError) {
+                로거_인사?.warn('API 검증 실패, 로컬 검증 사용', apiError);
+                validation = Validator.validateAssignmentDate(entryDate, formData.newStartDate);
+            }
+        } else {
+            validation = Validator.validateAssignmentDate(entryDate, formData.newStartDate);
+        }
         
         if (!validation.valid) {
             로거_인사?.warn('발령일 검증 실패', { errors: validation.errors });
@@ -1007,8 +1055,20 @@ async function saveAssignmentEdit() {
             return;
         }
         
-        // 날짜 범위 검증
-        if (!Validator.isDateInValidRange(formData.newStartDate)) {
+        // ✅ v4.1.0: 날짜 범위 검증 - API 우선 사용
+        let dateValid = true;
+        if (typeof API_인사 !== 'undefined') {
+            try {
+                const dateValidation = await API_인사.validateDate(formData.newStartDate);
+                dateValid = dateValidation.valid;
+            } catch (apiError) {
+                dateValid = Validator.isDateInValidRange(formData.newStartDate);
+            }
+        } else {
+            dateValid = Validator.isDateInValidRange(formData.newStartDate);
+        }
+        
+        if (!dateValid) {
             로거_인사?.warn('발령일이 유효 범위를 벗어남', { date: formData.newStartDate });
             
             if (typeof 에러처리_인사 !== 'undefined') {
@@ -1164,7 +1224,11 @@ async function saveAssignmentEdit() {
                     로거_인사?.info('호봉 처음부터 재계산 시작 (데이터 검증)');
                     
                     try {
-                        if (typeof RankCalculator !== 'undefined' && typeof TenureCalculator !== 'undefined') {
+                        // ✅ v4.1.0: API 또는 로컬 계산기 사용
+                        const hasAPI = typeof API_인사 !== 'undefined';
+                        const hasLocalCalc = typeof RankCalculator !== 'undefined' && typeof TenureCalculator !== 'undefined';
+                        
+                        if (hasAPI || hasLocalCalc) {
                             // 1. 과거 경력 계산 (입사 전 경력만!)
                             const entryDate = emp.employment?.entryDate || emp.entryDate;
                             const careers = emp.careers || emp.careerDetails || [];
@@ -1176,12 +1240,23 @@ async function saveAssignmentEdit() {
                             let totalMonths = 0;
                             let totalDays = 0;
                             
-                            careers.forEach((career, index) => {
+                            // ✅ v4.1.0: forEach → for...of (async/await 지원)
+                            for (let index = 0; index < careers.length; index++) {
+                                const career = careers[index];
                                 try {
-                                    const period = TenureCalculator.calculate(
-                                        career.startDate,
-                                        career.endDate
-                                    );
+                                    // ✅ v4.1.0: 기간 계산 - API 우선 사용
+                                    let period;
+                                    if (hasAPI) {
+                                        period = await API_인사.calculateTenure(
+                                            career.startDate,
+                                            career.endDate
+                                        );
+                                    } else {
+                                        period = TenureCalculator.calculate(
+                                            career.startDate,
+                                            career.endDate
+                                        );
+                                    }
                                     
                                     // rate가 "100%" 형식의 문자열일 수 있음 → 숫자로 변환
                                     let rateValue = career.rate || 100;
@@ -1189,7 +1264,13 @@ async function saveAssignmentEdit() {
                                         rateValue = parseInt(rateValue.replace('%', '')) || 100;
                                     }
                                     
-                                    const converted = CareerCalculator.applyConversionRate(period, rateValue);
+                                    // ✅ v4.1.0: 인정률 적용 - API 우선 사용
+                                    let converted;
+                                    if (hasAPI) {
+                                        converted = await API_인사.applyConversionRate(period, rateValue);
+                                    } else {
+                                        converted = CareerCalculator.applyConversionRate(period, rateValue);
+                                    }
                                     
                                     totalYears += converted.years;
                                     totalMonths += converted.months;
@@ -1202,7 +1283,7 @@ async function saveAssignmentEdit() {
                                 } catch (err) {
                                     로거_인사?.warn(`경력 ${index + 1} 계산 실패`, err);
                                 }
-                            });
+                            }
                             
                             // 정규화
                             if (totalDays >= 30) {
