@@ -661,16 +661,24 @@ async function getEmployeesAtDate(baseDate) {
             } else if (emp.rank?.firstUpgradeDate) {
                 // 2. 배치에 없으면 로컬 계산 (fallback)
                 try {
-                    if (typeof RankCalculator !== 'undefined') {
+                    if (typeof RankCalculator !== 'undefined' && RankCalculator.calculateCurrentRank) {
                         currentRank = RankCalculator.calculateCurrentRank(
                             emp.rank.startRank,
                             emp.rank.firstUpgradeDate,
                             baseDateStr
                         );
+                    } else {
+                        // RankCalculator도 없으면 저장된 startRank 사용
+                        currentRank = emp.rank.startRank;
                     }
                 } catch (e) {
-                    // 호봉 계산 실패 시 무시
+                    // 호봉 계산 실패 시 startRank 사용
+                    console.warn('[조직도] 호봉 계산 실패, startRank 사용:', emp.id, e);
+                    currentRank = emp.rank.startRank;
                 }
+            } else {
+                // firstUpgradeDate 없으면 startRank 사용
+                currentRank = emp.rank.startRank;
             }
         }
         

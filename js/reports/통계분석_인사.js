@@ -1306,14 +1306,26 @@ function _getAgeGroup(birthDate, baseDate) {
 async function _getTenureGroup(entryDate, baseDate) {
     if (!entryDate) return '미지정';
     
-    // ⭐ v4.0.0: API 우선 사용
+    // ⭐ v6.0.0: 로컬 계산 우선 사용 (API 호출 최소화)
     let tenureData;
-    if (typeof API_인사 !== 'undefined') {
-        tenureData = await API_인사.calculateTenure(entryDate, baseDate);
-    } else {
-        tenureData = TenureCalculator.calculate(entryDate, baseDate);
+    try {
+        if (typeof TenureCalculator !== 'undefined' && TenureCalculator.calculate) {
+            tenureData = TenureCalculator.calculate(entryDate, baseDate);
+        } else if (typeof API_인사 !== 'undefined') {
+            tenureData = await API_인사.calculateTenure(entryDate, baseDate);
+        } else {
+            // 둘 다 없으면 직접 계산
+            const start = new Date(entryDate);
+            const end = new Date(baseDate);
+            const years = Math.floor((end - start) / (365.25 * 24 * 60 * 60 * 1000));
+            tenureData = { years };
+        }
+    } catch (e) {
+        console.warn('[통계분석] 근속기간 계산 실패:', e);
+        return '미지정';
     }
-    const years = tenureData.years;
+    
+    const years = tenureData?.years || 0;
     
     if (years < 1) return '1년 미만';
     if (years < 3) return '1-3년';
