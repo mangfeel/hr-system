@@ -8,11 +8,17 @@
  * - XSS 방지
  * - 성능 최적화 (DocumentFragment)
  * 
- * @version 3.1.0
+ * @version 6.0.0
  * @since 2024-11-04
  * 
  * [변경 이력]
- * v3.1.0 (2025-12-04) ⭐ UI 개선: 통계 헤더 + 필터 + 뷰 전환
+ * v6.0.0 (2026-01-22) ⭐ 배치 API 적용 - 성능 최적화
+ *   - loadEmployeeList() async 변경
+ *   - 배치 API로 전체 직원 호봉 한 번에 계산
+ *   - _getRankFromCache() 헬퍼 함수 추가
+ *   - [object Promise] 버그 수정
+ *
+ * v3.1.0 (2025-12-04) UI 개선: 통계 헤더 + 필터 + 뷰 전환
  *   - 상단 통계 카드 (전체/재직/퇴사/휴직 인원)
  *   - 부서 필터, 정렬 옵션 드롭다운
  *   - 카드 뷰 ↔ 테이블 뷰 전환
@@ -34,7 +40,8 @@
  * - 직원유틸_인사.js (직원유틸_인사)
  * - DOM유틸_인사.js (DOM유틸_인사)
  * - 데이터베이스_인사.js (db)
- * - 호봉계산기_인사.js (DateUtils)
+ * - 호봉계산기_인사.js (DateUtils, RankCalculator)
+ * - API_인사.js (API_인사) - v6.0.0 추가
  */
 
 /**
@@ -61,10 +68,11 @@ let _employeeListState = {
     currentView: 'card',
     currentStatusFilter: 'active',  // 기본값: 재직자만
     currentDeptFilter: '',
-    currentSort: 'name'
+    currentSort: 'name',
+    rankCache: new Map()  // ⭐ v6.0.0: 호봉 캐시 (배치 API 결과)
 };
 
-function loadEmployeeList() {
+async function loadEmployeeList() {
     try {
         로거_인사?.debug('직원 목록 로드 시작');
         
@@ -92,6 +100,24 @@ function loadEmployeeList() {
             updateEmployeeStats([]);
             로거_인사?.info('직원 데이터 없음');
             return;
+        }
+        
+        // ⭐ v6.0.0: 배치 API로 전체 직원 호봉 한 번에 계산
+        const today = DateUtils.formatDate(new Date());
+        if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
+            try {
+                const rankBasedEmployees = employees.filter(emp => 
+                    emp.rank?.isRankBased !== false && emp.rank?.startRank && emp.rank?.firstUpgradeDate
+                );
+                if (rankBasedEmployees.length > 0) {
+                    console.log('[직원목록] 배치 API 시작:', rankBasedEmployees.length, '명');
+                    _employeeListState.rankCache = await API_인사.calculateBatchForEmployees(rankBasedEmployees, today);
+                    console.log('[직원목록] 배치 API 완료:', _employeeListState.rankCache.size, '명');
+                }
+            } catch (e) {
+                console.error('[직원목록] 배치 API 오류, 로컬 계산 사용:', e);
+                _employeeListState.rankCache = new Map();
+            }
         }
         
         // 데이터 있음
@@ -315,19 +341,55 @@ function sortEmployees(employees, sortOption, today) {
                 return aEntry2.localeCompare(bEntry2);
                 
             case 'rank-desc':
-                const aRank1 = 직원유틸_인사.isRankBased(a) ? parseInt(직원유틸_인사.getCurrentRank(a, today)) || 0 : 0;
-                const bRank1 = 직원유틸_인사.isRankBased(b) ? parseInt(직원유틸_인사.getCurrentRank(b, today)) || 0 : 0;
+                // ⭐ v6.0.0: 캐시에서 호봉 가져오기
+                const aRank1 = 직원유틸_인사.isRankBased(a) ? _getRankFromCache(a, today) : 0;
+                const bRank1 = 직원유틸_인사.isRankBased(b) ? _getRankFromCache(b, today) : 0;
                 return bRank1 - aRank1;
                 
             case 'rank-asc':
-                const aRank2 = 직원유틸_인사.isRankBased(a) ? parseInt(직원유틸_인사.getCurrentRank(a, today)) || 0 : 0;
-                const bRank2 = 직원유틸_인사.isRankBased(b) ? parseInt(직원유틸_인사.getCurrentRank(b, today)) || 0 : 0;
+                // ⭐ v6.0.0: 캐시에서 호봉 가져오기
+                const aRank2 = 직원유틸_인사.isRankBased(a) ? _getRankFromCache(a, today) : 0;
+                const bRank2 = 직원유틸_인사.isRankBased(b) ? _getRankFromCache(b, today) : 0;
                 return aRank2 - bRank2;
                 
             default:
                 return 0;
         }
     });
+}
+
+/**
+ * 호봉 캐시에서 현재 호봉 가져오기 (Private)
+ * ⭐ v6.0.0: 배치 API 결과 사용
+ * 
+ * @private
+ * @param {Object} emp - 직원 객체
+ * @param {string} today - 오늘 날짜
+ * @returns {number} 현재 호봉
+ */
+function _getRankFromCache(emp, today) {
+    // 1. 배치 API 캐시에서 조회
+    const cached = _employeeListState.rankCache.get(emp.id);
+    if (cached && cached.currentRank !== undefined) {
+        return cached.currentRank;
+    }
+    
+    // 2. 캐시에 없으면 로컬 계산 (fallback)
+    if (emp.rank?.startRank && emp.rank?.firstUpgradeDate) {
+        try {
+            if (typeof RankCalculator !== 'undefined') {
+                return RankCalculator.calculateCurrentRank(
+                    emp.rank.startRank,
+                    emp.rank.firstUpgradeDate,
+                    today
+                );
+            }
+        } catch (e) {
+            // 계산 실패 시 startRank 반환
+        }
+    }
+    
+    return emp.rank?.startRank || 0;
 }
 
 /**
@@ -444,9 +506,10 @@ function _createEmployeeTableRowHTML(emp, today) {
     const safeEntryDate = DOM유틸_인사.escapeHtml(entryDate);
     
     // 호봉
+    // ⭐ v6.0.0: 캐시에서 호봉 가져오기
     let rankDisplay = '-';
     if (status !== '퇴사' && isRankBased) {
-        const currentRank = 직원유틸_인사.getCurrentRank(emp, today);
+        const currentRank = _getRankFromCache(emp, today);
         rankDisplay = `${currentRank}호봉`;
     }
     
@@ -528,17 +591,8 @@ function _createEmployeeItemHTML(emp, today) {
     if (status === '퇴사') {
         badgeHTML = '<span class="badge badge-retired">퇴사</span>';
     } else if (isRankBased) {
-        // ✅ Before: try-catch 포함 호봉 계산 (10줄)
-        // try {
-        //     const currentRank = RankCalculator.calculateCurrentRank(...);
-        //     badgeHTML = `<span class="badge badge-rank">${currentRank}호봉</span>`;
-        // } catch (e) {
-        //     console.error('호봉 계산 오류:', e, emp);
-        //     badgeHTML = `<span class="badge badge-rank">-</span>`;
-        // }
-        
-        // ✅ After: 직원유틸_인사 사용 (단 2줄! 에러 처리 자동)
-        const currentRank = 직원유틸_인사.getCurrentRank(emp, today);
+        // ⭐ v6.0.0: 캐시에서 호봉 가져오기
+        const currentRank = _getRankFromCache(emp, today);
         badgeHTML = `<span class="badge badge-rank">${currentRank}호봉</span>`;
         paymentBadgeHTML = '<span class="badge-payment badge-payment-rank">호봉제</span>'; // ⭐ CSS 클래스 사용
     } else {
