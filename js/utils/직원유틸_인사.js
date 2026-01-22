@@ -768,7 +768,8 @@ const 직원유틸_인사 = (function() {
                     return await this._getStoredRankInfoAsync(emp, baseDate);
                 }
                 
-                const internalResult = InternalCareerCalculator.calculateWithPriorCareerRate(emp, targetDate);
+                // ⭐ v5.0.0: await 추가 (calculateWithPriorCareerRate가 async)
+                const internalResult = await InternalCareerCalculator.calculateWithPriorCareerRate(emp, targetDate);
                 const allFullRate = internalResult.details.every(d => d.rate === 100);
                 
                 if (allFullRate) {

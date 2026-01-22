@@ -665,6 +665,7 @@ function syncAdvancedSettings() {
 
 /**
  * 통계 생성
+ * ⭐ v5.0.0: async로 변경 (내부 async 함수 호출 지원)
  * 
  * @description
  * 사용자가 선택한 옵션에 따라 교차 통계를 생성합니다.
@@ -672,7 +673,7 @@ function syncAdvancedSettings() {
  * @example
  * generateStatistics(); // 통계 생성
  */
-function generateStatistics() {
+async function generateStatistics() {
     try {
         로거_인사?.debug('통계 생성 시작');
         
@@ -740,11 +741,11 @@ function generateStatistics() {
         
         if (rowOption2) {
             // 2차원 분석
-            statsData = _generate2DStatisticsData(employees, baseDate, rowOption1, rowOption2, columnOptions);
+            statsData = await _generate2DStatisticsData(employees, baseDate, rowOption1, rowOption2, columnOptions);
             html = _generate2DStatisticsTableHTML(statsData, rowOption1, rowOption2, columnOptions);
         } else {
             // 1차원 분석 (기존)
-            statsData = _generateStatisticsData(employees, baseDate, rowOption1, columnOptions);
+            statsData = await _generateStatisticsData(employees, baseDate, rowOption1, columnOptions);
             html = _generateStatisticsTableHTML(statsData, rowOption1, columnOptions);
         }
         
