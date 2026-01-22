@@ -13,10 +13,14 @@
  * - 발령별 이전 경력 인정율 수정 ⭐ v3.3.0 추가
  * - 탭 기반 UI로 전면 개편 ⭐ v3.4.0 추가
  * 
- * @version 4.0.0
+ * @version 4.1.0
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v4.1.0 (2026-01-22) ⭐ 검증 API 연동
+ *   - _validateEditForm → API_인사.validateEdit
+ *   - 서버 API로 검증 로직 보호
+ * 
  * v4.0.0 (2026-01-21) ⭐ API 연동 버전
  *   - saveEmployeeEdit() 비동기 처리
  *   - 호봉/근속기간 계산 API 우선 사용
@@ -448,8 +452,23 @@ async function saveEmployeeEdit() {
         // 입력값 수집
         const formData = _collectFormData();
         
-        // 기본 검증
-        const validation = _validateEditForm(formData, emp);
+        // 기본 검증 (API 우선, fallback으로 로컬 검증)
+        let validation;
+        
+        if (typeof API_인사 !== 'undefined') {
+            try {
+                validation = await API_인사.validateEdit(formData);
+                로거_인사?.debug('API 검증 완료', validation);
+            } catch (apiError) {
+                로거_인사?.warn('API 검증 실패, 로컬 검증 사용', apiError);
+                // fallback: 로컬 검증
+                validation = _validateEditForm(formData, emp);
+            }
+        } else {
+            // API_인사 없으면 로컬 검증
+            validation = _validateEditForm(formData, emp);
+        }
+        
         if (!validation.valid) {
             로거_인사?.warn('입력값 검증 실패', { errors: validation.errors });
             

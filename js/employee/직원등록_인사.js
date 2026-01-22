@@ -12,10 +12,14 @@
  * - 발령 데이터 구조 통일 ⭐ v3.4.2 추가
  * - 검증 및 저장
  * 
- * @version 4.0.0
+ * @version 4.1.0
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v4.1.0 (2026-01-22) ⭐ 검증 API 연동
+ *   - Validator.validateEmployeeRegistration → API_인사.validateRegistration
+ *   - 서버 API로 검증 로직 보호
+ * 
  * v4.0.0 (2026-01-21) ⭐ API 연동 버전
  *   - calculateAndSave() async 변경
  *   - 호봉 계산 API 우선 사용 (API_인사)
@@ -405,10 +409,37 @@ async function calculateAndSave() {
             isRankBased
         });
         
-        // ===== 검증 1: 필수 항목 검증 =====
-        const validation = Validator.validateEmployeeRegistration({
-            name, dept, position, grade, jobType, entryDate
-        });
+        // ===== 검증 1: 필수 항목 검증 (API) =====
+        let validation;
+        
+        // API 검증 우선, fallback으로 로컬 검증
+        if (typeof API_인사 !== 'undefined') {
+            try {
+                // 중복 검증을 위한 기존 코드 목록 수집
+                const employees = db.getAllEmployees() || [];
+                const existingNumbers = employees
+                    .filter(e => e.employeeNumber)
+                    .map(e => e.employeeNumber);
+                
+                validation = await API_인사.validateRegistration(
+                    { name, dept, position, grade, jobType, entryDate },
+                    [],  // existingCodes (고유번호는 자동생성이므로 빈 배열)
+                    existingNumbers
+                );
+                로거_인사?.debug('API 검증 완료', validation);
+            } catch (apiError) {
+                로거_인사?.warn('API 검증 실패, 로컬 검증 사용', apiError);
+                // fallback: 로컬 검증
+                validation = Validator.validateEmployeeRegistration({
+                    name, dept, position, grade, jobType, entryDate
+                });
+            }
+        } else {
+            // API_인사 없으면 로컬 검증
+            validation = Validator.validateEmployeeRegistration({
+                name, dept, position, grade, jobType, entryDate
+            });
+        }
         
         if (!validation.valid) {
             로거_인사?.warn('필수 항목 검증 실패', { errors: validation.errors });
