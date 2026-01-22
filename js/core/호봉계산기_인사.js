@@ -1,23 +1,24 @@
 /**
- * 호봉계산기_인사.js - API 전용 버전
+ * 호봉계산기_인사.js - API 연동 버전
  * 
- * 호봉 및 경력 계산 로직 (서버 API 전용)
- * - 모든 계산은 서버 API 호출
- * - 계산 로직 클라이언트에서 완전히 숨김
+ * 호봉 및 경력 계산 로직 (로컬 + 서버 API)
+ * - 기본: 로컬 계산 (기존 호환)
+ * - 선택: API 호출 (보안 강화 모드)
  * 
- * @version 5.0.0
+ * @version 4.0.0
  * @since 2024-11-04
  * 
  * [변경 이력]
- * v5.0.0 (2026-01-22) ⭐ API 전용 버전
- *   - 모든 Calculator를 API 호출로 변경
- *   - 로컬 계산 로직 완전 제거
- *   - 계산 공식 보호 (F12에서 안 보임)
- * 
- * v4.0.0 (2026-01-21) API 연동 버전
+ * v4.0.0 (2026-01-21) ⭐ API 연동 버전
  *   - 로컬 계산 유지 (기존 100% 호환)
  *   - API 호출 함수 추가 (*Async 버전)
+ *   - 설정으로 API 모드 전환 가능
  */
+
+// ===== API 모드 설정 =====
+const 호봉계산_설정 = {
+    API_MODE: false  // true: API 우선, false: 로컬 우선 (기본값)
+};
 
 // ===== 날짜 유틸리티 =====
 
@@ -81,53 +82,102 @@ const DateUtils = {
     }
 };
 
-// ===== 근속기간 계산기 (API 전용) =====
+// ===== 근속기간 계산기 =====
 
 const TenureCalculator = {
     
     /**
-     * 두 날짜 사이의 기간 계산 (API 호출)
-     * ⭐ v5.0.0: 서버 API 전용
+     * 두 날짜 사이의 기간 계산 (동기 - 로컬)
      */
-    async calculate(startDate, endDate) {
+    calculate(startDate, endDate) {
         try {
-            if (typeof API_인사 !== 'undefined') {
-                return await API_인사.calculateTenure(startDate, endDate);
+            const start = DateUtils.parseDate(startDate);
+            const end = DateUtils.parseDate(endDate);
+            const startDateObj = DateUtils.createDate(start.year, start.month, start.day);
+            const endDateObj = DateUtils.createDate(end.year, end.month, end.day);
+            
+            let years = 0, months = 0, days = 0;
+            let currentDate = new Date(startDateObj);
+            
+            // 년 계산
+            while (true) {
+                const nextYearDate = new Date(currentDate);
+                nextYearDate.setFullYear(nextYearDate.getFullYear() + 1);
+                nextYearDate.setDate(nextYearDate.getDate() - 1);
+                
+                if (nextYearDate <= endDateObj) {
+                    years++;
+                    currentDate = new Date(nextYearDate);
+                    currentDate.setDate(currentDate.getDate() + 1);
+                } else {
+                    break;
+                }
             }
-            // API 없으면 기본값 반환
-            console.error('❌ API_인사 모듈이 없습니다. 근속기간 계산 불가.');
-            return { years: 0, months: 0, days: 0 };
+            
+            // 월 계산
+            while (true) {
+                const nextMonthDate = new Date(currentDate);
+                nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
+                
+                if (nextMonthDate.getDate() < currentDate.getDate()) {
+                    nextMonthDate.setDate(0);
+                } else {
+                    nextMonthDate.setDate(nextMonthDate.getDate() - 1);
+                }
+                
+                if (nextMonthDate <= endDateObj) {
+                    months++;
+                    currentDate = new Date(nextMonthDate);
+                    currentDate.setDate(currentDate.getDate() + 1);
+                } else {
+                    break;
+                }
+            }
+            
+            // 일 계산
+            while (currentDate <= endDateObj) {
+                days++;
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            
+            return { years, months, days };
+            
         } catch (error) {
-            console.error('근속기간 계산 API 호출 실패', error);
+            console.error('근속기간 계산 실패', error);
             return { years: 0, months: 0, days: 0 };
         }
     },
     
     /**
-     * 동기 버전 (하위 호환용 - 경고만 표시)
-     * @deprecated API_인사.calculateTenure() 또는 TenureCalculator.calculate() 사용
+     * 비동기 API 버전
      */
-    calculateSync(startDate, endDate) {
-        console.warn('⚠️ TenureCalculator.calculateSync()는 더 이상 지원되지 않습니다.');
-        return { years: 0, months: 0, days: 0 };
+    async calculateAsync(startDate, endDate) {
+        try {
+            if (typeof API_인사 !== 'undefined' && 호봉계산_설정.API_MODE) {
+                return await API_인사.calculateTenure(startDate, endDate);
+            }
+            return this.calculate(startDate, endDate);
+        } catch (error) {
+            console.error('API 호출 실패, 로컬 계산 사용', error);
+            return this.calculate(startDate, endDate);
+        }
     },
     
     format(tenure) {
         try {
-            if (!tenure) return '0년 0개월 0일';
-            return `${tenure.years || 0}년 ${tenure.months || 0}개월 ${tenure.days || 0}일`;
+            return `${tenure.years}년 ${tenure.months}개월 ${tenure.days}일`;
         } catch (error) {
             return '0년 0개월 0일';
         }
     }
 };
 
-// ===== 호봉 계산기 (API 전용) =====
+// ===== 호봉 계산기 =====
 
 const RankCalculator = {
     
     /**
-     * 초기 호봉 계산 (간단한 계산이라 로컬 유지)
+     * 초기 호봉 계산 (동기 - 로컬)
      */
     calculateInitialRank(careerYears, careerMonths) {
         try {
@@ -139,63 +189,127 @@ const RankCalculator = {
     },
     
     /**
-     * 첫승급일 계산 (API 호출)
-     * ⭐ v5.0.0: 서버 API 전용
+     * 첫승급일 계산 (동기 - 로컬)
      */
-    async calculateFirstUpgradeDate(entryDate, careerYears, careerMonths, careerDays) {
+    calculateFirstUpgradeDate(entryDate, careerYears, careerMonths, careerDays) {
         try {
-            if (typeof API_인사 !== 'undefined') {
-                return await API_인사.calculateFirstUpgradeDate(entryDate, careerYears, careerMonths, careerDays);
+            const entry = DateUtils.parseDate(entryDate);
+            
+            let baseMonth = entry.month;
+            if (entry.day !== 1) {
+                baseMonth += 1;
+                if (baseMonth > 12) baseMonth = 1;
             }
-            console.error('❌ API_인사 모듈이 없습니다. 첫승급일 계산 불가.');
+            
+            const remainingMonths = careerMonths || 0;
+            const remainingDays = careerDays || 0;
+            
+            let monthsNeeded = 12 - remainingMonths;
+            let daysAdjustment = 0;
+            
+            if (remainingDays > 0) {
+                monthsNeeded -= 1;
+                daysAdjustment = 30 - remainingDays;
+            }
+            
+            let upgradeDate = entryDate;
+            
+            if (monthsNeeded > 0) {
+                upgradeDate = DateUtils.addMonths(upgradeDate, monthsNeeded);
+            }
+            if (daysAdjustment > 0) {
+                upgradeDate = DateUtils.addDays(upgradeDate, daysAdjustment);
+            }
+            
+            const upgradeParsed = DateUtils.parseDate(upgradeDate);
+            let finalMonth = upgradeParsed.month;
+            let finalYear = upgradeParsed.year;
+            
+            if (upgradeParsed.day !== 1) {
+                finalMonth += 1;
+                if (finalMonth > 12) {
+                    finalMonth = 1;
+                    finalYear += 1;
+                }
+            }
+            
+            return `${finalYear}-${String(finalMonth).padStart(2, '0')}-01`;
+            
+        } catch (error) {
+            console.error('첫승급일 계산 실패', error);
             const entry = DateUtils.parseDate(entryDate);
             return `${entry.year + 1}-${String(entry.month).padStart(2, '0')}-01`;
-        } catch (error) {
-            console.error('첫승급일 계산 API 호출 실패', error);
-            const entry = DateUtils.parseDate(entryDate);
-            return `${entry.year + 1}-${String(entry.month).padStart(2, '0')}-01`;
         }
     },
     
     /**
-     * 현재 호봉 계산 (API 호출)
-     * ⭐ v5.0.0: 서버 API 전용
+     * 현재 호봉 계산 (동기 - 로컬)
      */
-    async calculateCurrentRank(startRank, firstUpgradeDate, baseDate) {
+    calculateCurrentRank(startRank, firstUpgradeDate, baseDate) {
         try {
-            if (typeof API_인사 !== 'undefined') {
-                return await API_인사.calculateCurrentRank(startRank, firstUpgradeDate, baseDate);
+            const base = DateUtils.parseDate(baseDate);
+            const firstUpgrade = DateUtils.parseDate(firstUpgradeDate);
+            const baseObj = DateUtils.createDate(base.year, base.month, base.day);
+            const firstUpgradeObj = DateUtils.createDate(firstUpgrade.year, firstUpgrade.month, firstUpgrade.day);
+            
+            if (baseObj < firstUpgradeObj) {
+                return startRank;
             }
-            console.error('❌ API_인사 모듈이 없습니다. 현재 호봉 계산 불가.');
-            return startRank || 1;
+            
+            let yearDiff = base.year - firstUpgrade.year;
+            if (base.month < firstUpgrade.month || 
+                (base.month === firstUpgrade.month && base.day < firstUpgrade.day)) {
+                yearDiff--;
+            }
+            
+            return startRank + 1 + yearDiff;
+            
         } catch (error) {
-            console.error('현재 호봉 계산 API 호출 실패', error);
-            return startRank || 1;
+            console.error('현재 호봉 계산 실패', error);
+            return startRank;
         }
     },
     
     /**
-     * 차기승급일 계산 (API 호출)
-     * ⭐ v5.0.0: 서버 API 전용
+     * 차기승급일 계산 (동기 - 로컬)
      */
-    async calculateNextUpgradeDate(firstUpgradeDate, baseDate) {
+    calculateNextUpgradeDate(firstUpgradeDate, baseDate) {
         try {
-            if (typeof API_인사 !== 'undefined') {
-                return await API_인사.calculateNextUpgradeDate(firstUpgradeDate, baseDate);
+            // baseDate가 없으면 오늘 날짜 사용
+            if (!baseDate) {
+                baseDate = DateUtils.formatDate(new Date());
             }
-            console.error('❌ API_인사 모듈이 없습니다. 차기승급일 계산 불가.');
-            return firstUpgradeDate || '';
+            
+            const firstUpgrade = DateUtils.parseDate(firstUpgradeDate);
+            const base = DateUtils.parseDate(baseDate);
+            
+            const firstUpgradeObj = DateUtils.createDate(firstUpgrade.year, firstUpgrade.month, firstUpgrade.day);
+            const baseObj = DateUtils.createDate(base.year, base.month, base.day);
+            
+            if (firstUpgradeObj > baseObj) {
+                return firstUpgradeDate;
+            }
+            
+            let candidateYear = base.year;
+            let nextUpgradeObj = DateUtils.createDate(candidateYear, firstUpgrade.month, firstUpgrade.day);
+            
+            while (nextUpgradeObj <= baseObj) {
+                candidateYear++;
+                nextUpgradeObj = DateUtils.createDate(candidateYear, firstUpgrade.month, firstUpgrade.day);
+            }
+            
+            return DateUtils.formatDate(nextUpgradeObj);
+            
         } catch (error) {
-            console.error('차기승급일 계산 API 호출 실패', error);
-            return firstUpgradeDate || '';
+            console.error('차기승급일 계산 실패', error);
+            return DateUtils.addMonths(baseDate || DateUtils.formatDate(new Date()), 12);
         }
     },
     
     /**
-     * 통합 호봉 계산 (API 호출)
-     * ⭐ v5.0.0: 서버 API 전용
+     * 통합 호봉 계산 (호봉획정표, 인사카드용)
      */
-    async calculate(entryDate, firstUpgradeDate, startRank, baseDate) {
+    calculate(entryDate, firstUpgradeDate, startRank, baseDate) {
         try {
             // 인자가 emp 객체인 경우 처리 (인사카드용)
             if (typeof entryDate === 'object' && entryDate.employment) {
@@ -206,8 +320,8 @@ const RankCalculator = {
                 startRank = emp.rank?.startRank || 1;
             }
             
-            const currentGrade = await this.calculateCurrentRank(startRank, firstUpgradeDate, baseDate);
-            const nextUpgradeDate = await this.calculateNextUpgradeDate(firstUpgradeDate, baseDate);
+            const currentGrade = this.calculateCurrentRank(startRank, firstUpgradeDate, baseDate);
+            const nextUpgradeDate = this.calculateNextUpgradeDate(firstUpgradeDate, baseDate);
             
             return {
                 entryDate,
@@ -224,37 +338,114 @@ const RankCalculator = {
                 nextUpgradeDate: firstUpgradeDate || ''
             };
         }
+    },
+    
+    // ===== 비동기 API 버전들 =====
+    
+    async calculateInitialRankAsync(careerYears, careerMonths) {
+        try {
+            if (typeof API_인사 !== 'undefined' && 호봉계산_설정.API_MODE) {
+                return await API_인사.calculateInitialRank(careerYears, careerMonths);
+            }
+            return this.calculateInitialRank(careerYears, careerMonths);
+        } catch (error) {
+            return this.calculateInitialRank(careerYears, careerMonths);
+        }
+    },
+    
+    async calculateFirstUpgradeDateAsync(entryDate, careerYears, careerMonths, careerDays) {
+        try {
+            if (typeof API_인사 !== 'undefined' && 호봉계산_설정.API_MODE) {
+                return await API_인사.calculateFirstUpgradeDate(entryDate, careerYears, careerMonths, careerDays);
+            }
+            return this.calculateFirstUpgradeDate(entryDate, careerYears, careerMonths, careerDays);
+        } catch (error) {
+            return this.calculateFirstUpgradeDate(entryDate, careerYears, careerMonths, careerDays);
+        }
+    },
+    
+    async calculateCurrentRankAsync(startRank, firstUpgradeDate, baseDate) {
+        try {
+            if (typeof API_인사 !== 'undefined' && 호봉계산_설정.API_MODE) {
+                return await API_인사.calculateCurrentRank(startRank, firstUpgradeDate, baseDate);
+            }
+            return this.calculateCurrentRank(startRank, firstUpgradeDate, baseDate);
+        } catch (error) {
+            return this.calculateCurrentRank(startRank, firstUpgradeDate, baseDate);
+        }
+    },
+    
+    async calculateNextUpgradeDateAsync(firstUpgradeDate, baseDate) {
+        try {
+            if (typeof API_인사 !== 'undefined' && 호봉계산_설정.API_MODE) {
+                return await API_인사.calculateNextUpgradeDate(firstUpgradeDate, baseDate);
+            }
+            return this.calculateNextUpgradeDate(firstUpgradeDate, baseDate);
+        } catch (error) {
+            return this.calculateNextUpgradeDate(firstUpgradeDate, baseDate);
+        }
     }
 };
 
-// ===== 경력 계산기 (API 전용) =====
+// ===== 경력 계산기 =====
 
 const CareerCalculator = {
     
     STANDARD_WORKING_HOURS: 40,
     
     /**
-     * 경력 환산 (API 호출)
-     * ⭐ v5.0.0: 서버 API 전용
+     * 경력 환산 (동기 - 로컬)
      */
-    async applyConversionRate(period, rate, workingHours = 40) {
+    applyConversionRate(period, rate, workingHours = 40) {
         try {
-            if (typeof API_인사 !== 'undefined') {
-                return await API_인사.applyConversionRate(period, rate, workingHours);
+            let validWorkingHours = workingHours;
+            if (!validWorkingHours || isNaN(validWorkingHours)) validWorkingHours = 40;
+            if (validWorkingHours > 40) validWorkingHours = 40;
+            if (validWorkingHours < 1) validWorkingHours = 1;
+            
+            const hoursRate = validWorkingHours / 40;
+            const finalRate = (rate / 100) * hoursRate;
+            
+            const yearConverted = period.years * finalRate;
+            const yearInt = Math.floor(yearConverted);
+            const yearDecimal = yearConverted - yearInt;
+            const yearToMonths = yearDecimal * 12;
+            const yearMonthsInt = Math.floor(yearToMonths);
+            const yearMonthsDecimal = yearToMonths - yearMonthsInt;
+            const yearToDays = Math.floor(yearMonthsDecimal * 30);
+            
+            const monthConverted = period.months * finalRate;
+            const monthInt = Math.floor(monthConverted);
+            const monthDecimal = monthConverted - monthInt;
+            const monthToDays = Math.floor(monthDecimal * 30);
+            
+            const dayConverted = Math.floor(period.days * finalRate);
+            
+            let totalYears = yearInt;
+            let totalMonths = yearMonthsInt + monthInt;
+            let totalDays = yearToDays + monthToDays + dayConverted;
+            
+            if (totalDays >= 30) {
+                totalMonths += Math.floor(totalDays / 30);
+                totalDays = totalDays % 30;
             }
-            console.error('❌ API_인사 모듈이 없습니다. 경력 환산 불가.');
-            return { years: 0, months: 0, days: 0 };
+            if (totalMonths >= 12) {
+                totalYears += Math.floor(totalMonths / 12);
+                totalMonths = totalMonths % 12;
+            }
+            
+            return { years: totalYears, months: totalMonths, days: totalDays };
+            
         } catch (error) {
-            console.error('경력 환산 API 호출 실패', error);
+            console.error('경력 환산 실패', error);
             return { years: 0, months: 0, days: 0 };
         }
     },
     
     /**
-     * 전체 경력 합산 (API 호출)
-     * ⭐ v5.0.0: 서버 API 전용
+     * 전체 경력 합산 (동기 - 로컬)
      */
-    async calculateTotalCareer(careers) {
+    calculateTotalCareer(careers) {
         try {
             if (!careers || careers.length === 0) {
                 return { totalYears: 0, totalMonths: 0, totalDays: 0, convertedYears: 0, convertedMonths: 0, convertedDays: 0 };
@@ -265,12 +456,11 @@ const CareerCalculator = {
             for (const career of careers) {
                 if (!career.startDate || !career.endDate) continue;
                 
-                // TenureCalculator.calculate도 이제 async
-                const period = await TenureCalculator.calculate(career.startDate, career.endDate);
+                const period = TenureCalculator.calculate(career.startDate, career.endDate);
                 const rate = career.rate ?? career.conversionRate ?? 100;
                 const workingHours = career.workingHours ?? 40;
                 
-                const converted = await this.applyConversionRate(period, rate, workingHours);
+                const converted = this.applyConversionRate(period, rate, workingHours);
                 totalDays += converted.years * 365 + converted.months * 30 + converted.days;
             }
             
@@ -294,6 +484,37 @@ const CareerCalculator = {
         }
     },
     
+    // 비동기 API 버전들
+    async applyConversionRateAsync(period, rate, workingHours = 40) {
+        try {
+            if (typeof API_인사 !== 'undefined' && 호봉계산_설정.API_MODE) {
+                return await API_인사.applyConversionRate(period, rate, workingHours);
+            }
+            return this.applyConversionRate(period, rate, workingHours);
+        } catch (error) {
+            return this.applyConversionRate(period, rate, workingHours);
+        }
+    },
+    
+    async calculateTotalCareerAsync(careers) {
+        try {
+            if (typeof API_인사 !== 'undefined' && 호봉계산_설정.API_MODE) {
+                const result = await API_인사.calculateTotalCareer(careers);
+                return {
+                    totalYears: result.totalYears,
+                    totalMonths: result.totalMonths,
+                    totalDays: result.totalDays,
+                    convertedYears: result.totalYears,
+                    convertedMonths: result.totalMonths,
+                    convertedDays: result.totalDays
+                };
+            }
+            return this.calculateTotalCareer(careers);
+        } catch (error) {
+            return this.calculateTotalCareer(careers);
+        }
+    },
+    
     getWorkingHoursRate(workingHours) {
         const hours = Math.min(40, Math.max(1, workingHours || 40));
         return hours / 40;
@@ -305,15 +526,14 @@ const CareerCalculator = {
     }
 };
 
-// ===== 현 기관 경력 계산기 (API 전용) =====
+// ===== 현 기관 경력 계산기 =====
 
 const InternalCareerCalculator = {
     
     /**
      * 발령별 인정율 적용하여 현 기관 경력 계산
-     * ⭐ v5.0.0: async로 변경 (TenureCalculator.calculate가 async)
      */
-    async calculateWithPriorCareerRate(emp, baseDate) {
+    calculateWithPriorCareerRate(emp, baseDate) {
         try {
             const assignments = emp.assignments || [];
             if (assignments.length === 0) {
@@ -344,8 +564,7 @@ const InternalCareerCalculator = {
                 
                 const effectiveEnd = periodEnd > baseDate ? baseDate : periodEnd;
                 
-                // ⭐ v5.0.0: await 추가
-                const period = await TenureCalculator.calculate(periodStart, effectiveEnd);
+                const period = TenureCalculator.calculate(periodStart, effectiveEnd);
                 const originalDays = period.years * 365 + period.months * 30 + period.days;
                 
                 const rateInfo = rateMap[assign.id];
@@ -509,6 +728,7 @@ if (typeof window !== 'undefined') {
     window.RankCalculator = RankCalculator;
     window.CareerCalculator = CareerCalculator;
     window.InternalCareerCalculator = InternalCareerCalculator;
+    window.호봉계산_설정 = 호봉계산_설정;
 }
 
-console.log('✅ 호봉계산기_인사.js 로드 완료 (v5.0.0 API 전용 버전)');
+console.log('✅ 호봉계산기_인사.js 로드 완료 (v4.0.0 API 연동 버전)');
