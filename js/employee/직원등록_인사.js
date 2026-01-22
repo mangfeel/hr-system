@@ -623,7 +623,7 @@ async function calculateAndSave() {
                 totalDays: totalDays
             },
             
-            careerDetails: careerResult.details.map((d, idx) => ({
+            careerDetails: (careerResult.details || []).map((d, idx) => ({
                 id: idx + 1,
                 name: d.name,
                 startDate: d.startDate,
