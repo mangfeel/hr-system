@@ -562,11 +562,13 @@ async function calculateAndSave() {
         로거_인사?.debug('첫승급일 계산 완료', { firstUpgradeDate });
         
         // ✅ v4.0.0: 차기승급일 계산 - API 우선 사용
+        // 기준일은 오늘 날짜 사용
+        const today = new Date().toISOString().split('T')[0];
         let nextUpgradeDate;
         if (typeof API_인사 !== 'undefined') {
-            nextUpgradeDate = await API_인사.calculateNextUpgradeDate(firstUpgradeDate);
+            nextUpgradeDate = await API_인사.calculateNextUpgradeDate(firstUpgradeDate, today);
         } else {
-            nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(firstUpgradeDate);
+            nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(firstUpgradeDate, today);
         }
         
         로거_인사?.debug('차기승급일 계산 완료', { nextUpgradeDate });
