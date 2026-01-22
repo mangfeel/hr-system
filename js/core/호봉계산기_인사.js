@@ -509,7 +509,6 @@ if (typeof window !== 'undefined') {
     window.RankCalculator = RankCalculator;
     window.CareerCalculator = CareerCalculator;
     window.InternalCareerCalculator = InternalCareerCalculator;
-    window.호봉계산_설정 = 호봉계산_설정;
 }
 
-console.log('✅ 호봉계산기_인사.js 로드 완료 (v4.0.0 API 연동 버전)');
+console.log('✅ 호봉계산기_인사.js 로드 완료 (v5.0.0 API 전용 버전)');

@@ -990,10 +990,10 @@ async function _generateStatisticsData(employees, baseDate, rowOption, columnOpt
             _employees: groupEmployees  // ⭐ 원본 직원 데이터 보관 (소계 재계산용)
         };
         
-        // 각 열 기준에 대해 계산
-        columnOptions.forEach(colOption => {
+        // ⭐ v5.0.0: 저장된 호봉 값 사용 (동기 처리)
+        for (const colOption of columnOptions) {
             rowData[colOption] = _calculateColumnValue(groupEmployees, colOption, baseDate);
-        });
+        }
         
         statsData.push(rowData);
     }
@@ -1076,11 +1076,11 @@ async function _generate2DStatisticsDataAsync(employees, baseDate, rowOption1, r
         for (const [group2Name, group2Employees] of Object.entries(row2Groups)) {
             row2GroupNames.add(group2Name);
             
-            // 각 열 기준에 대해 통계 계산
+            // ⭐ v5.0.0: 저장된 호봉 값 사용 (동기 처리)
             const cellData = {};
-            columnOptions.forEach(colOption => {
+            for (const colOption of columnOptions) {
                 cellData[colOption] = _calculateColumnValue(group2Employees, colOption, baseDate);
-            });
+            }
             
             data[group1Name][group2Name] = cellData;
         }
@@ -1295,6 +1295,7 @@ function _getEntryYear(entryDate) {
 
 /**
  * 열 값 계산 (Private)
+ * ⭐ v5.0.0: 저장된 호봉 값 사용 (동기 함수 유지)
  * 
  * @private
  * @param {Array<Object>} employees - 직원 배열
@@ -1383,51 +1384,16 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                 let validCount = 0;
                 const rankDetails = []; // ⭐ 비고용 상세 정보
                 
-                // ⭐ v5.0.0: forEach → for...of (async/await 지원)
+                // ⭐ v5.0.0: 저장된 호봉 값 사용 (async 문제 회피)
                 for (const e of rankBased) {
                     try {
                         const name = e.personalInfo?.name || e.name;
                         
-                        // ⭐ v5.0.0: 직원유틸의 동적 호봉 계산 함수 사용 (인정율 반영) - await 추가
-                        let currentRank;
+                        // 저장된 currentRank 또는 startRank 사용
+                        let currentRank = e.rank?.currentRank;
                         
-                        if (typeof 직원유틸_인사 !== 'undefined' && typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-                            const rankInfo = await 직원유틸_인사.getDynamicRankInfo(e, baseDate);
-                            currentRank = rankInfo.currentRank;
-                            
-                            if (currentRank === '-') {
-                                console.log('필수 데이터 없음 (동적 계산):', name);
-                                continue; // 스킵 (return → continue)
-                            }
-                        } else {
-                            // Fallback: 기존 방식
-                            // 필수 데이터 확인
-                            if (!e.employment?.entryDate || !e.rank?.firstUpgradeDate) {
-                                console.log('필수 데이터 없음:', name, {
-                                    entryDate: e.employment?.entryDate,
-                                    firstUpgradeDate: e.rank?.firstUpgradeDate
-                                });
-                                continue; // 스킵 (return → continue)
-                            }
-                            
-                            const startRank = e.rank.startRank || 1;
-                            
-                            console.log('호봉 계산 시도:', name, {
-                                startRank: startRank,
-                                firstUpgradeDate: e.rank.firstUpgradeDate,
-                                baseDate: baseDate
-                            });
-                            
-                            try {
-                                currentRank = RankCalculator.calculateCurrentRank(
-                                    startRank,
-                                    e.rank.firstUpgradeDate,
-                                    baseDate
-                                );
-                            } catch (calcError) {
-                                console.error('RankCalculator.calculateCurrentRank 오류:', name, calcError);
-                                currentRank = null;
-                            }
+                        if (currentRank === undefined || currentRank === null || currentRank === '-') {
+                            currentRank = e.rank?.startRank || null;
                         }
                         
                         console.log('호봉 계산 결과:', name, currentRank);
@@ -1435,16 +1401,13 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                         if (typeof currentRank === 'number') {
                             totalRank += currentRank;
                             validCount++;
-                            // ⭐ 비고용 상세 정보 수집
                             rankDetails.push({ name, rank: currentRank });
                             console.log('✅ 호봉 추가:', name, '현재호봉:', currentRank);
                         } else {
-                            console.warn('⚠️ 계산 실패 - 제외:', name, currentRank);
+                            console.warn('⚠️ 호봉 값 없음 - 제외:', name, currentRank);
                         }
                     } catch (err) {
                         console.error('호봉 계산 실패:', e.uniqueCode, err);
-                        console.error('에러 스택:', err.stack);
-                        // 개별 직원 계산 실패는 무시하고 계속
                     }
                 }
                 
