@@ -5,11 +5,13 @@
  * - 핵심 로직은 서버에서만 실행 (코드 보호)
  * - 브라우저는 API 호출만 수행
  * 
- * @version 4.0.0
+ * @version 4.1.0
  * @since 2026-01-21
  * @location js/core/API_인사.js
  * 
  * [변경 이력]
+ * v4.1.0 - validateAssignment 필드명 변환 (2026-01-22)
+ *   - 클라이언트 필드명(assignmentDate, newDept, newPosition) → 서버 필드명(startDate, dept, position)
  * v4.0.0 - 검증 API 추가 (2026-01-22)
  *   - validateEmployee: 직원 데이터 검증 API
  *   - validateRegistration, validateEdit, validateCareerPeriod 등
@@ -258,11 +260,18 @@ const API_인사 = (function() {
     
     /**
      * 인사발령 검증
-     * @param {Object} data - 발령 데이터 { startDate, dept, position, entryDate?, resignDate? }
+     * @param {Object} data - 발령 데이터 { entryDate, assignmentDate, newDept, newPosition }
      * @returns {Promise<Object>} { valid: boolean, errors: string[] }
      */
     async function validateAssignment(data) {
-        return await validateEmployee('validateAssignment', { data });
+        // 필드명 변환 (클라이언트 → 서버)
+        const serverData = {
+            entryDate: data.entryDate,
+            startDate: data.assignmentDate || data.startDate,
+            dept: data.newDept || data.dept,
+            position: data.newPosition || data.position
+        };
+        return await validateEmployee('validateAssignment', { data: serverData });
     }
     
     /**
@@ -421,4 +430,4 @@ if (typeof window !== 'undefined') {
 }
 
 // 초기화 로그
-console.log('✅ API_인사.js 로드 완료 (v4.0.0 검증 API 추가)');
+console.log('✅ API_인사.js 로드 완료 (v4.1.0)');
