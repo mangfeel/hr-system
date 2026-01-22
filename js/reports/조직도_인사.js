@@ -9,8 +9,14 @@
  * - 직종별/직위별 인원 현황표
  * - 인쇄 / 엑셀 다운로드
  * 
- * @version 1.0.1
+ * @version 4.0.0
  * @since 2025-11-27
+ * 
+ * [변경 이력]
+ * v4.0.0 (2026-01-22) ⭐ API 연동 버전
+ *   - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
+ *   - getEmployeesAtDate() async 변경
+ *   - forEach → for...of (async/await 지원)
  * 
  * [의존성]
  * - 데이터베이스_인사.js (db)
@@ -485,7 +491,7 @@ function collectConcurrentPositions(baseDateStr) {
 /**
  * 조직도 생성
  */
-function generateOrgChart() {
+async function generateOrgChart() {
     try {
         로거_인사?.debug('조직도 생성 시작');
         
@@ -518,7 +524,7 @@ function generateOrgChart() {
         }
         
         // 기준일 재직자 추출
-        let employees = getEmployeesAtDate(baseDate);
+        let employees = await getEmployeesAtDate(baseDate);
         console.log('[조직도] 필터링 전 직원 수:', employees.length);
         
         // 육아휴직자 필터링
@@ -604,15 +610,16 @@ function generateOrgChart() {
  * 기준일 기준 재직자 추출
  * 
  * @param {Date} baseDate - 기준일
- * @returns {Array<Object>} 재직자 목록
+ * @returns {Promise<Array<Object>>} 재직자 목록
  */
-function getEmployeesAtDate(baseDate) {
+async function getEmployeesAtDate(baseDate) {
     // ⭐ v1.0.1: db.getEmployeesAtDate() 사용 (코드 중복 제거)
     const baseDateStr = DateUtils.formatDate(baseDate);
     const employees = db.getEmployeesAtDate(baseDateStr);
     const result = [];
     
-    employees.forEach(emp => {
+    // ⭐ v4.0.0: forEach → for...of (async/await 지원)
+    for (const emp of employees) {
         // 기준일 기준 발령 정보 가져오기
         const assignmentInfo = getAssignmentAtDate(emp, baseDate);
         
@@ -625,12 +632,20 @@ function getEmployeesAtDate(baseDate) {
                     const rankInfo = 직원유틸_인사.getDynamicRankInfo(emp, DateUtils.formatDate(baseDate));
                     currentRank = rankInfo.currentRank;
                 } else if (emp.rank?.firstUpgradeDate) {
-                    // fallback: 기존 방식
-                    currentRank = RankCalculator.calculateCurrentRank(
-                        emp.rank.startRank,
-                        emp.rank.firstUpgradeDate,
-                        DateUtils.formatDate(baseDate)
-                    );
+                    // ⭐ v4.0.0: fallback - API 우선 사용
+                    if (typeof API_인사 !== 'undefined') {
+                        currentRank = await API_인사.calculateCurrentRank(
+                            emp.rank.startRank,
+                            emp.rank.firstUpgradeDate,
+                            DateUtils.formatDate(baseDate)
+                        );
+                    } else {
+                        currentRank = RankCalculator.calculateCurrentRank(
+                            emp.rank.startRank,
+                            emp.rank.firstUpgradeDate,
+                            DateUtils.formatDate(baseDate)
+                        );
+                    }
                 }
             } catch (e) {
                 // 호봉 계산 실패 시 무시
@@ -658,7 +673,7 @@ function getEmployeesAtDate(baseDate) {
             isRankBased: emp.rank?.isRankBased !== false,
             originalData: emp
         });
-    });
+    }
     
     return result;
 }

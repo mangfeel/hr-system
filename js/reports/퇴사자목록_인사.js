@@ -9,10 +9,16 @@
  * - 인쇄 (A4 세로/가로)
  * - 엑셀 다운로드
  * 
- * @version 3.0
+ * @version 4.0.0
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v4.0.0 (2026-01-22) ⭐ API 연동 버전
+ *   - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
+ *   - TenureCalculator.calculate → API_인사.calculateTenure
+ *   - buildRetiredEmployeeRowData() async 변경
+ *   - forEach → for...of (async/await 지원)
+ * 
  * v3.0 - 프로덕션급 리팩토링
  *   - Phase 1 유틸리티 적용 (직원유틸, DOM유틸, 인쇄유틸)
  *   - 인쇄 문제 해결 (사이드바/메뉴 출력 방지)
@@ -277,7 +283,7 @@ function getSelectedRetiredColumns() {
  * @example
  * generateRetiredList(); // 퇴사자 목록 생성
  */
-function generateRetiredList() {
+async function generateRetiredList() {
     try {
         로거_인사?.info('퇴사자 목록 생성 시작');
         
@@ -428,10 +434,12 @@ function generateRetiredList() {
         });
         headerHTML += '</tr>';
         
-        // 7. 테이블 데이터 생성
-        const rows = retiredEmployees.map((emp, index) => {
+        // 7. 테이블 데이터 생성 (⭐ v4.0.0: async/await 지원)
+        const rowsArray = [];
+        for (let index = 0; index < retiredEmployees.length; index++) {
+            const emp = retiredEmployees[index];
             try {
-                const rowData = buildRetiredRowData(emp, index);
+                const rowData = await buildRetiredRowData(emp, index);
                 
                 let rowHTML = '<tr>';
                 selectedColumns.forEach(colKey => {
@@ -443,16 +451,16 @@ function generateRetiredList() {
                 });
                 rowHTML += '</tr>';
                 
-                return rowHTML;
+                rowsArray.push(rowHTML);
                 
             } catch (error) {
                 로거_인사?.error('행 데이터 생성 오류', { 
                     employee: emp.uniqueCode, 
                     error: error.message 
                 });
-                return '';
             }
-        }).join('');
+        }
+        const rows = rowsArray.join('');
         
         // 8. 결과 HTML 생성
         const resultHTML = `
@@ -526,9 +534,9 @@ function generateRetiredList() {
  * - 직원유틸_인사 사용하여 중복 코드 제거
  * 
  * @example
- * const rowData = buildRetiredRowData(employee, 0);
+ * const rowData = await buildRetiredRowData(employee, 0);
  */
-function buildRetiredRowData(emp, index) {
+async function buildRetiredRowData(emp, index) {
     try {
         // ✅ 직원유틸 사용
         const name = typeof 직원유틸_인사 !== 'undefined'
@@ -577,11 +585,16 @@ function buildRetiredRowData(emp, index) {
                     startRankDisplay = rankInfo.startRank + '호봉';
                     retiredRankDisplay = rankInfo.currentRank + '호봉';
                 } else {
-                    // Fallback: 기존 방식
+                    // ⭐ v4.0.0: Fallback - API 우선 사용
                     const startRank = emp.rank?.startRank || 1;
                     startRankDisplay = startRank + '호봉';
                     
-                    const retiredRank = RankCalculator.calculateCurrentRank(startRank, emp.rank.firstUpgradeDate, retirementDate);
+                    let retiredRank;
+                    if (typeof API_인사 !== 'undefined') {
+                        retiredRank = await API_인사.calculateCurrentRank(startRank, emp.rank.firstUpgradeDate, retirementDate);
+                    } else {
+                        retiredRank = RankCalculator.calculateCurrentRank(startRank, emp.rank.firstUpgradeDate, retirementDate);
+                    }
                     retiredRankDisplay = retiredRank + '호봉';
                 }
                 
@@ -600,7 +613,13 @@ function buildRetiredRowData(emp, index) {
         let tenure = '-';
         if (entryDate && entryDate !== '-' && retirementDate && retirementDate !== '-') {
             try {
-                const tenureObj = TenureCalculator.calculate(entryDate, retirementDate);
+                // ⭐ v4.0.0: API 우선 사용
+                let tenureObj;
+                if (typeof API_인사 !== 'undefined') {
+                    tenureObj = await API_인사.calculateTenure(entryDate, retirementDate);
+                } else {
+                    tenureObj = TenureCalculator.calculate(entryDate, retirementDate);
+                }
                 tenure = TenureCalculator.format(tenureObj);
             } catch (e) {
                 로거_인사?.error('근속기간 계산 오류', { 

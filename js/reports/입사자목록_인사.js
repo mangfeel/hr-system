@@ -10,10 +10,16 @@
  * - 인쇄 (A4 세로/가로)
  * - 엑셀 다운로드
  * 
- * @version 3.0
+ * @version 4.0.0
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v4.0.0 (2026-01-22) ⭐ API 연동 버전
+ *   - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
+ *   - TenureCalculator.calculate → API_인사.calculateTenure
+ *   - _renderNewEmployeesTable() async 변경
+ *   - forEach → for...of (async/await 지원)
+ * 
  * v3.0 - 프로덕션급 리팩토링
  *   - Phase 1 유틸리티 적용 (직원유틸, DOM유틸, 인쇄유틸)
  *   - 인쇄 문제 해결 (사이드바/메뉴 출력 방지)
@@ -281,7 +287,7 @@ function getSelectedNewEmployeeColumns() {
  * @example
  * generateNewEmployeeList(); // 입사자 목록 생성
  */
-function generateNewEmployeeList() {
+async function generateNewEmployeeList() {
     try {
         로거_인사?.info('입사자 목록 생성 시작');
         
@@ -410,10 +416,12 @@ function generateNewEmployeeList() {
         });
         headerHTML += '</tr>';
         
-        // 7. 테이블 데이터 생성
-        const rows = newEmployees.map((emp, index) => {
+        // 7. 테이블 데이터 생성 (⭐ v4.0.0: async/await 지원)
+        const rowsArray = [];
+        for (let index = 0; index < newEmployees.length; index++) {
+            const emp = newEmployees[index];
             try {
-                const rowData = buildNewEmployeeRowData(emp, index, endDate);
+                const rowData = await buildNewEmployeeRowData(emp, index, endDate);
                 
                 let rowHTML = '<tr>';
                 selectedColumns.forEach(colKey => {
@@ -423,16 +431,16 @@ function generateNewEmployeeList() {
                 });
                 rowHTML += '</tr>';
                 
-                return rowHTML;
+                rowsArray.push(rowHTML);
                 
             } catch (error) {
                 로거_인사?.error('행 생성 오류', { 
                     employee: emp.uniqueCode, 
                     error: error.message 
                 });
-                return '';
             }
-        }).join('');
+        }
+        const rows = rowsArray.join('');
         
         로거_인사?.debug('테이블 생성 완료', { rowsCount: newEmployees.length });
         
@@ -509,9 +517,9 @@ function generateNewEmployeeList() {
  * - 직원유틸_인사 사용하여 중복 코드 제거
  * 
  * @example
- * const rowData = buildNewEmployeeRowData(employee, 0, '2024-11-05');
+ * const rowData = await buildNewEmployeeRowData(employee, 0, '2024-11-05');
  */
-function buildNewEmployeeRowData(emp, index, periodEndDate) {
+async function buildNewEmployeeRowData(emp, index, periodEndDate) {
     try {
         // ✅ 직원유틸 사용
         const name = typeof 직원유틸_인사 !== 'undefined'
@@ -573,11 +581,16 @@ function buildNewEmployeeRowData(emp, index, periodEndDate) {
                     startRankDisplay = rankInfo.startRank + '호봉';
                     currentRankDisplay = rankInfo.currentRank + '호봉';
                 } else {
-                    // Fallback: 기존 방식
+                    // ⭐ v4.0.0: Fallback - API 우선 사용
                     const startRank = emp.rank?.startRank || 1;
                     startRankDisplay = startRank + '호봉';
                     
-                    const currentRank = RankCalculator.calculateCurrentRank(startRank, emp.rank.firstUpgradeDate, baseDate);
+                    let currentRank;
+                    if (typeof API_인사 !== 'undefined') {
+                        currentRank = await API_인사.calculateCurrentRank(startRank, emp.rank.firstUpgradeDate, baseDate);
+                    } else {
+                        currentRank = RankCalculator.calculateCurrentRank(startRank, emp.rank.firstUpgradeDate, baseDate);
+                    }
                     currentRankDisplay = currentRank + '호봉';
                 }
                 
@@ -596,7 +609,13 @@ function buildNewEmployeeRowData(emp, index, periodEndDate) {
         let tenure = '-';
         if (entryDate && entryDate !== '-' && baseDate && baseDate !== '-') {
             try {
-                const tenureObj = TenureCalculator.calculate(entryDate, baseDate);
+                // ⭐ v4.0.0: API 우선 사용
+                let tenureObj;
+                if (typeof API_인사 !== 'undefined') {
+                    tenureObj = await API_인사.calculateTenure(entryDate, baseDate);
+                } else {
+                    tenureObj = TenureCalculator.calculate(entryDate, baseDate);
+                }
                 tenure = TenureCalculator.format(tenureObj);
             } catch (e) {
                 로거_인사?.error('근속기간 계산 오류', { 

@@ -7,10 +7,16 @@
  * - 다양한 분석 지표
  * - 엑셀 다운로드
  * 
- * @version 1.2.1
+ * @version 4.0.0
  * @since 2025-11-10
  * 
  * [변경 이력]
+ * v4.0.0 (2026-01-22) ⭐ API 연동 버전
+ *   - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
+ *   - TenureCalculator.calculate → API_인사.calculateTenure
+ *   - _calculateStatValue() async 변경
+ *   - forEach → for...of (async/await 지원)
+ *
  * v1.2.1 - 육아휴직 상태 직원 통계 누락 버그 수정 (2026-01-21)
  *   ⭐ 버그 수정: 육아휴직 상태 직원이 통계에서 제외되던 문제
  *   - _isOnMaternityLeaveAtDate() 함수 신규 추가
@@ -964,11 +970,11 @@ function _getActiveEmployeesAtDate(baseDate, includeMaternity = true, targetType
  * @param {string} baseDate - 기준일
  * @param {string} rowOption - 행 기준
  * @param {Array<string>} columnOptions - 열 기준 배열
- * @returns {Array<Object>} 통계 데이터 배열
+ * @returns {Promise<Array<Object>>} 통계 데이터 배열
  */
-function _generateStatisticsData(employees, baseDate, rowOption, columnOptions) {
+async function _generateStatisticsData(employees, baseDate, rowOption, columnOptions) {
     // 1. 행 기준에 따라 그룹화
-    const groups = _groupEmployeesByRow(employees, rowOption, baseDate);
+    const groups = await _groupEmployeesByRow(employees, rowOption, baseDate);
     
     // 2. 각 그룹별로 통계 계산
     const statsData = [];
@@ -1030,8 +1036,17 @@ function _generateStatisticsData(employees, baseDate, rowOption, columnOptions) 
  * // }
  */
 function _generate2DStatisticsData(employees, baseDate, rowOption1, rowOption2, columnOptions) {
+    // 1. 1차 행 기준으로 그룹화 (⭐ v4.0.0: 동기 호출 불가, Promise 반환)
+    // 이 함수는 내부적으로 비동기 래퍼를 사용합니다
+    return _generate2DStatisticsDataAsync(employees, baseDate, rowOption1, rowOption2, columnOptions);
+}
+
+/**
+ * 2D 통계 데이터 생성 (async wrapper)
+ */
+async function _generate2DStatisticsDataAsync(employees, baseDate, rowOption1, rowOption2, columnOptions) {
     // 1. 1차 행 기준으로 그룹화
-    const row1Groups = _groupEmployeesByRow(employees, rowOption1, baseDate);
+    const row1Groups = await _groupEmployeesByRow(employees, rowOption1, baseDate);
     
     // 2. 2차원 데이터 구조 생성
     const data = {};
@@ -1048,8 +1063,8 @@ function _generate2DStatisticsData(employees, baseDate, rowOption1, rowOption2, 
         // ⭐ 1차 그룹의 원본 직원 저장 (소계 계산용)
         group1Employees[group1Name] = group1Emps;
         
-        // 2차 행 기준으로 그룹화
-        const row2Groups = _groupEmployeesByRow(group1Emps, rowOption2, baseDate);
+        // 2차 행 기준으로 그룹화 (⭐ v4.0.0: await 추가)
+        const row2Groups = await _groupEmployeesByRow(group1Emps, rowOption2, baseDate);
         
         data[group1Name] = {};
         
@@ -1152,12 +1167,13 @@ function _compareGroupNames(a, b, rowOption) {
  * @param {Array<Object>} employees - 직원 배열
  * @param {string} rowOption - 행 기준
  * @param {string} baseDate - 기준일
- * @returns {Object} 그룹화된 직원 객체
+ * @returns {Promise<Object>} 그룹화된 직원 객체
  */
-function _groupEmployeesByRow(employees, rowOption, baseDate) {
+async function _groupEmployeesByRow(employees, rowOption, baseDate) {
     const groups = {};
     
-    employees.forEach(emp => {
+    // ⭐ v4.0.0: forEach → for...of (async/await 지원)
+    for (const emp of employees) {
         let groupName;
         
         switch (rowOption) {
@@ -1183,7 +1199,8 @@ function _groupEmployeesByRow(employees, rowOption, baseDate) {
                 groupName = _getAgeGroup(emp.personalInfo?.birthDate, baseDate);
                 break;
             case 'tenureGroup':
-                groupName = _getTenureGroup(emp.employment?.entryDate, baseDate);
+                // ⭐ v4.0.0: async 함수 호출
+                groupName = await _getTenureGroup(emp.employment?.entryDate, baseDate);
                 break;
             case 'entryYear':
                 groupName = _getEntryYear(emp.employment?.entryDate);
@@ -1196,7 +1213,7 @@ function _groupEmployeesByRow(employees, rowOption, baseDate) {
             groups[groupName] = [];
         }
         groups[groupName].push(emp);
-    });
+    }
     
     return groups;
 }
@@ -1236,12 +1253,18 @@ function _getAgeGroup(birthDate, baseDate) {
  * @private
  * @param {string} entryDate - 입사일
  * @param {string} baseDate - 기준일
- * @returns {string} 근속 구간
+ * @returns {Promise<string>} 근속 구간
  */
-function _getTenureGroup(entryDate, baseDate) {
+async function _getTenureGroup(entryDate, baseDate) {
     if (!entryDate) return '미지정';
     
-    const tenureData = TenureCalculator.calculate(entryDate, baseDate);
+    // ⭐ v4.0.0: API 우선 사용
+    let tenureData;
+    if (typeof API_인사 !== 'undefined') {
+        tenureData = await API_인사.calculateTenure(entryDate, baseDate);
+    } else {
+        tenureData = TenureCalculator.calculate(entryDate, baseDate);
+    }
     const years = tenureData.years;
     
     if (years < 1) return '1년 미만';
