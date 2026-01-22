@@ -24,6 +24,7 @@
  *   - TenureCalculator.calculate → API_인사.calculateTenure
  *   - CareerCalculator.applyConversionRate → API_인사.applyConversionRate
  *   - forEach → for...of (async/await 지원)
+ *   - API 검증 시 전체 데이터 전달 (부서, 직위 포함)
  * 
  * v4.0.0 (2026-01-21) ⭐ API 연동 버전
  *   - saveAssignmentEdit() async 변경
@@ -499,13 +500,15 @@ async function saveAssignment() {
             ? 직원유틸_인사.getEntryDate(emp)
             : emp.employment?.entryDate;
         
-        // ✅ v4.1.0: 발령일 검증 - API 우선 사용
+        // ✅ v4.1.0: 발령 검증 - API 우선 사용
         let validation;
-        if (typeof API_인사 !== 'undefined') {
+        if (typeof API_인사 !== 'undefined' && typeof API_인사.validateAssignment === 'function') {
             try {
                 validation = await API_인사.validateAssignment({
                     entryDate: entryDate,
-                    assignmentDate: formData.assignmentDate
+                    assignmentDate: formData.assignmentDate,
+                    newDept: formData.newDept,
+                    newPosition: formData.newPosition
                 });
                 로거_인사?.debug('발령 검증 (API)', validation);
             } catch (apiError) {
@@ -544,8 +547,8 @@ async function saveAssignment() {
             return;
         }
         
-        // 부서/직위 검증 (단순 체크 - 로컬 유지)
-        if (!formData.newDept || formData.newDept.trim() === '') {
+        // 부서/직위 검증
+        if (!Validator.isNotEmpty(formData.newDept)) {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('부서를 입력하세요.');
             } else {
@@ -554,8 +557,8 @@ async function saveAssignment() {
             return;
         }
         
-        // 직위 검증 (단순 체크 - 로컬 유지)
-        if (!formData.newPosition || formData.newPosition.trim() === '') {
+        // 직위 검증
+        if (!Validator.isNotEmpty(formData.newPosition)) {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('직위를 입력하세요.');
             } else {
@@ -1013,13 +1016,15 @@ async function saveAssignmentEdit() {
             ? 직원유틸_인사.getEntryDate(emp)
             : emp.employment?.entryDate;
         
-        // ✅ v4.1.0: 발령일 검증 - API 우선 사용
+        // ✅ v4.1.0: 발령 검증 - API 우선 사용
         let validation;
-        if (typeof API_인사 !== 'undefined') {
+        if (typeof API_인사 !== 'undefined' && typeof API_인사.validateAssignment === 'function') {
             try {
                 validation = await API_인사.validateAssignment({
                     entryDate: entryDate,
-                    assignmentDate: formData.newStartDate
+                    assignmentDate: formData.newStartDate,
+                    newDept: formData.newDept,
+                    newPosition: formData.newPosition
                 });
                 로거_인사?.debug('발령 검증 (API)', validation);
             } catch (apiError) {
@@ -1042,7 +1047,7 @@ async function saveAssignmentEdit() {
             return;
         }
         
-        // ✅ v4.1.0: 날짜 범위 검증 - 로컬 사용 (단순 체크)
+        // 날짜 범위 검증 (로컬)
         if (!Validator.isDateInValidRange(formData.newStartDate)) {
             로거_인사?.warn('발령일이 유효 범위를 벗어남', { date: formData.newStartDate });
             
