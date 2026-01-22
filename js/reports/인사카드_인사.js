@@ -1350,6 +1350,49 @@ function _buildIndividualPage(emp, baseDate, applyContinuousService = false) {
 }
 
 /**
+ * 기준일 기준 로컬 호봉 계산
+ * ⭐ v5.0.0: async API 호출 대신 로컬에서 직접 계산
+ * @private
+ */
+function _calculateRankLocal(emp, baseDate) {
+    try {
+        const startRank = emp.rank?.startRank || 1;
+        const firstUpgradeDateStr = emp.rank?.firstUpgradeDate;
+        
+        // 호봉제가 아니면 '-' 반환
+        if (!firstUpgradeDateStr || firstUpgradeDateStr === '-') {
+            return '-';
+        }
+        
+        if (baseDate >= firstUpgradeDateStr) {
+            // 최초 승급 이후: startRank + 1 + 경과년수
+            const firstUpgrade = new Date(firstUpgradeDateStr);
+            const base = new Date(baseDate);
+            
+            // 경과 년수 계산 (승급일 기준)
+            let yearsAfterFirst = base.getFullYear() - firstUpgrade.getFullYear();
+            
+            // 승급월일이 아직 안 지났으면 -1
+            const upgradeMonth = firstUpgrade.getMonth();
+            const upgradeDay = firstUpgrade.getDate();
+            const baseMonth = base.getMonth();
+            const baseDay = base.getDate();
+            
+            if (baseMonth < upgradeMonth || (baseMonth === upgradeMonth && baseDay < upgradeDay)) {
+                yearsAfterFirst--;
+            }
+            
+            return startRank + 1 + Math.max(0, yearsAfterFirst);
+        } else {
+            return startRank;
+        }
+    } catch (e) {
+        console.error('_calculateRankLocal 오류:', e);
+        return emp.rank?.currentRank || emp.rank?.startRank || '-';
+    }
+}
+
+/**
  * 직원 데이터 구성
  * @private
  */
@@ -1404,8 +1447,8 @@ function _buildEmployeeData(emp, baseDate, detailed, applyContinuousService = fa
         phone: emp.contactInfo?.phone || emp.personalInfo?.phone || emp.phone || '',
         email: emp.contactInfo?.email || emp.personalInfo?.email || emp.email || '',
         address: emp.contactInfo?.address || emp.personalInfo?.address || emp.address || '',
-        // ⭐ v5.0.0: 저장된 호봉 값 사용 (동적 계산은 별도 async 함수로 분리)
-        rank: emp.rank?.currentRank || emp.rank?.startRank || '-',
+        // ⭐ v5.0.0: 기준일 기준 로컬 호봉 계산
+        rank: _calculateRankLocal(emp, baseDate),
         photo: _photoMap.get(name) || null,
         assignmentHistory: _getAssignmentHistory(emp, baseDate, applyContinuousService)
     };

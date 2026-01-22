@@ -1852,21 +1852,39 @@ function _generateRankBasedContractHTML(data) {
     ` : '';
     
     // 호봉 정보 - 계약일 기준으로 동적 계산
-    let currentRank = employee.rank?.currentRank || 1;
+    let currentRank = employee.rank?.startRank || 1;
     let upgradeDate = '';
     
-    // ⭐ v5.0.0: 저장된 호봉 값 사용 (getDynamicRankInfo가 async이므로)
-    // 참고: 동적 계산이 필요한 경우 별도의 async 함수로 분리 필요
+    // ⭐ v5.0.0: 계약일 기준 로컬 호봉 계산
     try {
-        // 저장된 현재 호봉 값 사용
-        if (employee.rank?.currentRank && employee.rank.currentRank !== '-') {
-            currentRank = employee.rank.currentRank;
-        } else if (employee.rank?.startRank) {
-            // currentRank가 없으면 startRank 사용
-            currentRank = employee.rank.startRank;
+        const startRank = employee.rank?.startRank || 1;
+        const firstUpgradeDateStr = employee.rank?.firstUpgradeDate;
+        
+        if (firstUpgradeDateStr && firstUpgradeDateStr !== '-' && contractDate >= firstUpgradeDateStr) {
+            // 최초 승급 이후: startRank + 1 + 경과년수
+            const firstUpgrade = new Date(firstUpgradeDateStr);
+            const contract = new Date(contractDate);
+            
+            // 경과 년수 계산 (승급일 기준)
+            let yearsAfterFirst = contract.getFullYear() - firstUpgrade.getFullYear();
+            
+            // 승급월일이 아직 안 지났으면 -1
+            const upgradeMonth = firstUpgrade.getMonth();
+            const upgradeDay = firstUpgrade.getDate();
+            const contractMonth = contract.getMonth();
+            const contractDay = contract.getDate();
+            
+            if (contractMonth < upgradeMonth || (contractMonth === upgradeMonth && contractDay < upgradeDay)) {
+                yearsAfterFirst--;
+            }
+            
+            currentRank = startRank + 1 + Math.max(0, yearsAfterFirst);
+        } else {
+            currentRank = startRank;
         }
     } catch (e) {
-        로거_인사?.warn('호봉 정보 조회 오류, 기본값 사용', e);
+        로거_인사?.warn('호봉 계산 오류, 기본값 사용', e);
+        currentRank = employee.rank?.startRank || 1;
     }
     
     // ⭐ 계약 연도의 승급일 직접 계산 (firstUpgradeDate에서 월/일 추출)

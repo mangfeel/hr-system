@@ -1385,19 +1385,38 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                 let validCount = 0;
                 const rankDetails = []; // ⭐ 비고용 상세 정보
                 
-                // ⭐ v5.0.0: 저장된 호봉 값 사용 (async 문제 회피)
+                // ⭐ v5.0.0: 기준일 기준 로컬 호봉 계산
                 for (const e of rankBased) {
                     try {
                         const name = e.personalInfo?.name || e.name;
+                        const startRank = e.rank?.startRank || 1;
+                        const firstUpgradeDate = e.rank?.firstUpgradeDate;
                         
-                        // 저장된 currentRank 또는 startRank 사용
-                        let currentRank = e.rank?.currentRank;
+                        // 기준일 기준 현재 호봉 로컬 계산
+                        let currentRank = startRank;
                         
-                        if (currentRank === undefined || currentRank === null || currentRank === '-') {
-                            currentRank = e.rank?.startRank || null;
+                        if (firstUpgradeDate && baseDate >= firstUpgradeDate) {
+                            // 최초 승급 이후: startRank + 1 + 경과년수
+                            const firstUpgrade = new Date(firstUpgradeDate);
+                            const base = new Date(baseDate);
+                            
+                            // 경과 년수 계산 (승급일 기준)
+                            let yearsAfterFirst = base.getFullYear() - firstUpgrade.getFullYear();
+                            
+                            // 승급월일이 아직 안 지났으면 -1
+                            const upgradeMonth = firstUpgrade.getMonth();
+                            const upgradeDay = firstUpgrade.getDate();
+                            const baseMonth = base.getMonth();
+                            const baseDay = base.getDate();
+                            
+                            if (baseMonth < upgradeMonth || (baseMonth === upgradeMonth && baseDay < upgradeDay)) {
+                                yearsAfterFirst--;
+                            }
+                            
+                            currentRank = startRank + 1 + Math.max(0, yearsAfterFirst);
                         }
                         
-                        console.log('호봉 계산 결과:', name, currentRank);
+                        console.log('호봉 계산 결과:', name, currentRank, '(startRank:', startRank, ', firstUpgrade:', firstUpgradeDate, ')');
                         
                         if (typeof currentRank === 'number') {
                             totalRank += currentRank;
