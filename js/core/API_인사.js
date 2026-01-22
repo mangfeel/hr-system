@@ -5,11 +5,15 @@
  * - 핵심 로직은 서버에서만 실행 (코드 보호)
  * - 브라우저는 API 호출만 수행
  * 
- * @version 4.1.0
+ * @version 5.0.0
  * @since 2026-01-21
  * @location js/core/API_인사.js
  * 
  * [변경 이력]
+ * v5.0.0 - 배치 API 추가 (2026-01-22) ⭐ 성능 최적화
+ *   - calculateBatch: 여러 직원 한 번에 계산 (300회 → 1회)
+ *   - calculateBatchForEmployees: 직원 배열 → 배치 결과
+ *   - 캐시 시스템 추가 (중복 계산 방지)
  * v4.1.0 - validateAssignment 필드명 변환 (2026-01-22)
  *   - 클라이언트 필드명(assignmentDate, newDept, newPosition) → 서버 필드명(startDate, dept, position)
  * v4.0.0 - 검증 API 추가 (2026-01-22)
@@ -380,6 +384,146 @@ const API_인사 = (function() {
         return results;
     }
     
+    // ===== 배치 API (v5.0.0 추가) - 성능 최적화 =====
+    
+    // 배치 결과 캐시 (동일 기준일에 대한 중복 계산 방지)
+    let _batchCache = {
+        baseDate: null,
+        results: new Map()
+    };
+    
+    /**
+     * 캐시 초기화 (기준일 변경 시)
+     * @param {string} baseDate - 새 기준일
+     */
+    function _clearCacheIfNeeded(baseDate) {
+        if (_batchCache.baseDate !== baseDate) {
+            _batchCache.baseDate = baseDate;
+            _batchCache.results.clear();
+            console.log('[API] 배치 캐시 초기화:', baseDate);
+        }
+    }
+    
+    /**
+     * 배치 API 호출 - 여러 직원을 한 번에 계산
+     * @param {Array} employees - 직원 배열 [{ id, entryDate, startRank, firstUpgradeDate }, ...]
+     * @param {string} baseDate - 기준일 (YYYY-MM-DD)
+     * @returns {Promise<Array>} 계산 결과 배열 [{ id, tenure, currentRank, nextUpgradeDate }, ...]
+     */
+    async function calculateBatch(employees, baseDate) {
+        if (!employees || employees.length === 0) {
+            return [];
+        }
+        
+        console.log(`[API] 배치 계산 시작: ${employees.length}명, 기준일: ${baseDate}`);
+        
+        const result = await call('calculate-batch', { employees, baseDate });
+        
+        if (result.success) {
+            console.log(`[API] 배치 계산 완료: ${result.data.length}명`);
+            return result.data;
+        }
+        
+        throw new Error(result.error || '배치 계산 실패');
+    }
+    
+    /**
+     * 직원 배열에서 배치 계산용 데이터 추출 후 계산
+     * @param {Array} employees - 전체 직원 데이터 배열
+     * @param {string} baseDate - 기준일
+     * @param {Object} options - 옵션 { useCache: true }
+     * @returns {Promise<Map>} 직원ID → 계산결과 Map
+     */
+    async function calculateBatchForEmployees(employees, baseDate, options = { useCache: true }) {
+        if (!employees || employees.length === 0) {
+            return new Map();
+        }
+        
+        // 캐시 확인
+        if (options.useCache) {
+            _clearCacheIfNeeded(baseDate);
+            
+            // 캐시에 없는 직원만 필터링
+            const uncachedEmployees = employees.filter(emp => {
+                const id = emp.id || emp.uniqueCode;
+                return !_batchCache.results.has(id);
+            });
+            
+            // 모두 캐시에 있으면 캐시 결과 반환
+            if (uncachedEmployees.length === 0) {
+                console.log('[API] 배치 캐시 히트: 모든 직원 캐시됨');
+                const resultMap = new Map();
+                employees.forEach(emp => {
+                    const id = emp.id || emp.uniqueCode;
+                    resultMap.set(id, _batchCache.results.get(id));
+                });
+                return resultMap;
+            }
+            
+            console.log(`[API] 배치 캐시: ${employees.length - uncachedEmployees.length}명 캐시됨, ${uncachedEmployees.length}명 계산 필요`);
+            
+            // 캐시 안 된 직원만 계산
+            if (uncachedEmployees.length > 0) {
+                await _calculateAndCache(uncachedEmployees, baseDate);
+            }
+            
+            // 전체 결과 반환
+            const resultMap = new Map();
+            employees.forEach(emp => {
+                const id = emp.id || emp.uniqueCode;
+                resultMap.set(id, _batchCache.results.get(id));
+            });
+            return resultMap;
+        }
+        
+        // 캐시 미사용 시 직접 계산
+        return await _calculateAndCache(employees, baseDate);
+    }
+    
+    /**
+     * 직원 배열 계산 후 캐시에 저장
+     * @private
+     */
+    async function _calculateAndCache(employees, baseDate) {
+        // 배치 API용 데이터 추출
+        const batchInput = employees.map(emp => ({
+            id: emp.id || emp.uniqueCode,
+            entryDate: emp.employment?.entryDate || emp.entryDate,
+            startRank: emp.rank?.startRank,
+            firstUpgradeDate: emp.rank?.firstUpgradeDate
+        }));
+        
+        // 배치 API 호출
+        const results = await calculateBatch(batchInput, baseDate);
+        
+        // 결과를 Map과 캐시에 저장
+        const resultMap = new Map();
+        results.forEach(r => {
+            resultMap.set(r.id, r);
+            _batchCache.results.set(r.id, r);
+        });
+        
+        return resultMap;
+    }
+    
+    /**
+     * 캐시된 결과 조회 (개별 직원)
+     * @param {string} employeeId - 직원 ID
+     * @returns {Object|null} 캐시된 결과 또는 null
+     */
+    function getCachedResult(employeeId) {
+        return _batchCache.results.get(employeeId) || null;
+    }
+    
+    /**
+     * 캐시 수동 초기화
+     */
+    function clearBatchCache() {
+        _batchCache.baseDate = null;
+        _batchCache.results.clear();
+        console.log('[API] 배치 캐시 수동 초기화');
+    }
+    
     // ===== 공개 API =====
     return {
         // 설정
@@ -417,6 +561,12 @@ const API_인사 = (function() {
         checkDuplicate,
         isValidResidentNumber,
         
+        // 배치 API (v5.0.0 추가) - 성능 최적화
+        calculateBatch,
+        calculateBatchForEmployees,
+        getCachedResult,
+        clearBatchCache,
+        
         // 유틸리티
         healthCheck,
         checkAllAPIs
@@ -430,4 +580,4 @@ if (typeof window !== 'undefined') {
 }
 
 // 초기화 로그
-console.log('✅ API_인사.js 로드 완료 (v4.1.0)');
+console.log('✅ API_인사.js 로드 완료 (v5.0.0 배치 API 추가)');

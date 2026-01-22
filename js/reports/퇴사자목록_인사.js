@@ -9,11 +9,16 @@
  * - 인쇄 (A4 세로/가로)
  * - 엑셀 다운로드
  * 
- * @version 5.0.0
+ * @version 6.0.0
  * @since 2024-11-05
  * 
  * [변경 이력]
- * v5.0.0 (2026-01-22) ⭐ API 전용 버전
+ * v6.0.0 (2026-01-22) ⭐ 로컬 계산으로 최적화
+ *   - API 호출 제거 → 로컬 계산 (퇴사자는 기준일이 각자 다르므로 배치 불가)
+ *   - RankCalculator, TenureCalculator 직접 사용
+ *   - API 호출 없이 즉시 계산
+ * 
+ * v5.0.0 (2026-01-22) API 전용 버전
  *   - 직원유틸_인사.getDynamicRankInfo() await 추가
  *   - 모든 계산 로직 서버 API로 이동
  * 
@@ -582,25 +587,17 @@ async function buildRetiredRowData(emp, index) {
         
         if (isRankBased) {
             try {
-                // ⭐ v5.0.0: 직원유틸의 동적 호봉 계산 함수 사용 (인정율 반영) - await 추가
-                // 퇴사일 기준 호봉 계산
-                if (typeof 직원유틸_인사 !== 'undefined' && typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-                    const rankInfo = await 직원유틸_인사.getDynamicRankInfo(emp, retirementDate);
-                    startRankDisplay = rankInfo.startRank + '호봉';
-                    retiredRankDisplay = rankInfo.currentRank + '호봉';
+                // ⭐ v6.0.0: 로컬 계산 사용 (퇴사자는 기준일이 각자 다르므로 배치 API 불가)
+                const startRank = emp.rank?.startRank || 1;
+                startRankDisplay = startRank + '호봉';
+                
+                let retiredRank;
+                if (typeof RankCalculator !== 'undefined' && emp.rank?.firstUpgradeDate) {
+                    retiredRank = RankCalculator.calculateCurrentRank(startRank, emp.rank.firstUpgradeDate, retirementDate);
                 } else {
-                    // ⭐ v4.0.0: Fallback - API 우선 사용
-                    const startRank = emp.rank?.startRank || 1;
-                    startRankDisplay = startRank + '호봉';
-                    
-                    let retiredRank;
-                    if (typeof API_인사 !== 'undefined') {
-                        retiredRank = await API_인사.calculateCurrentRank(startRank, emp.rank.firstUpgradeDate, retirementDate);
-                    } else {
-                        retiredRank = RankCalculator.calculateCurrentRank(startRank, emp.rank.firstUpgradeDate, retirementDate);
-                    }
-                    retiredRankDisplay = retiredRank + '호봉';
+                    retiredRank = startRank;
                 }
+                retiredRankDisplay = retiredRank + '호봉';
                 
             } catch (e) {
                 로거_인사?.error('퇴사시 호봉 계산 오류', { 
@@ -617,14 +614,12 @@ async function buildRetiredRowData(emp, index) {
         let tenure = '-';
         if (entryDate && entryDate !== '-' && retirementDate && retirementDate !== '-') {
             try {
-                // ⭐ v4.0.0: API 우선 사용
+                // ⭐ v6.0.0: 로컬 계산 사용 (API 호출 제거)
                 let tenureObj;
-                if (typeof API_인사 !== 'undefined') {
-                    tenureObj = await API_인사.calculateTenure(entryDate, retirementDate);
-                } else {
+                if (typeof TenureCalculator !== 'undefined') {
                     tenureObj = TenureCalculator.calculate(entryDate, retirementDate);
+                    tenure = TenureCalculator.format(tenureObj);
                 }
-                tenure = TenureCalculator.format(tenureObj);
             } catch (e) {
                 로거_인사?.error('근속기간 계산 오류', { 
                     employee: emp.uniqueCode, 

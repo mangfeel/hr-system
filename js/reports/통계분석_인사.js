@@ -7,11 +7,16 @@
  * - 다양한 분석 지표
  * - 엑셀 다운로드
  * 
- * @version 5.0.0
+ * @version 6.0.0
  * @since 2025-11-10
  * 
  * [변경 이력]
- * v5.0.0 (2026-01-22) ⭐ API 전용 버전
+ * v6.0.0 (2026-01-22) ⭐ 배치 API 적용 - 성능 최적화
+ *   - 근속구간 그룹핑 시 배치 API 사용 (calculateBatchForEmployees)
+ *   - N회 API 호출 → 1회로 감소
+ *   - _getTenureGroupFromYears() 헬퍼 함수 추가
+ *
+ * v5.0.0 (2026-01-22) API 전용 버전
  *   - 직원유틸_인사.getDynamicRankInfo() await 추가
  *   - 호봉 계산 forEach → for...of (async/await 지원)
  *   - 모든 계산 로직 서버 API로 이동
@@ -1178,6 +1183,18 @@ function _compareGroupNames(a, b, rowOption) {
 async function _groupEmployeesByRow(employees, rowOption, baseDate) {
     const groups = {};
     
+    // ⭐ v6.0.0: 근속구간 그룹핑 시 배치 API 사용 (성능 최적화)
+    let tenureMap = new Map();
+    if (rowOption === 'tenureGroup' && typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
+        try {
+            console.log('[통계분석] 근속구간 배치 API 시작:', employees.length, '명');
+            tenureMap = await API_인사.calculateBatchForEmployees(employees, baseDate);
+            console.log('[통계분석] 근속구간 배치 API 완료:', tenureMap.size, '명');
+        } catch (e) {
+            console.error('[통계분석] 배치 API 오류, 개별 처리로 전환:', e);
+        }
+    }
+    
     // ⭐ v4.0.0: forEach → for...of (async/await 지원)
     for (const emp of employees) {
         let groupName;
@@ -1205,8 +1222,17 @@ async function _groupEmployeesByRow(employees, rowOption, baseDate) {
                 groupName = _getAgeGroup(emp.personalInfo?.birthDate, baseDate);
                 break;
             case 'tenureGroup':
-                // ⭐ v4.0.0: async 함수 호출
-                groupName = await _getTenureGroup(emp.employment?.entryDate, baseDate);
+                // ⭐ v6.0.0: 배치 결과에서 근속기간 가져오기
+                {
+                    const batchResult = tenureMap.get(emp.id);
+                    if (batchResult && batchResult.tenure) {
+                        const years = batchResult.tenure.years || 0;
+                        groupName = _getTenureGroupFromYears(years);
+                    } else {
+                        // 배치에 없으면 개별 계산 (fallback)
+                        groupName = await _getTenureGroup(emp.employment?.entryDate, baseDate);
+                    }
+                }
                 break;
             case 'entryYear':
                 groupName = _getEntryYear(emp.employment?.entryDate);
@@ -1222,6 +1248,22 @@ async function _groupEmployeesByRow(employees, rowOption, baseDate) {
     }
     
     return groups;
+}
+
+/**
+ * 근속년수로 근속구간 반환 (Private)
+ * ⭐ v6.0.0: 배치 API 결과용 헬퍼 함수
+ * 
+ * @private
+ * @param {number} years - 근속년수
+ * @returns {string} 근속 구간
+ */
+function _getTenureGroupFromYears(years) {
+    if (years < 1) return '1년 미만';
+    if (years < 3) return '1-3년';
+    if (years < 5) return '3-5년';
+    if (years < 10) return '5-10년';
+    return '10년 이상';
 }
 
 /**

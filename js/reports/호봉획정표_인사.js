@@ -9,11 +9,17 @@
  * - 호봉획정표 생성 (대상자, 환산결과, 경력상세)
  * - 인쇄 (A4 세로)
  * 
- * @version 5.0.0
+ * @version 6.0.0
  * @since 2024-11-05
  * 
  * [변경 이력]
- * v5.0.0 (2026-01-22) ⭐ API 전용 버전
+ * v6.0.0 (2026-01-22) ⭐ 배치 API 적용 - 성능 최적화
+ *   - loadCertificateEmployeeList에서 배치 API 호출
+ *   - createCertEmployeeItemHTML에 batchResults 파라미터 추가
+ *   - printHobongCertificate에서 로컬 계산 사용
+ *   - N회 API 호출 → 1회로 감소
+ *
+ * v5.0.0 (2026-01-22) API 전용 버전
  *   - 직원유틸_인사.getDynamicRankInfo() await 추가
  *   - 모든 계산 로직 서버 API로 이동
  *
@@ -93,7 +99,7 @@ let _certCurrentFilter = 'all';
  */
 async function loadCertificateEmployeeList() {
     try {
-        로거_인사?.debug('호봉획정표 직원 목록 로드 시작 (v3.2.0)');
+        로거_인사?.debug('호봉획정표 직원 목록 로드 시작 (v6.0.0)');
         
         const employees = db.getEmployees();
         const listContainer = document.getElementById('certEmployeeList');
@@ -126,9 +132,27 @@ async function loadCertificateEmployeeList() {
             return;
         }
         
-        // HTML 생성 (재직자 먼저, 퇴사자 나중) - ✅ v4.0.0: async 처리
-        const activePromises = activeEmployees.map(emp => createCertEmployeeItemHTML(emp, false));
-        const retiredPromises = retiredEmployees.map(emp => createCertEmployeeItemHTML(emp, true));
+        // ⭐ v6.0.0: 배치 API로 전체 직원 한 번에 계산 (성능 최적화)
+        const today = new Date().toISOString().split('T')[0];
+        let batchResults = new Map();
+        if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
+            try {
+                const rankBasedEmployees = employees.filter(emp => 
+                    emp.rank?.isRankBased !== false && emp.rank?.startRank && emp.rank?.firstUpgradeDate
+                );
+                if (rankBasedEmployees.length > 0) {
+                    console.log('[호봉획정표] 배치 API 시작:', rankBasedEmployees.length, '명');
+                    batchResults = await API_인사.calculateBatchForEmployees(rankBasedEmployees, today);
+                    console.log('[호봉획정표] 배치 API 완료:', batchResults.size, '명');
+                }
+            } catch (e) {
+                console.error('[호봉획정표] 배치 API 오류, 로컬 계산으로 전환:', e);
+            }
+        }
+        
+        // HTML 생성 (재직자 먼저, 퇴사자 나중) - ✅ v6.0.0: batchResults 전달
+        const activePromises = activeEmployees.map(emp => createCertEmployeeItemHTML(emp, false, batchResults));
+        const retiredPromises = retiredEmployees.map(emp => createCertEmployeeItemHTML(emp, true, batchResults));
         
         const activeHtmlArray = await Promise.all(activePromises);
         const retiredHtmlArray = await Promise.all(retiredPromises);
@@ -155,7 +179,7 @@ async function loadCertificateEmployeeList() {
         // 양식 선택 복원
         loadCertificateStylePreference();
         
-        로거_인사?.info('호봉획정표 직원 목록 로드 완료 (v3.2.0)', {
+        로거_인사?.info('호봉획정표 직원 목록 로드 완료 (v6.0.0)', {
             total: employees.length
         });
         
@@ -210,6 +234,7 @@ function loadCertificateStylePreference() {
  * 
  * @param {Object} emp - 직원 객체
  * @param {boolean} isRetired - 퇴사자 여부
+ * @param {Map} batchResults - 배치 API 결과 (v6.0.0)
  * @returns {string} HTML 문자열
  */
 /**
@@ -217,11 +242,12 @@ function loadCertificateStylePreference() {
  * 
  * @param {Object} emp - 직원 객체
  * @param {boolean} isRetired - 퇴사 여부
+ * @param {Map} batchResults - 배치 API 결과 (v6.0.0)
  * @returns {Promise<string>} HTML 문자열
  * 
- * @version 4.0.0 - async API 버전
+ * @version 6.0.0 - 배치 API 적용
  */
-async function createCertEmployeeItemHTML(emp, isRetired) {
+async function createCertEmployeeItemHTML(emp, isRetired, batchResults = new Map()) {
     // 직원 정보 추출
     const name = typeof 직원유틸_인사 !== 'undefined'
         ? 직원유틸_인사.getName(emp)
@@ -240,42 +266,26 @@ async function createCertEmployeeItemHTML(emp, isRetired) {
         ? 직원유틸_인사.isRankBased(emp)
         : (emp.rank?.isRankBased !== false && emp.rank?.firstUpgradeDate);
     
-    // ⭐ v4.0.0: 현재 호봉 동적 계산 (인정율 반영)
+    // ⭐ v6.0.0: 배치 결과에서 현재 호봉 가져오기
     let currentRank = '-';
     if (isRankBased) {
         try {
-            const today = new Date().toISOString().split('T')[0];
-            
-            // ✅ v5.0.0: 직원유틸 (모든 함수가 async)
-            if (typeof 직원유틸_인사 !== 'undefined') {
-                if (typeof 직원유틸_인사.getDynamicRankInfoAsync === 'function') {
-                    const rankInfo = await 직원유틸_인사.getDynamicRankInfoAsync(emp, today);
-                    currentRank = rankInfo.currentRank + '호봉';
-                } else if (typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-                    // ⭐ v5.0.0: await 추가 (getDynamicRankInfo도 async)
-                    const rankInfo = await 직원유틸_인사.getDynamicRankInfo(emp, today);
-                    currentRank = rankInfo.currentRank + '호봉';
-                } else if (typeof 직원유틸_인사.getCurrentRankAsync === 'function') {
-                    const rank = await 직원유틸_인사.getCurrentRankAsync(emp, today);
-                    currentRank = rank + '호봉';
-                }
+            // 1. 배치 결과에서 조회
+            const batchResult = batchResults.get(emp.id);
+            if (batchResult && batchResult.currentRank !== undefined) {
+                currentRank = batchResult.currentRank + '호봉';
             } else if (emp.rank?.startRank && emp.rank?.firstUpgradeDate) {
-                // ✅ v4.0.0: API 우선 사용
+                // 2. 배치에 없으면 로컬 계산 (fallback)
+                const today = new Date().toISOString().split('T')[0];
                 let rank;
-                if (typeof API_인사 !== 'undefined') {
-                    rank = await API_인사.calculateCurrentRank(
-                        emp.rank.startRank,
-                        emp.rank.firstUpgradeDate,
-                        today
-                    );
-                } else if (typeof RankCalculator !== 'undefined') {
+                if (typeof RankCalculator !== 'undefined') {
                     rank = RankCalculator.calculateCurrentRank(
                         emp.rank.startRank,
                         emp.rank.firstUpgradeDate,
                         today
                     );
+                    currentRank = rank + '호봉';
                 }
-                currentRank = rank + '호봉';
             } else if (emp.rank?.startRank) {
                 currentRank = emp.rank.startRank + '호봉';
             }
@@ -767,11 +777,9 @@ async function printHobongCertificate(employeeId) {
                 currentRank = rankInfo.currentRank || startRank;
             }
         } else if (emp.rank?.isRankBased !== false && firstUpgradeDate !== '-') {
-            // ✅ v4.0.0: API 우선 사용
+            // ⭐ v6.0.0: 로컬 계산 사용 (API 호출 제거)
             try {
-                if (typeof API_인사 !== 'undefined') {
-                    nextUpgradeDate = await API_인사.calculateNextUpgradeDate(firstUpgradeDate, today);
-                } else {
+                if (typeof RankCalculator !== 'undefined') {
                     nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(firstUpgradeDate, today);
                 }
             } catch (error) {

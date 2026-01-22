@@ -10,11 +10,16 @@
  * - 인쇄 (A4 세로/가로)
  * - 엑셀 다운로드
  * 
- * @version 5.0.0
+ * @version 6.0.0
  * @since 2024-11-05
  * 
  * [변경 이력]
- * v5.0.0 (2026-01-22) ⭐ API 전용 버전
+ * v6.0.0 (2026-01-22) ⭐ 배치 API 적용 - 성능 최적화
+ *   - 개별 API 호출 → 배치 API (calculateBatchForEmployees)
+ *   - N회 API 호출 → 1회로 감소
+ *   - buildNewEmployeeRowData에 batchResults 파라미터 추가
+ * 
+ * v5.0.0 (2026-01-22) API 전용 버전
  *   - 직원유틸_인사.getDynamicRankInfo() await 추가
  *   - 모든 계산 로직 서버 API로 이동
  * 
@@ -384,6 +389,18 @@ async function generateNewEmployeeList() {
         
         로거_인사?.info('입사자 조회 완료', { count: newEmployees.length });
         
+        // ⭐ v6.0.0: 배치 API로 전체 직원 한 번에 계산 (성능 최적화)
+        let batchResults = new Map();
+        if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
+            try {
+                console.log('[입사자목록] 배치 API 시작:', newEmployees.length, '명');
+                batchResults = await API_인사.calculateBatchForEmployees(newEmployees, endDate);
+                console.log('[입사자목록] 배치 API 완료:', batchResults.size, '명');
+            } catch (e) {
+                console.error('[입사자목록] 배치 API 오류, 개별 처리로 전환:', e);
+            }
+        }
+        
         // 4. 선택된 컬럼 확인
         const selectedColumns = getSelectedNewEmployeeColumns();
         
@@ -420,12 +437,12 @@ async function generateNewEmployeeList() {
         });
         headerHTML += '</tr>';
         
-        // 7. 테이블 데이터 생성 (⭐ v4.0.0: async/await 지원)
+        // 7. 테이블 데이터 생성 (⭐ v6.0.0: 배치 API 결과 전달)
         const rowsArray = [];
         for (let index = 0; index < newEmployees.length; index++) {
             const emp = newEmployees[index];
             try {
-                const rowData = await buildNewEmployeeRowData(emp, index, endDate);
+                const rowData = await buildNewEmployeeRowData(emp, index, endDate, batchResults);
                 
                 let rowHTML = '<tr>';
                 selectedColumns.forEach(colKey => {
@@ -511,6 +528,7 @@ async function generateNewEmployeeList() {
  * @param {Object} emp - 직원 객체
  * @param {number} index - 행 인덱스 (0부터 시작)
  * @param {string} periodEndDate - 검색 기간 종료일 (YYYY-MM-DD)
+ * @param {Map} batchResults - 배치 API 결과 (v6.0.0)
  * @returns {Object} 행 데이터 객체
  * 
  * @description
@@ -521,9 +539,9 @@ async function generateNewEmployeeList() {
  * - 직원유틸_인사 사용하여 중복 코드 제거
  * 
  * @example
- * const rowData = await buildNewEmployeeRowData(employee, 0, '2024-11-05');
+ * const rowData = await buildNewEmployeeRowData(employee, 0, '2024-11-05', batchResults);
  */
-async function buildNewEmployeeRowData(emp, index, periodEndDate) {
+async function buildNewEmployeeRowData(emp, index, periodEndDate, batchResults = new Map()) {
     try {
         // ✅ 직원유틸 사용
         const name = typeof 직원유틸_인사 !== 'undefined'
@@ -579,21 +597,22 @@ async function buildNewEmployeeRowData(emp, index, periodEndDate) {
         
         if (isRankBased) {
             try {
-                // ⭐ v5.0.0: 직원유틸의 동적 호봉 계산 함수 사용 (인정율 반영) - await 추가
-                if (typeof 직원유틸_인사 !== 'undefined' && typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-                    const rankInfo = await 직원유틸_인사.getDynamicRankInfo(emp, baseDate);
-                    startRankDisplay = rankInfo.startRank + '호봉';
-                    currentRankDisplay = rankInfo.currentRank + '호봉';
+                // ⭐ v6.0.0: 배치 결과에서 호봉 가져오기 (개별 API 호출 제거)
+                const batchResult = batchResults.get(emp.id);
+                if (batchResult && batchResult.currentRank !== undefined) {
+                    const startRank = emp.rank?.startRank || 1;
+                    startRankDisplay = startRank + '호봉';
+                    currentRankDisplay = batchResult.currentRank + '호봉';
                 } else {
-                    // ⭐ v4.0.0: Fallback - API 우선 사용
+                    // 배치에 없으면 로컬 계산 (fallback)
                     const startRank = emp.rank?.startRank || 1;
                     startRankDisplay = startRank + '호봉';
                     
                     let currentRank;
-                    if (typeof API_인사 !== 'undefined') {
-                        currentRank = await API_인사.calculateCurrentRank(startRank, emp.rank.firstUpgradeDate, baseDate);
-                    } else {
+                    if (typeof RankCalculator !== 'undefined' && emp.rank?.firstUpgradeDate) {
                         currentRank = RankCalculator.calculateCurrentRank(startRank, emp.rank.firstUpgradeDate, baseDate);
+                    } else {
+                        currentRank = startRank;
                     }
                     currentRankDisplay = currentRank + '호봉';
                 }
@@ -613,14 +632,20 @@ async function buildNewEmployeeRowData(emp, index, periodEndDate) {
         let tenure = '-';
         if (entryDate && entryDate !== '-' && baseDate && baseDate !== '-') {
             try {
-                // ⭐ v4.0.0: API 우선 사용
+                // ⭐ v6.0.0: 배치 결과에서 근속기간 가져오기
+                const batchResult = batchResults.get(emp.id);
                 let tenureObj;
-                if (typeof API_인사 !== 'undefined') {
-                    tenureObj = await API_인사.calculateTenure(entryDate, baseDate);
-                } else {
+                
+                if (batchResult && batchResult.tenure) {
+                    tenureObj = batchResult.tenure;
+                } else if (typeof TenureCalculator !== 'undefined') {
+                    // 배치에 없으면 로컬 계산 (fallback)
                     tenureObj = TenureCalculator.calculate(entryDate, baseDate);
                 }
-                tenure = TenureCalculator.format(tenureObj);
+                
+                if (tenureObj && typeof TenureCalculator !== 'undefined') {
+                    tenure = TenureCalculator.format(tenureObj);
+                }
             } catch (e) {
                 로거_인사?.error('근속기간 계산 오류', { 
                     employee: emp.uniqueCode, 

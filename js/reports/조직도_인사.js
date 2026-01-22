@@ -9,11 +9,16 @@
  * - 직종별/직위별 인원 현황표
  * - 인쇄 / 엑셀 다운로드
  * 
- * @version 5.0.0
+ * @version 6.0.0
  * @since 2025-11-27
  * 
  * [변경 이력]
- * v5.0.0 (2026-01-22) ⭐ API 전용 버전
+ * v6.0.0 (2026-01-22) ⭐ 배치 API 적용 - 성능 최적화
+ *   - 개별 API 호출 → 배치 API (calculateBatchForEmployees)
+ *   - N회 API 호출 → 1회로 감소
+ *   - 로딩 시간 대폭 단축
+ * 
+ * v5.0.0 (2026-01-22) API 전용 버전
  *   - 직원유틸_인사.getDynamicRankInfo() await 추가
  *   - 모든 계산 로직 서버 API로 이동
  * 
@@ -620,39 +625,52 @@ async function getEmployeesAtDate(baseDate) {
     // ⭐ v1.0.1: db.getEmployeesAtDate() 사용 (코드 중복 제거)
     const baseDateStr = DateUtils.formatDate(baseDate);
     const employees = db.getEmployeesAtDate(baseDateStr);
+    
+    // ⭐ v6.0.0: 배치 API로 전체 직원 한 번에 계산 (성능 최적화)
+    let batchResults = new Map();
+    if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
+        try {
+            // 호봉제 직원만 필터링 (배치 계산 대상)
+            const rankBasedEmployees = employees.filter(emp => 
+                emp.rank?.isRankBased !== false && emp.rank?.startRank && emp.rank?.firstUpgradeDate
+            );
+            
+            if (rankBasedEmployees.length > 0) {
+                console.log('[조직도] 배치 API 시작:', rankBasedEmployees.length, '명');
+                batchResults = await API_인사.calculateBatchForEmployees(rankBasedEmployees, baseDateStr);
+                console.log('[조직도] 배치 API 완료:', batchResults.size, '명');
+            }
+        } catch (e) {
+            console.error('[조직도] 배치 API 오류, 로컬 계산으로 전환:', e);
+        }
+    }
+    
     const result = [];
     
-    // ⭐ v4.0.0: forEach → for...of (async/await 지원)
     for (const emp of employees) {
         // 기준일 기준 발령 정보 가져오기
         const assignmentInfo = getAssignmentAtDate(emp, baseDate);
         
-        // ⭐ v5.0.0: 기준일 기준 호봉 동적 계산 (인정율 반영) - await 추가
+        // ⭐ v6.0.0: 배치 결과에서 호봉 가져오기 (개별 API 호출 제거)
         let currentRank = null;
         if (emp.rank?.isRankBased !== false && emp.rank?.startRank) {
-            try {
-                // 직원유틸의 동적 호봉 계산 함수 사용
-                if (typeof 직원유틸_인사 !== 'undefined' && typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-                    const rankInfo = await 직원유틸_인사.getDynamicRankInfo(emp, DateUtils.formatDate(baseDate));
-                    currentRank = rankInfo.currentRank;
-                } else if (emp.rank?.firstUpgradeDate) {
-                    // ⭐ v4.0.0: fallback - API 우선 사용
-                    if (typeof API_인사 !== 'undefined') {
-                        currentRank = await API_인사.calculateCurrentRank(
-                            emp.rank.startRank,
-                            emp.rank.firstUpgradeDate,
-                            DateUtils.formatDate(baseDate)
-                        );
-                    } else {
+            // 1. 배치 결과에서 조회
+            const batchResult = batchResults.get(emp.id);
+            if (batchResult && batchResult.currentRank !== undefined) {
+                currentRank = batchResult.currentRank;
+            } else if (emp.rank?.firstUpgradeDate) {
+                // 2. 배치에 없으면 로컬 계산 (fallback)
+                try {
+                    if (typeof RankCalculator !== 'undefined') {
                         currentRank = RankCalculator.calculateCurrentRank(
                             emp.rank.startRank,
                             emp.rank.firstUpgradeDate,
-                            DateUtils.formatDate(baseDate)
+                            baseDateStr
                         );
                     }
+                } catch (e) {
+                    // 호봉 계산 실패 시 무시
                 }
-            } catch (e) {
-                // 호봉 계산 실패 시 무시
             }
         }
         
