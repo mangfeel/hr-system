@@ -10,11 +10,17 @@
  * - 엑셀 다운로드
  * - 연속근무자 최초 입사일 적용 ⭐ v3.1.2
  * 
- * @version 4.0.0
+ * @version 6.0.0
  * @since 2024-11-05
  * 
  * [변경 이력]
- * v4.0.0 (2026-01-21) ⭐ API 연동 버전
+ * v6.0.0 (2026-01-22) ⭐ 배치 API 최적화
+ *   - 호봉 계산: 배치 API 사용 (API ~100회 → 1회)
+ *   - 근속기간: 로컬 계산 사용 (단순 계산, 보호 불필요)
+ *   - 과거경력 없는 직원: 배치 캐시 활용
+ *   - 과거경력 있는 직원: 개별 API 유지 (동적 계산)
+ *
+ * v4.0.0 (2026-01-21) API 연동 버전
  *   - generateRegister(), buildRowData() 비동기 처리
  *   - 호봉/근속기간 계산 API 우선 사용
  *   - 서버 API로 계산 로직 보호
@@ -73,6 +79,10 @@
  * - 에러처리_인사.js (에러처리_인사) - 선택
  * - XLSX (SheetJS) - 엑셀 다운로드
  */
+
+// ===== v6.0.0: 배치 API 캐시 =====
+let _registerBatchCache = new Map();
+let _registerBatchCacheDate = null;
 
 // ===== 컬럼 정의 (33개) =====
 
@@ -442,6 +452,39 @@ async function generateRegister() {
             });
         }
         
+        // ⭐ v6.0.0: 배치 API로 호봉 계산 (성능 최적화)
+        if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
+            try {
+                // 기준일이 변경되었으면 캐시 초기화
+                if (_registerBatchCacheDate !== baseDate) {
+                    _registerBatchCache = new Map();
+                    _registerBatchCacheDate = baseDate;
+                }
+                
+                // 호봉제 직원 중 캐시에 없는 직원 필터링
+                const uncachedEmployees = filteredEmployees.filter(emp => {
+                    const hasStoredRankInfo = emp.rank?.startRank && emp.rank?.firstUpgradeDate;
+                    const isRankBased = emp.rank?.isRankBased !== false && hasStoredRankInfo;
+                    return isRankBased && !_registerBatchCache.has(emp.id);
+                });
+                
+                if (uncachedEmployees.length > 0) {
+                    console.log('[연명부] 배치 API 시작:', uncachedEmployees.length, '명');
+                    const batchResults = await API_인사.calculateBatchForEmployees(uncachedEmployees, baseDate);
+                    
+                    // 결과를 캐시에 저장
+                    batchResults.forEach((value, key) => {
+                        _registerBatchCache.set(key, value);
+                    });
+                    console.log('[연명부] 배치 API 완료:', batchResults.size, '명');
+                } else {
+                    console.log('[연명부] 배치 캐시 사용');
+                }
+            } catch (e) {
+                console.error('[연명부] 배치 API 오류:', e);
+            }
+        }
+        
         // 3. 선택된 컬럼 확인
         const selectedColumns = getSelectedColumns();
         
@@ -662,16 +705,23 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
                     startRankDisplay = storedStartRank;
                     firstUpgradeDate = storedFirstUpgrade;
                     
-                    // ✅ v4.0.0: API 우선 사용
-                    let currentRank;
-                    if (typeof API_인사 !== 'undefined') {
-                        currentRank = await API_인사.calculateCurrentRank(storedStartRank, storedFirstUpgrade, baseDate);
+                    // ✅ v6.0.0: 배치 캐시 우선 사용
+                    const cached = _registerBatchCache.get(emp.id);
+                    if (cached && cached.currentRank !== undefined) {
+                        // 캐시에서 가져오기
+                        currentRankDisplay = `${cached.currentRank}호봉`;
+                        nextUpgrade = cached.nextUpgradeDate || '-';
+                    } else if (typeof API_인사 !== 'undefined') {
+                        // 캐시 미스 시 개별 API 호출 (드문 경우)
+                        let currentRank = await API_인사.calculateCurrentRank(storedStartRank, storedFirstUpgrade, baseDate);
                         nextUpgrade = await API_인사.calculateNextUpgradeDate(storedFirstUpgrade, baseDate);
+                        currentRankDisplay = `${currentRank}호봉`;
                     } else {
-                        currentRank = RankCalculator.calculateCurrentRank(storedStartRank, storedFirstUpgrade, baseDate);
+                        // Fallback: 로컬 계산
+                        let currentRank = RankCalculator.calculateCurrentRank(storedStartRank, storedFirstUpgrade, baseDate);
                         nextUpgrade = RankCalculator.calculateNextUpgradeDate(storedFirstUpgrade, baseDate);
+                        currentRankDisplay = `${currentRank}호봉`;
                     }
-                    currentRankDisplay = `${currentRank}호봉`;
                     
                 } else {
                     // ⭐ v3.1.0: 과거경력이 있으면 동적 재계산
@@ -687,13 +737,8 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
                         const allFullRate = internalResult.details.every(d => d.rate === 100);
                         
                         if (!allFullRate) {
-                            // 2. 원본 재직일수 - ✅ v4.0.0: API 우선 사용
-                            let originalPeriod;
-                            if (typeof API_인사 !== 'undefined') {
-                                originalPeriod = await API_인사.calculateTenure(entryDateForRank, baseDate);
-                            } else {
-                                originalPeriod = TenureCalculator.calculate(entryDateForRank, baseDate);
-                            }
+                            // 2. 원본 재직일수 - ✅ v6.0.0: 로컬 계산 (단순 계산)
+                            const originalPeriod = TenureCalculator.calculate(entryDateForRank, baseDate);
                             const originalDays = originalPeriod.years * 365 + originalPeriod.months * 30 + originalPeriod.days;
                             
                             // 3. 손실 일수 = 원본 - 조정
@@ -781,16 +826,11 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
             }
         }
         
-        // 근속기간 (기준일 기준) - ✅ v4.0.0: API 우선 사용
+        // 근속기간 (기준일 기준) - ✅ v6.0.0: 로컬 계산 (단순 계산)
         let tenure = '-';
         if (entryDate && entryDate !== '-') {
             try {
-                let tenureObj;
-                if (typeof API_인사 !== 'undefined') {
-                    tenureObj = await API_인사.calculateTenure(entryDate, baseDate);
-                } else {
-                    tenureObj = TenureCalculator.calculate(entryDate, baseDate);
-                }
+                const tenureObj = TenureCalculator.calculate(entryDate, baseDate);
                 tenure = TenureCalculator.format(tenureObj);
             } catch (e) {
                 로거_인사?.error('근속기간 계산 오류', { 
