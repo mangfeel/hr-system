@@ -21,7 +21,6 @@
  * [변경 이력]
  * v4.1.0 (2026-01-22) ⭐ 검증/경력환산 API 연동
  *   - Validator.validateAssignmentDate → API_인사.validateAssignment
- *   - Validator.isDateInValidRange → API_인사.validateDate
  *   - TenureCalculator.calculate → API_인사.calculateTenure
  *   - CareerCalculator.applyConversionRate → API_인사.applyConversionRate
  *   - forEach → for...of (async/await 지원)
@@ -533,20 +532,8 @@ async function saveAssignment() {
             return;
         }
         
-        // ✅ v4.1.0: 날짜 범위 검증 - API 우선 사용
-        let dateValid = true;
-        if (typeof API_인사 !== 'undefined') {
-            try {
-                const dateValidation = await API_인사.validateDate(formData.assignmentDate);
-                dateValid = dateValidation.valid;
-            } catch (apiError) {
-                dateValid = Validator.isDateInValidRange(formData.assignmentDate);
-            }
-        } else {
-            dateValid = Validator.isDateInValidRange(formData.assignmentDate);
-        }
-        
-        if (!dateValid) {
+        // ✅ v4.1.0: 날짜 범위 검증 - 로컬 사용 (단순 체크)
+        if (!Validator.isDateInValidRange(formData.assignmentDate)) {
             로거_인사?.warn('발령일이 유효 범위를 벗어남', { date: formData.assignmentDate });
             
             if (typeof 에러처리_인사 !== 'undefined') {
@@ -1055,20 +1042,8 @@ async function saveAssignmentEdit() {
             return;
         }
         
-        // ✅ v4.1.0: 날짜 범위 검증 - API 우선 사용
-        let dateValid = true;
-        if (typeof API_인사 !== 'undefined') {
-            try {
-                const dateValidation = await API_인사.validateDate(formData.newStartDate);
-                dateValid = dateValidation.valid;
-            } catch (apiError) {
-                dateValid = Validator.isDateInValidRange(formData.newStartDate);
-            }
-        } else {
-            dateValid = Validator.isDateInValidRange(formData.newStartDate);
-        }
-        
-        if (!dateValid) {
+        // ✅ v4.1.0: 날짜 범위 검증 - 로컬 사용 (단순 체크)
+        if (!Validator.isDateInValidRange(formData.newStartDate)) {
             로거_인사?.warn('발령일이 유효 범위를 벗어남', { date: formData.newStartDate });
             
             if (typeof 에러처리_인사 !== 'undefined') {
