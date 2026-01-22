@@ -10,10 +10,16 @@
  * - 주당근무시간 관리 ⭐ v3.0.9 추가
  * - 발령별 이전 경력 인정율 반영 ⭐ v3.1.0 추가
  * 
- * @version 4.0.0
+ * @version 4.1.0
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v4.1.0 (2026-01-22) ⭐ 경력 환산 API 연동
+ *   - _collectEditCareerData() async 변경
+ *   - TenureCalculator.calculate → API_인사.calculateTenure
+ *   - CareerCalculator.applyConversionRate → API_인사.applyConversionRate
+ *   - 서버 API로 경력 환산 로직 보호
+ * 
  * v4.0.0 (2026-01-21) ⭐ API 연동 버전
  *   - recalculateCareer() 비동기 처리
  *   - _recalculateRank() API 호출로 호봉 계산
@@ -415,9 +421,10 @@ async function recalculateCareer() {
         }
         
         // 🔥 v3.0.5: 경력 데이터 수집 (에러 처리 강화)
+        // ⭐ v4.1.0: async 함수로 변경됨
         let careerResult;
         try {
-            careerResult = _collectEditCareerData();
+            careerResult = await _collectEditCareerData();
         } catch (error) {
             로거_인사?.error('경력 데이터 수집 중 오류', error);
             
@@ -839,7 +846,7 @@ function _validateForRecalculation(emp) {
  * @returns {Object} 경력 데이터
  * @throws {Error} 날짜 오류, 중복 경력 오류
  */
-function _collectEditCareerData() {
+async function _collectEditCareerData() {
     let totalYears = 0;
     let totalMonths = 0;
     let totalDays = 0;
@@ -863,12 +870,14 @@ function _collectEditCareerData() {
     const careerForms = careerContainer.querySelectorAll('[id^="editCareer-"]');
     로거_인사?.debug('경력 폼 요소 발견', { count: careerForms.length });
     
-    careerForms.forEach((form, index) => {
+    // ⭐ v4.1.0: forEach → for...of 변경 (async/await 지원)
+    for (const form of careerForms) {
         // ID에서 번호 추출 (editCareer-1 → 1)
         const match = form.id.match(/editCareer-(\d+)/);
-        if (!match) return;
+        if (!match) continue;
         
         const i = parseInt(match[1]);
+        const index = careerDetails.length; // 현재 인덱스
         
         const careerName = document.getElementById(`editCareerName-${i}`)?.value || '';
         const startDate = document.getElementById(`editCareerStartDate-${i}`)?.value || '';
@@ -881,7 +890,7 @@ function _collectEditCareerData() {
         if (workingHours < 1) workingHours = 1;
         
         // 날짜가 모두 입력된 경우만 처리
-        if (!startDate || !endDate) return;
+        if (!startDate || !endDate) continue;
         
         // 🔥 v3.0.5: 날짜 유효성 검증
         if (startDate > endDate) {
@@ -901,33 +910,56 @@ function _collectEditCareerData() {
             }
         }
         
-        // 기간 계산
+        // ⭐ v4.1.0: 기간 계산 - API 우선, fallback 로컬
         let period;
         try {
-            period = TenureCalculator.calculate(startDate, endDate);
+            if (typeof API_인사 !== 'undefined') {
+                period = await API_인사.calculateTenure(startDate, endDate);
+                로거_인사?.debug('기간 계산 (API)', { startDate, endDate, period });
+            } else {
+                period = TenureCalculator.calculate(startDate, endDate);
+                로거_인사?.debug('기간 계산 (로컬)', { startDate, endDate, period });
+            }
         } catch (error) {
             로거_인사?.error('경력 기간 계산 오류', { i, startDate, endDate, error });
             throw new Error(`경력 ${index + 1}: 기간 계산 중 오류가 발생했습니다.\n${error.message}`);
         }
         
-        // ⭐ v3.0.10: 1단계 - 인정률 적용
-        const rateConverted = CareerCalculator.applyConversionRate(period, rate);
+        // ⭐ v4.1.0: 1단계 - 인정률 적용 (API 우선)
+        let rateConverted;
+        if (typeof API_인사 !== 'undefined') {
+            rateConverted = await API_인사.applyConversionRate(period, rate);
+            로거_인사?.debug('인정률 적용 (API)', { rate, rateConverted });
+        } else {
+            rateConverted = CareerCalculator.applyConversionRate(period, rate);
+            로거_인사?.debug('인정률 적용 (로컬)', { rate, rateConverted });
+        }
         
-        // ⭐ v3.0.10: 2단계 - 주당근무시간 비율 적용 (40시간 기준)
+        // ⭐ v4.1.0: 2단계 - 주당근무시간 비율 적용 (API 우선)
         // 예: 20시간이면 50% 적용
         const workingHoursRate = (workingHours / 40) * 100;
-        const converted = CareerCalculator.applyConversionRate(rateConverted, workingHoursRate);
+        let converted;
+        if (typeof API_인사 !== 'undefined') {
+            converted = await API_인사.applyConversionRate(rateConverted, workingHoursRate);
+            로거_인사?.debug('근무시간 적용 (API)', { workingHoursRate, converted });
+        } else {
+            converted = CareerCalculator.applyConversionRate(rateConverted, workingHoursRate);
+            로거_인사?.debug('근무시간 적용 (로컬)', { workingHoursRate, converted });
+        }
         
         // ✅ 경력명이 비어있으면 기본값 사용
         const finalCareerName = careerName || `경력 ${index + 1}`;
         
+        // 기간 포맷팅 (로컬 - 단순 문자열 변환)
+        const formatPeriod = (p) => `${p.years}년 ${p.months}개월 ${p.days}일`;
+        
         로거_인사?.debug('경력 환산 완료', {
             career: finalCareerName,
-            실제기간: TenureCalculator.format(period),
+            실제기간: formatPeriod(period),
             인정률: `${rate}%`,
-            인정률적용후: TenureCalculator.format(rateConverted),
+            인정률적용후: formatPeriod(rateConverted),
             주당근무: `${workingHours}시간 (${workingHoursRate.toFixed(1)}%)`,
-            최종환산: TenureCalculator.format(converted)
+            최종환산: formatPeriod(converted)
         });
         
         totalYears += converted.years;
@@ -938,10 +970,10 @@ function _collectEditCareerData() {
             name: finalCareerName,
             startDate,
             endDate,
-            period: TenureCalculator.format(period),
+            period: formatPeriod(period),
             rate: `${rate}%`,
             workingHours: workingHours,
-            converted: TenureCalculator.format(converted)  // ⭐ 최종 환산 결과
+            converted: formatPeriod(converted)  // ⭐ 최종 환산 결과
         });
         
         // 🔥 v3.0.5: 중복 검증용 기간 저장
@@ -950,7 +982,7 @@ function _collectEditCareerData() {
             startDate,
             endDate
         });
-    });
+    }
     
     // 날짜 정규화
     if (totalDays >= 30) {
