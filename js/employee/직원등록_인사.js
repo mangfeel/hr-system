@@ -416,7 +416,7 @@ async function calculateAndSave() {
         if (typeof API_인사 !== 'undefined') {
             try {
                 // 중복 검증을 위한 기존 코드 목록 수집
-                const employees = db.getAllEmployees() || [];
+                const employees = db.data?.employees || [];
                 const existingNumbers = employees
                     .filter(e => e.employeeNumber)
                     .map(e => e.employeeNumber);
