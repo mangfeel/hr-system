@@ -13,7 +13,7 @@
     "type": "git",
     "url": "https://github.com/mangfeel/hr-system.git"
   },
-  "author": "김화겸",
+  "author": "SW HRM",
   "license": "UNLICENSED",
   "private": true,
   "devDependencies": {
@@ -50,8 +50,7 @@
       "icon": "assets/icon.ico"
     },
     "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
+      "oneClick": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "인사관리시스템"
