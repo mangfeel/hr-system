@@ -4,19 +4,17 @@
  * 렌더러 프로세스와 메인 프로세스 간의 안전한 통신을 위한 브릿지
  * - contextBridge를 통해 안전한 API만 노출
  * - Node.js 직접 접근 차단
- * - electron-store 접근 API 제공
  * 
  * @version 2.0.0
  * @since 2026-01-23
  * 
  * [변경 이력]
- * v2.0.0 (2026-01-23) - 3단계: 로컬 데이터 저장 전환
- *   - store.get, store.set, store.delete 추가
- *   - store.getAll, store.clear 추가
- *   - store.getPath 추가
+ * v2.0.0 (2026-01-23) - 7단계: 자동 업데이트 API 추가
+ *   - checkForUpdates, downloadUpdate, installUpdate
+ *   - getAppVersion
+ *   - onUpdateStatus 이벤트 리스너
  * 
  * v1.0.0 (2026-01-23) - 1단계: 기본 설정
- *   - 기본 API (앱 정보, 페이지 이동, 다이얼로그, 파일 시스템)
  */
 
 const { contextBridge, ipcRenderer } = require('electron');
@@ -27,64 +25,57 @@ const { contextBridge, ipcRenderer } = require('electron');
  */
 contextBridge.exposeInMainWorld('electronAPI', {
     
-    // ===== electron-store (데이터 저장) =====
-    
-    /**
-     * 데이터 저장
-     * @param {string} key - 저장 키
-     * @param {any} value - 저장할 값
-     * @returns {Promise<Object>} { success, error? }
-     * 
-     * @example
-     * await electronAPI.store.set('hr_system_v25_db', data);
-     */
-    store: {
-        set: (key, value) => ipcRenderer.invoke('store-set', key, value),
-        
-        /**
-         * 데이터 불러오기
-         * @param {string} key - 조회 키
-         * @returns {Promise<Object>} { success, data?, error? }
-         * 
-         * @example
-         * const result = await electronAPI.store.get('hr_system_v25_db');
-         * if (result.success) console.log(result.data);
-         */
-        get: (key) => ipcRenderer.invoke('store-get', key),
-        
-        /**
-         * 데이터 삭제
-         * @param {string} key - 삭제할 키
-         * @returns {Promise<Object>} { success, error? }
-         */
-        delete: (key) => ipcRenderer.invoke('store-delete', key),
-        
-        /**
-         * 전체 데이터 불러오기
-         * @returns {Promise<Object>} { success, data?, error? }
-         */
-        getAll: () => ipcRenderer.invoke('store-get-all'),
-        
-        /**
-         * 전체 데이터 초기화
-         * @returns {Promise<Object>} { success, error? }
-         */
-        clear: () => ipcRenderer.invoke('store-clear'),
-        
-        /**
-         * 저장소 경로 조회
-         * @returns {Promise<Object>} { success, path, userData }
-         */
-        getPath: () => ipcRenderer.invoke('store-get-path')
-    },
-    
     // ===== 앱 정보 =====
     
     /**
      * 앱 정보 조회
-     * @returns {Promise<Object>} { version, name, path, userData, storePath, isDev }
+     * @returns {Promise<Object>} { version, name, path, userData, isDev }
      */
     getAppInfo: () => ipcRenderer.invoke('get-app-info'),
+    
+    /**
+     * 앱 버전 조회
+     * @returns {Promise<Object>} { version, isDev }
+     */
+    getAppVersion: () => ipcRenderer.invoke('get-app-version'),
+    
+    // ===== 자동 업데이트 =====
+    
+    /**
+     * 업데이트 확인
+     * @returns {Promise<Object>} { success, message? }
+     */
+    checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+    
+    /**
+     * 업데이트 다운로드
+     * @returns {Promise<Object>} { success, message? }
+     */
+    downloadUpdate: () => ipcRenderer.invoke('download-update'),
+    
+    /**
+     * 업데이트 설치 (앱 재시작)
+     */
+    installUpdate: () => ipcRenderer.invoke('install-update'),
+    
+    /**
+     * 업데이트 상태 이벤트 리스너
+     * @param {Function} callback - 상태 변경 시 호출될 콜백
+     *   callback({ status, data }) 
+     *   status: 'checking' | 'available' | 'not-available' | 'downloading' | 'downloaded' | 'error'
+     */
+    onUpdateStatus: (callback) => {
+        ipcRenderer.on('update-status', (event, info) => {
+            callback(info);
+        });
+    },
+    
+    /**
+     * 업데이트 상태 이벤트 리스너 제거
+     */
+    removeUpdateListeners: () => {
+        ipcRenderer.removeAllListeners('update-status');
+    },
     
     // ===== 페이지 이동 =====
     
@@ -152,10 +143,23 @@ contextBridge.exposeInMainWorld('electronAPI', {
 });
 
 /**
+ * electron-store API
+ * window.electronStore 로 접근 가능
+ */
+contextBridge.exposeInMainWorld('electronStore', {
+    get: (key) => ipcRenderer.invoke('store-get', key),
+    set: (key, value) => ipcRenderer.invoke('store-set', key, value),
+    delete: (key) => ipcRenderer.invoke('store-delete', key),
+    getAll: () => ipcRenderer.invoke('store-get-all'),
+    clear: () => ipcRenderer.invoke('store-clear'),
+    getPath: () => ipcRenderer.invoke('store-get-path')
+});
+
+/**
  * 렌더러에서 Electron 환경 확인용
  * window.isElectron 으로 접근 가능
  */
 contextBridge.exposeInMainWorld('isElectron', true);
 
 console.log('[Preload] preload.js 로드 완료 (v2.0.0)');
-console.log('[Preload] electronAPI 노출됨 (store 포함)');
+console.log('[Preload] electronAPI, electronStore 노출됨');

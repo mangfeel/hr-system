@@ -5,12 +5,17 @@
  * - 앱 윈도우 생성 및 관리
  * - IPC 통신 핸들러
  * - electron-store 기반 데이터 저장
- * - 자동 업데이트 (향후)
+ * - 자동 업데이트
  * 
- * @version 2.0.0
+ * @version 3.0.0
  * @since 2026-01-23
  * 
  * [변경 이력]
+ * v3.0.0 (2026-01-23) - 7단계: 자동 업데이트 추가
+ *   - electron-updater 연동
+ *   - 업데이트 확인/다운로드/설치 기능
+ *   - 업데이트 상태 IPC 핸들러 추가
+ * 
  * v2.0.0 (2026-01-23) - 3단계: 로컬 데이터 저장 전환
  *   - electron-store 추가
  *   - store-get, store-set, store-delete IPC 핸들러 추가
@@ -52,6 +57,20 @@ const store = new Store({
 
 console.log('[Main] electron-store 경로:', store.path);
 
+// ===== 자동 업데이트 설정 =====
+
+const { autoUpdater } = require('electron-updater');
+
+// 업데이트 로그 설정
+autoUpdater.logger = require('electron-log');
+autoUpdater.logger.transports.file.level = 'info';
+
+// 자동 다운로드 비활성화 (사용자 확인 후 다운로드)
+autoUpdater.autoDownload = false;
+
+// 자동 설치 비활성화 (사용자 확인 후 설치)
+autoUpdater.autoInstallOnAppQuit = true;
+
 // ===== 전역 변수 =====
 
 /** @type {BrowserWindow} 메인 윈도우 */
@@ -59,6 +78,9 @@ let mainWindow = null;
 
 /** @type {boolean} 개발 모드 여부 */
 const isDev = !app.isPackaged;
+
+/** @type {Object} 업데이트 정보 */
+let updateInfo = null;
 
 // ===== 윈도우 생성 =====
 
@@ -96,6 +118,13 @@ function createWindow() {
         if (isDev) {
             mainWindow.webContents.openDevTools();
         }
+        
+        // 프로덕션 모드에서만 업데이트 확인
+        if (!isDev) {
+            setTimeout(() => {
+                checkForUpdates();
+            }, 3000);  // 앱 로드 후 3초 뒤 업데이트 확인
+        }
     });
 
     // 윈도우 닫힘 이벤트
@@ -116,11 +145,111 @@ function createWindow() {
     console.log('[Main] 윈도우 생성 완료');
 }
 
+// ===== 자동 업데이트 함수 =====
+
+/**
+ * 업데이트 확인
+ */
+function checkForUpdates() {
+    console.log('[Updater] 업데이트 확인 시작...');
+    autoUpdater.checkForUpdates().catch(err => {
+        console.error('[Updater] 업데이트 확인 오류:', err);
+    });
+}
+
+// 업데이트 확인 중
+autoUpdater.on('checking-for-update', () => {
+    console.log('[Updater] 업데이트 확인 중...');
+    sendUpdateStatus('checking');
+});
+
+// 업데이트 있음
+autoUpdater.on('update-available', (info) => {
+    console.log('[Updater] 업데이트 발견:', info.version);
+    updateInfo = info;
+    sendUpdateStatus('available', info);
+    
+    // 사용자에게 업데이트 알림
+    dialog.showMessageBox(mainWindow, {
+        type: 'info',
+        title: '업데이트 알림',
+        message: `새 버전이 있습니다! (v${info.version})`,
+        detail: '지금 다운로드하시겠습니까?',
+        buttons: ['다운로드', '나중에'],
+        defaultId: 0
+    }).then(result => {
+        if (result.response === 0) {
+            // 다운로드 시작
+            autoUpdater.downloadUpdate();
+        }
+    });
+});
+
+// 업데이트 없음
+autoUpdater.on('update-not-available', (info) => {
+    console.log('[Updater] 최신 버전입니다.');
+    sendUpdateStatus('not-available', info);
+});
+
+// 다운로드 진행률
+autoUpdater.on('download-progress', (progress) => {
+    const percent = Math.round(progress.percent);
+    console.log(`[Updater] 다운로드 중... ${percent}%`);
+    sendUpdateStatus('downloading', { percent });
+    
+    // 윈도우 타이틀에 진행률 표시
+    if (mainWindow) {
+        mainWindow.setTitle(`인사관리시스템 - 업데이트 다운로드 중 ${percent}%`);
+    }
+});
+
+// 다운로드 완료
+autoUpdater.on('update-downloaded', (info) => {
+    console.log('[Updater] 다운로드 완료:', info.version);
+    sendUpdateStatus('downloaded', info);
+    
+    // 윈도우 타이틀 복원
+    if (mainWindow) {
+        mainWindow.setTitle('인사관리시스템');
+    }
+    
+    // 사용자에게 재시작 알림
+    dialog.showMessageBox(mainWindow, {
+        type: 'info',
+        title: '업데이트 준비 완료',
+        message: '업데이트가 다운로드되었습니다.',
+        detail: '앱을 재시작하여 업데이트를 적용하시겠습니까?',
+        buttons: ['지금 재시작', '나중에'],
+        defaultId: 0
+    }).then(result => {
+        if (result.response === 0) {
+            // 재시작하여 업데이트 적용
+            autoUpdater.quitAndInstall();
+        }
+    });
+});
+
+// 업데이트 오류
+autoUpdater.on('error', (err) => {
+    console.error('[Updater] 오류:', err);
+    sendUpdateStatus('error', { message: err.message });
+});
+
+/**
+ * 렌더러 프로세스로 업데이트 상태 전송
+ */
+function sendUpdateStatus(status, data = null) {
+    if (mainWindow && mainWindow.webContents) {
+        mainWindow.webContents.send('update-status', { status, data });
+    }
+}
+
 // ===== 앱 이벤트 =====
 
 // 앱 준비 완료
 app.whenReady().then(() => {
     console.log('[Main] 앱 시작');
+    console.log('[Main] 앱 버전:', app.getVersion());
     console.log('[Main] 개발 모드:', isDev);
     console.log('[Main] 앱 경로:', app.getAppPath());
     console.log('[Main] 데이터 저장 경로:', app.getPath('userData'));
@@ -140,6 +269,47 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
+});
+
+// ===== IPC 핸들러: 자동 업데이트 =====
+
+/**
+ * 수동 업데이트 확인
+ */
+ipcMain.handle('check-for-updates', () => {
+    if (isDev) {
+        return { success: false, message: '개발 모드에서는 업데이트를 확인할 수 없습니다.' };
+    }
+    checkForUpdates();
+    return { success: true, message: '업데이트 확인 중...' };
+});
+
+/**
+ * 업데이트 다운로드
+ */
+ipcMain.handle('download-update', () => {
+    if (updateInfo) {
+        autoUpdater.downloadUpdate();
+        return { success: true };
+    }
+    return { success: false, message: '다운로드할 업데이트가 없습니다.' };
+});
+
+/**
+ * 업데이트 설치 (재시작)
+ */
+ipcMain.handle('install-update', () => {
+    autoUpdater.quitAndInstall();
+});
+
+/**
+ * 현재 앱 버전 조회
+ */
+ipcMain.handle('get-app-version', () => {
+    return {
+        version: app.getVersion(),
+        isDev: isDev
+    };
 });
 
 // ===== IPC 핸들러: electron-store (데이터 저장) =====
@@ -352,4 +522,4 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('[Main] Promise 거부:', reason);
 });
 
-console.log('[Main] main.js 로드 완료 (v2.0.0)');
+console.log('[Main] main.js 로드 완료 (v3.0.0)');
