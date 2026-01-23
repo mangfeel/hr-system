@@ -1,9 +1,467 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <meta http-equiv="refresh" content="0; url=login.html">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SW HRM - 인사관리시스템</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        /* 헤더 */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .version {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* 기능 섹션 */
+        .features {
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .features h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: #333;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .feature-card p {
+            font-size: 0.95rem;
+            color: #666;
+        }
+        
+        /* 데이터 보안 섹션 */
+        .security {
+            padding: 60px 20px;
+            background: #e8f5e9;
+        }
+        
+        .security h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #2e7d32;
+        }
+        
+        .security-box {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .security-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+        
+        .security-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .security-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .security-item h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .security-item p {
+            font-size: 0.95rem;
+            color: #666;
+        }
+        
+        .path-box {
+            background: #f5f5f5;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            word-break: break-all;
+        }
+        
+        /* 테스트 참여 안내 */
+        .beta {
+            background: #f8f9fa;
+            padding: 60px 20px;
+        }
+        
+        .beta h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .beta-box {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .beta-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .beta-box p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .beta-steps {
+            text-align: left;
+            margin: 30px 0;
+        }
+        
+        .beta-steps li {
+            padding: 10px 0;
+            font-size: 1rem;
+            color: #555;
+        }
+        
+        .beta-steps li strong {
+            color: #667eea;
+        }
+        
+        /* 개발자 메시지 */
+        .developer {
+            padding: 60px 20px;
+            background: #fff3e0;
+        }
+        
+        .developer h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #e65100;
+        }
+        
+        .developer-box {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .developer-box p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        
+        .developer-box ul {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+        
+        .developer-box li {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        /* 문의 섹션 */
+        .contact {
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .contact h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .contact p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .kakao-btn {
+            display: inline-block;
+            background: #FEE500;
+            color: #3C1E1E;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+        
+        .kakao-btn:hover {
+            transform: translateY(-3px);
+        }
+        
+        /* 푸터 */
+        footer {
+            background: #333;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        footer p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* 반응형 */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <script>window.location.href = 'login.html';</script>
+    <!-- 헤더 -->
+    <header>
+        <img src="https://raw.githubusercontent.com/mangfeel/hr-system/main/assets/icon.ico" alt="SW HRM 로고" class="logo" onerror="this.style.display='none'">
+        <h1>SW HRM</h1>
+        <p>사회복지시설을 위한 스마트 인사관리시스템</p>
+        <a href="https://github.com/mangfeel/hr-system/releases/download/v1.0.0/Setup.1.0.0.exe" class="download-btn">
+            ⬇️ 다운로드
+        </a>
+        <p class="version">v1.0.0 | Windows 10/11 지원</p>
+    </header>
+    
+    <!-- 기능 소개 -->
+    <section class="features">
+        <h2>✨ 주요 기능</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>직원 관리</h3>
+                <p>직원 정보 등록, 수정, 조회<br>인사카드 출력 지원</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>급여 관리</h3>
+                <p>호봉 자동 계산<br>통상임금, 초과근무수당 확인</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>통계 분석</h3>
+                <p>근속 현황, 입퇴사 분석<br>다양한 보고서 출력</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3>근로계약서</h3>
+                <p>근로계약서 자동 생성<br>PDF 출력 지원</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏆</div>
+                <h3>포상 관리</h3>
+                <p>포상 이력 관리<br>포상 현황 조회</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>데이터 보안</h3>
+                <p>로컬 데이터 암호화 저장<br>백업/복원 기능</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 데이터 보안 안내 -->
+    <section class="security">
+        <h2>🔐 데이터 저장 안내</h2>
+        <div class="security-box">
+            <div class="security-item">
+                <span class="security-icon">✅</span>
+                <div>
+                    <h3>서버에 저장되지 않습니다</h3>
+                    <p>직원 정보 등 모든 데이터는 <strong>절대 외부 서버에 저장되지 않습니다.</strong><br>개인정보 유출 걱정 없이 안심하고 사용하세요.</p>
+                </div>
+            </div>
+            <div class="security-item">
+                <span class="security-icon">💾</span>
+                <div>
+                    <h3>내 PC에만 저장됩니다</h3>
+                    <p>모든 데이터는 사용자 PC의 아래 경로에 저장됩니다.</p>
+                    <div class="path-box">C:\Users\[사용자이름]\AppData\Roaming\hr-system\</div>
+                </div>
+            </div>
+            <div class="security-item">
+                <span class="security-icon">⚠️</span>
+                <div>
+                    <h3>주기적인 백업을 권장합니다</h3>
+                    <p>PC 고장이나 포맷 시 데이터가 사라질 수 있습니다.<br>프로그램 내 <strong>[시스템 → 백업]</strong> 기능을 이용해 주기적으로 백업해 주세요.</p>
+                </div>
+            </div>
+            <div class="security-item">
+                <span class="security-icon">🔄</span>
+                <div>
+                    <h3>복원도 가능합니다</h3>
+                    <p>백업해둔 파일이 있다면 <strong>[시스템 → 복원]</strong> 기능으로 언제든 데이터를 복원할 수 있습니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 테스트 참여 안내 -->
+    <section class="beta">
+        <h2>🚀 테스트 참여 안내</h2>
+        <div class="beta-box">
+            <span class="beta-badge">Beta Test</span>
+            <p>현재 SW HRM은 정식 출시 전 테스트 단계입니다.</p>
+            <p>사회복지시설 인사관리 담당자분들의 테스트 참여와 소중한 의견을 기다립니다.</p>
+            
+            <ol class="beta-steps">
+                <li><strong>1단계</strong> - 프로그램 다운로드 및 설치</li>
+                <li><strong>2단계</strong> - 회원가입 후 승인 대기</li>
+                <li><strong>3단계</strong> - 승인 완료 시 라이선스 코드 발급</li>
+                <li><strong>4단계</strong> - 테스트 기간 동안 자유롭게 사용</li>
+            </ol>
+            
+            <p style="font-size: 0.95rem; color: #888;">테스트 기간 동안 무료로 모든 기능을 사용하실 수 있습니다.</p>
+        </div>
+    </section>
+    
+    <!-- 개발자 메시지 -->
+    <section class="developer">
+        <h2>📝 개발자로부터</h2>
+        <div class="developer-box">
+            <p>안녕하세요. SW HRM을 만들고 있는 개발자입니다.</p>
+            <p>솔직히 말씀드리면, 이 프로그램은 아직 많이 부족합니다.</p>
+            <ul>
+                <li>허접하게 만든 부분이 있을 수 있습니다.</li>
+                <li>예상치 못한 오류가 발생할 수 있습니다.</li>
+                <li>사용하시다가 불편한 점이 있을 수 있습니다.</li>
+            </ul>
+            <p>사용하시면서 불편한 점, 개선 의견, 오류 등이 있으시면 <strong>언제든 편하게 알려주세요.</strong> 최대한 반영하도록 하겠습니다.</p>
+            <p style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; color: #888;">
+                ※ 현재 추가적인 기능 개발은 계획하고 있지 않습니다.<br>
+                기존 기능의 안정화와 오류 수정에 집중하고 있습니다.
+            </p>
+        </div>
+    </section>
+    
+    <!-- 문의 섹션 -->
+    <section class="contact">
+        <h2>💬 문의 및 의견</h2>
+        <p>사용 방법에 대한 문의나 개선 의견을 남겨주세요!</p>
+        <a href="https://open.kakao.com/o/gdR0zUci" class="kakao-btn" target="_blank">
+            💬 카카오톡 오픈채팅
+        </a>
+    </section>
+    
+    <!-- 푸터 -->
+    <footer>
+        <p>© 2026 SW HRM. All rights reserved.</p>
+    </footer>
 </body>
 </html>
