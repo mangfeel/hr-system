@@ -8,11 +8,17 @@
  * - 엑셀 다운로드
  * - 인쇄 (A4 가로)
  * 
- * @version 2.3.0
+ * @version 3.0.0
  * @since 2025-12-11
  * @location js/labor/시간외근무_인사.js
  * 
  * [변경 이력]
+ * v3.0.0 (2026-01-22) ⭐ async API 연동 버전
+ *   - calculateOvertimePay() async로 변경
+ *   - generateOvertimeList() async로 변경
+ *   - onOvertimeHourChange() async로 변경
+ *   - SalaryCalculator.getEmployeeSalaryInfo() await 추가
+ *   - 급여계산기 v4.0.0 API 버전 호환
  * v2.3.0 - 시급 배율 적용 절사 시점 설정 반영 (2026-01-07)
  *   - 급여설정의 hourlyWageRounding.applyTiming 설정 반영
  *   - 'after' (기본값): 원시급 × 배율 → 절사
@@ -362,8 +368,9 @@ function deleteEmployeeOvertimeRecord(empId, year, month) {
  * @param {number} month - 월
  * @param {Object} hours - 유형별 시간 {extended1x: 2, extended15x: 10, ...}
  * @returns {Object} 계산 결과 {total, details, hourlyWage, baseSalary, ordinaryWage}
+ * @version 3.0.0 - async API 버전
  */
-function calculateOvertimePay(empId, year, month, hours) {
+async function calculateOvertimePay(empId, year, month, hours) {
     try {
         // 해당 월 기준일 (해당 월 말일)
         const lastDay = new Date(year, month, 0).getDate();
@@ -376,7 +383,8 @@ function calculateOvertimePay(empId, year, month, hours) {
         let ordinaryWage = 0;    // 통상임금
         
         if (typeof SalaryCalculator !== 'undefined' && SalaryCalculator.getEmployeeSalaryInfo) {
-            const salaryInfo = SalaryCalculator.getEmployeeSalaryInfo(empId, targetDate);
+            // ✅ v3.0.0: async API 버전
+            const salaryInfo = await SalaryCalculator.getEmployeeSalaryInfo(empId, targetDate);
             if (salaryInfo) {
                 // 기본급, 통상임금 저장
                 baseSalary = salaryInfo.baseSalary || 0;
@@ -612,8 +620,9 @@ function _generateOvertimeHTML() {
 
 /**
  * 시간외근무 목록 생성
+ * @version 3.0.0 - async API 버전
  */
-function generateOvertimeList() {
+async function generateOvertimeList() {
     try {
         const year = parseInt(document.getElementById('overtimeYear')?.value);
         const month = parseInt(document.getElementById('overtimeMonth')?.value);
@@ -667,9 +676,9 @@ function generateOvertimeList() {
         // 기존 시간외근무 기록 로드
         const monthRecords = getOvertimeRecordsByMonth(year, month);
         
-        // 직원별 데이터 생성
+        // 직원별 데이터 생성 - ✅ v3.0.0: async API 버전
         const enabledTypes = getEnabledOvertimeTypes();
-        _overtimeData = employees.map(emp => {
+        _overtimeData = await Promise.all(employees.map(async (emp) => {
             const record = monthRecords[emp.id] || {};
             const hours = {};
             enabledTypes.forEach(type => {
@@ -677,7 +686,7 @@ function generateOvertimeList() {
             });
             
             // 시간외수당 계산
-            const calculation = calculateOvertimePay(emp.id, year, month, hours);
+            const calculation = await calculateOvertimePay(emp.id, year, month, hours);
             
             return {
                 emp,
@@ -685,7 +694,7 @@ function generateOvertimeList() {
                 note: record.note || '',
                 calculation
             };
-        });
+        }));
         
         // 필터링된 데이터 초기화 (전체)
         _filteredOvertimeData = [..._overtimeData];
@@ -1002,8 +1011,9 @@ function _renderOvertimeTable(enabledTypes) {
 
 /**
  * 시간 변경 이벤트
+ * @version 3.0.0 - async API 버전
  */
-function onOvertimeHourChange(empId, typeCode, value) {
+async function onOvertimeHourChange(empId, typeCode, value) {
     const hours = parseInt(value) || 0;
     
     // 데이터 업데이트
@@ -1011,9 +1021,9 @@ function onOvertimeHourChange(empId, typeCode, value) {
     if (dataItem) {
         dataItem.hours[typeCode] = hours;
         
-        // 수당 재계산
+        // 수당 재계산 - ✅ v3.0.0: async API 버전
         const { year, month } = _overtimeSettings;
-        dataItem.calculation = calculateOvertimePay(empId, year, month, dataItem.hours);
+        dataItem.calculation = await calculateOvertimePay(empId, year, month, dataItem.hours);
         
         // 해당 행 업데이트
         _updateRowCalculation(empId, dataItem);

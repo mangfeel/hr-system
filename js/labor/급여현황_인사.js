@@ -9,11 +9,15 @@
  * - 엑셀 다운로드
  * - 인쇄 (A4 가로)
  * 
- * @version 1.9.0
+ * @version 2.0.0
  * @since 2025-12-02
  * @location js/labor/급여현황_인사.js
  * 
  * [변경 이력]
+ * v2.0.0 (2026-01-22) ⭐ async API 연동 버전
+ *   - generateSalaryStatus() async로 변경
+ *   - SalaryCalculator.getAllEmployeesSalaryInfo() await 추가
+ *   - 급여계산기 v4.0.0 API 버전 호환
  * v1.9.0 - 시급 배율 적용 절사 시점 설정 반영 (2026-01-07)
  *   - 급여설정의 hourlyWageRounding.applyTiming 설정 반영
  *   - 'after' (기본값): 원시급 × 배율 → 절사
@@ -416,8 +420,9 @@ function _generateSalaryStatusHTML() {
 
 /**
  * 급여 현황표 생성
+ * @version 2.0.0 - async API 버전
  */
-function generateSalaryStatus() {
+async function generateSalaryStatus() {
     try {
         로거_인사?.info('급여 현황표 생성 시작');
         
@@ -461,8 +466,8 @@ function generateSalaryStatus() {
             holidayBonusMethod, holidayBonusMonthlyRate
         };
         
-        // 전체 재직자 급여 정보 조회
-        let data = SalaryCalculator.getAllEmployeesSalaryInfo(targetDate);
+        // 전체 재직자 급여 정보 조회 - ✅ v2.0.0: async API 버전
+        let data = await SalaryCalculator.getAllEmployeesSalaryInfo(targetDate);
         
         if (!data || data.length === 0) {
             _renderNoData();
