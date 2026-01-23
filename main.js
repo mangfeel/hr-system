@@ -4,15 +4,53 @@
  * 인사관리시스템 데스크톱 앱의 메인 프로세스
  * - 앱 윈도우 생성 및 관리
  * - IPC 통신 핸들러
+ * - electron-store 기반 데이터 저장
  * - 자동 업데이트 (향후)
  * 
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2026-01-23
+ * 
+ * [변경 이력]
+ * v2.0.0 (2026-01-23) - 3단계: 로컬 데이터 저장 전환
+ *   - electron-store 추가
+ *   - store-get, store-set, store-delete IPC 핸들러 추가
+ *   - store-get-all, store-clear IPC 핸들러 추가
+ * 
+ * v1.0.0 (2026-01-23) - 1단계: 기본 설정
+ *   - 앱 윈도우 생성
+ *   - 기본 IPC 핸들러
  */
 
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
+
+// ===== electron-store 설정 =====
+
+const Store = require('electron-store');
+
+/**
+ * electron-store 인스턴스
+ * 데이터는 C:\Users\사용자\AppData\Roaming\hr-system\hr-system-data.json 에 저장됨
+ */
+const store = new Store({
+    name: 'hr-system-data',  // 파일명: hr-system-data.json
+    encryptionKey: 'hr-system-encryption-key-2026',  // 암호화 키
+    defaults: {
+        // 기본 데이터 구조 (데이터베이스_인사.js와 동일)
+        hr_system_v25_db: {
+            employees: [],
+            settings: {
+                organizationName: '조직명',
+                version: '3.0',
+                lastBackup: null,
+                nextUniqueCodeNumber: 1
+            }
+        }
+    }
+});
+
+console.log('[Main] electron-store 경로:', store.path);
 
 // ===== 전역 변수 =====
 
@@ -85,6 +123,7 @@ app.whenReady().then(() => {
     console.log('[Main] 앱 시작');
     console.log('[Main] 개발 모드:', isDev);
     console.log('[Main] 앱 경로:', app.getAppPath());
+    console.log('[Main] 데이터 저장 경로:', app.getPath('userData'));
     
     createWindow();
 
@@ -103,7 +142,90 @@ app.on('window-all-closed', () => {
     }
 });
 
-// ===== IPC 핸들러 (렌더러 ↔ 메인 통신) =====
+// ===== IPC 핸들러: electron-store (데이터 저장) =====
+
+/**
+ * 데이터 저장 (키-값)
+ */
+ipcMain.handle('store-set', (event, key, value) => {
+    try {
+        store.set(key, value);
+        console.log('[Main] store-set:', key);
+        return { success: true };
+    } catch (error) {
+        console.error('[Main] store-set 오류:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+/**
+ * 데이터 불러오기 (키로 조회)
+ */
+ipcMain.handle('store-get', (event, key) => {
+    try {
+        const value = store.get(key);
+        console.log('[Main] store-get:', key, value ? '(데이터 있음)' : '(데이터 없음)');
+        return { success: true, data: value };
+    } catch (error) {
+        console.error('[Main] store-get 오류:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+/**
+ * 데이터 삭제 (키로 삭제)
+ */
+ipcMain.handle('store-delete', (event, key) => {
+    try {
+        store.delete(key);
+        console.log('[Main] store-delete:', key);
+        return { success: true };
+    } catch (error) {
+        console.error('[Main] store-delete 오류:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+/**
+ * 전체 데이터 불러오기
+ */
+ipcMain.handle('store-get-all', (event) => {
+    try {
+        const allData = store.store;  // 전체 데이터 객체
+        console.log('[Main] store-get-all: 전체 데이터 조회');
+        return { success: true, data: allData };
+    } catch (error) {
+        console.error('[Main] store-get-all 오류:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+/**
+ * 전체 데이터 초기화
+ */
+ipcMain.handle('store-clear', (event) => {
+    try {
+        store.clear();
+        console.log('[Main] store-clear: 전체 데이터 초기화');
+        return { success: true };
+    } catch (error) {
+        console.error('[Main] store-clear 오류:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+/**
+ * 저장소 경로 조회
+ */
+ipcMain.handle('store-get-path', (event) => {
+    return { 
+        success: true, 
+        path: store.path,
+        userData: app.getPath('userData')
+    };
+});
+
+// ===== IPC 핸들러: 앱 정보 =====
 
 /**
  * 앱 정보 조회
@@ -114,6 +236,7 @@ ipcMain.handle('get-app-info', () => {
         name: app.getName(),
         path: app.getAppPath(),
         userData: app.getPath('userData'),
+        storePath: store.path,
         isDev: isDev
     };
 });
@@ -135,6 +258,8 @@ ipcMain.handle('navigate-to', (event, page) => {
     }
     return { success: false, error: '윈도우 없음' };
 });
+
+// ===== IPC 핸들러: 다이얼로그 =====
 
 /**
  * 알림 다이얼로그
@@ -179,6 +304,8 @@ ipcMain.handle('show-open-dialog', async (event, options) => {
     });
     return result;
 });
+
+// ===== IPC 핸들러: 파일 시스템 =====
 
 /**
  * 파일 쓰기
@@ -225,4 +352,4 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('[Main] Promise 거부:', reason);
 });
 
-console.log('[Main] main.js 로드 완료');
+console.log('[Main] main.js 로드 완료 (v2.0.0)');

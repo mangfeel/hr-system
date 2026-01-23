@@ -3,15 +3,23 @@
  * 
  * 인사관리시스템의 핵심 데이터 레이어
  * - localStorage 기반 데이터 관리
+ * - Electron 환경에서 electron-store 연동
  * - CRUD 작업 (생성, 읽기, 수정, 삭제)
  * - 고유번호 생성 및 중복 검증
  * - 데이터 무결성 검증
  * 
- * @version 3.1.1
+ * @version 4.0.0
  * @since 2024-11-04
  * 
  * [변경 이력]
- * v3.1.1 (2025-12-04) ⭐ 기준일 기준 재직자 조회 기능 추가
+ * v4.0.0 (2026-01-23) - Electron 데스크톱 앱 지원
+ *   - Electron 환경 감지 (window.isElectron)
+ *   - electron-store 연동 (백업/복원)
+ *   - _initElectronStore(), _saveToElectronStore() 추가
+ *   - syncFromElectronStore() 메서드 추가
+ *   - save() 시 electron-store에도 백업
+ * 
+ * v3.1.1 (2025-12-04) - 기준일 기준 재직자 조회 기능 추가
  *   - getEmployeesAtDate(baseDate) 메서드 추가
  *   - 연명부, 인사카드, 조직도 등에서 공통 사용 가능
  *   - 입사일/퇴사일 기준 재직자 필터링
@@ -50,6 +58,12 @@ const STORAGE_KEY = typeof CONFIG !== 'undefined'
     ? CONFIG.STORAGE_KEY 
     : 'hr_system_v25_db';
 
+/**
+ * Electron 환경 여부
+ * @const {boolean}
+ */
+const IS_ELECTRON = typeof window !== 'undefined' && window.isElectron === true;
+
 // ===== 데이터베이스 클래스 =====
 
 /**
@@ -67,6 +81,12 @@ class HRDatabase {
         try {
             로거_인사?.info('데이터베이스 초기화 시작');
             this.data = this.load();
+            
+            // Electron 환경이면 electron-store에서 동기화 (비동기)
+            if (IS_ELECTRON) {
+                this._initElectronStore();
+            }
+            
             로거_인사?.info('데이터베이스 초기화 완료', {
                 employeeCount: this.data.employees?.length || 0,
                 version: this.data.settings?.version
@@ -84,6 +104,100 @@ class HRDatabase {
                     '데이터베이스 초기화 중 오류가 발생했습니다.\n기본 데이터로 복구되었습니다.'
                 );
             }
+        }
+    }
+    
+    /**
+     * Electron 환경 초기화
+     * electron-store에서 데이터 가져와서 localStorage와 동기화
+     * @private
+     * @async
+     */
+    async _initElectronStore() {
+        try {
+            console.log('[DB] Electron 환경 감지, electron-store 동기화 시작');
+            
+            const result = await window.electronAPI.store.get(STORAGE_KEY);
+            
+            if (result.success && result.data) {
+                const storeData = result.data;
+                const localData = this.data;
+                
+                const localEmpty = !localData.employees || localData.employees.length === 0;
+                const storeHasData = storeData.employees && storeData.employees.length > 0;
+                
+                if (localEmpty && storeHasData) {
+                    console.log('[DB] electron-store에서 데이터 복원:', storeData.employees.length, '명');
+                    this.data = storeData;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+                } else if (!localEmpty) {
+                    console.log('[DB] localStorage 데이터를 electron-store에 백업');
+                    await this._saveToElectronStore();
+                }
+            } else {
+                console.log('[DB] electron-store 초기화, 현재 데이터 저장');
+                await this._saveToElectronStore();
+            }
+            
+            const pathResult = await window.electronAPI.store.getPath();
+            if (pathResult.success) {
+                console.log('[DB] electron-store 경로:', pathResult.path);
+            }
+            
+        } catch (error) {
+            console.error('[DB] electron-store 동기화 실패:', error);
+        }
+    }
+    
+    /**
+     * electron-store에 데이터 저장 (비동기)
+     * @private
+     * @async
+     * @returns {Promise<boolean>}
+     */
+    async _saveToElectronStore() {
+        if (!IS_ELECTRON) return false;
+        
+        try {
+            const result = await window.electronAPI.store.set(STORAGE_KEY, this.data);
+            if (result.success) {
+                console.log('[DB] electron-store 저장 완료');
+                return true;
+            } else {
+                console.error('[DB] electron-store 저장 실패:', result.error);
+                return false;
+            }
+        } catch (error) {
+            console.error('[DB] electron-store 저장 오류:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * electron-store에서 데이터 동기화 (수동 호출용)
+     * @async
+     * @returns {Promise<boolean>}
+     */
+    async syncFromElectronStore() {
+        if (!IS_ELECTRON) {
+            console.log('[DB] Electron 환경이 아님, 동기화 스킵');
+            return false;
+        }
+        
+        try {
+            const result = await window.electronAPI.store.get(STORAGE_KEY);
+            
+            if (result.success && result.data) {
+                this.data = result.data;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+                console.log('[DB] electron-store에서 동기화 완료:', this.data.employees?.length || 0, '명');
+                return true;
+            }
+            
+            return false;
+        } catch (error) {
+            console.error('[DB] electron-store 동기화 실패:', error);
+            return false;
         }
     }
     
@@ -187,6 +301,13 @@ class HRDatabase {
                 employeeCount: this.data.employees.length,
                 storageSize: jsonString.length
             });
+            
+            // Electron 환경이면 electron-store에도 백업 (비동기)
+            if (IS_ELECTRON) {
+                this._saveToElectronStore().catch(function(error) {
+                    console.error('[DB] electron-store 백업 실패:', error);
+                });
+            }
             
             return true;
             
@@ -994,6 +1115,14 @@ class HRDatabase {
             로거_인사?.warn('데이터 초기화 실행');
             
             localStorage.removeItem(STORAGE_KEY);
+            
+            // Electron 환경이면 electron-store도 초기화
+            if (IS_ELECTRON) {
+                window.electronAPI.store.delete(STORAGE_KEY).catch(function(error) {
+                    console.error('[DB] electron-store 초기화 실패:', error);
+                });
+            }
+            
             this.data = this.load();
             
             const successMsg = '✅ 모든 데이터가 삭제되었습니다.';

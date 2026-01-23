@@ -514,9 +514,9 @@ async function calculateAndSave() {
         
         // 경력 계산
         const careerResult = CareerCalculator.calculateTotalCareer(careers);
-        const totalYears = careerResult.years;
-        const totalMonths = careerResult.months;
-        const totalDays = careerResult.days;
+        const totalYears = careerResult.totalYears || 0;
+        const totalMonths = careerResult.totalMonths || 0;
+        const totalDays = careerResult.totalDays || 0;
         
         로거_인사?.debug('경력 계산 완료', { totalYears, totalMonths, totalDays });
         

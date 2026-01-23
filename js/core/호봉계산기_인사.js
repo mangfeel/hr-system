@@ -445,13 +445,23 @@ const CareerCalculator = {
     /**
      * 전체 경력 합산 (동기 - 로컬)
      */
+    /**
+     * 전체 경력 합산 (동기 - 로컬)
+     * @returns {Object} years, months, days, totalYears, totalMonths, totalDays, details
+     */
     calculateTotalCareer(careers) {
         try {
             if (!careers || careers.length === 0) {
-                return { totalYears: 0, totalMonths: 0, totalDays: 0, convertedYears: 0, convertedMonths: 0, convertedDays: 0 };
+                return { 
+                    years: 0, months: 0, days: 0,
+                    totalYears: 0, totalMonths: 0, totalDays: 0, 
+                    convertedYears: 0, convertedMonths: 0, convertedDays: 0,
+                    details: []
+                };
             }
             
-            let totalDays = 0;
+            let totalDaysSum = 0;
+            const details = [];
             
             for (const career of careers) {
                 if (!career.startDate || !career.endDate) continue;
@@ -461,26 +471,48 @@ const CareerCalculator = {
                 const workingHours = career.workingHours ?? 40;
                 
                 const converted = this.applyConversionRate(period, rate, workingHours);
-                totalDays += converted.years * 365 + converted.months * 30 + converted.days;
+                totalDaysSum += converted.years * 365 + converted.months * 30 + converted.days;
+                
+                // 경력 상세 정보 추가
+                details.push({
+                    name: career.name || '미입력',
+                    startDate: career.startDate,
+                    endDate: career.endDate,
+                    rate: rate,
+                    workingHours: workingHours,
+                    originalPeriod: { years: period.years, months: period.months, days: period.days },
+                    convertedPeriod: { years: converted.years, months: converted.months, days: converted.days },
+                    period: period.years + '년 ' + period.months + '개월 ' + period.days + '일',
+                    converted: converted.years + '년 ' + converted.months + '개월 ' + converted.days + '일'
+                });
             }
             
-            const totalYears = Math.floor(totalDays / 365);
-            const remainingAfterYears = totalDays % 365;
+            const totalYears = Math.floor(totalDaysSum / 365);
+            const remainingAfterYears = totalDaysSum % 365;
             const totalMonths = Math.floor(remainingAfterYears / 30);
             const remainingDays = remainingAfterYears % 30;
             
             return {
-                totalYears,
-                totalMonths,
+                years: totalYears,
+                months: totalMonths,
+                days: remainingDays,
+                totalYears: totalYears,
+                totalMonths: totalMonths,
                 totalDays: remainingDays,
                 convertedYears: totalYears,
                 convertedMonths: totalMonths,
-                convertedDays: remainingDays
+                convertedDays: remainingDays,
+                details: details
             };
             
         } catch (error) {
             console.error('전체 경력 합산 실패', error);
-            return { totalYears: 0, totalMonths: 0, totalDays: 0, convertedYears: 0, convertedMonths: 0, convertedDays: 0 };
+            return { 
+                years: 0, months: 0, days: 0,
+                totalYears: 0, totalMonths: 0, totalDays: 0, 
+                convertedYears: 0, convertedMonths: 0, convertedDays: 0,
+                details: []
+            };
         }
     },
     

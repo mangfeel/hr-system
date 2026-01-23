@@ -8,10 +8,14 @@
  * - XSS 방지
  * - 성능 최적화 (DocumentFragment)
  * 
- * @version 6.0.0
+ * @version 6.0.1
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v6.0.1 (2026-01-23) ⭐ Electron 호환성 수정
+ *   - deleteEmployee()에서 prompt() 대신 confirm() 사용 (Electron)
+ *   - Electron에서 prompt() 미지원 문제 해결
+ *
  * v6.0.0 (2026-01-22) ⭐ 배치 API 적용 - 성능 최적화
  *   - loadEmployeeList() async 변경
  *   - 배치 API로 전체 직원 호봉 한 번에 계산
@@ -709,41 +713,65 @@ function deleteEmployee(id) {
             return;
         }
         
-        // ===== 2단계: 이름 입력 확인 (실수 방지) =====
-        const inputName = prompt(
-            `⚠️ 최종 확인\n\n` +
-            `삭제를 진행하려면 직원 이름을 정확히 입력하세요:\n\n` +
-            `👤 "${name}"`
-        );
+        // ===== 2단계: 최종 확인 (Electron 호환) =====
+        // Electron에서는 prompt()가 지원되지 않으므로 confirm 사용
+        const isElectron = typeof window !== 'undefined' && window.isElectron === true;
         
-        if (inputName === null) {
-            로거_인사?.debug('직원 삭제 취소 (2단계 - 취소)', { id, name });
+        if (isElectron) {
+            // Electron: confirm으로 2중 확인
+            const finalConfirm = confirm(
+                `⚠️ 최종 확인\n\n` +
+                `"${name}" 님을 정말 삭제하시겠습니까?\n\n` +
+                `이 작업은 되돌릴 수 없습니다.`
+            );
             
-            if (typeof 에러처리_인사 !== 'undefined') {
-                에러처리_인사.info('삭제가 취소되었습니다.');
-            } else {
-                alert('ℹ️ 삭제가 취소되었습니다.');
+            if (!finalConfirm) {
+                로거_인사?.debug('직원 삭제 취소 (2단계)', { id, name });
+                
+                if (typeof 에러처리_인사 !== 'undefined') {
+                    에러처리_인사.info('삭제가 취소되었습니다.');
+                } else {
+                    alert('ℹ️ 삭제가 취소되었습니다.');
+                }
+                return;
             }
-            return;
-        }
-        
-        if (inputName.trim() !== name) {
-            로거_인사?.warn('직원 삭제 실패 (이름 불일치)', { 
-                id, 
-                expected: name, 
-                input: inputName 
-            });
+        } else {
+            // 웹: prompt로 이름 입력 확인
+            const inputName = prompt(
+                `⚠️ 최종 확인\n\n` +
+                `삭제를 진행하려면 직원 이름을 정확히 입력하세요:\n\n` +
+                `👤 "${name}"`
+            );
             
-            const errorMsg = `❌ 입력한 이름이 일치하지 않습니다.\n\n` +
-                           `입력: "${inputName}"\n` +
-                           `정답: "${name}"`;
-            
-            if (typeof 에러처리_인사 !== 'undefined') {
-                에러처리_인사.warn(errorMsg);
-            } else {
-                alert(errorMsg);
+            if (inputName === null) {
+                로거_인사?.debug('직원 삭제 취소 (2단계 - 취소)', { id, name });
+                
+                if (typeof 에러처리_인사 !== 'undefined') {
+                    에러처리_인사.info('삭제가 취소되었습니다.');
+                } else {
+                    alert('ℹ️ 삭제가 취소되었습니다.');
+                }
+                return;
             }
-            return;
+            
+            if (inputName.trim() !== name) {
+                로거_인사?.warn('직원 삭제 실패 (이름 불일치)', { 
+                    id, 
+                    expected: name, 
+                    input: inputName 
+                });
+                
+                const errorMsg = `❌ 입력한 이름이 일치하지 않습니다.\n\n` +
+                               `입력: "${inputName}"\n` +
+                               `정답: "${name}"`;
+                
+                if (typeof 에러처리_인사 !== 'undefined') {
+                    에러처리_인사.warn(errorMsg);
+                } else {
+                    alert(errorMsg);
+                }
+                return;
+            }
         }
         
         // ===== 삭제 실행 =====
