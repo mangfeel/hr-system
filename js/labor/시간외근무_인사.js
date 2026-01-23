@@ -673,6 +673,28 @@ async function generateOvertimeList() {
             return;
         }
         
+        // ⭐ v3.0.0: 배치 API로 호봉 계산 (성능 최적화)
+        const lastDay = new Date(year, month, 0).getDate();
+        const targetDate = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+        
+        if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
+            try {
+                const uncachedEmployees = employees.filter(emp => {
+                    const hasStoredRankInfo = emp.rank?.startRank && emp.rank?.firstUpgradeDate;
+                    const isRankBased = emp.rank?.isRankBased !== false && hasStoredRankInfo;
+                    return isRankBased;
+                });
+                
+                if (uncachedEmployees.length > 0) {
+                    console.log('[시간외근무] 배치 API 시작:', uncachedEmployees.length, '명');
+                    await API_인사.calculateBatchForEmployees(uncachedEmployees, targetDate);
+                    console.log('[시간외근무] 배치 API 완료');
+                }
+            } catch (e) {
+                console.error('[시간외근무] 배치 API 오류:', e);
+            }
+        }
+        
         // 기존 시간외근무 기록 로드
         const monthRecords = getOvertimeRecordsByMonth(year, month);
         

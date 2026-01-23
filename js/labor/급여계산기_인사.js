@@ -11,12 +11,17 @@
  * - 시급 계산 - 절사 방식 설정 반영
  * - 월소정근로시간 계산 - 소수점 처리 방식 설정 반영
  * 
- * @version 4.0.0
+ * @version 5.0.0
  * @since 2025-12-02
  * @location js/labor/급여계산기_인사.js
  * 
  * [변경 이력]
- * v4.0.0 (2026-01-21) ⭐ API 연동 버전
+ * v5.0.0 (2026-01-22) ⭐ 배치 API 최적화
+ *   - getAllEmployeesSalaryInfo() 배치 API 적용
+ *   - getRankAtDate() 배치 캐시 사용
+ *   - API 호출 ~100회 → 1회 (배치)
+ *   - 급여현황/시간외근무 속도 대폭 개선
+ * v4.0.0 (2026-01-21) API 연동 버전
  *   - getRankAtDate() API 우선 사용
  *   - 관련 함수들 async/await 전환
  *   - 서버 API로 호봉 계산 로직 보호
@@ -251,7 +256,7 @@ const SalaryCalculator = {
     
     /**
      * 특정 날짜 기준 호봉 조회
-     * @version 4.0.0 - async API 버전
+     * @version 5.0.0 - 배치 캐시 사용 버전
      */
     async getRankAtDate(emp, targetDate) {
         try {
@@ -260,7 +265,15 @@ const SalaryCalculator = {
                 const firstUpgradeDate = emp.rank.firstUpgradeDate;
                 
                 if (firstUpgradeDate) {
-                    // ✅ v4.0.0: API 우선 사용
+                    // ✅ v5.0.0: API_인사 배치 캐시 우선 사용
+                    if (typeof API_인사 !== 'undefined' && API_인사.getCachedResult) {
+                        const cached = API_인사.getCachedResult(emp.id);
+                        if (cached && cached.currentRank !== undefined) {
+                            return cached.currentRank;
+                        }
+                    }
+                    
+                    // 캐시 미스 시 개별 API 호출
                     if (typeof API_인사 !== 'undefined') {
                         return await API_인사.calculateCurrentRank(startRank, firstUpgradeDate, targetDate);
                     } else if (typeof RankCalculator !== 'undefined') {
@@ -889,7 +902,7 @@ const SalaryCalculator = {
     },
     
     /**
-     * @version 4.0.0 - async API 버전
+     * @version 5.0.0 - 배치 API 최적화 버전
      */
     async getAllEmployeesSalaryInfo(targetDate) {
         try {
@@ -898,6 +911,28 @@ const SalaryCalculator = {
             if (typeof db !== 'undefined') {
                 employees = db.data?.employees || db.getEmployees?.() || db.getAll?.() || [];
             }
+            
+            // ⭐ v5.0.0: 배치 API로 호봉 계산 (성능 최적화)
+            // API_인사.calculateBatchForEmployees 호출 시 내부 캐시 자동 채워짐
+            if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
+                try {
+                    // 호봉제 직원 필터링
+                    const rankBasedEmployees = employees.filter(emp => {
+                        const hasStoredRankInfo = emp.rank?.startRank && emp.rank?.firstUpgradeDate;
+                        const isRankBased = emp.rank?.isRankBased !== false && hasStoredRankInfo;
+                        return isRankBased;
+                    });
+                    
+                    if (rankBasedEmployees.length > 0) {
+                        console.log('[급여계산기] 배치 API 시작:', rankBasedEmployees.length, '명');
+                        await API_인사.calculateBatchForEmployees(rankBasedEmployees, targetDate);
+                        console.log('[급여계산기] 배치 API 완료');
+                    }
+                } catch (e) {
+                    console.error('[급여계산기] 배치 API 오류:', e);
+                }
+            }
+            
             const results = [];
             
             for (const emp of employees) {
