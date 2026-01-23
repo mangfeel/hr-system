@@ -97,6 +97,11 @@
                 <span>⚙️</span><span>시스템</span>
             </button>
         </nav>
+        <!-- 라이선스 정보 표시 -->
+        <div id="licenseInfoDisplay" style="margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 12px; color: #666;">
+            <span id="licensePlanBadge" style="background: #e0e7ff; color: #4f46e5; padding: 2px 8px; border-radius: 4px; font-weight: 500;"></span>
+            <span id="licenseExpireText"></span>
+        </div>
     </header>
     
     <!-- 사이드바 -->
@@ -1447,6 +1452,51 @@
     <div id="org-chart-print-area" style="display: none;"></div>
     <div id="profile-card-print-area" style="display: none;"></div>
     <div id="awards-print-area" style="display: none;"></div>
+    
+    <!-- 7. 라이선스 모듈 -->
+    <script src="js/license/license_인사.js"></script>
+    <script>
+        // 라이선스 정보 표시
+        function displayLicenseInfo() {
+            try {
+                const license = License.getCurrentLicense();
+                const planBadge = document.getElementById('licensePlanBadge');
+                const expireText = document.getElementById('licenseExpireText');
+                
+                if (license && planBadge && expireText) {
+                    // 플랜 타입 표시
+                    const planNames = {
+                        'trial': '체험판',
+                        'basic': '기본',
+                        'premium': '프리미엄',
+                        'enterprise': '기업용'
+                    };
+                    planBadge.textContent = planNames[license.plan_type] || license.plan_type;
+                    
+                    // 만료일/남은 기간 표시
+                    const days = license.days_remaining;
+                    if (days <= 7) {
+                        expireText.style.color = '#dc2626';
+                        expireText.style.fontWeight = 'bold';
+                        expireText.textContent = `⚠️ ${days}일 후 만료`;
+                    } else if (days <= 30) {
+                        expireText.style.color = '#d97706';
+                        expireText.textContent = `${days}일 남음`;
+                    } else {
+                        expireText.style.color = '#666';
+                        expireText.textContent = `만료: ${license.expire_date}`;
+                    }
+                }
+            } catch (e) {
+                console.error('[Main] 라이선스 정보 표시 오류:', e);
+            }
+        }
+        
+        // 페이지 로드 시 라이선스 정보 표시
+        window.addEventListener('load', function() {
+            setTimeout(displayLicenseInfo, 500);
+        });
+    </script>
     
     <!-- 8. 초기화 (마지막에 로드) -->
     <script src="js/초기화_인사.js"></script>
