@@ -1,6 +1,14 @@
 /**
  * auth_인사.js
  * 인증 및 승인 처리
+ * 
+ * @version 1.1.0
+ * @since 2026-01-23
+ * 
+ * [변경 이력]
+ * v1.1.0 - 라이선스 사용자 정보 연동 (2026-01-27)
+ *   - signIn: License.setCurrentUser() 호출 추가
+ *   - signOut: License.clearAll() 호출 추가
  */
 
 const Auth_인사 = {
@@ -60,6 +68,12 @@ const Auth_인사 = {
                 return { success: false, message: '아직 관리자 승인이 완료되지 않았습니다.' };
             }
             
+            // ★ 현재 사용자 정보 저장 (라이선스 검증용)
+            if (typeof License !== 'undefined' && License.setCurrentUser) {
+                License.setCurrentUser(data.user.id, email);
+                console.log('[Auth] 사용자 정보 저장됨:', data.user.id);
+            }
+            
             return { success: true };
         } catch (error) {
             return { success: false, message: '이메일 또는 비밀번호가 올바르지 않습니다.' };
@@ -67,6 +81,11 @@ const Auth_인사 = {
     },
     
     async signOut() {
+        // ★ 라이선스 정보 삭제
+        if (typeof License !== 'undefined' && License.clearAll) {
+            License.clearAll();
+        }
+        
         await supabaseAuth.auth.signOut();
         this.currentUser = null;
         window.location.href = 'login.html';

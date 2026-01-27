@@ -1,15 +1,19 @@
 /**
- * 백업_인사.js - 프로덕션급 리팩토링 v3.5
+ * 백업_인사.js - 프로덕션급 리팩토링 v3.6
  * 
  * 데이터 백업 기능
  * - JSON 백업 (전체 DB 구조 + 시스템 설정 보존)
  * - Excel 백업 (완벽한 가져오기 호환)
  * - 전체 데이터 초기화
  * 
- * @version 3.5
+ * @version 3.6
  * @since 2024-11-07
  * 
  * [변경 이력]
+ * v3.6 - Electron 환경 호환 (2026-01-23)
+ *   - resetAllData(): prompt() → confirm()으로 변경
+ *   - Electron 환경에서 prompt() 미지원 문제 해결
+ * 
  * v3.5 - 누락된 설정 키 추가 (2025-12-08)
  *   - hr_position_allowances (직책수당 금액 설정)
  *   - hr_salary_basic_settings (급여 기본 설정) - KEYS에 누락되어 있던 것 추가
@@ -813,16 +817,13 @@ function resetAllData() {
             return;
         }
         
-        // 2차 확인
+        // 2차 확인 (Electron 환경 호환 - prompt 대신 confirm 사용)
         const confirmMessage2 = 
             `⚠️ 최종 확인\n\n` +
-            `"삭제"를 입력하시면 ${currentCount}명의 직원 데이터가\n` +
-            `영구적으로 삭제됩니다.\n\n` +
-            `계속하시겠습니까?`;
+            `${currentCount}명의 직원 데이터가 영구적으로 삭제됩니다.\n\n` +
+            `정말 삭제하시겠습니까?`;
         
-        const userInput = prompt(confirmMessage2);
-        
-        if (userInput !== '삭제') {
+        if (!confirm(confirmMessage2)) {
             로거_인사?.info('전체 데이터 삭제 취소 (2차 확인)');
             에러처리_인사?.info('삭제가 취소되었습니다.');
             return;

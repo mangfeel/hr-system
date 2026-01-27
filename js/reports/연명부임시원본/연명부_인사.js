@@ -10,15 +10,10 @@
  * - 엑셀 다운로드
  * - 연속근무자 최초 입사일 적용 ⭐ v3.1.2
  * 
- * @version 6.1.0
+ * @version 6.0.0
  * @since 2024-11-05
  * 
  * [변경 이력]
- * v6.1.0 (2026-01-27) ⭐ 개별 API 호출 제거 (성능 최적화)
- *   - 과거경력 직원: 개별 API → 로컬 계산 (RankCalculator)
- *   - 캐시 미스 시: 개별 API → 로컬 계산
- *   - 결과: API 100회+ → 1회 (배치 API만 사용)
- *
  * v6.0.0 (2026-01-22) ⭐ 배치 API 최적화
  *   - 호봉 계산: 배치 API 사용 (API ~100회 → 1회)
  *   - 근속기간: 로컬 계산 사용 (단순 계산, 보호 불필요)
@@ -716,8 +711,13 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
                         // 캐시에서 가져오기
                         currentRankDisplay = `${cached.currentRank}호봉`;
                         nextUpgrade = cached.nextUpgradeDate || '-';
+                    } else if (typeof API_인사 !== 'undefined') {
+                        // 캐시 미스 시 개별 API 호출 (드문 경우)
+                        let currentRank = await API_인사.calculateCurrentRank(storedStartRank, storedFirstUpgrade, baseDate);
+                        nextUpgrade = await API_인사.calculateNextUpgradeDate(storedFirstUpgrade, baseDate);
+                        currentRankDisplay = `${currentRank}호봉`;
                     } else {
-                        // ✅ v6.1.0: 캐시 미스 시 로컬 계산 (성능 최적화)
+                        // Fallback: 로컬 계산
                         let currentRank = RankCalculator.calculateCurrentRank(storedStartRank, storedFirstUpgrade, baseDate);
                         nextUpgrade = RankCalculator.calculateNextUpgradeDate(storedFirstUpgrade, baseDate);
                         currentRankDisplay = `${currentRank}호봉`;
@@ -776,21 +776,40 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
                     const startRank = 1 + totalPastYears;
                     startRankDisplay = startRank;
                     
-                    // 7. 동적 첫승급일 계산 - ✅ v6.1.0: 로컬 계산 (성능 최적화)
-                    let dynamicFirstUpgrade = RankCalculator.calculateFirstUpgradeDate(
-                        adjustedEntryDate,
-                        totalPastYears,
-                        totalPastMonths,
-                        totalPastDays
-                    );
+                    // 7. 동적 첫승급일 계산 - ✅ v4.0.0: API 우선 사용
+                    let dynamicFirstUpgrade;
+                    if (typeof API_인사 !== 'undefined') {
+                        dynamicFirstUpgrade = await API_인사.calculateFirstUpgradeDate(
+                            adjustedEntryDate,
+                            totalPastYears,
+                            totalPastMonths,
+                            totalPastDays
+                        );
+                    } else {
+                        dynamicFirstUpgrade = RankCalculator.calculateFirstUpgradeDate(
+                            adjustedEntryDate,
+                            totalPastYears,
+                            totalPastMonths,
+                            totalPastDays
+                        );
+                    }
                     firstUpgradeDate = dynamicFirstUpgrade;
                     
-                    // 8. 현재 호봉 계산 - ✅ v6.1.0: 로컬 계산 (성능 최적화)
-                    let currentRank = RankCalculator.calculateCurrentRank(startRank, dynamicFirstUpgrade, baseDate);
+                    // 8. 현재 호봉 계산 - ✅ v4.0.0: API 우선 사용
+                    let currentRank;
+                    if (typeof API_인사 !== 'undefined') {
+                        currentRank = await API_인사.calculateCurrentRank(startRank, dynamicFirstUpgrade, baseDate);
+                    } else {
+                        currentRank = RankCalculator.calculateCurrentRank(startRank, dynamicFirstUpgrade, baseDate);
+                    }
                     currentRankDisplay = `${currentRank}호봉`;
                     
-                    // 9. 차기승급일 - ✅ v6.1.0: 로컬 계산 (성능 최적화)
-                    nextUpgrade = RankCalculator.calculateNextUpgradeDate(dynamicFirstUpgrade, baseDate);
+                    // 9. 차기승급일 - ✅ v4.0.0: API 우선 사용
+                    if (typeof API_인사 !== 'undefined') {
+                        nextUpgrade = await API_인사.calculateNextUpgradeDate(dynamicFirstUpgrade, baseDate);
+                    } else {
+                        nextUpgrade = RankCalculator.calculateNextUpgradeDate(dynamicFirstUpgrade, baseDate);
+                    }
                 }
                 
             } catch (e) {

@@ -8,10 +8,19 @@
  * - 호봉제 판단 및 계산
  * - 근속연수 계산
  * 
- * @version 5.0.0
+ * @version 5.1.0
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v5.1.0 (2026-01-27) ⭐ 로컬 계산 최적화 (API 과부하 해결)
+ *   - getCurrentRankAsync → 로컬 계산 (API 호출 제거)
+ *   - getNextUpgradeDateAsync → 로컬 계산 (API 호출 제거)
+ *   - getDynamicRankInfo → 로컬 계산 (API 호출 제거)
+ *   - getTenureAsync → 로컬 계산 (API 호출 제거)
+ *   - _getStoredRankInfo → 로컬 계산 (API 호출 제거)
+ *   - 503 Service Unavailable 오류 해결
+ *   - UI 응답 지연 문제 해결
+ * 
  * v5.0.0 (2026-01-22) ⭐ API 전용 버전
  *   - 모든 Calculator 호출을 async/await로 변경
  *   - getDynamicRankInfo → async
@@ -501,26 +510,8 @@ const 직원유틸_인사 = (function() {
          * @returns {Promise<number|string>} 현재 호봉 또는 '-'
          */
         async getCurrentRankAsync(emp, baseDate = null) {
-            if (!this.isRankBased(emp)) {
-                return '-';
-            }
-            
-            try {
-                if (typeof API_인사 !== 'undefined') {
-                    const targetDate = baseDate || DateUtils.formatDate(new Date());
-                    const result = await API_인사.calculateCurrentRank(
-                        emp.rank.startRank,
-                        emp.rank.firstUpgradeDate,
-                        targetDate
-                    );
-                    return result;
-                }
-                // API 없으면 로컬 계산
-                return this.getCurrentRank(emp, baseDate);
-            } catch (error) {
-                console.error('getCurrentRankAsync 오류', error);
-                return this.getCurrentRank(emp, baseDate);
-            }
+            // ✅ v4.1.0: 항상 로컬 계산 사용 (API 과부하 방지)
+            return this.getCurrentRank(emp, baseDate);
         },
         
         /**
@@ -574,30 +565,15 @@ const 직원유틸_인사 = (function() {
         
         /**
          * ⭐ v4.0.0: 다음 승급일 계산 (API 버전)
+         * ✅ v4.1.0: 로컬 계산으로 변경 (API 과부하 방지)
          * 
          * @param {Object} emp - 직원 객체
          * @param {string|null} [baseDate=null] - 기준일
          * @returns {Promise<string>} 다음 승급일 (YYYY-MM-DD) 또는 '-'
          */
         async getNextUpgradeDateAsync(emp, baseDate = null) {
-            if (!this.isRankBased(emp)) {
-                return '-';
-            }
-            
-            try {
-                if (typeof API_인사 !== 'undefined') {
-                    const targetDate = baseDate || DateUtils.formatDate(new Date());
-                    const result = await API_인사.calculateNextUpgradeDate(
-                        emp.rank.firstUpgradeDate,
-                        targetDate
-                    );
-                    return result;
-                }
-                return this.getNextUpgradeDate(emp, baseDate);
-            } catch (error) {
-                console.error('getNextUpgradeDateAsync 오류', error);
-                return this.getNextUpgradeDate(emp, baseDate);
-            }
+            // ✅ v4.1.0: 항상 로컬 계산 사용 (API 과부하 방지)
+            return this.getNextUpgradeDate(emp, baseDate);
         },
         
         /**
@@ -776,13 +752,8 @@ const 직원유틸_인사 = (function() {
                     return await this._getStoredRankInfoAsync(emp, baseDate);
                 }
                 
-                // 동적 계산 필요
-                let originalPeriod;
-                if (typeof API_인사 !== 'undefined') {
-                    originalPeriod = await API_인사.calculateTenure(entryDate, targetDate);
-                } else {
-                    originalPeriod = TenureCalculator.calculate(entryDate, targetDate);
-                }
+                // ✅ v4.1.0: 항상 로컬 계산 사용 (API 과부하 방지)
+                const originalPeriod = TenureCalculator.calculate(entryDate, targetDate);
                 
                 const originalDays = originalPeriod.years * 365 + originalPeriod.months * 30 + originalPeriod.days;
                 const lostDays = originalDays - internalResult.totalDays;
@@ -813,22 +784,12 @@ const 직원유틸_인사 = (function() {
                 
                 const startRank = 1 + totalPastYears;
                 
-                // API 호출
-                let dynamicFirstUpgrade, currentRank, nextUpgradeDate;
-                
-                if (typeof API_인사 !== 'undefined') {
-                    dynamicFirstUpgrade = await API_인사.calculateFirstUpgradeDate(
-                        adjustedEntryDate, totalPastYears, totalPastMonths, totalPastDays
-                    );
-                    currentRank = await API_인사.calculateCurrentRank(startRank, dynamicFirstUpgrade, targetDate);
-                    nextUpgradeDate = await API_인사.calculateNextUpgradeDate(dynamicFirstUpgrade, targetDate);
-                } else {
-                    dynamicFirstUpgrade = RankCalculator.calculateFirstUpgradeDate(
-                        adjustedEntryDate, totalPastYears, totalPastMonths, totalPastDays
-                    );
-                    currentRank = RankCalculator.calculateCurrentRank(startRank, dynamicFirstUpgrade, targetDate);
-                    nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(dynamicFirstUpgrade, targetDate);
-                }
+                // ✅ v4.1.0: 항상 로컬 계산 사용
+                const dynamicFirstUpgrade = RankCalculator.calculateFirstUpgradeDate(
+                    adjustedEntryDate, totalPastYears, totalPastMonths, totalPastDays
+                );
+                const currentRank = RankCalculator.calculateCurrentRank(startRank, dynamicFirstUpgrade, targetDate);
+                const nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(dynamicFirstUpgrade, targetDate);
                 
                 return {
                     startRank,
@@ -901,14 +862,10 @@ const 직원유틸_인사 = (function() {
                 let currentRank = startRank;
                 let nextUpgradeDate = '-';
                 
-                if (firstUpgradeDate !== '-') {
-                    if (typeof API_인사 !== 'undefined') {
-                        currentRank = await API_인사.calculateCurrentRank(startRank, firstUpgradeDate, targetDate);
-                        nextUpgradeDate = await API_인사.calculateNextUpgradeDate(firstUpgradeDate, targetDate);
-                    } else if (typeof RankCalculator !== 'undefined') {
-                        currentRank = RankCalculator.calculateCurrentRank(startRank, firstUpgradeDate, targetDate);
-                        nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(firstUpgradeDate, targetDate);
-                    }
+                // ✅ v4.1.0: 항상 로컬 계산 사용 (API 과부하 방지)
+                if (firstUpgradeDate !== '-' && typeof RankCalculator !== 'undefined') {
+                    currentRank = RankCalculator.calculateCurrentRank(startRank, firstUpgradeDate, targetDate);
+                    nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(firstUpgradeDate, targetDate);
                 }
                 
                 return {
@@ -996,12 +953,8 @@ const 직원유틸_인사 = (function() {
             try {
                 const targetDate = baseDate || DateUtils.formatDate(new Date());
                 
-                let years;
-                if (typeof API_인사 !== 'undefined') {
-                    years = await API_인사.calculateTenure(entryDate, targetDate);
-                } else {
-                    years = TenureCalculator.calculate(entryDate, targetDate);
-                }
+                // ✅ v4.1.0: 항상 로컬 계산 사용 (API 과부하 방지)
+                const years = TenureCalculator.calculate(entryDate, targetDate);
                 
                 const formatted = TenureCalculator.format(years);
                 

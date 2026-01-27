@@ -391,6 +391,12 @@
                 
                 currentUser = data.user;
                 
+                // ★ 현재 사용자 정보 저장 (라이선스 검증용)
+                if (typeof License !== 'undefined' && License.setCurrentUser) {
+                    License.setCurrentUser(data.user.id, email);
+                    console.log('[Auth] 사용자 정보 저장됨:', data.user.id);
+                }
+                
                 // 라이선스 확인
                 await checkLicenseAndProceed();
                 
@@ -546,6 +552,13 @@
                 
                 if (profile && profile.status === 'approved') {
                     currentUser = session.user;
+                    
+                    // ★ 현재 사용자 정보 저장 (라이선스 검증용)
+                    if (typeof License !== 'undefined' && License.setCurrentUser) {
+                        License.setCurrentUser(session.user.id, session.user.email);
+                        console.log('[Auth] 세션 복구 - 사용자 정보 저장됨:', session.user.id);
+                    }
+                    
                     await checkLicenseAndProceed();
                 }
             }

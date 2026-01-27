@@ -117,9 +117,15 @@ class HRDatabase {
         try {
             console.log('[DB] Electron 환경 감지, electron-store 동기화 시작');
             
-            const result = await window.electronAPI.store.get(STORAGE_KEY);
+            // electronStore가 없으면 스킵
+            if (!window.electronStore?.get) {
+                console.warn('[DB] electronStore가 없습니다. localStorage만 사용합니다.');
+                return;
+            }
             
-            if (result.success && result.data) {
+            const result = await window.electronStore.get(STORAGE_KEY);
+            
+            if (result && result.success && result.data) {
                 const storeData = result.data;
                 const localData = this.data;
                 
@@ -139,13 +145,15 @@ class HRDatabase {
                 await this._saveToElectronStore();
             }
             
-            const pathResult = await window.electronAPI.store.getPath();
-            if (pathResult.success) {
-                console.log('[DB] electron-store 경로:', pathResult.path);
+            if (window.electronStore?.getPath) {
+                const pathResult = await window.electronStore.getPath();
+                if (pathResult && pathResult.success) {
+                    console.log('[DB] electron-store 경로:', pathResult.path);
+                }
             }
             
         } catch (error) {
-            console.error('[DB] electron-store 동기화 실패:', error);
+            console.warn('[DB] electron-store 동기화 실패 (무시됨):', error);
         }
     }
     
@@ -159,16 +167,21 @@ class HRDatabase {
         if (!IS_ELECTRON) return false;
         
         try {
-            const result = await window.electronAPI.store.set(STORAGE_KEY, this.data);
-            if (result.success) {
+            // electronStore가 없으면 스킵
+            if (!window.electronStore?.set) {
+                return false;
+            }
+            
+            const result = await window.electronStore.set(STORAGE_KEY, this.data);
+            if (result && result.success) {
                 console.log('[DB] electron-store 저장 완료');
                 return true;
             } else {
-                console.error('[DB] electron-store 저장 실패:', result.error);
+                console.warn('[DB] electron-store 저장 실패:', result?.error);
                 return false;
             }
         } catch (error) {
-            console.error('[DB] electron-store 저장 오류:', error);
+            console.warn('[DB] electron-store 저장 오류 (무시됨):', error);
             return false;
         }
     }
@@ -185,9 +198,14 @@ class HRDatabase {
         }
         
         try {
-            const result = await window.electronAPI.store.get(STORAGE_KEY);
+            // electronStore가 없으면 스킵
+            if (!window.electronStore?.get) {
+                return false;
+            }
             
-            if (result.success && result.data) {
+            const result = await window.electronStore.get(STORAGE_KEY);
+            
+            if (result && result.success && result.data) {
                 this.data = result.data;
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
                 console.log('[DB] electron-store에서 동기화 완료:', this.data.employees?.length || 0, '명');
@@ -196,7 +214,7 @@ class HRDatabase {
             
             return false;
         } catch (error) {
-            console.error('[DB] electron-store 동기화 실패:', error);
+            console.warn('[DB] electron-store 동기화 실패 (무시됨):', error);
             return false;
         }
     }
@@ -1091,36 +1109,17 @@ class HRDatabase {
         try {
             로거_인사?.warn('데이터 초기화 시도');
             
-            const confirmMsg1 = '⚠️ 모든 데이터가 삭제됩니다.\n정말 진행하시겠습니까?';
-            const confirmMsg2 = '⚠️ 마지막 확인입니다.\n삭제하시겠습니까?';
-            
-            const confirm1 = typeof 에러처리_인사 !== 'undefined'
-                ? 에러처리_인사.confirm(confirmMsg1)
-                : confirm(confirmMsg1);
-            
-            if (!confirm1) {
-                로거_인사?.info('데이터 초기화 취소 (1차 확인)');
-                return;
-            }
-            
-            const confirm2 = typeof 에러처리_인사 !== 'undefined'
-                ? 에러처리_인사.confirm(confirmMsg2)
-                : confirm(confirmMsg2);
-            
-            if (!confirm2) {
-                로거_인사?.info('데이터 초기화 취소 (2차 확인)');
-                return;
-            }
-            
             로거_인사?.warn('데이터 초기화 실행');
             
             localStorage.removeItem(STORAGE_KEY);
             
-            // Electron 환경이면 electron-store도 초기화
-            if (IS_ELECTRON) {
-                window.electronAPI.store.delete(STORAGE_KEY).catch(function(error) {
-                    console.error('[DB] electron-store 초기화 실패:', error);
-                });
+            // Electron 환경이면 electron-store도 초기화 (안전하게 처리)
+            if (IS_ELECTRON && window.electronStore?.delete) {
+                try {
+                    window.electronStore.delete(STORAGE_KEY);
+                } catch (storeError) {
+                    console.warn('[DB] electron-store 초기화 실패 (무시됨):', storeError);
+                }
             }
             
             this.data = this.load();
@@ -1139,9 +1138,8 @@ class HRDatabase {
         } catch (error) {
             로거_인사?.error('데이터 초기화 실패', error);
             
-            if (typeof 에러처리_인사 !== 'undefined') {
-                에러처리_인사.handle(error, '초기화 중 오류가 발생했습니다.');
-            }
+            // 오류가 발생해도 localStorage는 삭제되었으므로 새로고침
+            location.reload();
         }
     }
     

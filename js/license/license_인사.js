@@ -5,9 +5,22 @@
  * - 서버 API와 통신하여 라이선스 검증
  * - 로컬 저장소에 라이선스 정보 캐시
  * - 만료 알림 및 차단
+ * - 사용자별 라이선스 구분 (v1.1.0)
  * 
- * @version 1.0.0
+ * @version 1.3.0
  * @since 2026-01-23
+ * 
+ * [변경 이력]
+ * v1.3.0 - 라이선스 활성화 시 사용자 검증 (2026-01-27)
+ *   - activate()에서 라이선스 소유자와 현재 사용자 비교
+ *   - 다른 기관 라이선스 키 입력 차단
+ * v1.2.0 - API 키 및 인증 방식 수정 (2026-01-27)
+ *   - API_KEY를 최신 값으로 교체
+ *   - 헤더를 'apikey'에서 'Authorization: Bearer'로 변경
+ * v1.1.0 - 사용자별 라이선스 구분 (2026-01-27)
+ *   - 라이선스 저장 시 user_id 함께 저장
+ *   - 로그인한 사용자와 라이선스 소유자 비교
+ *   - 다른 사용자의 라이선스로 접근 방지
  */
 
 const License = (function() {
@@ -16,8 +29,9 @@ const License = (function() {
     // ===== 설정 =====
     const CONFIG = {
         API_URL: 'https://pulanyznvpsrlkpqotat.supabase.co/functions/v1',
-        API_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bGFueXpudnBzcmxrcHFvdGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc1MTY5OTIsImV4cCI6MjA1MzA5Mjk5Mn0.tAnnyMRL5f5bcNBxAuLcH_9D9SgKeEiJwcbfQCMB99o',
+        API_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bGFueXpudnBzcmxrcHFvdGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4ODgwNzcsImV4cCI6MjA4NDQ2NDA3N30.H-ml4_ztuNY67iLjnPokPgkQEzwEwe0ttW3Ic7K9Mlk',
         STORAGE_KEY: 'hr_license_info',
+        USER_STORAGE_KEY: 'hr_current_user',
         CACHE_HOURS: 24  // 오프라인 캐시 유효 시간
     };
 
@@ -43,6 +57,37 @@ const License = (function() {
      */
     function isElectron() {
         return typeof window !== 'undefined' && window.isElectron === true;
+    }
+
+    /**
+     * 현재 로그인한 사용자 ID 조회
+     */
+    function getCurrentUserId() {
+        try {
+            const userInfo = localStorage.getItem(CONFIG.USER_STORAGE_KEY);
+            if (userInfo) {
+                const parsed = JSON.parse(userInfo);
+                return parsed.id || parsed.user_id || null;
+            }
+        } catch (e) {
+            console.error('[License] 사용자 정보 로드 오류:', e);
+        }
+        return null;
+    }
+
+    /**
+     * 현재 사용자 정보 저장
+     */
+    function setCurrentUser(userId, email) {
+        try {
+            localStorage.setItem(CONFIG.USER_STORAGE_KEY, JSON.stringify({
+                id: userId,
+                email: email,
+                logged_at: new Date().toISOString()
+            }));
+        } catch (e) {
+            console.error('[License] 사용자 정보 저장 오류:', e);
+        }
     }
 
     /**
@@ -86,6 +131,26 @@ const License = (function() {
         return hoursPassed < CONFIG.CACHE_HOURS;
     }
 
+    /**
+     * 라이선스 소유자 확인
+     * @param {Object} licenseInfo - 라이선스 정보
+     * @returns {boolean} 현재 사용자의 라이선스인지 여부
+     */
+    function isLicenseOwnedByCurrentUser(licenseInfo) {
+        if (!licenseInfo || !licenseInfo.user_id) {
+            // user_id가 없는 구버전 캐시는 무효화
+            return false;
+        }
+        
+        const currentUserId = getCurrentUserId();
+        if (!currentUserId) {
+            // 현재 사용자 정보가 없으면 무효
+            return false;
+        }
+        
+        return licenseInfo.user_id === currentUserId;
+    }
+
     // ===== 핵심 함수 =====
 
     /**
@@ -99,7 +164,7 @@ const License = (function() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'apikey': CONFIG.API_KEY
+                    'Authorization': `Bearer ${CONFIG.API_KEY}`
                 },
                 body: JSON.stringify({
                     license_key: licenseKey,
@@ -113,10 +178,11 @@ const License = (function() {
 
             const result = await response.json();
             
-            // 유효한 경우 캐시에 저장
+            // 유효한 경우 캐시에 저장 (user_id 포함)
             if (result.valid) {
                 saveCachedLicense({
                     license_key: licenseKey,
+                    user_id: result.user_id,  // 사용자 ID 저장
                     valid: result.valid,
                     status: result.status,
                     plan_type: result.plan_type,
@@ -133,6 +199,11 @@ const License = (function() {
             // 오프라인 시 캐시 사용
             const cached = loadCachedLicense();
             if (cached && cached.license_key === licenseKey && isCacheValid(cached)) {
+                // 오프라인에서도 사용자 확인
+                if (!isLicenseOwnedByCurrentUser(cached)) {
+                    throw new Error('다른 사용자의 라이선스입니다.');
+                }
+                
                 console.log('[License] 오프라인 - 캐시 사용');
                 return {
                     valid: cached.valid,
@@ -167,6 +238,20 @@ const License = (function() {
 
         try {
             const result = await validateOnServer(licenseKey);
+            
+            // ★ 라이선스 소유자 확인
+            if (result.valid && result.user_id) {
+                const currentUserId = getCurrentUserId();
+                if (currentUserId && result.user_id !== currentUserId) {
+                    console.log('[License] 다른 사용자의 라이선스 키 입력 거부');
+                    return {
+                        valid: false,
+                        status: 'wrong_user',
+                        message: '이 라이선스는 다른 기관에 할당되어 있습니다.\n본인에게 발급된 라이선스 키를 입력하세요.'
+                    };
+                }
+            }
+            
             return result;
         } catch (error) {
             return {
@@ -185,6 +270,17 @@ const License = (function() {
         const cached = loadCachedLicense();
         
         if (!cached || !cached.license_key) {
+            return {
+                valid: false,
+                status: 'not_found',
+                message: '등록된 라이선스가 없습니다.'
+            };
+        }
+
+        // ★ 현재 사용자의 라이선스인지 확인
+        if (!isLicenseOwnedByCurrentUser(cached)) {
+            console.log('[License] 다른 사용자의 라이선스 감지 - 초기화');
+            clear();  // 다른 사용자의 라이선스 삭제
             return {
                 valid: false,
                 status: 'not_found',
@@ -250,6 +346,15 @@ const License = (function() {
     }
 
     /**
+     * 사용자 정보도 함께 삭제 (완전 로그아웃)
+     */
+    function clearAll() {
+        clear();
+        localStorage.removeItem(CONFIG.USER_STORAGE_KEY);
+        console.log('[License] 모든 인증 정보 삭제됨');
+    }
+
+    /**
      * 만료 임박 여부 확인
      * @param {number} warningDays - 경고 일수 (기본 7일)
      * @returns {boolean} 만료 임박 여부
@@ -293,11 +398,14 @@ const License = (function() {
         checkStoredLicense,
         getCurrentLicense,
         clear,
+        clearAll,
         isExpiringSoon,
         getDaysRemaining,
         getExpireDate,
         getPlanType,
-        getDeviceId
+        getDeviceId,
+        setCurrentUser,
+        getCurrentUserId
     };
 
 })();
@@ -305,4 +413,4 @@ const License = (function() {
 // 전역 노출
 window.License = License;
 
-console.log('[License] license_인사.js 로드됨 (v1.0.0)');
+console.log('[License] license_인사.js 로드됨 (v1.3.0)');

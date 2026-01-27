@@ -9,10 +9,15 @@
  * - 연속 휴직 지원
  * - 복직 취소 기능
  * 
- * @version 3.0.4
+ * @version 3.1.0
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v3.1.0 - Electron 호환 모달 적용 (2026-01-27)
+ *   - prompt() → 날짜 입력 모달 (showDateInputModal)
+ *   - 복직일 입력 시 달력 UI 제공
+ *   - Electron 환경 prompt() 미지원 문제 해결
+ *
  * v3.0.4 - 긴급 버그 패치 #4 (2024-11-06)
  *   - 🔧 버그 수정: saveMaternityLeave() - 중복 검증 로직 오류 수정
  *   - 연속 휴직 상태에서도 중복 검증 실행하도록 수정
@@ -65,6 +70,79 @@
  * - 로거_인사.js (로거_인사) - 선택
  * - 에러처리_인사.js (에러처리_인사) - 선택
  */
+
+// ===== Electron 호환 모달 유틸리티 (v3.1.0) =====
+
+/**
+ * 날짜 입력 모달 표시
+ * @param {string} title - 모달 제목
+ * @param {string} message - 안내 메시지
+ * @param {string} defaultValue - 기본 날짜 (YYYY-MM-DD)
+ * @returns {Promise<string|null>} 선택된 날짜 또는 null (취소)
+ */
+function showDateInputModal(title, message, defaultValue = '') {
+    return new Promise((resolve) => {
+        const modalHtml = `
+            <div id="dateInputModal" style="
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5); display: flex;
+                align-items: center; justify-content: center; z-index: 10000;
+            ">
+                <div style="
+                    background: white; border-radius: 12px; padding: 24px;
+                    min-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                ">
+                    <h3 style="margin: 0 0 12px 0; color: #333; font-size: 18px;">📅 ${title}</h3>
+                    <p style="margin: 0 0 16px 0; color: #666; font-size: 14px;">${message}</p>
+                    <input type="date" id="dateInputValue" value="${defaultValue}" style="
+                        width: 100%; padding: 12px; font-size: 16px;
+                        border: 2px solid #ddd; border-radius: 8px;
+                        margin-bottom: 20px; box-sizing: border-box;
+                    " />
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button id="dateInputCancel" style="
+                            padding: 10px 20px; border: 1px solid #ddd;
+                            background: white; border-radius: 6px; cursor: pointer;
+                        ">취소</button>
+                        <button id="dateInputConfirm" style="
+                            padding: 10px 20px; border: none;
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white; border-radius: 6px; cursor: pointer;
+                        ">확인</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const modal = document.getElementById('dateInputModal');
+        const input = document.getElementById('dateInputValue');
+        input.focus();
+        
+        document.getElementById('dateInputConfirm').onclick = () => {
+            const value = input.value;
+            modal.remove();
+            resolve(value || null);
+        };
+        
+        document.getElementById('dateInputCancel').onclick = () => {
+            modal.remove();
+            resolve(null);
+        };
+        
+        // Enter로 확인, ESC로 취소
+        input.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+                const value = input.value;
+                modal.remove();
+                resolve(value || null);
+            } else if (e.key === 'Escape') {
+                modal.remove();
+                resolve(null);
+            }
+        };
+    });
+}
 
 // ===== 전역 변수 =====
 
@@ -556,7 +634,7 @@ function loadMaternityList() {
  * @example
  * endMaternityLeave('employee-id'); // 복직 처리
  */
-function endMaternityLeave(empId) {
+async function endMaternityLeave(empId) {
     try {
         로거_인사?.info('복직 처리 시작', { empId });
         
@@ -608,7 +686,13 @@ function endMaternityLeave(empId) {
             : (emp.personalInfo?.name || emp.name);
         
         const today = DateUtils.formatDate(new Date());
-        const returnDate = prompt(`${name} 님의 복직일을 입력하세요 (YYYY-MM-DD)`, today);
+        
+        // ✅ v3.1.0: prompt() → 날짜 입력 모달 (Electron 호환)
+        const returnDate = await showDateInputModal(
+            '복직일 입력',
+            `${name} 님의 복직일을 선택하세요.`,
+            today
+        );
         
         if (!returnDate) {
             로거_인사?.debug('복직 처리 취소');

@@ -9,11 +9,18 @@
  * - 통상임금 설정 (포함 항목 선택, 명절휴가비 산입 방식)
  * - 수당 계산 설정 (월소정근로시간 소수점, 시급 절사, 시간외수당 절사)
  * 
- * @version 3.2.0
+ * @version 3.3.0
  * @since 2025-12-01
  * @location js/labor/급여설정_인사.js
  * 
  * [변경 이력]
+ * v3.3.0 - Electron 호환 모달 적용 (2026-01-27)
+ *   - prompt() → 사용자 친화적 모달로 전면 교체
+ *   - 연도 선택: 드롭다운 모달 (showYearSelectModal)
+ *   - 텍스트 입력: 입력 모달 (showTextInputModal)
+ *   - 삭제 확인: 체크박스 모달 (showDeleteConfirmModal)
+ *   - 선택: 버튼 선택 모달 (showSelectModal)
+ *   - Electron 환경 prompt() 미지원 문제 해결
  * v3.2.0 - 시급 절사 적용 시점 옵션 추가 (2026-01-07)
  *   - 수당 계산 설정에 "절사 적용 시점" 옵션 추가
  *   - '배율 적용 후 절사' (after): 원시급 × 배율 → 절사 (기본값)
@@ -140,6 +147,307 @@
  * - DOM유틸_인사.js (DOM유틸_인사) - 선택
  * - XLSX (SheetJS) - 엑셀 처리
  */
+
+// ===== Electron 호환 모달 유틸리티 (v3.3.0) =====
+
+/**
+ * 연도 선택 모달 표시
+ * @param {number} defaultYear - 기본 선택 연도
+ * @param {string} title - 모달 제목
+ * @returns {Promise<number|null>} 선택된 연도 또는 null (취소)
+ */
+function showYearSelectModal(defaultYear, title = '연도 선택') {
+    return new Promise((resolve) => {
+        const currentYear = new Date().getFullYear();
+        const years = [];
+        for (let y = currentYear - 2; y <= currentYear + 3; y++) {
+            years.push(y);
+        }
+        
+        const modalHtml = `
+            <div id="yearSelectModal" style="
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5); display: flex;
+                align-items: center; justify-content: center; z-index: 10000;
+            ">
+                <div style="
+                    background: white; border-radius: 12px; padding: 24px;
+                    min-width: 320px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                ">
+                    <h3 style="margin: 0 0 20px 0; color: #333; font-size: 18px;">📅 ${title}</h3>
+                    <select id="yearSelectInput" style="
+                        width: 100%; padding: 12px; font-size: 16px;
+                        border: 2px solid #ddd; border-radius: 8px;
+                        margin-bottom: 20px; cursor: pointer;
+                    ">
+                        ${years.map(y => `<option value="${y}" ${y === defaultYear ? 'selected' : ''}>${y}년</option>`).join('')}
+                    </select>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button id="yearSelectCancel" style="
+                            padding: 10px 20px; border: 1px solid #ddd;
+                            background: white; border-radius: 6px; cursor: pointer;
+                        ">취소</button>
+                        <button id="yearSelectConfirm" style="
+                            padding: 10px 20px; border: none;
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white; border-radius: 6px; cursor: pointer;
+                        ">확인</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const modal = document.getElementById('yearSelectModal');
+        const input = document.getElementById('yearSelectInput');
+        
+        document.getElementById('yearSelectConfirm').onclick = () => {
+            const value = parseInt(input.value);
+            modal.remove();
+            resolve(value);
+        };
+        
+        document.getElementById('yearSelectCancel').onclick = () => {
+            modal.remove();
+            resolve(null);
+        };
+        
+        // ESC 키로 닫기
+        const escHandler = (e) => {
+            if (e.key === 'Escape') {
+                modal.remove();
+                document.removeEventListener('keydown', escHandler);
+                resolve(null);
+            }
+        };
+        document.addEventListener('keydown', escHandler);
+    });
+}
+
+/**
+ * 텍스트 입력 모달 표시
+ * @param {string} title - 모달 제목
+ * @param {string} message - 안내 메시지
+ * @param {string} defaultValue - 기본값
+ * @returns {Promise<string|null>} 입력된 텍스트 또는 null (취소)
+ */
+function showTextInputModal(title, message, defaultValue = '') {
+    return new Promise((resolve) => {
+        const modalHtml = `
+            <div id="textInputModal" style="
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5); display: flex;
+                align-items: center; justify-content: center; z-index: 10000;
+            ">
+                <div style="
+                    background: white; border-radius: 12px; padding: 24px;
+                    min-width: 360px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                ">
+                    <h3 style="margin: 0 0 12px 0; color: #333; font-size: 18px;">✏️ ${title}</h3>
+                    <p style="margin: 0 0 16px 0; color: #666; font-size: 14px;">${message}</p>
+                    <input type="text" id="textInputValue" value="${defaultValue}" style="
+                        width: 100%; padding: 12px; font-size: 16px;
+                        border: 2px solid #ddd; border-radius: 8px;
+                        margin-bottom: 20px; box-sizing: border-box;
+                    " />
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button id="textInputCancel" style="
+                            padding: 10px 20px; border: 1px solid #ddd;
+                            background: white; border-radius: 6px; cursor: pointer;
+                        ">취소</button>
+                        <button id="textInputConfirm" style="
+                            padding: 10px 20px; border: none;
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white; border-radius: 6px; cursor: pointer;
+                        ">확인</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const modal = document.getElementById('textInputModal');
+        const input = document.getElementById('textInputValue');
+        input.focus();
+        input.select();
+        
+        document.getElementById('textInputConfirm').onclick = () => {
+            const value = input.value.trim();
+            modal.remove();
+            resolve(value || null);
+        };
+        
+        document.getElementById('textInputCancel').onclick = () => {
+            modal.remove();
+            resolve(null);
+        };
+        
+        // Enter로 확인, ESC로 취소
+        input.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+                const value = input.value.trim();
+                modal.remove();
+                resolve(value || null);
+            } else if (e.key === 'Escape') {
+                modal.remove();
+                resolve(null);
+            }
+        };
+    });
+}
+
+/**
+ * 삭제 확인 모달 (체크박스)
+ * @param {string} title - 모달 제목
+ * @param {string} message - 경고 메시지
+ * @returns {Promise<boolean>} 확인 여부
+ */
+function showDeleteConfirmModal(title, message) {
+    return new Promise((resolve) => {
+        const modalHtml = `
+            <div id="deleteConfirmModal" style="
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5); display: flex;
+                align-items: center; justify-content: center; z-index: 10000;
+            ">
+                <div style="
+                    background: white; border-radius: 12px; padding: 24px;
+                    min-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                ">
+                    <h3 style="margin: 0 0 16px 0; color: #dc3545; font-size: 18px;">⚠️ ${title}</h3>
+                    <p style="margin: 0 0 20px 0; color: #333; font-size: 14px; line-height: 1.6; white-space: pre-line;">${message}</p>
+                    <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; cursor: pointer;">
+                        <input type="checkbox" id="deleteConfirmCheck" style="width: 18px; height: 18px; cursor: pointer;" />
+                        <span style="color: #666; font-size: 14px;">위 내용을 확인했으며, 삭제에 동의합니다.</span>
+                    </label>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button id="deleteConfirmCancel" style="
+                            padding: 10px 20px; border: 1px solid #ddd;
+                            background: white; border-radius: 6px; cursor: pointer;
+                        ">취소</button>
+                        <button id="deleteConfirmOk" disabled style="
+                            padding: 10px 20px; border: none;
+                            background: #ccc; color: white; border-radius: 6px; cursor: not-allowed;
+                        ">삭제</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const modal = document.getElementById('deleteConfirmModal');
+        const checkbox = document.getElementById('deleteConfirmCheck');
+        const okBtn = document.getElementById('deleteConfirmOk');
+        
+        checkbox.onchange = () => {
+            if (checkbox.checked) {
+                okBtn.disabled = false;
+                okBtn.style.background = '#dc3545';
+                okBtn.style.cursor = 'pointer';
+            } else {
+                okBtn.disabled = true;
+                okBtn.style.background = '#ccc';
+                okBtn.style.cursor = 'not-allowed';
+            }
+        };
+        
+        okBtn.onclick = () => {
+            if (checkbox.checked) {
+                modal.remove();
+                resolve(true);
+            }
+        };
+        
+        document.getElementById('deleteConfirmCancel').onclick = () => {
+            modal.remove();
+            resolve(false);
+        };
+        
+        // ESC로 닫기
+        const escHandler = (e) => {
+            if (e.key === 'Escape') {
+                modal.remove();
+                document.removeEventListener('keydown', escHandler);
+                resolve(false);
+            }
+        };
+        document.addEventListener('keydown', escHandler);
+    });
+}
+
+/**
+ * 선택 모달 (버튼식)
+ * @param {string} title - 모달 제목
+ * @param {Array<{value: string, label: string}>} options - 선택지 배열
+ * @returns {Promise<string|null>} 선택된 값 또는 null (취소)
+ */
+function showSelectModal(title, options) {
+    return new Promise((resolve) => {
+        const buttonsHtml = options.map(opt => `
+            <button class="selectModalBtn" data-value="${opt.value}" style="
+                width: 100%; padding: 14px; margin-bottom: 10px;
+                border: 2px solid #ddd; background: white;
+                border-radius: 8px; cursor: pointer; font-size: 15px;
+                transition: all 0.2s;
+            ">${opt.label}</button>
+        `).join('');
+        
+        const modalHtml = `
+            <div id="selectModal" style="
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5); display: flex;
+                align-items: center; justify-content: center; z-index: 10000;
+            ">
+                <div style="
+                    background: white; border-radius: 12px; padding: 24px;
+                    min-width: 320px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                ">
+                    <h3 style="margin: 0 0 20px 0; color: #333; font-size: 18px;">🔘 ${title}</h3>
+                    ${buttonsHtml}
+                    <button id="selectModalCancel" style="
+                        width: 100%; padding: 12px; margin-top: 10px;
+                        border: 1px solid #ddd; background: #f5f5f5;
+                        border-radius: 8px; cursor: pointer; font-size: 14px;
+                    ">취소</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const modal = document.getElementById('selectModal');
+        
+        // 선택 버튼 이벤트
+        modal.querySelectorAll('.selectModalBtn').forEach(btn => {
+            btn.onmouseover = () => {
+                btn.style.borderColor = '#667eea';
+                btn.style.background = '#f8f9ff';
+            };
+            btn.onmouseout = () => {
+                btn.style.borderColor = '#ddd';
+                btn.style.background = 'white';
+            };
+            btn.onclick = () => {
+                modal.remove();
+                resolve(btn.dataset.value);
+            };
+        });
+        
+        document.getElementById('selectModalCancel').onclick = () => {
+            modal.remove();
+            resolve(null);
+        };
+        
+        // ESC로 닫기
+        const escHandler = (e) => {
+            if (e.key === 'Escape') {
+                modal.remove();
+                document.removeEventListener('keydown', escHandler);
+                resolve(null);
+            }
+        };
+        document.addEventListener('keydown', escHandler);
+    });
+}
 
 // ===== 상수 정의 =====
 
@@ -1804,15 +2112,10 @@ function changeGradeYear(year) {
 /**
  * 새 연도 생성
  */
-function createNewGradeYear() {
-    const yearInput = prompt('생성할 연도를 입력하세요:', String(new Date().getFullYear() + 1));
-    if (!yearInput) return;
-    
-    const year = parseInt(yearInput);
-    if (isNaN(year) || year < 2000 || year > 2100) {
-        에러처리_인사?.warn('유효한 연도를 입력하세요 (2000~2100).');
-        return;
-    }
+async function createNewGradeYear() {
+    const defaultYear = new Date().getFullYear() + 1;
+    const year = await showYearSelectModal(defaultYear, '생성할 연도 선택');
+    if (!year) return;
     
     try {
         SalarySettingsManager.createGradeYear(year);
@@ -1863,7 +2166,7 @@ function copyGradesFromPrevYear() {
 /**
  * 연도 삭제
  */
-function deleteGradeYear() {
+async function deleteGradeYear() {
     const gradeYears = SalarySettingsManager.getGradeYears();
     
     // 현재 연도에 데이터가 없으면 삭제할 것이 없음
@@ -1882,15 +2185,13 @@ function deleteGradeYear() {
     const rankCount = data.rankGrades?.length || 0;
     const salaryCount = data.salaryGrades?.length || 0;
     
-    // "삭제" 텍스트 입력 확인
-    const confirmText = prompt(
-        `⚠️ ${currentGradeYear}년 직급 데이터를 삭제하시겠습니까?\n\n` +
-        `포함된 데이터: 호봉제 ${rankCount}개, 연봉제 ${salaryCount}개\n\n` +
-        `이 작업은 되돌릴 수 없습니다.\n` +
-        `삭제하려면 "삭제"라고 입력하세요:`
+    // 삭제 확인 모달
+    const confirmed = await showDeleteConfirmModal(
+        `${currentGradeYear}년 직급 데이터 삭제`,
+        `포함된 데이터:\n• 호봉제 ${rankCount}개\n• 연봉제 ${salaryCount}개\n\n이 작업은 되돌릴 수 없습니다.`
     );
     
-    if (confirmText !== '삭제') {
+    if (!confirmed) {
         에러처리_인사?.info('삭제가 취소되었습니다.');
         return;
     }
@@ -1947,7 +2248,7 @@ function addRankGrade() {
  * 호봉제 직급 수정
  * @param {string} id - 직급 ID
  */
-function editRankGrade(id) {
+async function editRankGrade(id) {
     try {
         const data = SalarySettingsManager.loadGrades();
         const grade = data.rankGrades.find(g => g.id === id);
@@ -1957,8 +2258,8 @@ function editRankGrade(id) {
             return;
         }
         
-        const newName = prompt('새 직급명을 입력하세요:', grade.name);
-        if (newName === null) return;  // 취소
+        const newName = await showTextInputModal('직급명 수정', '새 직급명을 입력하세요:', grade.name);
+        if (!newName) return;  // 취소
         
         const trimmedName = newName.trim();
         if (!trimmedName) {
@@ -2054,7 +2355,7 @@ function addSalaryGrade() {
  * 연봉제 직급 수정
  * @param {string} id - 직급 ID
  */
-function editSalaryGrade(id) {
+async function editSalaryGrade(id) {
     try {
         const data = SalarySettingsManager.loadGrades();
         const grade = data.salaryGrades.find(g => g.id === id);
@@ -2064,9 +2365,9 @@ function editSalaryGrade(id) {
             return;
         }
         
-        // 간단한 프롬프트로 수정 (향후 모달로 개선 가능)
-        const newName = prompt('새 직급명을 입력하세요:', grade.name);
-        if (newName === null) return;
+        // 직급명 입력 모달
+        const newName = await showTextInputModal('직급명 수정', '새 직급명을 입력하세요:', grade.name);
+        if (!newName) return;
         
         const trimmedName = newName.trim();
         if (!trimmedName) {
@@ -2074,9 +2375,12 @@ function editSalaryGrade(id) {
             return;
         }
         
-        const currentType = grade.holidayBonusType === 'percent' ? '1' : '2';
-        const typeChoice = prompt('명절휴가비 유형을 선택하세요:\n1. 비율 (기본급×60%)\n2. 정액', currentType);
-        if (typeChoice === null) return;
+        // 명절휴가비 유형 선택 모달
+        const typeChoice = await showSelectModal('명절휴가비 유형 선택', [
+            { value: '1', label: '📊 비율 (기본급×60%)' },
+            { value: '2', label: '💰 정액' }
+        ]);
+        if (!typeChoice) return;
         
         const newType = typeChoice === '2' ? HOLIDAY_BONUS_TYPES.FIXED : HOLIDAY_BONUS_TYPES.PERCENT;
         
@@ -2600,15 +2904,10 @@ function changeSalaryTableYear(year) {
 /**
  * 새 연도 급여표 생성
  */
-function createNewYearTable() {
-    const year = prompt('생성할 연도를 입력하세요:', new Date().getFullYear() + 1);
-    if (!year) return;
-    
-    const yearNum = Number(year);
-    if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2100) {
-        에러처리_인사?.warn('올바른 연도를 입력하세요. (2000~2100)');
-        return;
-    }
+async function createNewYearTable() {
+    const defaultYear = new Date().getFullYear() + 1;
+    const yearNum = await showYearSelectModal(defaultYear, '급여표 생성 연도 선택');
+    if (!yearNum) return;
     
     const tables = SalarySettingsManager.loadSalaryTables();
     if (tables[String(yearNum)]) {
@@ -3343,15 +3642,10 @@ function changePositionAllowanceYear(year) {
 /**
  * 새 연도 직책수당 생성
  */
-function createNewPositionYear() {
-    const year = prompt('생성할 연도를 입력하세요:', new Date().getFullYear() + 1);
-    if (!year) return;
-    
-    const yearNum = Number(year);
-    if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2100) {
-        에러처리_인사?.warn('올바른 연도를 입력하세요. (2000~2100)');
-        return;
-    }
+async function createNewPositionYear() {
+    const defaultYear = new Date().getFullYear() + 1;
+    const yearNum = await showYearSelectModal(defaultYear, '직책수당 생성 연도 선택');
+    if (!yearNum) return;
     
     const allowances = SalarySettingsManager.loadPositionAllowances();
     if (allowances[String(yearNum)]) {
@@ -3963,15 +4257,10 @@ function changeOrdinarySettingsYear(year) {
 /**
  * 새 연도 통상임금 설정 생성
  */
-function createNewOrdinarySettingsYear() {
-    const year = prompt('생성할 연도를 입력하세요:', new Date().getFullYear() + 1);
-    if (!year) return;
-    
-    const yearNum = Number(year);
-    if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2100) {
-        에러처리_인사?.warn('올바른 연도를 입력하세요. (2000~2100)');
-        return;
-    }
+async function createNewOrdinarySettingsYear() {
+    const defaultYear = new Date().getFullYear() + 1;
+    const yearNum = await showYearSelectModal(defaultYear, '통상임금 설정 연도 선택');
+    if (!yearNum) return;
     
     const existing = SalarySettingsManager.getOrdinarySettingsByYear(yearNum);
     // 기존 설정이 있는지 확인 (기본값과 다른지)
@@ -4598,15 +4887,10 @@ function changeHolidayBonusYear(year) {
 /**
  * 새 연도 명절휴가비 설정 생성
  */
-function createNewHolidayYear() {
-    const year = prompt('생성할 연도를 입력하세요:', new Date().getFullYear() + 1);
-    if (!year) return;
-    
-    const yearNum = Number(year);
-    if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2100) {
-        에러처리_인사?.warn('올바른 연도를 입력하세요. (2000~2100)');
-        return;
-    }
+async function createNewHolidayYear() {
+    const defaultYear = new Date().getFullYear() + 1;
+    const yearNum = await showYearSelectModal(defaultYear, '명절휴가비 설정 연도 선택');
+    if (!yearNum) return;
     
     const settings = SalarySettingsManager.loadSettings();
     if (settings[String(yearNum)]) {
@@ -4919,7 +5203,7 @@ function importGradesFromEmployees() {
  * 직급 일괄 삭제
  * @param {string} type - 'rank' (호봉제), 'salary' (연봉제), 'all' (모두)
  */
-function deleteAllGrades(type) {
+async function deleteAllGrades(type) {
     try {
         const data = SalarySettingsManager.loadGrades();
         const rankCount = data.rankGrades?.length || 0;
@@ -4957,14 +5241,13 @@ function deleteAllGrades(type) {
                 return;
         }
         
-        // "삭제" 텍스트 입력 확인
-        const confirmText = prompt(
-            `⚠️ ${currentGradeYear}년 ${message}을(를) 삭제하시겠습니까?\n\n` +
-            `이 작업은 되돌릴 수 없습니다.\n` +
-            `삭제하려면 "삭제"라고 입력하세요:`
+        // 삭제 확인 모달
+        const confirmed = await showDeleteConfirmModal(
+            `${currentGradeYear}년 ${message} 삭제`,
+            `${message}을(를) 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`
         );
         
-        if (confirmText !== '삭제') {
+        if (!confirmed) {
             에러처리_인사?.info('삭제가 취소되었습니다.');
             return;
         }
@@ -5483,15 +5766,10 @@ function changeCalculationSettingsYear(year) {
 /**
  * 새 연도 수당 계산 설정 생성
  */
-function createNewCalculationSettingsYear() {
-    const year = prompt('생성할 연도를 입력하세요:', new Date().getFullYear() + 1);
-    if (!year) return;
-    
-    const yearNum = Number(year);
-    if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2100) {
-        에러처리_인사?.warn('올바른 연도를 입력하세요. (2000~2100)');
-        return;
-    }
+async function createNewCalculationSettingsYear() {
+    const defaultYear = new Date().getFullYear() + 1;
+    const yearNum = await showYearSelectModal(defaultYear, '수당 계산 설정 연도 선택');
+    if (!yearNum) return;
     
     const settings = SalarySettingsManager.loadOrdinarySettings();
     if (settings[String(yearNum)]) {

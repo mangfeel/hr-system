@@ -8,10 +8,15 @@
  * - XSS 방지
  * - 성능 최적화 (DocumentFragment)
  * 
- * @version 6.0.1
+ * @version 6.1.0
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v6.1.0 (2026-01-27) ⭐ Electron 호환 모달로 통일
+ *   - deleteEmployee()에서 prompt()/confirm() → 체크박스 모달
+ *   - 웹/Electron 분기 제거, 통일된 UX 제공
+ *   - showDeleteConfirmModal() 함수 추가
+ *
  * v6.0.1 (2026-01-23) ⭐ Electron 호환성 수정
  *   - deleteEmployee()에서 prompt() 대신 confirm() 사용 (Electron)
  *   - Electron에서 prompt() 미지원 문제 해결
@@ -64,6 +69,87 @@
  * @example
  * loadEmployeeList(); // 목록 로드
  */
+
+// ===== Electron 호환 모달 유틸리티 (v6.1.0) =====
+
+/**
+ * 삭제 확인 모달 (체크박스)
+ * @param {string} title - 모달 제목
+ * @param {string} message - 경고 메시지
+ * @returns {Promise<boolean>} 확인 여부
+ */
+function showDeleteConfirmModal(title, message) {
+    return new Promise((resolve) => {
+        const modalHtml = `
+            <div id="deleteConfirmModal" style="
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5); display: flex;
+                align-items: center; justify-content: center; z-index: 10000;
+            ">
+                <div style="
+                    background: white; border-radius: 12px; padding: 24px;
+                    min-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                ">
+                    <h3 style="margin: 0 0 16px 0; color: #dc3545; font-size: 18px;">⚠️ ${title}</h3>
+                    <p style="margin: 0 0 20px 0; color: #333; font-size: 14px; line-height: 1.6; white-space: pre-line;">${message}</p>
+                    <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; cursor: pointer;">
+                        <input type="checkbox" id="deleteConfirmCheck" style="width: 18px; height: 18px; cursor: pointer;" />
+                        <span style="color: #666; font-size: 14px;">위 내용을 확인했으며, 삭제에 동의합니다.</span>
+                    </label>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button id="deleteConfirmCancel" style="
+                            padding: 10px 20px; border: 1px solid #ddd;
+                            background: white; border-radius: 6px; cursor: pointer;
+                        ">취소</button>
+                        <button id="deleteConfirmOk" disabled style="
+                            padding: 10px 20px; border: none;
+                            background: #ccc; color: white; border-radius: 6px; cursor: not-allowed;
+                        ">삭제</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const modal = document.getElementById('deleteConfirmModal');
+        const checkbox = document.getElementById('deleteConfirmCheck');
+        const okBtn = document.getElementById('deleteConfirmOk');
+        
+        checkbox.onchange = () => {
+            if (checkbox.checked) {
+                okBtn.disabled = false;
+                okBtn.style.background = '#dc3545';
+                okBtn.style.cursor = 'pointer';
+            } else {
+                okBtn.disabled = true;
+                okBtn.style.background = '#ccc';
+                okBtn.style.cursor = 'not-allowed';
+            }
+        };
+        
+        okBtn.onclick = () => {
+            if (checkbox.checked) {
+                modal.remove();
+                resolve(true);
+            }
+        };
+        
+        document.getElementById('deleteConfirmCancel').onclick = () => {
+            modal.remove();
+            resolve(false);
+        };
+        
+        // ESC로 닫기
+        const escHandler = (e) => {
+            if (e.key === 'Escape') {
+                modal.remove();
+                document.removeEventListener('keydown', escHandler);
+                resolve(false);
+            }
+        };
+        document.addEventListener('keydown', escHandler);
+    });
+}
 
 // 전역 상태 관리
 let _employeeListState = {
@@ -679,7 +765,7 @@ function searchEmployees() {
  * @example
  * deleteEmployee('emp-001'); // 직원 삭제
  */
-function deleteEmployee(id) {
+async function deleteEmployee(id) {
     try {
         로거_인사?.debug('직원 삭제 시도', { id });
         
@@ -697,81 +783,16 @@ function deleteEmployee(id) {
         const dept = 직원유틸_인사?.getDepartment(emp) || emp.currentPosition?.dept || '';
         const position = 직원유틸_인사?.getPosition(emp) || emp.currentPosition?.position || '';
         
-        // ===== 1단계: 기본 확인 =====
-        const confirmMessage = `⚠️ ${name} 님의 모든 데이터를 삭제하시겠습니까?\n\n` +
-                             `고유번호: ${uniqueCode}\n` +
-                             `부서: ${dept}\n` +
-                             `직위: ${position}\n\n` +
-                             `⚠️ 이 작업은 되돌릴 수 없습니다.`;
+        // ===== 삭제 확인 모달 (v6.1.0 - Electron 호환) =====
+        const confirmed = await showDeleteConfirmModal(
+            `${name} 님 삭제`,
+            `고유번호: ${uniqueCode}\n부서: ${dept}\n직위: ${position}\n\n이 직원의 모든 데이터가 삭제됩니다.\n이 작업은 되돌릴 수 없습니다.`
+        );
         
-        const confirmed = typeof 에러처리_인사 !== 'undefined' 
-            ? 에러처리_인사.confirm(confirmMessage)
-            : confirm(confirmMessage);
-            
         if (!confirmed) {
-            로거_인사?.debug('직원 삭제 취소 (1단계)', { id, name });
+            로거_인사?.debug('직원 삭제 취소', { id, name });
+            에러처리_인사?.info('삭제가 취소되었습니다.');
             return;
-        }
-        
-        // ===== 2단계: 최종 확인 (Electron 호환) =====
-        // Electron에서는 prompt()가 지원되지 않으므로 confirm 사용
-        const isElectron = typeof window !== 'undefined' && window.isElectron === true;
-        
-        if (isElectron) {
-            // Electron: confirm으로 2중 확인
-            const finalConfirm = confirm(
-                `⚠️ 최종 확인\n\n` +
-                `"${name}" 님을 정말 삭제하시겠습니까?\n\n` +
-                `이 작업은 되돌릴 수 없습니다.`
-            );
-            
-            if (!finalConfirm) {
-                로거_인사?.debug('직원 삭제 취소 (2단계)', { id, name });
-                
-                if (typeof 에러처리_인사 !== 'undefined') {
-                    에러처리_인사.info('삭제가 취소되었습니다.');
-                } else {
-                    alert('ℹ️ 삭제가 취소되었습니다.');
-                }
-                return;
-            }
-        } else {
-            // 웹: prompt로 이름 입력 확인
-            const inputName = prompt(
-                `⚠️ 최종 확인\n\n` +
-                `삭제를 진행하려면 직원 이름을 정확히 입력하세요:\n\n` +
-                `👤 "${name}"`
-            );
-            
-            if (inputName === null) {
-                로거_인사?.debug('직원 삭제 취소 (2단계 - 취소)', { id, name });
-                
-                if (typeof 에러처리_인사 !== 'undefined') {
-                    에러처리_인사.info('삭제가 취소되었습니다.');
-                } else {
-                    alert('ℹ️ 삭제가 취소되었습니다.');
-                }
-                return;
-            }
-            
-            if (inputName.trim() !== name) {
-                로거_인사?.warn('직원 삭제 실패 (이름 불일치)', { 
-                    id, 
-                    expected: name, 
-                    input: inputName 
-                });
-                
-                const errorMsg = `❌ 입력한 이름이 일치하지 않습니다.\n\n` +
-                               `입력: "${inputName}"\n` +
-                               `정답: "${name}"`;
-                
-                if (typeof 에러처리_인사 !== 'undefined') {
-                    에러처리_인사.warn(errorMsg);
-                } else {
-                    alert(errorMsg);
-                }
-                return;
-            }
         }
         
         // ===== 삭제 실행 =====
