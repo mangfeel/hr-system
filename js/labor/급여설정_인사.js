@@ -9,11 +9,14 @@
  * - 통상임금 설정 (포함 항목 선택, 명절휴가비 산입 방식)
  * - 수당 계산 설정 (월소정근로시간 소수점, 시급 절사, 시간외수당 절사)
  * 
- * @version 3.3.0
+ * @version 3.3.1
  * @since 2025-12-01
  * @location js/labor/급여설정_인사.js
  * 
  * [변경 이력]
+ * v3.3.1 - 연도 선택 범위 확대 (2026-01-27)
+ *   - showYearSelectModal 연도 범위: ±5년 → -5년~+30년
+ *   - 2050년까지 선택 가능
  * v3.3.0 - Electron 호환 모달 적용 (2026-01-27)
  *   - prompt() → 사용자 친화적 모달로 전면 교체
  *   - 연도 선택: 드롭다운 모달 (showYearSelectModal)
@@ -160,7 +163,7 @@ function showYearSelectModal(defaultYear, title = '연도 선택') {
     return new Promise((resolve) => {
         const currentYear = new Date().getFullYear();
         const years = [];
-        for (let y = currentYear - 2; y <= currentYear + 3; y++) {
+        for (let y = currentYear - 5; y <= currentYear + 30; y++) {
             years.push(y);
         }
         
