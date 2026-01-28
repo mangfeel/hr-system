@@ -7,10 +7,15 @@
  * - electron-store 기반 데이터 저장
  * - 자동 업데이트
  * 
- * @version 3.0.0
+ * @version 3.1.0
  * @since 2026-01-23
  * 
  * [변경 이력]
+ * v3.1.0 (2026-01-28) - 업데이트 진행률 UI 개선
+ *   - 진행률 팝업창 추가
+ *   - 작업표시줄 진행률 표시
+ *   - 다운로드 MB 표시
+ * 
  * v3.0.0 (2026-01-23) - 7단계: 자동 업데이트 추가
  *   - electron-updater 연동
  *   - 업데이트 확인/다운로드/설치 기능
@@ -75,6 +80,9 @@ autoUpdater.autoInstallOnAppQuit = true;
 
 /** @type {BrowserWindow} 메인 윈도우 */
 let mainWindow = null;
+
+/** @type {BrowserWindow} 업데이트 진행률 윈도우 */
+let progressWindow = null;
 
 /** @type {boolean} 개발 모드 여부 */
 const isDev = !app.isPackaged;
@@ -148,6 +156,120 @@ function createWindow() {
 // ===== 자동 업데이트 함수 =====
 
 /**
+ * 업데이트 진행률 윈도우 생성
+ */
+function createProgressWindow() {
+    if (progressWindow && !progressWindow.isDestroyed()) {
+        progressWindow.focus();
+        return;
+    }
+    
+    progressWindow = new BrowserWindow({
+        width: 400,
+        height: 150,
+        parent: mainWindow,
+        modal: true,
+        resizable: false,
+        minimizable: false,
+        maximizable: false,
+        closable: false,
+        frame: false,
+        transparent: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    });
+    
+    // 진행률 HTML 로드
+    const progressHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+                font-family: 'Malgun Gothic', sans-serif;
+                background: rgba(255, 255, 255, 0.98);
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                padding: 24px;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .title {
+                font-size: 16px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 16px;
+                text-align: center;
+            }
+            .progress-container {
+                background: #e9ecef;
+                border-radius: 8px;
+                height: 24px;
+                overflow: hidden;
+                margin-bottom: 12px;
+            }
+            .progress-bar {
+                height: 100%;
+                background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+                border-radius: 8px;
+                transition: width 0.3s ease;
+                width: 0%;
+            }
+            .progress-text {
+                text-align: center;
+                font-size: 13px;
+                color: #666;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="title">🔄 업데이트 다운로드 중...</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">0% (0 / 0 MB)</div>
+        <script>
+            const { ipcRenderer } = require('electron');
+            ipcRenderer.on('update-progress', (event, data) => {
+                document.getElementById('progressBar').style.width = data.percent + '%';
+                document.getElementById('progressText').textContent = 
+                    data.percent + '% (' + data.mbDownloaded + ' / ' + data.mbTotal + ' MB)';
+            });
+        </script>
+    </body>
+    </html>
+    `;
+    
+    progressWindow.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(progressHtml));
+    
+    progressWindow.on('closed', () => {
+        progressWindow = null;
+    });
+    
+    console.log('[Updater] 진행률 윈도우 생성');
+}
+
+/**
+ * 업데이트 진행률 윈도우 닫기
+ */
+function closeProgressWindow() {
+    if (progressWindow && !progressWindow.isDestroyed()) {
+        progressWindow.close();
+        progressWindow = null;
+    }
+    // 작업표시줄 진행률 초기화
+    if (mainWindow) {
+        mainWindow.setProgressBar(-1);
+    }
+}
+
+/**
  * 업데이트 확인
  */
 function checkForUpdates() {
@@ -179,6 +301,8 @@ autoUpdater.on('update-available', (info) => {
         defaultId: 0
     }).then(result => {
         if (result.response === 0) {
+            // 진행률 윈도우 표시
+            createProgressWindow();
             // 다운로드 시작
             autoUpdater.downloadUpdate();
         }
@@ -194,12 +318,26 @@ autoUpdater.on('update-not-available', (info) => {
 // 다운로드 진행률
 autoUpdater.on('download-progress', (progress) => {
     const percent = Math.round(progress.percent);
-    console.log(`[Updater] 다운로드 중... ${percent}%`);
+    const mbDownloaded = (progress.transferred / 1024 / 1024).toFixed(1);
+    const mbTotal = (progress.total / 1024 / 1024).toFixed(1);
+    console.log(`[Updater] 다운로드 중... ${percent}% (${mbDownloaded}/${mbTotal} MB)`);
     sendUpdateStatus('downloading', { percent });
     
-    // 윈도우 타이틀에 진행률 표시
     if (mainWindow) {
+        // 윈도우 타이틀에 진행률 표시
         mainWindow.setTitle(`인사관리시스템 - 업데이트 다운로드 중 ${percent}%`);
+        
+        // 작업표시줄 진행률 표시
+        mainWindow.setProgressBar(progress.percent / 100);
+    }
+    
+    // 진행률 윈도우 업데이트
+    if (progressWindow && !progressWindow.isDestroyed()) {
+        progressWindow.webContents.send('update-progress', {
+            percent,
+            mbDownloaded,
+            mbTotal
+        });
     }
 });
 
@@ -207,6 +345,9 @@ autoUpdater.on('download-progress', (progress) => {
 autoUpdater.on('update-downloaded', (info) => {
     console.log('[Updater] 다운로드 완료:', info.version);
     sendUpdateStatus('downloaded', info);
+    
+    // 진행률 윈도우 닫기
+    closeProgressWindow();
     
     // 윈도우 타이틀 복원
     if (mainWindow) {
@@ -233,6 +374,9 @@ autoUpdater.on('update-downloaded', (info) => {
 autoUpdater.on('error', (err) => {
     console.error('[Updater] 오류:', err);
     sendUpdateStatus('error', { message: err.message });
+    
+    // 진행률 윈도우 닫기
+    closeProgressWindow();
 });
 
 /**
@@ -522,4 +666,4 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('[Main] Promise 거부:', reason);
 });
 
-console.log('[Main] main.js 로드 완료 (v3.0.0)');
+console.log('[Main] main.js 로드 완료 (v3.1.0)');
