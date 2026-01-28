@@ -684,6 +684,7 @@ function showMonthlyAssignments() {
 
 /**
  * 이번달 승급자 상세 보기
+ * @version 1.1.0 - RankCalculator 직접 호출로 수정
  */
 function showMonthlyUpgrades() {
     try {
@@ -699,14 +700,26 @@ function showMonthlyUpgrades() {
                 const firstUpgrade = emp.rank?.firstUpgradeDate;
                 if (firstUpgrade && firstUpgrade.substring(5) === thisMonthDay) {
                     const name = 직원유틸_인사.getName(emp);
-                    const currentRank = parseInt(직원유틸_인사.getCurrentRank(emp, todayStr)) || 0;
+                    
+                    // RankCalculator 직접 호출로 현재 호봉 계산
+                    let currentRank = 0;
+                    const startRank = emp.rank?.startRank;
+                    
+                    if (typeof RankCalculator !== 'undefined' && startRank && firstUpgrade) {
+                        currentRank = RankCalculator.calculateCurrentRank(startRank, firstUpgrade, todayStr);
+                    } else {
+                        // 폴백: 직원유틸 사용
+                        currentRank = parseInt(직원유틸_인사.getCurrentRank(emp, todayStr)) || startRank || 1;
+                    }
+                    
+                    // 이번 달 승급이므로 이전 호봉 = 현재 호봉 - 1
                     const prevRank = currentRank - 1;
                     
                     upgrades.push({
                         emp,
                         name,
                         prevRank: prevRank > 0 ? prevRank : 1,
-                        currentRank
+                        currentRank: currentRank
                     });
                 }
             }
