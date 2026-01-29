@@ -10,14 +10,20 @@
  * - 육아휴직자 포함/제외
  * - 인쇄 최적화
  * 
- * @version 5.0.0
+ * @version 5.0.1
  * @since 2025-11-28
+ * @updated 2026-01-29 - 개별 직원 선택 미리보기 버그 수정 (preview-content 초기화 로직)
  * @updated 2026-01-07 - 출력 범위 변경 시 기존 페이지 초기화 (전체→개별 전환 버그 수정)
  * @updated 2025-12-11 - 텍스트형 단독 카드에 포상이력 추가
  * @updated 2025-12-11 - 개별 직원 인사카드 페이지 제목 제거 (이름 중복 방지)
  * @updated 2025-12-11 - 2단 서식 옵션 추가 (인사이력/포상이력/경력사항 2열 배치)
  * 
  * [변경 이력]
+ * v5.0.1 (2026-01-29) ⭐ 개별 직원 선택 미리보기 버그 수정
+ *   - 출력 범위 변경 시 preview-content 요소가 삭제되는 문제 해결
+ *   - onProfileCardRangeChange(), onEmployeeCheckboxChange() 초기화 로직 수정
+ *   - previewArea.innerHTML 대신 previewContent.innerHTML만 초기화
+ *
  * v5.0.0 (2026-01-22) ⭐ API 전용 버전
  *   - 호봉 계산에서 저장된 값 사용 (정렬/데이터 표시)
  *   - _calculateRankAtDate async로 변경
@@ -435,10 +441,10 @@ function onProfileCardRangeChange() {
     // ⭐ [v1.4.0] 출력 범위 변경 시 기존 생성된 페이지 초기화
     _generatedPages = [];
     
-    // 미리보기 영역도 초기화
-    const previewArea = document.getElementById('profile-card-preview');
-    if (previewArea) {
-        previewArea.innerHTML = '<div class="preview-placeholder">미리보기를 클릭하면 여기에 표시됩니다.</div>';
+    // ⭐ [v5.0.1] 미리보기 영역 초기화 수정 - preview-content 유지
+    const previewContent = document.getElementById('profile-card-preview-content');
+    if (previewContent) {
+        previewContent.innerHTML = '<div class="preview-placeholder">미리보기를 클릭하면 여기에 표시됩니다.</div>';
     }
     
     if (range === 'individual') {
@@ -463,10 +469,10 @@ function onEmployeeCheckboxChange() {
     // 기존 생성된 페이지 초기화
     _generatedPages = [];
     
-    // 미리보기 영역도 초기화
-    const previewArea = document.getElementById('profile-card-preview');
-    if (previewArea) {
-        previewArea.innerHTML = '<div class="preview-placeholder">미리보기를 클릭하면 여기에 표시됩니다.</div>';
+    // ⭐ [v5.0.1] 미리보기 영역 초기화 수정 - preview-content 유지
+    const previewContent = document.getElementById('profile-card-preview-content');
+    if (previewContent) {
+        previewContent.innerHTML = '<div class="preview-placeholder">미리보기를 클릭하면 여기에 표시됩니다.</div>';
     }
 }
 
