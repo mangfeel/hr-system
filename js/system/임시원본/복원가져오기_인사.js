@@ -2,22 +2,15 @@
  * 복원가져오기_인사.js - 프로덕션급 리팩토링
  * 
  * 데이터 복원 및 가져오기 기능
- * - HRM 보안 백업 파일 복원 (압축 + 인코딩) ⭐ v4.0 추가
- * - JSON 백업 파일 복원 (전체 데이터 + 시스템 설정) - 레거시 지원
+ * - JSON 백업 파일 복원 (전체 데이터 + 시스템 설정)
  * - Excel 파일에서 직원 정보 가져오기
  * - Excel 날짜 변환 유틸리티
  * - 발령 데이터 자동 마이그레이션 ⭐ v3.5 추가
  * 
- * @version 4.0
+ * @version 3.5
  * @since 2024-11-05
  * 
  * [변경 이력]
- * v4.0 - 보안 백업 형식 지원 (2026-01-29)
- *   - .hrm 파일 복원 지원 (압축 + 인코딩)
- *   - .json 파일도 레거시로 계속 지원
- *   - _decodeBackupData() 함수 추가
- *   - 파일 확장자에 따른 자동 처리
- * 
  * v3.5 - 발령 데이터 자동 마이그레이션 (2025-12-10)
  *   - 복원 시 구버전 발령 데이터 자동 변환
  *   - id: 숫자 → 문자열 (assign-timestamp)
@@ -57,7 +50,7 @@
  * - 모든 기존 함수명 유지
  * - 기존 API 100% 호환
  * - 전역 함수 유지
- * - 구버전 백업 파일(.json)도 복원 가능
+ * - 구버전 백업 파일도 복원 가능
  * 
  * [의존성]
  * - 데이터베이스_인사.js (db)
@@ -69,7 +62,7 @@
  * 
  * [중요 사항]
  * - Excel 가져오기 시 과거 경력은 포함되지 않음
- * - 완벽한 복원은 HRM 또는 JSON 백업 사용 권장
+ * - 완벽한 복원은 JSON 백업 사용 권장
  */
 
 // ===== 시스템 설정 키 정의 =====
@@ -104,78 +97,15 @@ const RESTORE_SYSTEM_KEYS = {
     overtimeRecords: 'hr_overtime_records'               // 시간외근무 기록 (연월별)
 };
 
-// ===== v4.0: 보안 디코딩 함수 =====
-
-// BACKUP_FILE_HEADER는 백업_인사.js에서 이미 선언됨
-// const BACKUP_FILE_HEADER = 'HRM_SECURE_BACKUP_V4';
+// ===== JSON 복원 =====
 
 /**
- * 백업 데이터 디코딩 (Private)
+ * JSON 백업 파일 복원
  * 
- * @private
- * @param {string} encoded - 인코딩된 문자열
- * @returns {Object} 복원된 데이터 객체
+ * @param {File} file - 복원할 JSON 파일
  * 
  * @description
- * 인코딩된 백업 데이터를 원래 JSON 객체로 복원합니다.
- */
-function _decodeBackupData(encoded) {
-    try {
-        // 1. 헤더에서 청크 개수 추출
-        const chunkCount = parseInt(encoded.substring(0, 6), 10);
-        const shuffled = encoded.substring(6);
-        
-        // 2. 청크 분리
-        const chunkSize = 16;
-        const chunks = [];
-        for (let i = 0; i < shuffled.length; i += chunkSize) {
-            chunks.push(shuffled.substring(i, i + chunkSize));
-        }
-        
-        // 3. 홀수/짝수 복원 (역순으로)
-        const oddCount = Math.floor(chunkCount / 2);
-        const evenCount = chunkCount - oddCount;
-        
-        const oddChunks = chunks.slice(0, oddCount);
-        const evenChunks = chunks.slice(oddCount, oddCount + evenCount);
-        
-        // 원래 순서로 복원
-        const restored = [];
-        for (let i = 0; i < chunkCount; i++) {
-            if (i % 2 === 0) {
-                restored.push(evenChunks.shift());
-            } else {
-                restored.push(oddChunks.shift());
-            }
-        }
-        const reversed = restored.join('');
-        
-        // 4. 바이트 순서 원복
-        const base64 = reversed.split('').reverse().join('');
-        
-        // 5. Base64 → UTF-8 디코딩
-        const jsonStr = decodeURIComponent(escape(atob(base64)));
-        
-        // 6. JSON 파싱
-        return JSON.parse(jsonStr);
-        
-    } catch (error) {
-        로거_인사?.error('백업 데이터 디코딩 오류', error);
-        throw error;
-    }
-}
-
-// ===== JSON/HRM 복원 =====
-
-/**
- * 백업 파일 복원 (JSON 또는 HRM)
- * 
- * @param {File} file - 복원할 백업 파일 (.hrm 또는 .json)
- * 
- * @description
- * 백업 파일에서 전체 데이터를 복원합니다.
- * - .hrm 파일: 보안 인코딩 해제 후 복원 (v4.0+)
- * - .json 파일: 기존 방식으로 복원 (레거시 지원)
+ * JSON 백업 파일에서 전체 데이터를 복원합니다.
  * - 기존 데이터 완전 대체
  * - 모든 정보 100% 복원 (과거 경력 포함)
  * - 시스템 설정도 함께 복원 (v3.2+ 백업 파일)
@@ -183,14 +113,14 @@ function _decodeBackupData(encoded) {
  * - 복원 후 페이지 자동 새로고침
  * 
  * @example
- * // HTML: <input type="file" accept=".hrm,.json" onchange="restoreFromJSON(this.files[0])">
+ * // HTML: <input type="file" onchange="restoreFromJSON(this.files[0])">
  * restoreFromJSON(file);
  * 
  * @throws {인사에러} 파일이 없거나 형식이 잘못된 경우
  */
 function restoreFromJSON(file) {
     try {
-        로거_인사?.debug('백업 복원 시작', { filename: file?.name });
+        로거_인사?.debug('JSON 복원 시작', { filename: file?.name });
         
         // 파일 확인
         if (!file) {
@@ -199,30 +129,17 @@ function restoreFromJSON(file) {
             return;
         }
         
-        // 파일 확장자 확인
-        const fileName = file.name.toLowerCase();
-        const isHrmFile = fileName.endsWith('.hrm');
-        const isJsonFile = fileName.endsWith('.json');
-        
-        if (!isHrmFile && !isJsonFile) {
-            로거_인사?.warn('지원하지 않는 파일 형식', { filename: file.name });
-            에러처리_인사?.warn('지원하지 않는 파일 형식입니다.\n.hrm 또는 .json 파일을 선택해주세요.');
-            return;
-        }
-        
         // 사용자 확인
-        const fileTypeLabel = isHrmFile ? '보안 백업' : 'JSON 백업';
         const confirmMessage = 
             `⚠️ 경고: 데이터 복원\n\n` +
             `파일: ${file.name}\n` +
-            `형식: ${fileTypeLabel}\n` +
             `크기: ${_formatFileSize(file.size)}\n\n` +
             `기존 데이터가 모두 대체됩니다.\n` +
             `(직원 데이터 + 시스템 설정 모두 복원)\n\n` +
             `진행하시겠습니까?`;
         
         if (!confirm(confirmMessage)) {
-            로거_인사?.info('백업 복원 취소');
+            로거_인사?.info('JSON 복원 취소');
             _clearFileInput('restoreFile');
             return;
         }
@@ -232,30 +149,10 @@ function restoreFromJSON(file) {
         
         reader.onload = function(e) {
             try {
-                로거_인사?.debug('백업 파일 읽기 완료');
+                로거_인사?.debug('JSON 파일 읽기 완료');
                 
-                const fileContent = e.target.result;
-                let rawData;
-                
-                // ⭐ v4.0: 파일 형식에 따른 처리
-                if (isHrmFile) {
-                    // .hrm 파일: 헤더 확인 후 디코딩
-                    const lines = fileContent.split('\n');
-                    const header = lines[0];
-                    
-                    if (header !== BACKUP_FILE_HEADER) {
-                        throw new Error('올바른 HRM 백업 파일이 아닙니다.');
-                    }
-                    
-                    const encodedData = lines.slice(1).join('');
-                    rawData = _decodeBackupData(encodedData);
-                    로거_인사?.debug('HRM 보안 백업 디코딩 완료');
-                    
-                } else {
-                    // .json 파일: 기존 방식
-                    rawData = JSON.parse(fileContent);
-                    로거_인사?.debug('JSON 백업 파싱 완료');
-                }
+                // JSON 파싱
+                const rawData = JSON.parse(e.target.result);
                 
                 // 백업 버전 확인 (v3.2+ 또는 구버전)
                 const isNewFormat = rawData._backupInfo && rawData.database;
@@ -296,11 +193,10 @@ function restoreFromJSON(file) {
                     });
                 }
                 
-                로거_인사?.info('백업 복원 완료', {
+                로거_인사?.info('JSON 복원 완료', {
                     employeeCount: dbData.employees?.length || 0,
                     settingsRestored: settingsRestored,
                     backupVersion: rawData._backupInfo?.version || '구버전',
-                    backupType: isHrmFile ? 'HRM 보안' : 'JSON',
                     migrationResult: migrationResult
                 });
                 
@@ -324,7 +220,6 @@ function restoreFromJSON(file) {
                 
                 alert(
                     `✅ 복원 완료!\n\n` +
-                    `파일 형식: ${isHrmFile ? 'HRM 보안 백업' : 'JSON 백업'}\n` +
                     `직원 수: ${dbData.employees?.length || 0}명` +
                     settingsInfo +
                     migrationInfo +
@@ -335,8 +230,8 @@ function restoreFromJSON(file) {
                 location.reload();
                 
             } catch (error) {
-                로거_인사?.error('백업 복원 오류', error);
-                에러처리_인사?.handle(error, '백업 파일 복원 중 오류가 발생했습니다.');
+                로거_인사?.error('JSON 복원 오류', error);
+                에러처리_인사?.handle(error, 'JSON 파일 복원 중 오류가 발생했습니다.');
                 _clearFileInput('restoreFile');
             }
         };
@@ -351,8 +246,8 @@ function restoreFromJSON(file) {
         reader.readAsText(file);
         
     } catch (error) {
-        로거_인사?.error('백업 복원 시작 오류', error);
-        에러처리_인사?.handle(error, '복원을 시작할 수 없습니다.');
+        로거_인사?.error('JSON 복원 시작 오류', error);
+        에러처리_인사?.handle(error, 'JSON 복원을 시작할 수 없습니다.');
         _clearFileInput('restoreFile');
     }
 }

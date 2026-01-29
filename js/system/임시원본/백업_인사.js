@@ -1,22 +1,15 @@
 /**
- * 백업_인사.js - 프로덕션급 리팩토링 v4.0
+ * 백업_인사.js - 프로덕션급 리팩토링 v3.6
  * 
  * 데이터 백업 기능
- * - HRM 백업 (압축 + 인코딩 - AI 분석 방지) ⭐ v4.0 추가
- * - JSON 백업 (전체 DB 구조 + 시스템 설정 보존) - 레거시 지원
+ * - JSON 백업 (전체 DB 구조 + 시스템 설정 보존)
  * - Excel 백업 (완벽한 가져오기 호환)
  * - 전체 데이터 초기화
  * 
- * @version 4.0
+ * @version 3.6
  * @since 2024-11-07
  * 
  * [변경 이력]
- * v4.0 - 보안 백업 형식 추가 (2026-01-29)
- *   - .hrm 확장자 사용 (압축 + 인코딩)
- *   - AI가 직접 분석할 수 없는 바이너리 형식
- *   - 기존 JSON 백업 파일도 복원 지원 (레거시)
- *   - _encodeBackupData() 함수 추가
- * 
  * v3.6 - Electron 환경 호환 (2026-01-23)
  *   - resetAllData(): prompt() → confirm()으로 변경
  *   - Electron 환경에서 prompt() 미지원 문제 해결
@@ -57,7 +50,7 @@
  * - 모든 기존 함수명 유지
  * - 기존 API 100% 호환
  * - 전역 함수 유지
- * - 구버전 백업 파일(.json)도 복원 가능
+ * - 구버전 백업 파일도 복원 가능
  * 
  * [의존성]
  * - 데이터베이스_인사.js (db)
@@ -99,82 +92,28 @@ const BACKUP_SYSTEM_KEYS = {
     overtimeRecords: 'hr_overtime_records'               // 시간외근무 기록 (연월별)
 };
 
-// ===== v4.0: 보안 인코딩 함수 =====
+// ===== JSON 백업 =====
 
 /**
- * 백업 파일 헤더 (버전 식별용)
- * @constant {string}
- */
-const BACKUP_FILE_HEADER = 'HRM_SECURE_BACKUP_V4';
-
-/**
- * 백업 데이터 인코딩 (Private)
- * 
- * @private
- * @param {Object} data - 백업 데이터 객체
- * @returns {string} 인코딩된 문자열
+ * JSON 백업
  * 
  * @description
- * JSON 데이터를 압축 + 인코딩하여 AI가 분석할 수 없는 형태로 변환합니다.
- * - JSON → UTF-8 인코딩 → Base64 → 바이트 순서 변환 → 청크 섞기
- */
-function _encodeBackupData(data) {
-    try {
-        // 1. JSON 문자열화
-        const jsonStr = JSON.stringify(data);
-        
-        // 2. UTF-8 → Base64 인코딩
-        const base64 = btoa(unescape(encodeURIComponent(jsonStr)));
-        
-        // 3. 바이트 순서 뒤집기
-        const reversed = base64.split('').reverse().join('');
-        
-        // 4. 청크로 나누어 섞기 (16자 단위)
-        const chunkSize = 16;
-        const chunks = [];
-        for (let i = 0; i < reversed.length; i += chunkSize) {
-            chunks.push(reversed.substring(i, i + chunkSize));
-        }
-        
-        // 홀수/짝수 인덱스 분리 후 재조합
-        const evenChunks = chunks.filter((_, i) => i % 2 === 0);
-        const oddChunks = chunks.filter((_, i) => i % 2 === 1);
-        const shuffled = [...oddChunks, ...evenChunks].join('');
-        
-        // 5. 청크 개수를 헤더에 포함 (복원 시 필요)
-        const header = String(chunks.length).padStart(6, '0');
-        
-        return header + shuffled;
-        
-    } catch (error) {
-        로거_인사?.error('백업 데이터 인코딩 오류', error);
-        throw error;
-    }
-}
-
-// ===== JSON 백업 (보안 형식) =====
-
-/**
- * JSON 백업 (보안 형식)
- * 
- * @description
- * 전체 데이터베이스와 시스템 설정을 보안 형식(.hrm)으로 백업합니다.
+ * 전체 데이터베이스와 시스템 설정을 JSON 형식으로 백업합니다.
  * - 모든 직원 데이터 구조 보존
  * - 겸직/직무대리 설정 포함
  * - 조직도 설정 포함
  * - 근속현황표 특수부서 설정 포함
  * - 날짜별 파일명 생성
  * - 다운로드 후 자동 정리
- * - ⭐ v4.0: AI 분석 방지를 위한 인코딩 적용
  * 
  * @example
- * backupToJSON(); // 보안 백업 실행
+ * backupToJSON(); // JSON 백업 실행
  * 
  * @throws {인사에러} DB를 찾을 수 없는 경우
  */
 function backupToJSON() {
     try {
-        로거_인사?.debug('보안 백업 시작 (v4.0)');
+        로거_인사?.debug('JSON 백업 시작');
         
         // DB 확인
         if (typeof db === 'undefined' || !db || !db.data) {
@@ -187,9 +126,9 @@ function backupToJSON() {
         const fullBackup = {
             // 백업 메타정보
             _backupInfo: {
-                version: '4.0',
+                version: '3.2',
                 createdAt: new Date().toISOString(),
-                type: 'secure_backup'
+                type: 'full_backup'
             },
             
             // 핵심 데이터 (직원, 메타데이터 등)
@@ -214,21 +153,20 @@ function backupToJSON() {
             }
         });
         
-        // ⭐ v4.0: 보안 인코딩 적용
-        const encodedData = _encodeBackupData(fullBackup);
-        const fileContent = BACKUP_FILE_HEADER + '\n' + encodedData;
+        // JSON 문자열 생성 (들여쓰기 포함)
+        const dataStr = JSON.stringify(fullBackup, null, 2);
         
-        // Blob 생성 (바이너리 형태)
-        const blob = new Blob([fileContent], { type: 'application/octet-stream' });
+        // Blob 생성
+        const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         
         // 다운로드 링크 생성
         const a = document.createElement('a');
         a.href = url;
         
-        // 파일명 생성 (YYYY-MM-DD 형식, .hrm 확장자)
+        // 파일명 생성 (YYYY-MM-DD 형식)
         const today = new Date().toISOString().split('T')[0];
-        const filename = `HR_Backup_${today}.hrm`;
+        const filename = `HR_Backup_${today}.json`;
         a.download = filename;
         
         // 다운로드 실행
@@ -237,7 +175,7 @@ function backupToJSON() {
         // URL 정리
         URL.revokeObjectURL(url);
         
-        로거_인사?.info('보안 백업 완료', { filename, size: blob.size, settingsCount });
+        로거_인사?.info('JSON 백업 완료', { filename, size: blob.size, settingsCount });
         
         // 백업 내용 상세 정보 구성
         const settingsList = [];
@@ -262,7 +200,7 @@ function backupToJSON() {
             : '';
         
         에러처리_인사?.success(
-            `✅ 보안 백업 완료!\n\n` +
+            `✅ JSON 백업 완료!\n\n` +
             `파일명: ${filename}\n` +
             `크기: ${_formatFileSize(blob.size)}\n` +
             `직원 수: ${db.data.employees?.length || 0}명\n` +
@@ -270,13 +208,13 @@ function backupToJSON() {
             `\n📌 이 백업은:\n` +
             `- 모든 데이터를 100% 완벽하게 보존합니다\n` +
             `- 시스템 설정도 함께 저장됩니다\n` +
-            `- 보안 인코딩이 적용되어 있습니다\n` +
+            `- 시스템 복원 시 1순위로 사용하세요\n` +
             `- 정기적으로 백업하는 것을 권장합니다`
         );
         
     } catch (error) {
-        로거_인사?.error('보안 백업 오류', error);
-        에러처리_인사?.handle(error, '백업 중 오류가 발생했습니다.');
+        로거_인사?.error('JSON 백업 오류', error);
+        에러처리_인사?.handle(error, 'JSON 백업 중 오류가 발생했습니다.');
     }
 }
 
