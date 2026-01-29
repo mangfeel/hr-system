@@ -8,11 +8,15 @@
  * - 엑셀 다운로드
  * - 인쇄 (A4 가로)
  * 
- * @version 3.0.0
+ * @version 3.0.1
  * @since 2025-12-11
  * @location js/labor/시간외근무_인사.js
  * 
  * [변경 이력]
+ * v3.0.1 (2026-01-29) ⭐ 시간외수당 절사 설정 적용 버그 수정
+ *   - SalarySettingsManager.getOrdinarySettingsByYear()에서 overtimeRounding 직접 로드
+ *   - 기본값을 unit: 1 → unit: 10 (10원 단위)로 변경
+ *   - SalaryCalculator.getOvertimeRoundingSettings 미존재 문제 해결
  * v3.0.0 (2026-01-22) ⭐ async API 연동 버전
  *   - calculateOvertimePay() async로 변경
  *   - generateOvertimeList() async로 변경
@@ -399,9 +403,17 @@ async function calculateOvertimePay(empId, year, month, hours) {
         }
         
         // 시간외수당 절사 설정 조회
-        let overtimeRounding = { unit: 1, method: 'round' };
-        if (typeof SalaryCalculator !== 'undefined' && SalaryCalculator.getOvertimeRoundingSettings) {
-            overtimeRounding = SalaryCalculator.getOvertimeRoundingSettings(year);
+        // ⭐ [v2.3.1] SalarySettingsManager에서 직접 설정 가져오기
+        let overtimeRounding = { unit: 10, method: 'round' };  // 기본값: 10원 단위 반올림
+        try {
+            if (typeof SalarySettingsManager !== 'undefined' && SalarySettingsManager.getOrdinarySettingsByYear) {
+                const ordinarySettings = SalarySettingsManager.getOrdinarySettingsByYear(year);
+                if (ordinarySettings && ordinarySettings.overtimeRounding) {
+                    overtimeRounding = ordinarySettings.overtimeRounding;
+                }
+            }
+        } catch (e) {
+            로거_인사?.warn('시간외수당 절사 설정 로드 실패, 기본값 사용', e);
         }
         
         // 유형별 수당 계산 (각 유형별로 절사 적용 후 합산)
@@ -637,12 +649,12 @@ async function generateOvertimeList() {
         // 시급 절사 설정 확인
         let isDecimalMode = false;
         let hourlyWageRounding = { type: 'integer', unit: 1, method: 'floor' };
-        let overtimeRounding = { unit: 1, method: 'round' };
+        let overtimeRounding = { unit: 10, method: 'round' };  // ⭐ [v2.3.1] 기본값 10원 단위
         
         if (typeof SalarySettingsManager !== 'undefined' && SalarySettingsManager.getOrdinarySettingsByYear) {
             const ordinarySettings = SalarySettingsManager.getOrdinarySettingsByYear(year) || {};
             hourlyWageRounding = ordinarySettings.hourlyWageRounding || { type: 'decimal', unit: 1, method: 'floor' };
-            overtimeRounding = ordinarySettings.overtimeRounding || { unit: 1, method: 'round' };
+            overtimeRounding = ordinarySettings.overtimeRounding || { unit: 10, method: 'round' };  // ⭐ [v2.3.1] 기본값 10원 단위
             isDecimalMode = hourlyWageRounding.type === 'decimal';
         }
         
