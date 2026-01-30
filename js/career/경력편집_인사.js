@@ -15,7 +15,8 @@
  * 
  * [변경 이력]
  * v4.1.1 (2026-01-30) 🐛 저장 후 UI 블로킹 개선
- *   - loadEmployeeList()를 setTimeout()으로 비동기 실행
+ *   - 모든 화면 갱신 작업을 setTimeout()으로 비동기 실행
+ *   - loadCareerManagementTab(), showEmployeeDetail(), loadEmployeeList() 포함
  *   - 저장 후 입력란 커서 활성화 지연 문제 해결
  *   - UI 응답성 향상
  * 
@@ -496,25 +497,28 @@ async function recalculateCareer() {
             moduleClasses: careerManageModule?.className 
         });
         
-        // ⭐ 경력 관리 화면이 활성화되어 있으면 전체 화면 재로드
-        if (isCareerManageActive || careerEditSource === 'career-manage') {
-            로거_인사?.info('경력 관리 화면 전체 재로드');
+        // ⭐ v4.1.1: 모든 화면 갱신을 비동기로 처리 (UI 블로킹 방지)
+        setTimeout(() => {
+            // 경력 관리 화면이 활성화되어 있으면 전체 화면 재로드
+            if (isCareerManageActive || careerEditSource === 'career-manage') {
+                로거_인사?.info('경력 관리 화면 전체 재로드');
+                
+                if (typeof loadCareerManagementTab === 'function') {
+                    loadCareerManagementTab();
+                }
+            } else {
+                // 직원 상세 화면 갱신 (기본값)
+                로거_인사?.debug('직원 상세 화면으로 복귀', { empId: emp.id });
+                if (typeof showEmployeeDetail === 'function') {
+                    showEmployeeDetail(emp.id);
+                }
+            }
             
-            if (typeof loadCareerManagementTab === 'function') {
-                loadCareerManagementTab();
+            // 직원 목록 갱신
+            if (typeof loadEmployeeList === 'function') {
+                loadEmployeeList();
             }
-        } else {
-            // 직원 상세 화면 갱신 (기본값)
-            로거_인사?.debug('직원 상세 화면으로 복귀', { empId: emp.id });
-            if (typeof showEmployeeDetail === 'function') {
-                showEmployeeDetail(emp.id);
-            }
-        }
-        
-        // 직원 목록 갱신 (비동기 - UI 블로킹 방지)
-        if (typeof loadEmployeeList === 'function') {
-            setTimeout(() => loadEmployeeList(), 100);
-        }
+        }, 50);
         
     } catch (error) {
         로거_인사?.error('경력 재계산 실패', error);
