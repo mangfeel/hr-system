@@ -8,10 +8,16 @@
  * - Excel 날짜 변환 유틸리티
  * - 발령 데이터 자동 마이그레이션 ⭐ v3.5 추가
  * 
- * @version 4.0
+ * @version 4.1
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v4.1 - 디코딩 헤더 구조 개선 (2026-01-30)
+ *   - v4.1 헤더(12자리): 청크개수(6) + 원본길이(6)
+ *   - v4.0 헤더(6자리) 레거시 호환 유지
+ *   - 마지막 청크가 16자 미만일 때 복원 오류 수정
+ *   - 백업_인사.js v4.1과 호환
+ * 
  * v4.0 - 보안 백업 형식 지원 (2026-01-29)
  *   - .hrm 파일 복원 지원 (압축 + 인코딩)
  *   - .json 파일도 레거시로 계속 지원
@@ -121,42 +127,94 @@ const RESTORE_SYSTEM_KEYS = {
  */
 function _decodeBackupData(encoded) {
     try {
-        // 1. 헤더에서 청크 개수 추출
-        const chunkCount = parseInt(encoded.substring(0, 6), 10);
-        const shuffled = encoded.substring(6);
+        // v4.0 형식 (6자리 헤더) vs v4.1 형식 (12자리 헤더) 감지
+        // v4.1: 헤더 12자리 = 청크개수(6) + 원본길이(6)
+        // v4.0: 헤더 6자리 = 청크개수만
         
-        // 2. 청크 분리
         const chunkSize = 16;
-        const chunks = [];
-        for (let i = 0; i < shuffled.length; i += chunkSize) {
-            chunks.push(shuffled.substring(i, i + chunkSize));
+        let chunkCount, originalLength, shuffled;
+        
+        // 헤더 형식 감지: v4.1은 12자리, v4.0은 6자리
+        // v4.1 형식인지 확인 (원본길이가 유효한 숫자인지)
+        const possibleOriginalLength = parseInt(encoded.substring(6, 12), 10);
+        const possibleChunkCount = parseInt(encoded.substring(0, 6), 10);
+        
+        // v4.1 형식 검증: 청크개수 * 16 >= 원본길이 > (청크개수-1) * 16
+        const isV41Format = !isNaN(possibleOriginalLength) && 
+                           possibleOriginalLength > 0 &&
+                           possibleChunkCount * chunkSize >= possibleOriginalLength &&
+                           possibleOriginalLength > (possibleChunkCount - 1) * chunkSize;
+        
+        if (isV41Format) {
+            // v4.1 형식: 12자리 헤더
+            chunkCount = possibleChunkCount;
+            originalLength = possibleOriginalLength;
+            shuffled = encoded.substring(12);
+        } else {
+            // v4.0 형식: 6자리 헤더 (레거시 호환)
+            chunkCount = parseInt(encoded.substring(0, 6), 10);
+            shuffled = encoded.substring(6);
+            // 원본 길이 추정 (마지막 청크가 16자라고 가정)
+            originalLength = shuffled.length;
         }
         
-        // 3. 홀수/짝수 복원 (역순으로)
+        // 마지막 청크 크기 계산
+        const lastChunkSize = originalLength % chunkSize || chunkSize;
+        
+        // 홀수/짝수 청크 개수 계산
         const oddCount = Math.floor(chunkCount / 2);
         const evenCount = chunkCount - oddCount;
         
-        const oddChunks = chunks.slice(0, oddCount);
-        const evenChunks = chunks.slice(oddCount, oddCount + evenCount);
+        // 홀수 청크들의 총 길이 계산 (인덱스 1, 3, 5, ...)
+        let oddTotalLength = 0;
+        for (let i = 1; i < chunkCount; i += 2) {
+            if (i === chunkCount - 1) {
+                oddTotalLength += lastChunkSize;
+            } else {
+                oddTotalLength += chunkSize;
+            }
+        }
+        
+        const oddPart = shuffled.substring(0, oddTotalLength);
+        const evenPart = shuffled.substring(oddTotalLength);
+        
+        // 홀수 청크 분리 (인덱스 1, 3, 5, ...)
+        const oddChunks = [];
+        let pos = 0;
+        for (let i = 1; i < chunkCount; i += 2) {
+            const size = (i === chunkCount - 1) ? lastChunkSize : chunkSize;
+            oddChunks.push(oddPart.substring(pos, pos + size));
+            pos += size;
+        }
+        
+        // 짝수 청크 분리 (인덱스 0, 2, 4, ...)
+        const evenChunks = [];
+        pos = 0;
+        for (let i = 0; i < chunkCount; i += 2) {
+            const size = (i === chunkCount - 1) ? lastChunkSize : chunkSize;
+            evenChunks.push(evenPart.substring(pos, pos + size));
+            pos += size;
+        }
         
         // 원래 순서로 복원
         const restored = [];
+        let evenIdx = 0, oddIdx = 0;
         for (let i = 0; i < chunkCount; i++) {
             if (i % 2 === 0) {
-                restored.push(evenChunks.shift());
+                restored.push(evenChunks[evenIdx++]);
             } else {
-                restored.push(oddChunks.shift());
+                restored.push(oddChunks[oddIdx++]);
             }
         }
         const reversed = restored.join('');
         
-        // 4. 바이트 순서 원복
+        // 바이트 순서 원복
         const base64 = reversed.split('').reverse().join('');
         
-        // 5. Base64 → UTF-8 디코딩
+        // Base64 → UTF-8 디코딩
         const jsonStr = decodeURIComponent(escape(atob(base64)));
         
-        // 6. JSON 파싱
+        // JSON 파싱
         return JSON.parse(jsonStr);
         
     } catch (error) {

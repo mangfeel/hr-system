@@ -1,5 +1,5 @@
 /**
- * 백업_인사.js - 프로덕션급 리팩토링 v4.0
+ * 백업_인사.js - 프로덕션급 리팩토링 v4.1
  * 
  * 데이터 백업 기능
  * - HRM 백업 (압축 + 인코딩 - AI 분석 방지) ⭐ v4.0 추가
@@ -7,10 +7,15 @@
  * - Excel 백업 (완벽한 가져오기 호환)
  * - 전체 데이터 초기화
  * 
- * @version 4.0
+ * @version 4.1
  * @since 2024-11-07
  * 
  * [변경 이력]
+ * v4.1 - 인코딩 헤더 구조 개선 (2026-01-30)
+ *   - 헤더: 청크개수(6자리) + 원본길이(6자리) = 12자리
+ *   - 마지막 청크가 16자 미만일 때 복원 오류 수정
+ *   - 복원가져오기_인사.js v4.1과 호환
+ * 
  * v4.0 - 보안 백업 형식 추가 (2026-01-29)
  *   - .hrm 확장자 사용 (압축 + 인코딩)
  *   - AI가 직접 분석할 수 없는 바이너리 형식
@@ -129,7 +134,10 @@ function _encodeBackupData(data) {
         // 3. 바이트 순서 뒤집기
         const reversed = base64.split('').reverse().join('');
         
-        // 4. 청크로 나누어 섞기 (16자 단위)
+        // 4. 원본 길이 저장 (복원 시 마지막 청크 처리용)
+        const originalLength = reversed.length;
+        
+        // 5. 청크로 나누어 섞기 (16자 단위)
         const chunkSize = 16;
         const chunks = [];
         for (let i = 0; i < reversed.length; i += chunkSize) {
@@ -141,8 +149,8 @@ function _encodeBackupData(data) {
         const oddChunks = chunks.filter((_, i) => i % 2 === 1);
         const shuffled = [...oddChunks, ...evenChunks].join('');
         
-        // 5. 청크 개수를 헤더에 포함 (복원 시 필요)
-        const header = String(chunks.length).padStart(6, '0');
+        // 6. 헤더: 청크 개수(6자리) + 원본 길이(6자리) = 12자리
+        const header = String(chunks.length).padStart(6, '0') + String(originalLength).padStart(6, '0');
         
         return header + shuffled;
         

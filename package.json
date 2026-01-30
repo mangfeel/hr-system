@@ -1,7 +1,7 @@
 {
   "name": "hr-system",
-  "version": "1.0.6",
-  "description": "인사관리시스템 - 데스크톱 앱",
+  "version": "1.0.7",
+  "description": "?�사관리시?�템 - ?�스?�톱 ??,
   "main": "main.js",
   "scripts": {
     "start": "electron .",
