@@ -10,10 +10,15 @@
  * - 주당근무시간 관리 ⭐ v3.0.9 추가
  * - 발령별 이전 경력 인정율 반영 ⭐ v3.1.0 추가
  * 
- * @version 4.1.0
+ * @version 4.1.1
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v4.1.1 (2026-01-30) 🐛 저장 후 UI 블로킹 개선
+ *   - loadEmployeeList()를 setTimeout()으로 비동기 실행
+ *   - 저장 후 입력란 커서 활성화 지연 문제 해결
+ *   - UI 응답성 향상
+ * 
  * v4.1.0 (2026-01-22) ⭐ 경력 환산 API 연동
  *   - _collectEditCareerData() async 변경
  *   - TenureCalculator.calculate → API_인사.calculateTenure
@@ -506,9 +511,9 @@ async function recalculateCareer() {
             }
         }
         
-        // 직원 목록 갱신
+        // 직원 목록 갱신 (비동기 - UI 블로킹 방지)
         if (typeof loadEmployeeList === 'function') {
-            loadEmployeeList();
+            setTimeout(() => loadEmployeeList(), 100);
         }
         
     } catch (error) {
