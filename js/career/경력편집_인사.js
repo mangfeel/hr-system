@@ -14,7 +14,9 @@
  * @since 2024-11-04
  * 
  * [변경 이력]
- * v4.1.1 (2026-01-30) 🐛 저장 후 UI 블로킹 개선
+ * v4.1.1 (2026-01-30) 🐛 저장 후 UI 블로킹 개선 및 캐시 무효화
+ *   - API_인사.clearBatchCache() 호출하여 배치 캐시 무효화
+ *   - 호봉 변경 후 직원목록에 즉시 반영되지 않던 문제 해결
  *   - 모든 화면 갱신 작업을 setTimeout()으로 비동기 실행
  *   - loadCareerManagementTab(), showEmployeeDetail(), loadEmployeeList() 포함
  *   - 저장 후 입력란 커서 활성화 지연 문제 해결
@@ -485,6 +487,12 @@ async function recalculateCareer() {
         
         // 모달 닫기
         closeEditCareerModal();
+        
+        // ⭐ v4.1.1: 배치 API 캐시 무효화 (호봉 변경 반영)
+        if (typeof API_인사 !== 'undefined' && typeof API_인사.clearBatchCache === 'function') {
+            API_인사.clearBatchCache();
+            로거_인사?.info('배치 API 캐시 무효화 완료');
+        }
         
         // ⭐ 현재 활성 화면 자동 감지
         const careerManageModule = document.getElementById('module-career-manage');
