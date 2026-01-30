@@ -8,10 +8,16 @@
  * - Excel 날짜 변환 유틸리티
  * - 발령 데이터 자동 마이그레이션 ⭐ v3.5 추가
  * 
- * @version 4.1
+ * @version 4.2
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v4.2 - 엑셀 가져오기 호봉 숫자 변환 수정 (2026-01-30)
+ *   - startRank, currentRank를 parseInt()로 숫자 변환
+ *   - 문자열 "1" → 숫자 1 로 저장하여 호봉 계산 오류 방지
+ *   - 기존: "1" + 1 + yearDiff = "112" (문자열 연결 버그)
+ *   - 수정: 1 + 1 + yearDiff = 정상 호봉 계산
+ * 
  * v4.1 - 디코딩 헤더 구조 개선 (2026-01-30)
  *   - v4.1 헤더(12자리): 청크개수(6) + 원본길이(6)
  *   - v4.0 헤더(6자리) 레거시 호환 유지
@@ -711,9 +717,9 @@ function _createEmployeeFromAssignments(uniqueCode, assignments) {
             },
             
             rank: {
-                startRank: latest['입사 호봉'] || latest['입사호봉'] || 1,
+                startRank: parseInt(latest['입사 호봉'] || latest['입사호봉']) || 1,
                 firstUpgradeDate: excelDateToJS(latest['첫승급년월일']) || null,
-                currentRank: latest['현재호봉'] || 1,
+                currentRank: parseInt(latest['현재호봉']) || 1,
                 isRankBased: !!(excelDateToJS(latest['첫승급년월일']))
             },
             
