@@ -6,10 +6,16 @@
  * - 대시보드 업데이트
  * - 조직 설정 관리
  * 
- * @version 3.1.0
+ * @version 3.2.0
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v3.2.0 (2026-01-30) ⭐ async/await 적용
+ *   - showDeptEmployees: async로 변경 (getCurrentRank await)
+ *   - showMonthlyUpgrades: async로 변경 (getCurrentRank await)
+ *   - _updateDashboardAlerts: async로 변경 (getNextUpgradeDate, getCurrentRank await)
+ *   - [object Promise] 표시 버그 수정
+ * 
  * v3.1.0 (2025-12-04) ⭐ 대시보드 UI 전면 개편
  *   - 실무 중심 대시보드 레이아웃
  *   - 인사말 헤더 (조직명, 오늘 날짜)
@@ -259,7 +265,7 @@ function _updateMonthlyStats(employees) {
 /**
  * 알림/예정 업데이트
  */
-function _updateDashboardAlerts(employees, active) {
+async function _updateDashboardAlerts(employees, active) {
     try {
         const alertsContainer = document.getElementById('dashboard-alerts');
         if (!alertsContainer) return;
@@ -268,17 +274,17 @@ function _updateDashboardAlerts(employees, active) {
         const todayStr = DateUtils.formatDate(today);
         const alerts = [];
         
-        // 30일 이내 승급 예정자
-        active.forEach(emp => {
+        // 30일 이내 승급 예정자 (async 처리를 위해 for...of 사용)
+        for (const emp of active) {
             if (typeof 직원유틸_인사 !== 'undefined' && 직원유틸_인사.isRankBased(emp)) {
-                const nextUpgrade = 직원유틸_인사.getNextUpgradeDate(emp, todayStr);
+                const nextUpgrade = await 직원유틸_인사.getNextUpgradeDate(emp, todayStr);
                 if (nextUpgrade && nextUpgrade !== '-') {
                     const upgradeDate = new Date(nextUpgrade);
                     const diffDays = Math.ceil((upgradeDate - today) / (1000 * 60 * 60 * 24));
                     
                     if (diffDays >= 0 && diffDays <= 30) {
                         const name = 직원유틸_인사.getName(emp);
-                        const currentRank = parseInt(직원유틸_인사.getCurrentRank(emp, todayStr)) || 0;
+                        const currentRank = parseInt(await 직원유틸_인사.getCurrentRank(emp, todayStr)) || 0;
                         const nextRank = currentRank + 1;
                         
                         alerts.push({
@@ -289,10 +295,10 @@ function _updateDashboardAlerts(employees, active) {
                     }
                 }
             }
-        });
+        }
         
         // 육아휴직 복귀 예정자 (30일 이내)
-        active.forEach(emp => {
+        for (const emp of active) {
             if (emp.maternityLeave?.isOnLeave) {
                 const endDate = emp.maternityLeave.endDate;
                 if (endDate) {
@@ -311,7 +317,7 @@ function _updateDashboardAlerts(employees, active) {
                     }
                 }
             }
-        });
+        }
         
         // 알림이 없으면
         if (alerts.length === 0) {
@@ -511,7 +517,7 @@ function showDashboardDetailModal(title, content) {
  * 부서별 직원 상세 보기
  * @param {string} deptName - 부서명
  */
-function showDeptEmployees(deptName) {
+async function showDeptEmployees(deptName) {
     try {
         const active = db.getActiveEmployees();
         const deptEmployees = active.filter(emp => {
@@ -525,14 +531,17 @@ function showDeptEmployees(deptName) {
         }
         
         const today = DateUtils.formatDate(new Date());
-        const content = deptEmployees.map(emp => {
+        
+        // async 처리를 위해 for...of 사용
+        const contentItems = [];
+        for (const emp of deptEmployees) {
             const name = (typeof 직원유틸_인사 !== 'undefined') ? 직원유틸_인사.getName(emp) : (emp.personalInfo?.name || '');
             const position = emp.currentPosition?.position || emp.position || '';
             const isRankBased = (typeof 직원유틸_인사 !== 'undefined') ? 직원유틸_인사.isRankBased(emp) : false;
-            const currentRank = isRankBased ? 직원유틸_인사.getCurrentRank(emp, today) : '-';
+            const currentRank = isRankBased ? await 직원유틸_인사.getCurrentRank(emp, today) : '-';
             const rankBadge = isRankBased ? `${currentRank}호봉` : '연봉제';
             
-            return `
+            contentItems.push(`
                 <div class="dash-detail-item" onclick="showEmployeeDetail('${emp.id}'); closeDashboardDetailModal();">
                     <div>
                         <div class="dash-detail-name">${name}</div>
@@ -540,10 +549,10 @@ function showDeptEmployees(deptName) {
                     </div>
                     <span class="dash-detail-badge">${rankBadge}</span>
                 </div>
-            `;
-        }).join('');
+            `);
+        }
         
-        showDashboardDetailModal(`${deptName} (${deptEmployees.length}명)`, content);
+        showDashboardDetailModal(`${deptName} (${deptEmployees.length}명)`, contentItems.join(''));
         
     } catch (error) {
         로거_인사?.error('부서별 직원 상세 보기 오류', error);
@@ -685,8 +694,9 @@ function showMonthlyAssignments() {
 /**
  * 이번달 승급자 상세 보기
  * @version 1.1.0 - RankCalculator 직접 호출로 수정
+ * @version 1.2.0 - async/await 적용
  */
-function showMonthlyUpgrades() {
+async function showMonthlyUpgrades() {
     try {
         const employees = db.getEmployees();
         const today = new Date();
@@ -694,7 +704,7 @@ function showMonthlyUpgrades() {
         const thisMonthDay = `${String(today.getMonth() + 1).padStart(2, '0')}-01`;
         
         const upgrades = [];
-        employees.forEach(emp => {
+        for (const emp of employees) {
             const isRetired = emp.employment?.status === '퇴사';
             if (!isRetired && typeof 직원유틸_인사 !== 'undefined' && 직원유틸_인사.isRankBased(emp)) {
                 const firstUpgrade = emp.rank?.firstUpgradeDate;
@@ -708,8 +718,8 @@ function showMonthlyUpgrades() {
                     if (typeof RankCalculator !== 'undefined' && startRank && firstUpgrade) {
                         currentRank = RankCalculator.calculateCurrentRank(startRank, firstUpgrade, todayStr);
                     } else {
-                        // 폴백: 직원유틸 사용
-                        currentRank = parseInt(직원유틸_인사.getCurrentRank(emp, todayStr)) || startRank || 1;
+                        // 폴백: 직원유틸 사용 (async)
+                        currentRank = parseInt(await 직원유틸_인사.getCurrentRank(emp, todayStr)) || startRank || 1;
                     }
                     
                     // 이번 달 승급이므로 이전 호봉 = 현재 호봉 - 1
@@ -723,7 +733,7 @@ function showMonthlyUpgrades() {
                     });
                 }
             }
-        });
+        }
         
         if (upgrades.length === 0) {
             showDashboardDetailModal('이번달 승급', '<div class="dashboard-empty">이번달 승급자가 없습니다.</div>');

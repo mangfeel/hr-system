@@ -1,7 +1,7 @@
 {
   "name": "hr-system",
-  "version": "1.0.7",
-  "description": "?¸ì‚¬ê´€ë¦¬ì‹œ?¤í…œ - ?°ìŠ¤?¬í†± ??,
+  "version": "1.0.8",
+  "description": "HR Management System",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
