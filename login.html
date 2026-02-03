@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>인사관리시스템 - 로그인</title>
+    <!--
+    login.html - 로그인/회원가입 페이지
+    
+    @version 1.1.0
+    @since 2026-01-23
+    
+    [변경 이력]
+    v1.1.0 (2026-01-30) ⭐ 로그인 정보 자동 입력 기능
+      - 로그인 성공 시 이메일/비밀번호 저장 (electron-store)
+      - 앱 실행 시 저장된 정보 자동 입력
+      - 비밀번호는 Base64 인코딩 처리
+      - 사용자는 로그인 버튼만 클릭하면 됨
+    
+    v1.0.0 (2026-01-23) 초기 버전
+    -->
     <style>
         * {
             margin: 0;
@@ -338,7 +353,7 @@
         }
         
         // ===== 라이선스 키 포맷팅 =====
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             const licenseInput = document.getElementById('licenseKey');
             if (licenseInput) {
                 licenseInput.addEventListener('input', function(e) {
@@ -351,7 +366,73 @@
                     e.target.value = formatted;
                 });
             }
+            
+            // ⭐ 저장된 로그인 정보 불러오기
+            await loadSavedLoginInfo();
         });
+        
+        // ===== 로그인 정보 저장/불러오기 =====
+        
+        /**
+         * 저장된 로그인 정보 불러오기
+         */
+        async function loadSavedLoginInfo() {
+            try {
+                // Electron 환경에서만 동작
+                if (typeof window.electronStore === 'undefined') {
+                    console.log('[Login] 웹 환경 - 저장된 로그인 정보 불러오기 스킵');
+                    return;
+                }
+                
+                const savedLogin = await window.electronStore.get('savedLogin');
+                
+                if (savedLogin && savedLogin.email) {
+                    document.getElementById('loginEmail').value = savedLogin.email;
+                    
+                    // 비밀번호 디코딩
+                    if (savedLogin.password) {
+                        try {
+                            const decodedPassword = atob(savedLogin.password);
+                            document.getElementById('loginPassword').value = decodedPassword;
+                        } catch (e) {
+                            console.warn('[Login] 비밀번호 디코딩 실패');
+                        }
+                    }
+                    
+                    console.log('[Login] 저장된 로그인 정보 불러옴:', savedLogin.email);
+                }
+            } catch (error) {
+                console.warn('[Login] 저장된 로그인 정보 불러오기 실패:', error);
+            }
+        }
+        
+        /**
+         * 로그인 정보 저장
+         * @param {string} email - 이메일
+         * @param {string} password - 비밀번호
+         */
+        async function saveLoginInfo(email, password) {
+            try {
+                // Electron 환경에서만 동작
+                if (typeof window.electronStore === 'undefined') {
+                    console.log('[Login] 웹 환경 - 로그인 정보 저장 스킵');
+                    return;
+                }
+                
+                // 비밀번호는 간단한 인코딩 처리
+                const encodedPassword = btoa(password);
+                
+                await window.electronStore.set('savedLogin', {
+                    email: email,
+                    password: encodedPassword,
+                    savedAt: new Date().toISOString()
+                });
+                
+                console.log('[Login] 로그인 정보 저장됨:', email);
+            } catch (error) {
+                console.warn('[Login] 로그인 정보 저장 실패:', error);
+            }
+        }
         
         // ===== 인증 함수 =====
         
@@ -390,6 +471,9 @@
                 }
                 
                 currentUser = data.user;
+                
+                // ⭐ 로그인 정보 저장 (다음 접속 시 자동 입력)
+                await saveLoginInfo(email, password);
                 
                 // ★ 현재 사용자 정보 저장 (라이선스 검증용)
                 if (typeof License !== 'undefined' && License.setCurrentUser) {
