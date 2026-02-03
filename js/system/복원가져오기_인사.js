@@ -8,10 +8,14 @@
  * - Excel 날짜 변환 유틸리티
  * - 발령 데이터 자동 마이그레이션 ⭐ v3.5 추가
  * 
- * @version 4.2
+ * @version 4.3
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v4.3 - 복원 결과 메시지 한글화 (2026-01-30)
+ *   - 시스템 설정 복원 결과 메시지에서 영어 키 이름을 한글로 변환
+ *   - salaryGrades → 직급 관리, salaryTables → 급여표 등
+ * 
  * v4.2 - 엑셀 가져오기 호봉 숫자 변환 수정 (2026-01-30)
  *   - startRank, currentRank를 parseInt()로 숫자 변환
  *   - 문자열 "1" → 숫자 1 로 저장하여 호봉 계산 오류 방지
@@ -376,6 +380,14 @@ function restoreFromJSON(file) {
                             case 'orgChartSettings': return '조직도 설정';
                             case 'tenureSpecialDepts': return '근속현황표 특수부서';
                             case 'awardsData': return '포상 데이터';
+                            case 'salaryGrades': return '직급 관리';
+                            case 'salaryTables': return '급여표';
+                            case 'salarySettings': return '급여 설정';
+                            case 'ordinaryWageSettings': return '통상임금 설정';
+                            case 'positionAllowances': return '직책수당 설정';
+                            case 'salaryBasicSettings': return '급여 기본 설정';
+                            case 'overtimeSettings': return '시간외근무 설정';
+                            case 'overtimeRecords': return '시간외근무 기록';
                             default: return k;
                         }
                     }).join('\n• ')}`
