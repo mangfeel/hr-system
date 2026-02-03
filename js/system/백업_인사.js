@@ -1,5 +1,5 @@
 /**
- * 백업_인사.js - 프로덕션급 리팩토링 v4.1
+ * 백업_인사.js - 프로덕션급 리팩토링 v4.2
  * 
  * 데이터 백업 기능
  * - HRM 백업 (압축 + 인코딩 - AI 분석 방지) ⭐ v4.0 추가
@@ -7,10 +7,15 @@
  * - Excel 백업 (완벽한 가져오기 호환)
  * - 전체 데이터 초기화
  * 
- * @version 4.1
+ * @version 4.2
  * @since 2024-11-07
  * 
  * [변경 이력]
+ * v4.2 - 전체 삭제 시 모든 설정 삭제 (2026-01-30)
+ *   - resetAllData(): 직원 데이터 + 모든 시스템 설정 삭제
+ *   - 겸직/직무대리, 조직도, 직급/급여표, 직책수당, 포상, 시간외근무 등
+ *   - BACKUP_SYSTEM_KEYS에 정의된 모든 localStorage 키 삭제
+ * 
  * v4.1 - 인코딩 헤더 구조 개선 (2026-01-30)
  *   - 헤더: 청크개수(6자리) + 원본길이(6자리) = 12자리
  *   - 마지막 청크가 16자 미만일 때 복원 오류 수정
@@ -848,10 +853,17 @@ function _applyExcelFormatting(ws) {
 // ===== 전체 데이터 초기화 =====
 
 /**
- * 전체 데이터 삭제
+ * 전체 데이터 삭제 (완전 초기화)
  * 
  * @description
- * 모든 직원 데이터를 삭제합니다.
+ * 모든 직원 데이터와 시스템 설정을 삭제합니다.
+ * - 직원 데이터
+ * - 겸직/직무대리 설정
+ * - 조직도 설정
+ * - 직급/급여표 설정
+ * - 직책수당 설정
+ * - 포상 데이터
+ * - 시간외근무 기록
  * - 복구 불가능
  * - 사용자 확인 필수
  * 
@@ -878,7 +890,13 @@ function resetAllData() {
         const confirmMessage = 
             `⚠️ 경고: 전체 데이터 삭제\n\n` +
             `현재 직원 수: ${currentCount}명\n\n` +
-            `모든 데이터가 영구적으로 삭제됩니다.\n` +
+            `모든 데이터와 설정이 영구적으로 삭제됩니다.\n` +
+            `- 직원 데이터\n` +
+            `- 겸직/직무대리 설정\n` +
+            `- 조직도 설정\n` +
+            `- 직급/급여표/직책수당 설정\n` +
+            `- 포상 데이터\n` +
+            `- 시간외근무 기록\n\n` +
             `이 작업은 되돌릴 수 없습니다.\n\n` +
             `정말 삭제하시겠습니까?`;
         
@@ -890,7 +908,8 @@ function resetAllData() {
         // 2차 확인 (Electron 환경 호환 - prompt 대신 confirm 사용)
         const confirmMessage2 = 
             `⚠️ 최종 확인\n\n` +
-            `${currentCount}명의 직원 데이터가 영구적으로 삭제됩니다.\n\n` +
+            `${currentCount}명의 직원 데이터와 모든 설정이\n` +
+            `영구적으로 삭제됩니다.\n\n` +
             `정말 삭제하시겠습니까?`;
         
         if (!confirm(confirmMessage2)) {
@@ -899,20 +918,59 @@ function resetAllData() {
             return;
         }
         
-        // 데이터 삭제 실행
-        db.reset();
+        // ⭐ 시스템 설정 데이터 삭제
+        로거_인사?.info('시스템 설정 데이터 삭제 시작');
         
-        로거_인사?.warn('전체 데이터 삭제 완료', { deletedCount: currentCount });
+        let deletedSettings = 0;
+        
+        // BACKUP_SYSTEM_KEYS에 정의된 모든 키 삭제
+        Object.entries(BACKUP_SYSTEM_KEYS).forEach(([key, storageKey]) => {
+            if (localStorage.getItem(storageKey)) {
+                localStorage.removeItem(storageKey);
+                deletedSettings++;
+                로거_인사?.debug(`설정 삭제: ${key} (${storageKey})`);
+            }
+        });
+        
+        // 추가 설정 키 삭제 (BACKUP_SYSTEM_KEYS에 없는 것들)
+        const additionalKeys = [
+            'orgSettings',              // 조직도 설정 (레거시)
+            'hr_org_settings'           // 조직도 설정 (대체 키)
+        ];
+        
+        additionalKeys.forEach(key => {
+            if (localStorage.getItem(key)) {
+                localStorage.removeItem(key);
+                deletedSettings++;
+                로거_인사?.debug(`추가 설정 삭제: ${key}`);
+            }
+        });
+        
+        로거_인사?.info(`시스템 설정 ${deletedSettings}개 삭제 완료`);
+        
+        // ⭐ 직원 데이터 삭제 (db.reset() 대신 직접 삭제 - 중복 확인 방지)
+        const employeeStorageKey = typeof CONFIG !== 'undefined' 
+            ? CONFIG.STORAGE_KEY 
+            : 'hr_system_v25_db';
+        
+        localStorage.removeItem(employeeStorageKey);
+        로거_인사?.info(`직원 데이터 삭제 완료 (${employeeStorageKey})`);
+        
+        로거_인사?.warn('전체 데이터 삭제 완료', { 
+            deletedCount: currentCount,
+            deletedSettings: deletedSettings 
+        });
         
         에러처리_인사?.success(
             `✅ 전체 데이터 삭제 완료\n\n` +
-            `삭제된 직원 수: ${currentCount}명`
+            `삭제된 직원 수: ${currentCount}명\n` +
+            `삭제된 설정: ${deletedSettings}개`
         );
         
-        // 대시보드 업데이트
-        if (typeof updateDashboard === 'function') {
-            updateDashboard();
-        }
+        // 페이지 새로고침 (초기화 상태 반영)
+        setTimeout(() => {
+            location.reload();
+        }, 1500);
         
     } catch (error) {
         로거_인사?.error('전체 데이터 삭제 오류', error);
