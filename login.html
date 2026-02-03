@@ -7,10 +7,14 @@
     <!--
     login.html - 로그인/회원가입 페이지
     
-    @version 1.1.0
+    @version 1.1.1
     @since 2026-01-23
     
     [변경 이력]
+    v1.1.1 (2026-01-30) 🐛 electronStore 반환 형식 수정
+      - electronStore.get() 반환값이 {success, data} 형식임
+      - result.data에서 실제 데이터 추출하도록 수정
+    
     v1.1.0 (2026-01-30) ⭐ 로그인 정보 자동 입력 기능
       - 로그인 성공 시 이메일/비밀번호 저장 (electron-store)
       - 앱 실행 시 저장된 정보 자동 입력
@@ -384,9 +388,12 @@
                     return;
                 }
                 
-                const savedLogin = await window.electronStore.get('savedLogin');
+                const result = await window.electronStore.get('savedLogin');
                 
-                if (savedLogin && savedLogin.email) {
+                // ⭐ 반환 형식: {success: true, data: {...}}
+                if (result && result.success && result.data && result.data.email) {
+                    const savedLogin = result.data;
+                    
                     document.getElementById('loginEmail').value = savedLogin.email;
                     
                     // 비밀번호 디코딩
@@ -400,6 +407,8 @@
                     }
                     
                     console.log('[Login] 저장된 로그인 정보 불러옴:', savedLogin.email);
+                } else {
+                    console.log('[Login] 저장된 로그인 정보 없음');
                 }
             } catch (error) {
                 console.warn('[Login] 저장된 로그인 정보 불러오기 실패:', error);
