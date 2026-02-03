@@ -15,6 +15,7 @@
  *   - resetAllData(): 직원 데이터 + 모든 시스템 설정 삭제
  *   - 겸직/직무대리, 조직도, 직급/급여표, 직책수당, 포상, 시간외근무 등
  *   - BACKUP_SYSTEM_KEYS에 정의된 모든 localStorage 키 삭제
+ *   - ⭐ Electron 환경: electron-store 데이터도 함께 삭제
  * 
  * v4.1 - 인코딩 헤더 구조 개선 (2026-01-30)
  *   - 헤더: 청크개수(6자리) + 원본길이(6자리) = 12자리
@@ -873,8 +874,10 @@ function _applyExcelFormatting(ws) {
  * @throws {인사에러} DB를 찾을 수 없는 경우
  */
 function resetAllData() {
-    try {
-        로거_인사?.debug('전체 데이터 삭제 시작');
+    // async 처리를 위한 내부 함수
+    (async () => {
+        try {
+            로거_인사?.debug('전체 데이터 삭제 시작');
         
         // DB 확인
         if (typeof db === 'undefined' || !db) {
@@ -956,6 +959,20 @@ function resetAllData() {
         localStorage.removeItem(employeeStorageKey);
         로거_인사?.info(`직원 데이터 삭제 완료 (${employeeStorageKey})`);
         
+        // ⭐ Electron 환경: electron-store도 삭제
+        if (typeof window !== 'undefined' && window.electronStore) {
+            로거_인사?.info('Electron 환경 감지 - electron-store 데이터 삭제 시작');
+            
+            try {
+                // electron-store 전체 삭제
+                await window.electronStore.clear();
+                로거_인사?.info('electron-store 전체 삭제 완료');
+            } catch (storeError) {
+                로거_인사?.error('electron-store 삭제 오류', storeError);
+                // 오류가 발생해도 계속 진행
+            }
+        }
+        
         로거_인사?.warn('전체 데이터 삭제 완료', { 
             deletedCount: currentCount,
             deletedSettings: deletedSettings 
@@ -976,6 +993,7 @@ function resetAllData() {
         로거_인사?.error('전체 데이터 삭제 오류', error);
         에러처리_인사?.handle(error, '데이터 삭제 중 오류가 발생했습니다.');
     }
+    })();  // async 함수 즉시 실행
 }
 
 // ===== 유틸리티 함수 =====
