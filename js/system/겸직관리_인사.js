@@ -6,10 +6,12 @@
  * - 조직도 생성 시 기준일에 따라 자동 반영
  * - 유형: 겸직(concurrent), 직무대리(acting)
  * 
- * @version 1.0.1
+ * @version 1.0.2
  * @since 2025-11-27
  * 
  * [변경 이력]
+ * v1.0.2 - 2026-02-03: 등록 현황 테이블 담당 직원 이름 표시 버그 수정
+ *   - employee.name → employee.personalInfo?.name 으로 수정
  * v1.0.1 - 2026-01-05: 겸직관리_인사 네임스페이스 추가 (급여계산기 연동)
  * v1.0.0 - 2025-11-27: 최초 작성
  * 
@@ -417,7 +419,7 @@ function generateConcurrentPositionHTML(positions, employees, departments) {
     const tableRowsHTML = positions.length > 0 
         ? positions.map(pos => {
             const employee = getEmployeeById(pos.employeeId);
-            const empName = employee ? employee.name : '(삭제된 직원)';
+            const empName = employee ? (employee.personalInfo?.name || employee.name || '(이름없음)') : '(삭제된 직원)';
             const typeInfo = POSITION_TYPES[pos.type] || POSITION_TYPES.concurrent;
             
             // 현재 유효 여부 체크
