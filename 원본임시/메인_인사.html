@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인사관리 시스템 v3.0</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="css/스타일_인사.css">
+    <link rel="stylesheet" href="css/통계분석_스타일.css">
+    <link rel="stylesheet" href="css/인사카드_스타일.css">
+    <link rel="stylesheet" href="css/포상관리_스타일.css">
+    <link rel="stylesheet" href="css/호봉획정표_스타일.css">
+    <link rel="stylesheet" href="css/근로계약서_스타일.css">
+    <style>
+        /* 상단 메뉴 추가 */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 260px;
+            right: 0;
+            height: 50px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 999;
+        }
+        .top-nav {
+            display: flex;
+            gap: 0;
+        }
+        .top-menu-item {
+            padding: 0 20px;
+            height: 50px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .top-menu-item:hover {
+            color: #111827;
+            background: #f9fafb;
+        }
+        .top-menu-item.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+        .main-content {
+            margin-top: 50px;
+        }
+        /* 메뉴 카테고리 숨김 */
+        .menu-category.hidden {
+            display: none !important;
+        }
+        @media (max-width: 768px) {
+            .top-header { left: 0; }
+        }
+    </style>
+    <!-- Supabase 인증 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- 인증 체크 -->
+    <script src="js/auth/supabase_인사.js"></script>
+    <script src="js/auth/auth_인사.js"></script>
+    <script>
+        (async function() {
+            const isLoggedIn = await Auth_인사.init();
+            if (!isLoggedIn) {
+                window.location.href = 'login.html';
+            }
+        })();
+    </script>
+    <!-- 상단 대분류 메뉴 -->
+    <header class="top-header">
+        <nav class="top-nav">
+            <button class="top-menu-item active" data-category="dashboard" onclick="showCategory('dashboard')">
+                <span>📊</span><span>대시보드</span>
+            </button>
+            <button class="top-menu-item" data-category="hr" onclick="showCategory('hr')">
+                <span>👥</span><span>인력관리</span>
+            </button>
+            <button class="top-menu-item" data-category="labor" onclick="showCategory('labor')">
+                <span>💰</span><span>노무관리</span>
+            </button>
+            <button class="top-menu-item" data-category="reports" onclick="showCategory('reports')">
+                <span>📊</span><span>보고서</span>
+            </button>
+            <button class="top-menu-item" data-category="system" onclick="showCategory('system')">
+                <span>⚙️</span><span>시스템</span>
+            </button>
+        </nav>
+        <!-- 라이선스 정보 표시 -->
+        <div id="licenseInfoDisplay" style="margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 12px; color: #666;">
+            <span id="licensePlanBadge" style="background: #e0e7ff; color: #4f46e5; padding: 2px 8px; border-radius: 4px; font-weight: 500;"></span>
+            <span id="licenseExpireText"></span>
+        </div>
+    </header>
+    
+    <!-- 사이드바 -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1>🏢 <span id="orgNameDisplay">인사관리 시스템</span> <span class="version-badge">v3.0</span></h1>
+            <p>HR Management System</p>
+        </div>
+        
+        <div class="quick-search">
+            <button class="search-trigger" onclick="openSearchModal()">
+                <span>🔍 빠른 검색...</span>
+                <span class="search-shortcut">Ctrl+K</span>
+            </button>
+        </div>
+        
+        <div class="menu-category" data-category="dashboard">
+            <div class="category-header" onclick="navigateToModule('dashboard')">📊 대시보드</div>
+        </div>
+        
+        <div class="menu-category" data-category="hr">
+            <div class="category-header" onclick="toggleCategory('hr')">
+                <span>👥 인력 관리</span>
+                <span class="toggle-icon" id="toggle-hr">▼</span>
+            </div>
+            <div class="category-items" id="hr-items">
+                <a href="#" onclick="navigateToModule('employee-register'); return false;">➕ 신규 직원 등록</a>
+                <a href="#" onclick="navigateToModule('employee-list'); return false;">📋 직원 목록/수정</a>
+                <a href="#" onclick="navigateToModule('career-manage'); return false;">📝 경력 관리</a>
+                <a href="#" onclick="navigateToModule('assignment'); return false;">📄 인사 발령</a>
+                <a href="#" onclick="navigateToModule('employment-contract'); return false;">📃 근로계약서</a>
+                <a href="#" onclick="navigateToModule('maternity'); return false;">🤱 육아 휴직</a>
+                <a href="#" onclick="navigateToModule('reduced-work'); return false;">⏰ 단축근로 관리</a>
+                <a href="#" onclick="navigateToModule('awards-manage'); return false;">🏆 포상 등록</a>
+            </div>
+        </div>
+        
+        <div class="menu-category" data-category="labor">
+            <div class="category-header" onclick="toggleCategory('labor')">
+                <span>💰 노무 관리</span>
+                <span class="toggle-icon" id="toggle-labor">▼</span>
+            </div>
+            <div class="category-items" id="labor-items">
+                <a href="#" onclick="navigateToModule('salary-settings'); return false;">⚙️ 급여 설정</a>
+                <a href="#" onclick="navigateToModule('salary-status'); return false;">📊 급여 현황표</a>
+                <a href="#" onclick="navigateToModule('overtime'); return false;">⏰ 시간외근무 관리</a>
+            </div>
+        </div>
+        
+        <div class="menu-category" data-category="reports">
+            <div class="category-header" onclick="toggleCategory('reports')">
+                <span>📊 보고서</span>
+                <span class="toggle-icon" id="toggle-reports">▼</span>
+            </div>
+            <div class="category-items" id="reports-items">
+                <a href="#" onclick="navigateToModule('org-chart'); return false;">🏛️ 조직도</a>
+                <a href="#" onclick="navigateToModule('profile-card'); return false;">📇 인사카드</a>
+                <a href="#" onclick="navigateToModule('awards-report'); return false;">🏆 포상 현황</a>
+                <a href="#" onclick="navigateToModule('statistics'); return false;">📊 교차 통계 분석</a>
+                <a href="#" onclick="navigateToModule('tenure-report'); return false;">📈 근속현황표</a>
+                <a href="#" onclick="navigateToModule('register'); return false;">📋 연명부</a>
+                <a href="#" onclick="navigateToModule('certificate'); return false;">📄 호봉획정표</a>
+                <a href="#" onclick="navigateToModule('new-employee-list'); return false;">📥 입사자 목록</a>
+                <a href="#" onclick="navigateToModule('retired-list'); return false;">🚪 퇴사자 목록</a>
+            </div>
+        </div>
+        
+        <div class="menu-category" data-category="system">
+            <div class="category-header" onclick="toggleCategory('system')">
+                <span>⚙️ 시스템</span>
+                <span class="toggle-icon" id="toggle-system">▼</span>
+            </div>
+            <div class="category-items" id="system-items">
+                <a href="#" onclick="navigateToModule('settings'); return false;">⚙️ 조직 설정</a>
+                <a href="#" onclick="navigateToModule('org-chart-settings'); return false;">🏛️ 조직도 설정</a>
+                <a href="#" onclick="navigateToModule('concurrent-position'); return false;">👥 겸직/직무대리 관리</a>
+                <a href="#" onclick="navigateToModule('backup'); return false;">💾 백업/복원</a>
+                <a href="#" onclick="navigateToModule('import'); return false;">📤 가져오기</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 메인 컨텐츠 -->
+    <main class="main-content">
+        <div class="top-search-bar">
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            <div class="search-input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="직원, 메뉴 검색..." onclick="openSearchModal()" readonly>
+                <span class="search-kbd">Ctrl+K</span>
+            </div>
+        </div>
+        
+        <div class="content-area">
+            <!-- 대시보드 -->
+            <div id="module-dashboard" class="module-content active">
+                <!-- 인사말 헤더 -->
+                <div class="dashboard-greeting">
+                    <div class="greeting-text">
+                        <h2>👋 안녕하세요!</h2>
+                        <p id="dashboard-org-name">인사관리시스템</p>
+                    </div>
+                    <div class="greeting-date" id="dashboard-today"></div>
+                </div>
+                
+                <!-- 통계 카드 -->
+                <div class="dashboard-stats">
+                    <div class="dash-stat-card">
+                        <div class="dash-stat-icon">👥</div>
+                        <div class="dash-stat-info">
+                            <div class="dash-stat-value" id="dash-stat-total">0</div>
+                            <div class="dash-stat-label">전체 직원</div>
+                        </div>
+                    </div>
+                    <div class="dash-stat-card">
+                        <div class="dash-stat-icon">✅</div>
+                        <div class="dash-stat-info">
+                            <div class="dash-stat-value" id="dash-stat-active">0</div>
+                            <div class="dash-stat-label">재직 중</div>
+                        </div>
+                    </div>
+                    <div class="dash-stat-card">
+                        <div class="dash-stat-icon">🤱</div>
+                        <div class="dash-stat-info">
+                            <div class="dash-stat-value" id="dash-stat-leave">0</div>
+                            <div class="dash-stat-label">휴직 중</div>
+                        </div>
+                    </div>
+                    <div class="dash-stat-card">
+                        <div class="dash-stat-icon">🚪</div>
+                        <div class="dash-stat-info">
+                            <div class="dash-stat-value" id="dash-stat-retired">0</div>
+                            <div class="dash-stat-label">퇴사</div>
+                        </div>
+                    </div>
+                    <div class="dash-stat-card highlight">
+                        <div class="dash-stat-icon">📊</div>
+                        <div class="dash-stat-info">
+                            <div class="dash-stat-value" id="dash-stat-avgrank">0</div>
+                            <div class="dash-stat-label">평균 호봉</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2단 레이아웃 -->
+                <div class="dashboard-grid">
+                    <!-- 왼쪽: 빠른 실행 + 알림 -->
+                    <div class="dashboard-left">
+                        <!-- 빠른 실행 -->
+                        <div class="dashboard-card">
+                            <div class="dashboard-card-title">⚡ 빠른 실행</div>
+                            <div class="quick-actions">
+                                <button class="quick-action-btn" onclick="navigateToModule('employee-register')">
+                                    <span class="quick-action-icon">➕</span>
+                                    <span>직원 등록</span>
+                                </button>
+                                <button class="quick-action-btn" onclick="navigateToModule('assignment')">
+                                    <span class="quick-action-icon">📋</span>
+                                    <span>인사발령</span>
+                                </button>
+                                <button class="quick-action-btn" onclick="navigateToModule('maternity')">
+                                    <span class="quick-action-icon">🤱</span>
+                                    <span>육아휴직</span>
+                                </button>
+                                <button class="quick-action-btn" onclick="navigateToModule('certificate')">
+                                    <span class="quick-action-icon">📄</span>
+                                    <span>호봉획정표</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 알림/예정 -->
+                        <div class="dashboard-card">
+                            <div class="dashboard-card-title">🔔 알림 / 예정</div>
+                            <div id="dashboard-alerts">
+                                <div class="dashboard-empty">알림이 없습니다.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 오른쪽: 이번 달 현황 + 부서별 현황 -->
+                    <div class="dashboard-right">
+                        <!-- 이번 달 현황 -->
+                        <div class="dashboard-card">
+                            <div class="dashboard-card-title">📅 이번 달 현황</div>
+                            <div class="monthly-stats">
+                                <div class="monthly-stat-item">
+                                    <span class="monthly-stat-label">입사</span>
+                                    <span class="monthly-stat-value" id="monthly-hired">0명</span>
+                                </div>
+                                <div class="monthly-stat-item">
+                                    <span class="monthly-stat-label">퇴사</span>
+                                    <span class="monthly-stat-value" id="monthly-retired">0명</span>
+                                </div>
+                                <div class="monthly-stat-item">
+                                    <span class="monthly-stat-label">발령</span>
+                                    <span class="monthly-stat-value" id="monthly-assignments">0건</span>
+                                </div>
+                                <div class="monthly-stat-item">
+                                    <span class="monthly-stat-label">이번달 승급</span>
+                                    <span class="monthly-stat-value" id="monthly-upgrades">0명</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 부서별 현황 -->
+                        <div class="dashboard-card">
+                            <div class="dashboard-card-title">👥 부서별 현황</div>
+                            <div id="dashboard-dept-stats">
+                                <div class="dashboard-empty">부서 정보가 없습니다.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 최근 활동 -->
+                <div class="dashboard-card full-width">
+                    <div class="dashboard-card-title">📊 최근 활동</div>
+                    <div id="dashboard-recent-activity">
+                        <div class="dashboard-empty">최근 활동이 없습니다.</div>
+                    </div>
+                </div>
+                
+                <!-- 시스템 정보 (축소) -->
+                <div class="dashboard-system-info">
+                    <span>💾 저장용량: <strong id="dash-storage-size">0 KB</strong></span>
+                    <span>🔢 다음 고유번호: <strong id="dash-next-code">H001</strong></span>
+                    <span>📦 데이터 버전: <strong>v3.0</strong></span>
+                </div>
+            </div>
+            
+            <!-- 대시보드 상세 모달 -->
+            <div id="dashboard-detail-modal" class="modal" style="display:none;">
+                <div class="modal-content dash-detail-modal">
+                    <div class="dash-detail-header">
+                        <h3 id="dash-detail-title">상세 정보</h3>
+                        <button class="modal-close" onclick="closeDashboardDetailModal()">×</button>
+                    </div>
+                    <div class="dash-detail-body" id="dash-detail-body">
+                        <!-- 동적 콘텐츠 -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 조직 설정 -->
+            <div id="module-settings" class="module-content">
+                <div class="card">
+                    <div class="card-title">⚙️ 조직 정보 설정</div>
+                    <div class="alert alert-info">
+                        <span>💡</span>
+                        <span>조직 정보는 시스템 전체에 적용되며, 근로계약서 등의 문서에 자동으로 표시됩니다.</span>
+                    </div>
+                    
+                    <!-- 기본 정보 -->
+                    <div class="form-group">
+                        <label>조직명 <span class="required-mark">*</span></label>
+                        <input type="text" id="organizationName" class="form-control" placeholder="예: ○○복지관">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>기관 주소</label>
+                            <input type="text" id="organizationAddress" class="form-control" placeholder="예: 서울특별시 강남구 테헤란로 123">
+                        </div>
+                        <div class="form-group">
+                            <label>기관 연락처</label>
+                            <input type="text" id="organizationPhone" class="form-control" placeholder="예: 02-1234-5678">
+                        </div>
+                    </div>
+                    
+                    <!-- 퇴직연금 설정 -->
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <label style="font-weight: bold; color: #4a5568;">퇴직연금 설정</label>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>퇴직연금 은행</label>
+                                <select id="pensionBank" class="form-control">
+                                    <option value="농협은행">농협은행</option>
+                                    <option value="신한은행">신한은행</option>
+                                    <option value="국민은행">국민은행</option>
+                                    <option value="우리은행">우리은행</option>
+                                    <option value="하나은행">하나은행</option>
+                                    <option value="기업은행">기업은행</option>
+                                    <option value="SC제일은행">SC제일은행</option>
+                                    <option value="한국투자증권">한국투자증권</option>
+                                    <option value="삼성생명">삼성생명</option>
+                                    <option value="미래에셋증권">미래에셋증권</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>퇴직연금 유형</label>
+                                <select id="pensionType" class="form-control">
+                                    <option value="DC">DC형 (확정기여형)</option>
+                                    <option value="DB">DB형 (확정급여형)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="saveOrganizationSettings()">💾 저장</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 신규 직원 등록 -->
+            <div id="module-employee-register" class="module-content">
+                <div class="register-header">
+                    <h2 class="register-title">➕ 신규 직원 등록</h2>
+                    <p class="register-subtitle">새로운 직원의 정보를 입력하고 호봉을 자동으로 계산합니다.</p>
+                </div>
+                
+                <!-- ✅ 카드 1: 기본 정보 (식별 + 기본 통합) -->
+                <div class="card register-card">
+                    <div class="card-title">👤 기본 정보</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>고유번호 <span class="required-mark">*</span></label>
+                            <input type="text" id="uniqueCode" class="form-control auto-generated" readonly placeholder="자동 생성">
+                        </div>
+                        <div class="form-group">
+                            <label>사원번호</label>
+                            <div class="input-with-button">
+                                <input type="text" id="employeeNumber" class="form-control" placeholder="예: 2025-0001" oninput="onEmployeeNumberInput()">
+                                <button type="button" class="btn btn-secondary btn-small" onclick="generateEmployeeNumberManual()" title="자동생성">🔄</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>성명 <span class="required-mark">*</span></label>
+                            <input type="text" id="employeeName" class="form-control" placeholder="예: 홍길동">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>입사일 <span class="required-mark">*</span></label>
+                            <input type="date" id="entryDate" class="form-control" onchange="updateEmployeeNumberField()">
+                        </div>
+                        <div class="form-group">
+                            <label>고용형태 <span class="required-mark">*</span></label>
+                            <select id="employmentType" class="form-control">
+                                <option value="" disabled>-- 선택 --</option>
+                                <option value="정규직" selected>정규직</option>
+                                <option value="무기계약직">무기계약직</option>
+                                <option value="계약직">계약직</option>
+                                <option value="육아휴직대체">육아휴직대체</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ✅ 카드 2: 소속 및 급여 정보 (소속 + 근로시간 + 급여체계 통합) -->
+                <div class="card register-card">
+                    <div class="card-title">🏢 소속 및 급여 정보</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>부서 <span class="required-mark">*</span></label>
+                            <input type="text" id="employeeDept" class="form-control" placeholder="예: 사무국, 사회복지팀">
+                        </div>
+                        <div class="form-group">
+                            <label>직위 <span class="required-mark">*</span></label>
+                            <input type="text" id="employeePosition" class="form-control" placeholder="예: 팀장, 주임, 사원">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>직급 <span class="required-mark">*</span></label>
+                            <input type="text" id="employeeGrade" class="form-control" placeholder="예: 일반직 1급, 관리직 2급">
+                        </div>
+                        <div class="form-group">
+                            <label>직종 <span class="required-mark">*</span></label>
+                            <input type="text" id="employeeJobType" class="form-control" placeholder="예: 사회복지사, 요양보호사">
+                        </div>
+                    </div>
+                    
+                    <!-- 구분선 -->
+                    <div class="card-divider"></div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>주 소정근로시간</label>
+                            <div class="input-with-unit">
+                                <input type="number" id="weeklyWorkingHours" class="form-control" value="40" min="1" max="52" onchange="updateMonthlyHoursDisplay()">
+                                <span class="input-unit">시간</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>월 소정근로시간</label>
+                            <input type="text" id="monthlyWorkingHoursDisplay" class="form-control auto-generated" value="209시간" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>급여체계 <span class="required-mark">*</span></label>
+                            <div class="radio-group-inline">
+                                <label class="radio-label-inline">
+                                    <input type="radio" name="isRankBased" value="true" checked>
+                                    <span>호봉제</span>
+                                </label>
+                                <label class="radio-label-inline">
+                                    <input type="radio" name="isRankBased" value="false">
+                                    <span>연봉제</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ✅ 카드 3: 과거 경력 -->
+                <div class="card register-card">
+                    <div class="card-title">📋 과거 경력 <span class="optional-badge">선택</span></div>
+                    <div class="no-career-check">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="noCareerCheckbox" onchange="toggleCareerSection()">
+                            <span>경력 없음 (신입)</span>
+                        </label>
+                    </div>
+                    <div id="careerSection">
+                        <p class="card-description">입사 전 경력을 입력하면 호봉 계산에 반영됩니다.</p>
+                        <div id="careerList"></div>
+                        <button class="btn btn-secondary btn-add-career" onclick="addCareer()">
+                            <span>➕</span> 경력 추가
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 등록 버튼 -->
+                <button class="btn btn-primary btn-register" onclick="calculateAndSave()">
+                    <span>💾</span> 호봉 계산 및 등록
+                </button>
+                
+                <!-- 결과 표시 영역 -->
+                <div id="rankResult"></div>
+            </div>
+            
+            <!-- 직원 목록/수정 -->
+            <div id="module-employee-list" class="module-content">
+                <!-- 통계 헤더 -->
+                <div class="emp-list-stats">
+                    <div class="emp-stat-card" data-filter="all" onclick="filterByStatus('all')">
+                        <div class="emp-stat-label">전체</div>
+                        <div class="emp-stat-value" id="emplist-stat-total">0명</div>
+                    </div>
+                    <div class="emp-stat-card active" data-filter="active" onclick="filterByStatus('active')">
+                        <div class="emp-stat-label">재직</div>
+                        <div class="emp-stat-value" id="emplist-stat-active">0명</div>
+                    </div>
+                    <div class="emp-stat-card" data-filter="retired" onclick="filterByStatus('retired')">
+                        <div class="emp-stat-label">퇴사</div>
+                        <div class="emp-stat-value" id="emplist-stat-retired">0명</div>
+                    </div>
+                    <div class="emp-stat-card" data-filter="leave" onclick="filterByStatus('leave')">
+                        <div class="emp-stat-label">휴직중</div>
+                        <div class="emp-stat-value" id="emplist-stat-leave">0명</div>
+                    </div>
+                </div>
+                
+                <!-- 필터 및 검색 영역 -->
+                <div class="emp-list-toolbar">
+                    <div class="emp-search-box">
+                        <span class="emp-search-icon">🔍</span>
+                        <input type="text" id="searchEmployee" placeholder="이름, 부서, 고유번호 검색..." onkeyup="searchEmployees()" class="form-control">
+                    </div>
+                    <div class="emp-filters">
+                        <select id="filterDept" class="emp-filter-select" onchange="applyFilters()">
+                            <option value="">전체 부서</option>
+                        </select>
+                        <select id="filterSort" class="emp-filter-select" onchange="applyFilters()">
+                            <option value="name">이름순</option>
+                            <option value="entry-desc">입사일 (최신순)</option>
+                            <option value="entry-asc">입사일 (오래된순)</option>
+                            <option value="rank-desc">호봉 (높은순)</option>
+                            <option value="rank-asc">호봉 (낮은순)</option>
+                        </select>
+                    </div>
+                    <div class="emp-view-toggle">
+                        <button class="emp-view-btn active" data-view="card" onclick="switchView('card')" title="카드 보기">
+                            🃏
+                        </button>
+                        <button class="emp-view-btn" data-view="table" onclick="switchView('table')" title="테이블 보기">
+                            📋
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 카드 뷰 -->
+                <div class="employee-list" id="employeeList"></div>
+                
+                <!-- 테이블 뷰 -->
+                <div class="emp-table-container" id="employeeTableView" style="display:none;">
+                    <table class="emp-table">
+                        <thead>
+                            <tr>
+                                <th>고유번호</th>
+                                <th>이름</th>
+                                <th>부서</th>
+                                <th>직위</th>
+                                <th>호봉</th>
+                                <th>입사일</th>
+                                <th>상태</th>
+                                <th>액션</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeTableBody"></tbody>
+                    </table>
+                </div>
+                
+                <!-- 빈 상태 -->
+                <div id="emptyEmployeeState" class="empty-state" style="display:none;">
+                    <div class="empty-state-icon">📂</div>
+                    <h3>등록된 직원이 없습니다</h3>
+                </div>
+            </div>
+            
+            <!-- 경력 관리 -->
+            <div id="module-career-manage" class="module-content">
+                <!-- 경력관리.js에서 동적으로 생성됨 -->
+            </div>
+            
+            <!-- 인사발령 -->
+            <div id="module-assignment" class="module-content">
+                <!-- 페이지 헤더 -->
+                <div style="margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #e5e7eb;">
+                    <h2 style="font-size:1.4em;font-weight:700;color:#111827;margin:0 0 6px 0;">인사발령</h2>
+                    <p style="color:#6b7280;margin:0;font-size:0.9em;">부서 이동, 직위 변경, 급여방식 변경 등 인사 변동사항을 관리합니다.</p>
+                </div>
+                
+                <!-- 탭 네비게이션 (언더라인 스타일) -->
+                <div style="display:flex;gap:0;margin-bottom:24px;border-bottom:1px solid #e5e7eb;">
+                    <button type="button" onclick="switchAssignmentTab('register')" id="assignmentTabRegister"
+                            style="padding:12px 20px;font-size:0.9em;font-weight:600;background:transparent;color:#667eea;border:none;border-bottom:2px solid #667eea;cursor:pointer;transition:all 0.2s;margin-bottom:-1px;">
+                        발령 등록
+                    </button>
+                    <button type="button" onclick="switchAssignmentTab('history')" id="assignmentTabHistory"
+                            style="padding:12px 20px;font-size:0.9em;font-weight:500;background:transparent;color:#6b7280;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;margin-bottom:-1px;">
+                        발령 내역 <span id="assignmentHistoryBadge" style="background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:10px;font-size:0.8em;margin-left:4px;">0</span>
+                    </button>
+                </div>
+                
+                <!-- 탭 1: 발령 등록 -->
+                <div id="assignmentTabContentRegister" class="assignment-tab-content" style="display:block;">
+                    
+                    <!-- 섹션 1: 발령 대상 -->
+                    <div style="margin-bottom:28px;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                            <span style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75em;font-weight:700;">1</span>
+                            <span style="font-weight:600;color:#374151;font-size:0.95em;">발령 대상 선택</span>
+                        </div>
+                        <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85em;color:#4b5563;margin-bottom:6px;display:block;">직원 <span style="color:#ef4444;">*</span></label>
+                                <select id="assignmentEmployeeSelect" class="form-control" onchange="loadEmployeeForAssignment()" style="padding:10px 12px;">
+                                    <option value="">직원을 선택하세요</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85em;color:#4b5563;margin-bottom:6px;display:block;">발령일 <span style="color:#ef4444;">*</span></label>
+                                <input type="date" id="assignmentDate" class="form-control" style="padding:10px 12px;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 구분선 -->
+                    <div style="height:1px;background:#e5e7eb;margin-bottom:28px;"></div>
+                    
+                    <!-- 섹션 2: 발령 정보 -->
+                    <div style="margin-bottom:28px;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                            <span style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75em;font-weight:700;">2</span>
+                            <span style="font-weight:600;color:#374151;font-size:0.95em;">발령 정보</span>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85em;color:#4b5563;margin-bottom:6px;display:block;">부서 <span style="color:#ef4444;">*</span></label>
+                                <input type="text" id="assignmentDept" class="form-control" placeholder="예: 사회복지팀" style="padding:10px 12px;">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85em;color:#4b5563;margin-bottom:6px;display:block;">직위 <span style="color:#ef4444;">*</span></label>
+                                <input type="text" id="assignmentPosition" class="form-control" placeholder="예: 팀장" style="padding:10px 12px;">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85em;color:#4b5563;margin-bottom:6px;display:block;">직급</label>
+                                <input type="text" id="assignmentGrade" class="form-control" placeholder="예: 일반직 1급" style="padding:10px 12px;">
+                            </div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:0.85em;color:#4b5563;margin-bottom:6px;display:block;">고용형태</label>
+                                <select id="assignmentEmploymentType" class="form-control" style="padding:10px 12px;">
+                                    <option value="정규직">정규직</option>
+                                    <option value="무기계약직">무기계약직</option>
+                                    <option value="계약직">계약직</option>
+                                    <option value="육아휴직대체">육아휴직대체</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 구분선 -->
+                    <div style="height:1px;background:#e5e7eb;margin-bottom:28px;"></div>
+                    
+                    <!-- 섹션 3: 급여 및 근무 -->
+                    <div style="margin-bottom:28px;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                            <span style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75em;font-weight:700;">3</span>
+                            <span style="font-weight:600;color:#374151;font-size:0.95em;">급여 및 근무조건</span>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                            <!-- 급여방식 - 세그먼트 컨트롤 스타일 -->
+                            <div>
+                                <label style="font-size:0.85em;color:#4b5563;margin-bottom:8px;display:block;">급여방식 <span style="color:#ef4444;">*</span></label>
+                                <div style="display:flex;background:#f3f4f6;border-radius:8px;padding:4px;">
+                                    <label style="flex:1;text-align:center;padding:10px;border-radius:6px;cursor:pointer;transition:all 0.2s;margin:0;" id="paymentMethodRank">
+                                        <input type="radio" name="assignmentPaymentMethod" value="호봉제" checked style="display:none;">
+                                        <span style="font-weight:500;font-size:0.9em;">호봉제</span>
+                                    </label>
+                                    <label style="flex:1;text-align:center;padding:10px;border-radius:6px;cursor:pointer;transition:all 0.2s;margin:0;" id="paymentMethodSalary">
+                                        <input type="radio" name="assignmentPaymentMethod" value="연봉제" style="display:none;">
+                                        <span style="font-weight:500;font-size:0.9em;">연봉제</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- 근무시간 -->
+                            <div>
+                                <label style="font-size:0.85em;color:#4b5563;margin-bottom:8px;display:block;">근무시간</label>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                    <div>
+                                        <div style="position:relative;">
+                                            <input type="number" id="assignmentWorkingHours" class="form-control" value="40" min="1" max="52" onchange="updateAssignmentMonthlyHours()" style="padding:10px 12px;padding-right:45px;">
+                                            <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85em;">시간/주</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <input type="text" id="assignmentMonthlyHours" class="form-control" value="209시간/월" readonly style="padding:10px 12px;background:#f9fafb;color:#6b7280;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 이전 경력 인정율 섹션 - JS에서 동적으로 표시/숨김 -->
+                    <!-- assignmentPriorCareerRateSection이 여기에 동적 삽입됨 -->
+                    
+                    <!-- 등록 버튼 -->
+                    <button class="btn btn-primary" style="width:100%;padding:14px;font-size:0.95em;font-weight:600;background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;" onclick="saveAssignment()"
+                            onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(102,126,234,0.4)';"
+                            onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';">
+                        인사발령 등록
+                    </button>
+                </div>
+                
+                <!-- 탭 2: 발령 내역 -->
+                <div id="assignmentTabContentHistory" class="assignment-tab-content" style="display:none;">
+                    
+                    <!-- 검색/필터 바 -->
+                    <div style="display:flex;gap:12px;margin-bottom:20px;align-items:center;flex-wrap:wrap;">
+                        <div style="flex:1;min-width:200px;position:relative;">
+                            <input type="text" id="assignmentHistorySearch" class="form-control" placeholder="직원명 또는 부서 검색" oninput="filterAssignmentHistory()" 
+                                   style="padding:10px 12px 10px 36px;border-radius:8px;">
+                            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9ca3af;">🔍</span>
+                        </div>
+                        <select id="assignmentHistoryFilter" class="form-control" onchange="filterAssignmentHistory()" style="width:auto;padding:10px 32px 10px 12px;border-radius:8px;">
+                            <option value="all">전체 보기</option>
+                            <option value="active">현재 발령만</option>
+                            <option value="completed">종료 발령만</option>
+                        </select>
+                        <span id="assignmentHistoryCount" style="color:#6b7280;font-size:0.85em;padding:8px 12px;background:#f3f4f6;border-radius:6px;">0건</span>
+                    </div>
+                    
+                    <!-- 발령 내역 테이블 -->
+                    <div style="background:white;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;">
+                        <table style="width:100%;border-collapse:collapse;font-size:0.9em;">
+                            <thead>
+                                <tr style="background:#f8fafc;">
+                                    <th style="padding:14px 16px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb;">직원</th>
+                                    <th style="padding:14px 12px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb;">발령일</th>
+                                    <th style="padding:14px 12px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb;">부서</th>
+                                    <th style="padding:14px 12px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb;">직위</th>
+                                    <th style="padding:14px 12px;text-align:center;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb;">상태</th>
+                                    <th style="padding:14px 16px;text-align:center;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb;">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assignmentHistoryTableBody">
+                                <!-- JS에서 동적으로 채워짐 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 빈 상태 -->
+                    <div id="assignmentHistoryEmpty" style="display:none;text-align:center;padding:60px 20px;color:#9ca3af;">
+                        <div style="font-size:3em;margin-bottom:12px;opacity:0.5;">📋</div>
+                        <p style="margin:0;font-size:0.95em;">발령 내역이 없습니다.</p>
+                    </div>
+                    
+                    <!-- 더보기 안내 -->
+                    <div id="assignmentHistoryMore" style="display:none;text-align:center;padding:16px;color:#6b7280;font-size:0.85em;margin-top:12px;">
+                        <!-- JS에서 동적으로 채워짐 -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 근로계약서 -->
+            <div id="module-employment-contract" class="module-content">
+                <div class="card">
+                    <div class="card-title">📃 근로계약서</div>
+                    <div class="alert alert-info">
+                        <span>💡</span>
+                        <span>기준일을 설정하면 해당 날짜 기준으로 호봉제/연봉제 직원이 분류됩니다.</span>
+                    </div>
+                    
+                    <!-- ⭐ 기준일 (탭 위) -->
+                    <div class="form-row" style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #bae6fd;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-weight: bold; color: #0369a1;">📅 기준일 (계약일) *</label>
+                            <input type="date" id="contractBaseDate" class="form-control" onchange="onContractBaseDateChange()" style="max-width: 200px;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0; display: flex; align-items: center; padding-top: 20px;">
+                            <span style="color: #64748b; font-size: 13px;">이 날짜 기준으로 직원의 호봉제/연봉제 여부가 결정됩니다.</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 탭 버튼 -->
+                    <div class="contract-tabs" style="display: flex; gap: 0; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb;">
+                        <button type="button" class="contract-tab-btn active" data-tab="rank" onclick="switchContractTab('rank')">
+                            📊 호봉제 <span id="contractRankCount" style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 5px;">0</span>
+                        </button>
+                        <button type="button" class="contract-tab-btn" data-tab="salary" onclick="switchContractTab('salary')">
+                            💰 연봉제 <span id="contractSalaryCount" style="background: #9ca3af; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 5px;">0</span>
+                        </button>
+                    </div>
+                    
+                    <!-- 호봉제 탭 -->
+                    <div id="contractTabRank" class="contract-tab-content active">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>직원 선택 (호봉제) *</label>
+                                <select id="contractEmployeeSelectRank" class="form-control" onchange="onContractEmployeeChange('rank')">
+                                    <option value="">선택하세요</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group" id="contractHireDateGroupRank">
+                                <label>입사일 (근로개시일)</label>
+                                <input type="date" id="contractHireDateRank" class="form-control" onchange="updateContractPreview()">
+                            </div>
+                            <div class="form-group" id="contractPeriodGroupRank" style="display: none;">
+                                <label>계약 시작일</label>
+                                <input type="date" id="contractStartDateRank" class="form-control" onchange="updateContractPreview()">
+                            </div>
+                            <div class="form-group" id="contractEndGroupRank" style="display: none;">
+                                <label>계약 종료일</label>
+                                <input type="date" id="contractEndDateRank" class="form-control" onchange="updateContractPreview()">
+                            </div>
+                        </div>
+                        
+                        <!-- 근무시간 정보 (자동 조회) -->
+                        <div class="form-row" style="background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="color: #64748b; font-size: 13px;">주당 근무시간</label>
+                                <span id="contractWeeklyHoursRank" style="font-weight: bold; color: #2563eb;">-</span>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="color: #64748b; font-size: 13px;">월소정근로시간</label>
+                                <span id="contractMonthlyHoursRank" style="font-weight: bold; color: #2563eb;">-</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 수습기간 -->
+                        <div id="contractProbationGroupRank">
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="contractHasProbationRank" onchange="toggleContractProbation('rank')"> 수습기간 적용 (신규 입사자)
+                                </label>
+                            </div>
+                            <div id="contractProbationOptionsRank" style="display: none; margin-left: 20px;">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>수습기간</label>
+                                        <select id="contractProbationMonthsRank" class="form-control" onchange="updateContractPreview()">
+                                            <option value="1">1개월</option>
+                                            <option value="2">2개월</option>
+                                            <option value="3" selected>3개월</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>수습기간</label>
+                                        <span id="contractProbationPeriodTextRank" style="color: #666;">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-primary" onclick="printEmploymentContract()">🖨️ 인쇄</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 연봉제 탭 -->
+                    <div id="contractTabSalary" class="contract-tab-content" style="display: none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>직원 선택 (연봉제) *</label>
+                                <select id="contractEmployeeSelectSalary" class="form-control" onchange="onContractEmployeeChange('salary')">
+                                    <option value="">선택하세요</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group" id="contractHireDateGroupSalary">
+                                <label>입사일 (근로개시일)</label>
+                                <input type="date" id="contractHireDateSalary" class="form-control" onchange="updateContractPreview()">
+                            </div>
+                            <div class="form-group" id="contractPeriodGroupSalary" style="display: none;">
+                                <label>계약 시작일</label>
+                                <input type="date" id="contractStartDateSalary" class="form-control" onchange="updateContractPreview()">
+                            </div>
+                            <div class="form-group" id="contractEndGroupSalary" style="display: none;">
+                                <label>계약 종료일</label>
+                                <input type="date" id="contractEndDateSalary" class="form-control" onchange="updateContractPreview()">
+                            </div>
+                        </div>
+                        
+                        <!-- 근무시간 정보 (자동 조회) -->
+                        <div class="form-row" style="background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="color: #64748b; font-size: 13px;">주당 근무시간</label>
+                                <span id="contractWeeklyHoursSalary" style="font-weight: bold; color: #2563eb;">-</span>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="color: #64748b; font-size: 13px;">월소정근로시간</label>
+                                <span id="contractMonthlyHoursSalary" style="font-weight: bold; color: #2563eb;">-</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 수습기간 -->
+                        <div id="contractProbationGroupSalary">
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="contractHasProbationSalary" onchange="toggleContractProbation('salary')"> 수습기간 적용 (신규 입사자)
+                                </label>
+                            </div>
+                            <div id="contractProbationOptionsSalary" style="display: none; margin-left: 20px;">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>수습기간</label>
+                                        <select id="contractProbationMonthsSalary" class="form-control" onchange="updateContractPreview()">
+                                            <option value="1">1개월</option>
+                                            <option value="2">2개월</option>
+                                            <option value="3" selected>3개월</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>수습기간</label>
+                                        <span id="contractProbationPeriodTextSalary" style="color: #666;">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-primary" onclick="printEmploymentContract()">🖨️ 인쇄</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 근로계약서 미리보기 -->
+                <div id="contractPreviewContainer" style="margin-top: 20px;">
+                    <!-- 동적으로 생성 -->
+                </div>
+            </div>
+            
+            <!-- 육아휴직 -->
+            <div id="module-maternity" class="module-content">
+                <div class="card">
+                    <div class="card-title">🤱 육아휴직 등록</div>
+                    <div class="alert alert-info"><span>💡</span><span>육아휴직 시작 및 복직을 관리합니다. 복직 시 부서/직위가 변경되는 경우 복직 처리 후 인사발령 탭에서 발령을 등록하세요.</span></div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>직원 선택 *</label>
+                            <select id="maternityEmployeeSelect" class="form-control">
+                                <option value="">선택하세요</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>휴직 시작일 *</label>
+                            <input type="date" id="maternityStartDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>휴직 종료일 (예정) *</label>
+                            <input type="date" id="maternityEndDate" class="form-control">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%;" onclick="saveMaternityLeave()">🤱 육아휴직 등록</button>
+                </div>
+                <div class="card">
+                    <div class="card-title">📋 육아휴직 중인 직원</div>
+                    <div id="maternityList"></div>
+                </div>
+            </div>
+            
+            <!-- 단축근로 관리 -->
+            <div id="module-reduced-work" class="module-content">
+                <!-- 단축근로_인사.js에서 동적으로 생성됨 -->
+            </div>
+            
+            <!-- 급여 설정 -->
+            <div id="module-salary-settings" class="module-content">
+                <!-- 급여설정_인사.js에서 동적으로 생성됨 -->
+            </div>
+            
+            <!-- 급여 현황표 -->
+            <div id="module-salary-status" class="module-content">
+                <!-- 급여현황_인사.js에서 동적으로 생성됨 -->
+            </div>
+            
+            <!-- 시간외근무 관리 -->
+            <div id="module-overtime" class="module-content">
+                <!-- 시간외근무_인사.js에서 동적으로 생성됨 -->
+            </div>
+            
+            <!-- 연명부 -->
+            <div id="module-register" class="module-content">
+                <div class="card">
+                    <div class="card-title">📋 연명부 생성</div>
+                    <div class="alert alert-info"><span>ℹ️</span><span>기준일에 재직 중이었던 모든 직원이 표시됩니다.</span></div>
+                    <div class="form-group"><label>기준일</label><input type="date" id="registerBaseDate" class="form-control"></div>
+                    <button class="btn btn-primary" onclick="generateRegister()">📋 연명부 생성</button>
+                </div>
+                <div id="registerResult"></div>
+            </div>
+            
+            <!-- 호봉획정표 -->
+            <div id="module-certificate" class="module-content">
+                <div class="card">
+                    <!-- 헤더 -->
+                    <div class="cert-card-header">
+                        <div class="card-title">📄 호봉획정표 생성</div>
+                        <div class="cert-card-subtitle">입사 시 과거 경력 환산 내역을 출력합니다</div>
+                    </div>
+                    
+                    <!-- 양식 선택 -->
+                    <div class="cert-section">
+                        <div class="cert-section-title">출력 양식</div>
+                        <div class="cert-style-selector">
+                            <div class="cert-style-option">
+                                <input type="radio" name="certStyleType" id="certStyleOfficial" value="official">
+                                <label for="certStyleOfficial">
+                                    <div class="cert-style-icon">📜</div>
+                                    <div class="cert-style-name">공문서</div>
+                                </label>
+                            </div>
+                            <div class="cert-style-option">
+                                <input type="radio" name="certStyleType" id="certStyleModern" value="modern">
+                                <label for="certStyleModern">
+                                    <div class="cert-style-icon">✨</div>
+                                    <div class="cert-style-name">모던</div>
+                                </label>
+                            </div>
+                            <div class="cert-style-option">
+                                <input type="radio" name="certStyleType" id="certStyleStandard" value="standard" checked>
+                                <label for="certStyleStandard">
+                                    <div class="cert-style-icon">📋</div>
+                                    <div class="cert-style-name">표준</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 직원 선택 -->
+                    <div class="cert-section">
+                        <div class="cert-section-title">직원 선택</div>
+                        
+                        <!-- 검색 및 필터 -->
+                        <div class="cert-search-filter-row">
+                            <div class="cert-search-box">
+                                <input type="text" id="certEmployeeSearch" 
+                                       placeholder="이름, 부서, 직위 검색..."
+                                       oninput="searchCertificateEmployees(this.value)">
+                            </div>
+                            <div class="cert-filter-tabs">
+                                <button type="button" class="cert-filter-tab active" data-filter="all" onclick="filterCertificateEmployees('all')">
+                                    전체<span class="cert-filter-count" id="certCountAll">0</span>
+                                </button>
+                                <button type="button" class="cert-filter-tab" data-filter="active" onclick="filterCertificateEmployees('active')">
+                                    재직<span class="cert-filter-count" id="certCountActive">0</span>
+                                </button>
+                                <button type="button" class="cert-filter-tab" data-filter="retired" onclick="filterCertificateEmployees('retired')">
+                                    퇴사<span class="cert-filter-count" id="certCountRetired">0</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 선택 컨트롤 -->
+                        <div class="cert-selection-bar">
+                            <div class="cert-selection-actions">
+                                <button type="button" class="cert-selection-btn" onclick="toggleAllCertificateEmployees(true)">✓ 전체선택</button>
+                                <button type="button" class="cert-selection-btn" onclick="toggleAllCertificateEmployees(false)">✕ 해제</button>
+                            </div>
+                            <div class="cert-selection-count">
+                                선택 <strong id="certSelectionCount">0</strong>명
+                            </div>
+                        </div>
+                        
+                        <!-- 직원 목록 -->
+                        <div id="certEmployeeList" class="cert-employee-list-new">
+                            <!-- 동적으로 생성됨 -->
+                        </div>
+                    </div>
+                    
+                    <!-- 생성 버튼 -->
+                    <button class="cert-generate-btn" id="certGenerateBtn" onclick="generateCertificateFromReport()" disabled>
+                        📄 호봉획정표 생성 (<span id="certGenerateCount">0</span>명)
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 입사자 목록 -->
+            <div id="module-new-employee-list" class="module-content">
+                <div class="card">
+                    <div class="card-title">📥 입사자 목록 생성</div>
+                    <div class="alert alert-info">
+                        <span>ℹ️</span>
+                        <span>지정한 기간 동안 입사한 직원 목록을 생성합니다. 재직자는 기간 종료일 기준, 퇴사자는 퇴사일 기준으로 호봉과 근속기간이 계산됩니다.</span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>시작일</label>
+                            <input type="date" id="newEmployeeStartDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>종료일</label>
+                            <input type="date" id="newEmployeeEndDate" class="form-control">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="generateNewEmployeeList()">📥 입사자 목록 생성</button>
+                </div>
+                <div id="newEmployeeListResult"></div>
+            </div>
+            
+            <!-- 퇴사자 목록 -->
+            <div id="module-retired-list" class="module-content">
+                <div class="card">
+                    <div class="card-title">🚪 퇴사자 목록 생성</div>
+                    <div class="alert alert-info">
+                        <span>ℹ️</span>
+                        <span>지정한 기간 동안 퇴사한 직원 목록을 생성합니다. (종료일 다음날부터 퇴사한 직원이 포함됩니다)</span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>시작일</label>
+                            <input type="date" id="retiredStartDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>종료일</label>
+                            <input type="date" id="retiredEndDate" class="form-control">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="generateRetiredList()">🚪 퇴사자 목록 생성</button>
+                </div>
+                <div id="retiredListResult"></div>
+            </div>
+            
+            <!-- 백업/복원 -->
+            <div id="module-backup" class="module-content">
+                <div class="card">
+                    <div class="card-title">💾 시스템 백업</div>
+                    <div class="form-group">
+                        <label>HRM 백업 (권장)</label>
+                        <p style="color:#6b7280;font-size:13px;margin-bottom:12px;">모든 데이터를 완벽하게 보존합니다.</p>
+                        <button class="btn btn-success" onclick="backupToJSON()">💾 HRM 백업</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">📤 시스템 복원</div>
+                    <div class="alert alert-warning"><span>⚠️</span><span>복원하면 기존 데이터가 모두 대체됩니다.</span></div>
+                    <div class="form-group">
+                        <button class="btn btn-secondary" onclick="document.getElementById('restoreFile').click()">📤 백업 파일 선택</button>
+                        <input type="file" id="restoreFile" accept=".hrm,.json" onchange="restoreFromJSON(this.files[0])" style="display:none;">
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">⚙️ 추가 옵션</div>
+                    <div class="form-group">
+                        <label>엑셀 백업 (구글 시트 호환용)</label>
+                        <p style="color:#6b7280;font-size:13px;margin-bottom:12px;">발령 이력이 모두 백업됩니다.</p>
+                        <button class="btn btn-success" onclick="backupToExcel()">📊 엑셀 백업</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">위험 영역</div>
+                    <button class="btn btn-danger" onclick="resetAllData()">🗑️ 전체 삭제</button>
+                </div>
+            </div>
+            
+            <!-- 가져오기 -->
+            <div id="module-import" class="module-content">
+                <div class="card">
+                    <div class="card-title">📊 초기 데이터 가져오기</div>
+                    <div class="alert alert-info">
+                        <span>💡</span>
+                        <span>신규 기능 시작 시 기존 데이터를 엑셀로 일괄 입력할 수 있습니다.</span>
+                    </div>
+                    <div class="form-group">
+                        <label style="font-weight:600;margin-bottom:8px;display:block;">📄 인사 기초데이터</label>
+                        <p style="color:#6b7280;font-size:13px;margin-bottom:12px;">직원 정보, 발령 이력 등을 엑셀에서 가져옵니다.</p>
+                        <button class="btn btn-primary" onclick="document.getElementById('googleImportFile2').click()">📥 파일 선택</button>
+                        <input type="file" id="googleImportFile2" accept=".xlsx,.xls" onchange="importFromGoogleSheets(this.files[0])" style="display:none;">
+                    </div>
+                    <div class="alert alert-warning" style="margin-top:20px;">
+                        <span>⚠️</span>
+                        <span>주의: 과거 경력은 포함되지 않으며, 완벽한 복원은 HRM 백업 사용을 권장합니다.</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🏆 포상 데이터 가져오기</div>
+                    
+                    <!-- 현재 상태 표시 -->
+                    <div id="awards-import-status" style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #6c757d;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="font-weight: 600;">현재 데이터:</span>
+                                <span id="awards-current-count" style="margin-left: 8px;">로딩중...</span>
+                            </div>
+                            <button class="btn btn-small btn-secondary" onclick="refreshAwardsImportStatus()" style="font-size: 11px; padding: 4px 8px;">🔄 새로고침</button>
+                        </div>
+                        <div id="awards-last-updated" style="font-size: 11px; color: #888; margin-top: 5px;"></div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <span>💡</span>
+                        <span>기존 포상대장 엑셀을 일괄 업로드합니다. 성명+입사일로 직원 DB와 자동 매칭됩니다.</span>
+                    </div>
+                    <div class="form-group">
+                        <label style="font-weight:600;margin-bottom:8px;display:block;">📄 포상대장 엑셀</label>
+                        <p style="color:#6b7280;font-size:13px;margin-bottom:12px;">포상구분, 성명, 입사일, 포상내역, 선정여부 등 14개 컬럼 형식</p>
+                        <button class="btn btn-primary" onclick="document.getElementById('awardsImportFile').click()">📥 파일 선택</button>
+                        <input type="file" id="awardsImportFile" accept=".xlsx,.xls" onchange="uploadAwardsExcel(this.files[0])" style="display:none;">
+                    </div>
+                    <div class="alert alert-secondary" style="margin-top:15px;">
+                        <span>📋</span>
+                        <span>엑셀 컬럼 순서: 포상구분 | 성명 | 입사일 | 퇴사일 | 퇴사여부 | 직위 | 포상년도 | 포상내역 | 훈격 | 포상주관처 | 포상내용 | 선정여부 | 수상년월일 | 상장사진</span>
+                    </div>
+                </div>
+            </div>
+    <!-- 📈 근속현황표 -->
+            <div id="module-tenure-report" class="module-content">
+                <!-- 근속현황표_인사.js에서 동적으로 생성됨 -->
+            </div>
+            
+    <!-- 📊 교차 통계 분석 -->
+            <div id="module-statistics" class="module-content"></div>
+            
+    <!-- 🏛️ 조직도 -->
+            <div id="module-org-chart" class="module-content"></div>
+            
+    <!-- 🏛️ 조직도 설정 -->
+            <div id="module-org-chart-settings" class="module-content"></div>
+            
+    <!-- 👥 겸직/직무대리 관리 -->
+            <div id="module-concurrent-position" class="module-content"></div>
+            
+    <!-- 🪪 인사카드 -->
+            <div id="module-profile-card" class="module-content"></div>
+            
+    <!-- 🏆 포상 등록 (인력관리) -->
+            <div id="module-awards-manage" class="module-content">
+                <div id="awards-manage-module">
+                    <!-- 포상관리_인사.js에서 동적으로 생성됨 -->
+                </div>
+            </div>
+            
+    <!-- 🏆 포상 현황 (보고서) -->
+            <div id="module-awards-report" class="module-content">
+                <div id="awards-report-module">
+                    <!-- 포상관리_인사.js에서 동적으로 생성됨 -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 검색 모달 -->
+    <div class="search-modal" id="searchModal" onclick="closeSearchModal(event)">
+        <div class="search-modal-content" onclick="event.stopPropagation()">
+            <input type="text" class="search-modal-input" id="searchModalInput" placeholder="직원 이름, 부서, 고유번호로 검색..." oninput="performSearch(this.value)">
+            <div class="search-results" id="searchResults">
+                <div class="no-results">검색어를 입력하세요</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 모달들은 각 JS 파일에서 동적으로 생성됨 -->
+    <div class="modal" id="employeeDetailModal"></div>
+    <div class="modal" id="retireModal"></div>
+    <div class="modal" id="editAssignmentModal"></div>
+    <div class="modal" id="editMaternityModal"></div>
+    <div class="modal" id="editCareerModal"></div>
+    <div class="modal" id="editEmployeeModal"></div>
+
+    <!-- JavaScript 파일들 (순서 중요!) -->
+    
+    <!-- ==================== Phase 1: 핵심 인프라 (최우선) ==================== -->
+    <!-- ⚠️ 중요: 이 6개 스크립트는 반드시 다른 모든 스크립트보다 먼저 로드되어야 합니다 -->
+    
+    <script src="js/config/상수_인사.js"></script>
+    <script src="js/utils/로거_인사.js"></script>
+    <script src="js/utils/에러처리_인사.js"></script>
+    <script src="js/utils/직원유틸_인사.js"></script>
+    <script src="js/utils/DOM유틸_인사.js"></script>
+    <script src="js/utils/인쇄유틸_인사.js"></script> <!-- ⭐ NEW: 보고서 인쇄 전용 -->
+    
+    <!-- ==================== Phase 1 끝 ==================== -->
+    
+    <!-- 1. Core: 핵심 시스템 -->
+    <script src="js/core/검증_인사.js"></script>
+    <script src="js/core/데이터베이스_인사.js"></script>
+    <script src="js/core/호봉계산기_인사.js"></script>
+    <script src="js/core/API_인사.js"></script> <!-- 서버 API 호출 모듈 -->
+    
+    <!-- 2. System: 시스템 유틸리티 -->
+    <script src="js/system/네비게이션_인사.js"></script>
+    
+    <!-- 3. Employee: 직원 관리 -->
+    <script src="js/employee/직원등록_인사.js"></script>
+    <script src="js/employee/직원목록_인사.js"></script>
+    <script src="js/employee/직원상세_인사.js"></script>
+    <script src="js/employee/직원수정_인사.js"></script>
+    
+    <!-- 4. Career: 경력 관리 -->
+    <script src="js/career/경력편집_인사.js"></script>
+    <script src="js/career/경력관리_인사.js"></script>
+    
+    <!-- 5. HR: 인사 업무 -->
+    <script src="js/hr/인사발령_인사.js"></script>
+    <script src="js/hr/근로계약서_인사.js"></script>
+    <script src="js/hr/육아휴직_인사.js"></script>
+    <script src="js/hr/단축근로_인사.js"></script>
+    <script src="js/hr/퇴사관리_인사.js"></script>
+    <script src="js/hr/포상등록_인사.js"></script>
+    
+    <!-- 6. Reports: 보고서 -->
+    <script src="js/reports/연명부_인사.js"></script>
+    <script src="js/reports/호봉획정표_인사.js"></script>
+    <script src="js/reports/입사자목록_인사.js"></script>
+    <script src="js/reports/퇴사자목록_인사.js"></script>
+    <script src="js/reports/근속현황표_인사.js"></script>
+    <script src="js/reports/통계분석_인사.js"></script>
+    <script src="js/reports/인사카드_인사.js"></script>
+    <script src="js/reports/포상현황_인사.js"></script>
+    
+    <!-- 6.5. Labor: 노무관리 -->
+    <script src="js/labor/급여설정_인사.js"></script>
+    <script src="js/labor/급여계산기_인사.js"></script>
+    <script src="js/labor/급여현황_인사.js"></script>
+    <script src="js/labor/시간외근무_인사.js"></script>
+    
+    <!-- 7. System: 백업/복원/검색/조직도설정/겸직관리 -->
+    <!-- ⚠️ 조직도설정과 겸직관리는 조직도보다 먼저 로드되어야 함 -->
+    <script src="js/system/백업_인사.js"></script>
+    <script src="js/system/복원가져오기_인사.js"></script>
+    <script src="js/system/검색_인사.js"></script>
+    <script src="js/system/조직도설정_인사.js"></script>
+    <script src="js/system/겸직관리_인사.js"></script>
+    
+    <!-- 8. 조직도 (조직도설정, 겸직관리 이후 로드) -->
+    <script src="js/reports/조직도_인사.js"></script>
+    
+    <!-- 상단 메뉴 제어 -->
+    <script>
+        function showCategory(category) {
+            // 상단 메뉴 활성화
+            document.querySelectorAll('.top-menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.top-menu-item').classList.add('active');
+            
+            // 메뉴 카테고리 표시/숨김
+            document.querySelectorAll('.menu-category').forEach(cat => {
+                if (cat.dataset.category === category || 
+                    (category === 'hr' && cat.dataset.category === 'hr') ||
+                    (category === 'labor' && cat.dataset.category === 'labor') ||
+                    (category === 'reports' && cat.dataset.category === 'reports') ||
+                    (category === 'system' && cat.dataset.category === 'system') ||
+                    (category === 'dashboard' && cat.dataset.category === 'dashboard')) {
+                    cat.classList.remove('hidden');
+                } else {
+                    cat.classList.add('hidden');
+                }
+            });
+            
+            // 카테고리별 처리
+            if (category === 'dashboard') {
+                setTimeout(() => navigateToModule('dashboard'), 100);
+            } else if (category === 'hr') {
+                // 인력관리 메뉴 펼치기
+                const items = document.getElementById('hr-items');
+                if (items) {
+                    items.style.display = 'block';
+                    items.classList.remove('collapsed');
+                    const toggle = document.getElementById('toggle-hr');
+                    if (toggle) toggle.textContent = '▲';
+                }
+            } else if (category === 'labor') {
+                // 노무관리 메뉴 펼치기
+                const items = document.getElementById('labor-items');
+                if (items) {
+                    items.style.display = 'block';
+                    items.classList.remove('collapsed');
+                    const toggle = document.getElementById('toggle-labor');
+                    if (toggle) toggle.textContent = '▲';
+                }
+            } else if (category === 'reports') {
+                const items = document.getElementById('reports-items');
+                if (items) {
+                    items.style.display = 'block';
+                    items.classList.remove('collapsed');
+                    const toggle = document.getElementById('toggle-reports');
+                    if (toggle) toggle.textContent = '▲';
+                }
+            } else if (category === 'system') {
+                const items = document.getElementById('system-items');
+                if (items) {
+                    items.style.display = 'block';
+                    items.classList.remove('collapsed');
+                    const toggle = document.getElementById('toggle-system');
+                    if (toggle) toggle.textContent = '▲';
+                }
+            }
+        }
+        
+        // 페이지 로드시 초기 설정
+        window.addEventListener('load', function() {
+            // 모든 카테고리 숨기고 대시보드만 표시
+            document.querySelectorAll('.menu-category').forEach(cat => {
+                if (cat.dataset.category !== 'dashboard') {
+                    cat.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+    
+    <!-- 인쇄 전용 영역 (화면에는 보이지 않음) -->
+    <div id="statistics-print-area" style="display: none;"></div>
+    <div id="tenure-report-print-area" style="display: none;"></div>
+    <div id="org-chart-print-area" style="display: none;"></div>
+    <div id="profile-card-print-area" style="display: none;"></div>
+    <div id="awards-print-area" style="display: none;"></div>
+    
+    <!-- 7. 라이선스 모듈 -->
+    <script src="js/license/license_인사.js"></script>
+    <script>
+        // 라이선스 정보 표시
+        function displayLicenseInfo() {
+            try {
+                const license = License.getCurrentLicense();
+                const planBadge = document.getElementById('licensePlanBadge');
+                const expireText = document.getElementById('licenseExpireText');
+                
+                if (license && planBadge && expireText) {
+                    // 플랜 타입 표시
+                    const planNames = {
+                        'trial': '체험판',
+                        'basic': '기본',
+                        'premium': '프리미엄',
+                        'enterprise': '기업용'
+                    };
+                    planBadge.textContent = planNames[license.plan_type] || license.plan_type;
+                    
+                    // 만료일/남은 기간 표시
+                    const days = license.days_remaining;
+                    if (days <= 7) {
+                        expireText.style.color = '#dc2626';
+                        expireText.style.fontWeight = 'bold';
+                        expireText.textContent = `⚠️ ${days}일 후 만료`;
+                    } else if (days <= 30) {
+                        expireText.style.color = '#d97706';
+                        expireText.textContent = `${days}일 남음`;
+                    } else {
+                        expireText.style.color = '#666';
+                        expireText.textContent = `만료: ${license.expire_date}`;
+                    }
+                }
+            } catch (e) {
+                console.error('[Main] 라이선스 정보 표시 오류:', e);
+            }
+        }
+        
+        // 페이지 로드 시 라이선스 정보 표시
+        window.addEventListener('load', function() {
+            setTimeout(displayLicenseInfo, 500);
+        });
+    </script>
+    
+    <!-- 8. 초기화 (마지막에 로드) -->
+    <script src="js/초기화_인사.js"></script>
+</body>
+</html>
