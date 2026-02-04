@@ -1443,56 +1443,31 @@ function printCertificate() {
     로거_인사?.info('호봉획정표 인쇄 시작');
     
     try {
-        const printArea = document.getElementById('certificate-print-area');
-        if (!printArea || !printArea.innerHTML.trim()) {
-            alert('⚠️ 먼저 호봉획정표를 생성하세요.');
-            return;
-        }
-        
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>호봉획정표 인쇄</title>
-                <style>
-                    @page { size: A4 portrait; margin: 15mm; }
-                    body { font-family: 'Malgun Gothic', sans-serif; margin: 0; padding: 20px; }
-                    .certificate-container { max-width: 700px; margin: 0 auto; }
-                    h2 { text-align: center; margin-bottom: 30px; }
-                    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-                    th, td { border: 1px solid #333; padding: 10px; }
-                    th { background: #f5f5f5 !important; font-weight: 600; text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    td { text-align: center; }
-                    .section-title { background: #e8e8e8 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    .no-print { position: fixed; top: 20px; right: 20px; background: #2196F3; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; z-index: 9999; }
-                    .no-print:hover { background: #1976D2; }
-                    @media print { body { padding: 0; } .no-print { display: none !important; } }
-                </style>
-            </head>
-            <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
-                ${printArea.innerHTML}
-            </body>
-            </html>
-        `;
-        
-        // Electron 환경에서 시스템 브라우저로 열기
-        if (window.electronAPI && window.electronAPI.openInBrowser) {
-            window.electronAPI.openInBrowser(htmlContent, 'hobong_certificate_print.html');
+        // ⭐ 인쇄유틸 사용
+        if (typeof 인쇄유틸_인사 !== 'undefined') {
+            인쇄유틸_인사.print('certificate-print-area', 'portrait');
         } else {
-            const printWindow = window.open('', '_blank');
-            if (printWindow) {
-                printWindow.document.write(htmlContent);
-                printWindow.document.close();
-            } else {
-                alert('팝업이 차단되었습니다.');
-            }
+            // ⚠️ Fallback: 레거시 방식 (하위 호환성)
+            로거_인사?.warn('인쇄유틸을 찾을 수 없음 - 레거시 방식 사용');
+            
+            document.body.classList.add('printing-certificate');
+            
+            setTimeout(() => {
+                window.print();
+                setTimeout(() => {
+                    document.body.classList.remove('printing-certificate');
+                }, 100);
+            }, 100);
         }
         
     } catch (error) {
         로거_인사?.error('호봉획정표 인쇄 실패', error);
-        alert('❌ 인쇄 중 오류가 발생했습니다.');
+        
+        if (typeof 에러처리_인사 !== 'undefined') {
+            에러처리_인사.handle(error, '인쇄 중 오류가 발생했습니다.');
+        } else {
+            alert('❌ 인쇄 중 오류가 발생했습니다.');
+        }
     }
 }
 

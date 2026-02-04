@@ -764,71 +764,141 @@ function printNewEmployeeList(orientation = 'landscape') {
     로거_인사?.info('입사자 목록 인쇄 시작', { orientation });
     
     try {
-        const table = document.getElementById('newEmployeeListTable');
+        // 테이블 확인
+        const table = typeof DOM유틸_인사 !== 'undefined'
+            ? DOM유틸_인사.getById('newEmployeeListTable')
+            : document.getElementById('newEmployeeListTable');
         
         if (!table) {
-            alert('⚠️ 먼저 입사자 목록을 생성하세요.');
+            로거_인사?.warn('테이블을 찾을 수 없음');
+            
+            if (typeof 에러처리_인사 !== 'undefined') {
+                에러처리_인사.warn('먼저 입사자 목록을 생성하세요.');
+            } else {
+                alert('⚠️ 먼저 입사자 목록을 생성하세요.');
+            }
             return;
         }
         
-        // 제목 정보 추출
-        const cardTitle = document.querySelector('#newEmployeeListResult .card-title');
-        const titleText = cardTitle ? cardTitle.textContent : '입사자 목록';
-        
-        // 테이블 복제 및 가운데 정렬 적용
-        const tableClone = table.cloneNode(true);
-        tableClone.querySelectorAll('th, td').forEach(cell => {
-            cell.style.textAlign = 'center';
-        });
-        
-        const pageStyle = orientation === 'landscape' 
-            ? '@page { size: A4 landscape; margin: 10mm; }' 
-            : '@page { size: A4 portrait; margin: 10mm; }';
-        
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>입사자 목록 인쇄</title>
-                <style>
-                    ${pageStyle}
-                    body { font-family: 'Malgun Gothic', sans-serif; margin: 0; padding: 20px; }
-                    h2 { text-align: center; margin-bottom: 20px; font-size: 18px; }
-                    table { border-collapse: collapse; width: 100%; font-size: ${orientation === 'landscape' ? '10px' : '12px'}; }
-                    th, td { border: 1px solid #e8ebed; padding: ${orientation === 'landscape' ? '4px' : '6px'}; text-align: center; }
-                    th { background: #f8f9fa !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    thead { display: table-header-group; }
-                    tr { page-break-inside: avoid; }
-                    .no-print { position: fixed; top: 20px; right: 20px; background: #2196F3; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; z-index: 9999; }
-                    .no-print:hover { background: #1976D2; }
-                    @media print { body { padding: 0; } .no-print { display: none !important; } }
-                </style>
-            </head>
-            <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
-                <h2>${titleText}</h2>
-                ${tableClone.outerHTML}
-            </body>
-            </html>
-        `;
-        
-        // Electron 환경에서 시스템 브라우저로 열기
-        if (window.electronAPI && window.electronAPI.openInBrowser) {
-            window.electronAPI.openInBrowser(htmlContent, 'new_employee_print.html');
-        } else {
-            const printWindow = window.open('', '_blank');
-            if (printWindow) {
-                printWindow.document.write(htmlContent);
-                printWindow.document.close();
-            } else {
-                alert('팝업이 차단되었습니다.');
+        // ⭐ 인쇄유틸 사용 (핵심!)
+        if (typeof 인쇄유틸_인사 !== 'undefined') {
+            // 제목 정보 추출
+            const cardTitle = document.querySelector('#newEmployeeListResult .card-title');
+            const titleText = cardTitle ? cardTitle.textContent : '입사자 목록';
+            
+            로거_인사?.debug('인쇄 제목', { titleText });
+            
+            // 인쇄 전용 영역 생성 (없으면)
+            let printArea = document.getElementById('new-employees-print-area');
+            
+            if (!printArea) {
+                로거_인사?.debug('인쇄 영역 생성');
+                
+                printArea = document.createElement('div');
+                printArea.id = 'new-employees-print-area';
+                printArea.className = 'print-container';
+                printArea.style.display = 'none';
+                
+                document.body.appendChild(printArea);
             }
+            
+            // 테이블 복제 및 가운데 정렬 적용
+            const tableClone = table.cloneNode(true);
+            tableClone.id = 'newEmployeeListTablePrint';
+            
+            // ⭐ 모든 th (헤더)를 가운데 정렬
+            const allHeaders = tableClone.querySelectorAll('th');
+            allHeaders.forEach(header => {
+                const currentStyle = header.getAttribute('style') || '';
+                const newStyle = currentStyle.replace(/text-align:[^;]+;?/g, '') + 'text-align:center;';
+                header.setAttribute('style', newStyle);
+            });
+            
+            // ⭐ 모든 td (데이터)를 가운데 정렬
+            const allCells = tableClone.querySelectorAll('td');
+            allCells.forEach(cell => {
+                const currentStyle = cell.getAttribute('style') || '';
+                const newStyle = currentStyle.replace(/text-align:[^;]+;?/g, '') + 'text-align:center;';
+                cell.setAttribute('style', newStyle);
+            });
+            
+            로거_인사?.debug('테이블 정렬 적용', { 
+                headersCount: allHeaders.length,
+                cellsCount: allCells.length 
+            });
+            
+            // ⭐ 인쇄 영역 업데이트 (제목 포함)
+            printArea.innerHTML = `
+                <div class="new-employees-content">
+                    <h2 style="text-align:center;margin-bottom:20px;font-size:18px;font-weight:600;color:#333;">
+                        ${titleText}
+                    </h2>
+                    ${tableClone.outerHTML}
+                </div>
+            `;
+            
+            // 인쇄 실행
+            인쇄유틸_인사.print('new-employees-print-area', orientation);
+            
+        } else {
+            // ⚠️ Fallback: 레거시 방식 (하위 호환성)
+            로거_인사?.warn('인쇄유틸을 찾을 수 없음 - 레거시 방식 사용');
+            
+            // 기존 스타일 제거
+            const existingStyle = document.getElementById('print-new-employee-orientation-style');
+            if (existingStyle) existingStyle.remove();
+            
+            // 인쇄 방향 스타일 추가
+            const style = document.createElement('style');
+            style.id = 'print-new-employee-orientation-style';
+            style.textContent = `
+                @media print {
+                    @page {
+                        size: A4 ${orientation === 'landscape' ? 'landscape' : 'portrait'};
+                        margin: 10mm;
+                    }
+                    
+                    /* 입사자 목록 모듈의 첫 번째 카드 숨기기 */
+                    #module-new-employee-list > .card:first-child {
+                        display: none !important;
+                    }
+                    
+                    body { 
+                        font-size: ${orientation === 'landscape' ? '10px' : '12px'}; 
+                    }
+                    table {
+                        font-size: ${orientation === 'landscape' ? '9px' : '11px'} !important;
+                        page-break-inside: auto;
+                    }
+                    tr {
+                        page-break-inside: avoid;
+                        page-break-after: auto;
+                    }
+                    thead {
+                        display: table-header-group;
+                    }
+                    th, td {
+                        padding: ${orientation === 'landscape' ? '4px' : '6px'} !important;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 인쇄 실행
+            setTimeout(() => {
+                window.print();
+            }, 100);
         }
         
     } catch (error) {
         로거_인사?.error('입사자 목록 인쇄 실패', error);
-        alert('❌ 인쇄 중 오류가 발생했습니다.');
+        
+        if (typeof 에러처리_인사 !== 'undefined') {
+            에러처리_인사.handle(error, '인쇄 중 오류가 발생했습니다.');
+        } else {
+            alert('❌ 인쇄 중 오류가 발생했습니다.');
+            console.error('인쇄 오류:', error);
+        }
     }
 }
 

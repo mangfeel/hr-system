@@ -2553,15 +2553,50 @@ function exportStatisticsToExcel() {
         // ⭐ 비고 표시 여부 확인
         const showRemarks = document.getElementById('stats-show-remarks')?.checked ?? true;
         
-        // ⭐ 테이블 데이터를 2차원 배열로 추출 (rowspan 해결)
-        const data = _extractTableDataAsArray(table, showRemarks);
+        let tableToExport = table;
         
-        // 워크시트 생성
-        const ws = XLSX.utils.aoa_to_sheet(data);
+        // ⭐ 비고 숨김 상태인 경우, 테이블 복제 후 비고 컬럼 제거
+        if (!showRemarks) {
+            tableToExport = table.cloneNode(true);
+            
+            // 모든 행에서 "비고" 헤더와 데이터 컬럼 제거
+            const rows = tableToExport.querySelectorAll('tr');
+            rows.forEach(row => {
+                const cells = Array.from(row.children);
+                const cellsToRemove = [];
+                
+                // "비고" 텍스트를 가진 th 찾기 및 해당 인덱스의 td 제거
+                cells.forEach((cell, index) => {
+                    if (cell.tagName === 'TH' && cell.textContent.trim() === '비고') {
+                        cellsToRemove.push(index);
+                    }
+                });
+                
+                // 헤더 행이 아닌 경우, 비고 데이터 컬럼 제거
+                // (헤더의 비고 위치에 대응하는 td 제거)
+                if (row.querySelector('th') === null) {
+                    // 데이터 행: 홀수 인덱스의 셀이 비고 컬럼 (구분, 값, 비고, 값, 비고...)
+                    const dataCells = Array.from(row.children);
+                    for (let i = dataCells.length - 1; i >= 0; i--) {
+                        // 첫 번째 열(구분)을 제외하고, 짝수 인덱스가 비고 컬럼
+                        if (i > 0 && i % 2 === 0) {
+                            dataCells[i].remove();
+                        }
+                    }
+                } else {
+                    // 헤더 행: "비고" th 제거
+                    cellsToRemove.sort((a, b) => b - a); // 역순 정렬
+                    cellsToRemove.forEach(index => {
+                        if (cells[index]) {
+                            cells[index].remove();
+                        }
+                    });
+                }
+            });
+        }
         
-        // 워크북 생성
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, '교차통계');
+        // 테이블을 워크북으로 변환
+        const wb = XLSX.utils.table_to_book(tableToExport, { sheet: '교차통계' });
         
         // 파일명 생성 (1차원 or 2차원 대응)
         const baseDate = document.getElementById('stats-base-date')?.value || '';
@@ -2600,359 +2635,6 @@ function exportStatisticsToExcel() {
 }
 
 /**
- * rowspan 해제 - 병합된 셀을 모든 행에 복사
- * @private
- * @param {HTMLTableElement} table - 테이블 요소
- * 
- * @description
- * rowspan이 있는 셀을 찾아서 해당 값을 아래 행들에 복사하고
- * rowspan 속성을 제거합니다. 이렇게 하면 outerHTML로 직렬화할 때
- * 셀이 밀리는 문제를 방지할 수 있습니다.
- */
-function _expandRowspans(table) {
-    const rows = Array.from(table.querySelectorAll('tr'));
-    
-    // 각 행의 실제 셀 위치를 추적하기 위한 맵
-    // rowSpanTracker[rowIndex][colIndex] = { value, remaining }
-    const rowSpanTracker = [];
-    
-    rows.forEach((row, rowIndex) => {
-        rowSpanTracker[rowIndex] = rowSpanTracker[rowIndex] || {};
-        
-        const cells = Array.from(row.children);
-        let colIndex = 0;
-        let cellIndex = 0;
-        
-        while (cellIndex < cells.length || rowSpanTracker[rowIndex][colIndex]) {
-            // 이전 행에서 rowspan으로 인해 이 위치에 셀이 있어야 하는 경우
-            if (rowSpanTracker[rowIndex][colIndex]) {
-                const tracker = rowSpanTracker[rowIndex][colIndex];
-                
-                // 새 셀 생성하여 삽입
-                const newCell = document.createElement(tracker.isHeader ? 'th' : 'td');
-                newCell.innerHTML = tracker.value;
-                newCell.setAttribute('style', tracker.style || '');
-                
-                // 현재 위치에 삽입
-                if (cellIndex < cells.length) {
-                    row.insertBefore(newCell, cells[cellIndex]);
-                } else {
-                    row.appendChild(newCell);
-                }
-                
-                // 다음 행에도 계속 적용해야 하는 경우
-                if (tracker.remaining > 1) {
-                    rowSpanTracker[rowIndex + 1] = rowSpanTracker[rowIndex + 1] || {};
-                    rowSpanTracker[rowIndex + 1][colIndex] = {
-                        value: tracker.value,
-                        style: tracker.style,
-                        isHeader: tracker.isHeader,
-                        remaining: tracker.remaining - 1
-                    };
-                }
-                
-                colIndex++;
-                continue;
-            }
-            
-            if (cellIndex >= cells.length) break;
-            
-            const cell = cells[cellIndex];
-            const rowspan = parseInt(cell.getAttribute('rowspan')) || 1;
-            
-            if (rowspan > 1) {
-                // rowspan 제거
-                cell.removeAttribute('rowspan');
-                
-                // 아래 행들에 같은 값 삽입 예약
-                for (let i = 1; i < rowspan; i++) {
-                    rowSpanTracker[rowIndex + i] = rowSpanTracker[rowIndex + i] || {};
-                    rowSpanTracker[rowIndex + i][colIndex] = {
-                        value: cell.innerHTML,
-                        style: cell.getAttribute('style') || '',
-                        isHeader: cell.tagName === 'TH',
-                        remaining: rowspan - i
-                    };
-                }
-            }
-            
-            colIndex++;
-            cellIndex++;
-        }
-    });
-}
-
-/**
- * 테이블 데이터 직접 추출 (rowspan/colspan 해결)
- * @private
- * @param {HTMLTableElement} table - 원본 테이블
- * @param {boolean} showRemarks - 비고 표시 여부
- * @returns {string} 새 테이블 HTML 문자열
- * 
- * @description
- * rowspan이 있는 테이블을 2차원 배열로 변환한 후
- * 새로운 HTML 테이블을 생성합니다.
- */
-function _extractTableData(table, showRemarks = true) {
-    const rows = Array.from(table.querySelectorAll('tr'));
-    
-    // 2차원 배열로 테이블 데이터 저장 (rowspan 해결)
-    const grid = [];
-    const rowSpanTracker = {}; // rowSpanTracker[colIndex] = { value, html, remaining, isHeader }
-    
-    rows.forEach((row, rowIndex) => {
-        grid[rowIndex] = [];
-        const cells = Array.from(row.children);
-        let colIndex = 0;
-        let cellIndex = 0;
-        
-        while (cellIndex < cells.length || rowSpanTracker[colIndex]) {
-            // 이전 행의 rowspan으로 인해 채워야 하는 셀
-            while (rowSpanTracker[colIndex] && rowSpanTracker[colIndex].remaining > 0) {
-                grid[rowIndex][colIndex] = {
-                    html: rowSpanTracker[colIndex].html,
-                    text: rowSpanTracker[colIndex].text,
-                    isHeader: rowSpanTracker[colIndex].isHeader,
-                    isRowspanCopy: true
-                };
-                
-                rowSpanTracker[colIndex].remaining--;
-                if (rowSpanTracker[colIndex].remaining === 0) {
-                    delete rowSpanTracker[colIndex];
-                }
-                colIndex++;
-            }
-            
-            if (cellIndex >= cells.length) break;
-            
-            const cell = cells[cellIndex];
-            const rowspan = parseInt(cell.getAttribute('rowspan')) || 1;
-            const colspan = parseInt(cell.getAttribute('colspan')) || 1;
-            const isHeader = cell.tagName === 'TH';
-            
-            // 현재 셀 저장
-            grid[rowIndex][colIndex] = {
-                html: cell.innerHTML,
-                text: cell.textContent.trim(),
-                isHeader: isHeader,
-                colspan: colspan
-            };
-            
-            // rowspan 추적
-            if (rowspan > 1) {
-                rowSpanTracker[colIndex] = {
-                    html: cell.innerHTML,
-                    text: cell.textContent.trim(),
-                    isHeader: isHeader,
-                    remaining: rowspan - 1
-                };
-            }
-            
-            // colspan 처리
-            for (let c = 1; c < colspan; c++) {
-                colIndex++;
-                grid[rowIndex][colIndex] = {
-                    html: '',
-                    text: '',
-                    isHeader: isHeader,
-                    isColspanSkip: true
-                };
-            }
-            
-            colIndex++;
-            cellIndex++;
-        }
-        
-        // 남은 rowspan 처리
-        while (rowSpanTracker[colIndex] && rowSpanTracker[colIndex].remaining > 0) {
-            grid[rowIndex][colIndex] = {
-                html: rowSpanTracker[colIndex].html,
-                text: rowSpanTracker[colIndex].text,
-                isHeader: rowSpanTracker[colIndex].isHeader,
-                isRowspanCopy: true
-            };
-            
-            rowSpanTracker[colIndex].remaining--;
-            if (rowSpanTracker[colIndex].remaining === 0) {
-                delete rowSpanTracker[colIndex];
-            }
-            colIndex++;
-        }
-    });
-    
-    // 비고 컬럼 인덱스 찾기 (헤더에서 "비고" 텍스트 검색)
-    const remarkColIndices = new Set();
-    if (!showRemarks && grid.length > 0) {
-        grid[0].forEach((cell, colIndex) => {
-            if (cell && cell.text === '비고') {
-                remarkColIndices.add(colIndex);
-            }
-        });
-    }
-    
-    // 새 HTML 생성
-    let html = '<table style="border-collapse: collapse; width: 100%;">';
-    
-    grid.forEach((row, rowIndex) => {
-        // 행 클래스 확인 (원본 테이블에서)
-        const originalRow = rows[rowIndex];
-        const rowClass = originalRow?.className || '';
-        const isSecondary = rowClass.includes('table-secondary');
-        const isLight = rowClass.includes('table-light');
-        
-        let rowStyle = '';
-        if (isSecondary) rowStyle = 'background: #e9ecef;';
-        else if (isLight) rowStyle = 'background: #f8f9fa;';
-        
-        html += `<tr style="${rowStyle}">`;
-        
-        row.forEach((cell, colIndex) => {
-            if (!cell) return;
-            if (cell.isColspanSkip) return; // colspan으로 인해 건너뛰는 셀
-            if (remarkColIndices.has(colIndex)) return; // 비고 컬럼 제외
-            
-            const tag = cell.isHeader ? 'th' : 'td';
-            let style = 'border: 1px solid #333; padding: 6px 8px; text-align: center;';
-            
-            if (cell.isHeader) {
-                style += ' background: #f0f0f0; font-weight: 600;';
-            }
-            if (isSecondary && !cell.isHeader) {
-                style += ' background: #e9ecef;';
-            }
-            if (isLight && !cell.isHeader) {
-                style += ' background: #f8f9fa;';
-            }
-            
-            // colspan 속성 추가
-            const colspanAttr = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : '';
-            
-            html += `<${tag} style="${style}"${colspanAttr}>${cell.html}</${tag}>`;
-        });
-        
-        html += '</tr>';
-    });
-    
-    html += '</table>';
-    
-    return html;
-}
-
-/**
- * 테이블 데이터를 2차원 배열로 추출 (엑셀용)
- * @private
- * @param {HTMLTableElement} table - 원본 테이블
- * @param {boolean} showRemarks - 비고 표시 여부
- * @returns {Array<Array<string>>} 2차원 배열
- */
-function _extractTableDataAsArray(table, showRemarks = true) {
-    const rows = Array.from(table.querySelectorAll('tr'));
-    
-    // 2차원 배열로 테이블 데이터 저장 (rowspan 해결)
-    const grid = [];
-    const rowSpanTracker = {};
-    
-    rows.forEach((row, rowIndex) => {
-        grid[rowIndex] = [];
-        const cells = Array.from(row.children);
-        let colIndex = 0;
-        let cellIndex = 0;
-        
-        while (cellIndex < cells.length || rowSpanTracker[colIndex]) {
-            // 이전 행의 rowspan으로 인해 채워야 하는 셀
-            while (rowSpanTracker[colIndex] && rowSpanTracker[colIndex].remaining > 0) {
-                grid[rowIndex][colIndex] = {
-                    text: rowSpanTracker[colIndex].text,
-                    isRemarkCol: rowSpanTracker[colIndex].isRemarkCol
-                };
-                
-                rowSpanTracker[colIndex].remaining--;
-                if (rowSpanTracker[colIndex].remaining === 0) {
-                    delete rowSpanTracker[colIndex];
-                }
-                colIndex++;
-            }
-            
-            if (cellIndex >= cells.length) break;
-            
-            const cell = cells[cellIndex];
-            const rowspan = parseInt(cell.getAttribute('rowspan')) || 1;
-            const colspan = parseInt(cell.getAttribute('colspan')) || 1;
-            const text = cell.textContent.trim();
-            const isRemarkCol = text === '비고' || (cell.style && cell.style.whiteSpace === 'pre-line');
-            
-            // 현재 셀 저장
-            grid[rowIndex][colIndex] = {
-                text: text,
-                colspan: colspan,
-                isRemarkCol: isRemarkCol
-            };
-            
-            // rowspan 추적
-            if (rowspan > 1) {
-                rowSpanTracker[colIndex] = {
-                    text: text,
-                    isRemarkCol: isRemarkCol,
-                    remaining: rowspan - 1
-                };
-            }
-            
-            // colspan 처리
-            for (let c = 1; c < colspan; c++) {
-                colIndex++;
-                grid[rowIndex][colIndex] = {
-                    text: '',
-                    isColspanSkip: true
-                };
-            }
-            
-            colIndex++;
-            cellIndex++;
-        }
-        
-        // 남은 rowspan 처리
-        while (rowSpanTracker[colIndex] && rowSpanTracker[colIndex].remaining > 0) {
-            grid[rowIndex][colIndex] = {
-                text: rowSpanTracker[colIndex].text,
-                isRemarkCol: rowSpanTracker[colIndex].isRemarkCol
-            };
-            
-            rowSpanTracker[colIndex].remaining--;
-            if (rowSpanTracker[colIndex].remaining === 0) {
-                delete rowSpanTracker[colIndex];
-            }
-            colIndex++;
-        }
-    });
-    
-    // 비고 컬럼 인덱스 찾기
-    const remarkColIndices = new Set();
-    if (!showRemarks && grid.length > 0) {
-        grid[0].forEach((cell, colIndex) => {
-            if (cell && cell.text === '비고') {
-                remarkColIndices.add(colIndex);
-            }
-        });
-    }
-    
-    // 2차원 문자열 배열로 변환 (비고 컬럼 제외)
-    const result = [];
-    grid.forEach(row => {
-        const rowData = [];
-        row.forEach((cell, colIndex) => {
-            if (!cell) return;
-            if (cell.isColspanSkip) return;
-            if (remarkColIndices.has(colIndex)) return;
-            
-            rowData.push(cell.text);
-        });
-        result.push(rowData);
-    });
-    
-    return result;
-}
-
-/**
  * 통계 인쇄
  * 
  * @param {string} orientation - 페이지 방향 ('portrait' 또는 'landscape')
@@ -2971,20 +2653,95 @@ function printStatistics(orientation = 'portrait') {
     try {
         로거_인사?.debug('통계 인쇄 시작', { orientation });
         
-        // 테이블 확인
-        const statsTable = document.getElementById('stats-table');
-        if (!statsTable) {
-            alert('⚠️ 먼저 통계를 생성하세요.');
+        // 1. 인쇄유틸 확인
+        if (typeof 인쇄유틸_인사 === 'undefined') {
+            alert('❌ 인쇄 기능을 사용할 수 없습니다.\n인쇄유틸_인사.js가 로드되지 않았습니다.');
+            로거_인사?.warn('인쇄유틸을 찾을 수 없습니다');
             return;
         }
         
-        // 비고 표시 여부 확인
+        // 2. 테이블 확인
+        const statsTable = document.getElementById('stats-table');
+        if (!statsTable) {
+            alert('⚠️ 먼저 통계를 생성하세요.');
+            로거_인사?.warn('통계 테이블을 찾을 수 없습니다');
+            return;
+        }
+        
+        // 3. 인쇄 영역 가져오기
+        const printArea = document.getElementById('statistics-print-area');
+        if (!printArea) {
+            alert('❌ 인쇄 영역을 찾을 수 없습니다.');
+            로거_인사?.error('statistics-print-area 요소가 없습니다');
+            return;
+        }
+        
+        // 4. 테이블 복제 (원본 보존)
+        const clonedTable = statsTable.cloneNode(true);
+        clonedTable.id = 'stats-table-print';  // ID 변경
+        
+        // ⭐ 비고 표시 여부 확인
         const showRemarks = document.getElementById('stats-show-remarks')?.checked ?? true;
         
-        // ⭐ 테이블 데이터 직접 추출 (rowspan 문제 해결)
-        const tableHTML = _extractTableData(statsTable, showRemarks);
+        // ⭐ 비고 숨김 상태인 경우, 비고 컬럼 제거
+        if (!showRemarks) {
+            const rows = clonedTable.querySelectorAll('tr');
+            rows.forEach(row => {
+                const cells = Array.from(row.children);
+                const cellsToRemove = [];
+                
+                // "비고" 텍스트를 가진 th 찾기
+                cells.forEach((cell, index) => {
+                    if (cell.tagName === 'TH' && cell.textContent.trim() === '비고') {
+                        cellsToRemove.push(index);
+                    }
+                });
+                
+                // 헤더 행이 아닌 경우, 비고 데이터 컬럼 제거
+                if (row.querySelector('th') === null) {
+                    // 데이터 행: 짝수 인덱스가 비고 컬럼 (첫 번째 열 제외)
+                    const dataCells = Array.from(row.children);
+                    for (let i = dataCells.length - 1; i >= 0; i--) {
+                        if (i > 0 && i % 2 === 0) {
+                            dataCells[i].remove();
+                        }
+                    }
+                } else {
+                    // 헤더 행: "비고" th 제거
+                    cellsToRemove.sort((a, b) => b - a);
+                    cellsToRemove.forEach(index => {
+                        if (cells[index]) {
+                            cells[index].remove();
+                        }
+                    });
+                }
+            });
+        }
         
-        // 분석 정보 생성
+        // 5. 비고 컬럼 스타일 조정 (인쇄용) - 비고가 표시되는 경우만
+        if (showRemarks) {
+            const cells = clonedTable.querySelectorAll('td, th');
+            cells.forEach(cell => {
+                const currentStyle = cell.getAttribute('style') || '';
+                
+                // 비고 컬럼 감지
+                const isRemarkColumn = currentStyle.includes('white-space: pre-line') || 
+                                       currentStyle.includes('font-size: 0.9em') ||
+                                       currentStyle.includes('font-size: 0.85em');
+                
+                if (isRemarkColumn) {
+                    // 비고 컬럼은 폰트 작게, 줄바꿈 유지
+                    cell.setAttribute('style', currentStyle + '; font-size: 0.75em; line-height: 1.3;');
+                } else {
+                    // 일반 셀은 가운데 정렬 유지
+                    if (currentStyle.includes('text-align: center')) {
+                        cell.setAttribute('style', currentStyle);
+                    }
+                }
+            });
+        }
+        
+        // 6. 분석 정보 생성
         const baseDate = document.getElementById('stats-base-date')?.value || '';
         const includeMaternity = document.getElementById('stats-include-maternity')?.checked ?? true;
         const targetType = document.querySelector('input[name="statsTarget"]:checked')?.value || 'all';
@@ -2995,100 +2752,62 @@ function printStatistics(orientation = 'portrait') {
         else if (targetType === 'salary') targetLabel = '연봉제만';
         else targetLabel = '전체 직원';
         
+        let title = '📊 교차 통계 분석';
         let analysisInfo = '';
+        
         if (enableRow2) {
+            // 2차원 분석
             const rowOption1 = document.querySelector('input[name="rowOption1"]:checked')?.value || '';
             const rowOption2 = document.querySelector('input[name="rowOption2"]:checked')?.value || '';
             const rowLabel1 = ROW_OPTIONS.find(opt => opt.id === rowOption1)?.label || '통계1';
             const rowLabel2 = ROW_OPTIONS.find(opt => opt.id === rowOption2)?.label || '통계2';
-            analysisInfo = `<p><b>분석 대상:</b> ${targetLabel} | <b>기준일:</b> ${baseDate} | <b>육아휴직자:</b> ${includeMaternity ? '포함' : '제외'} | <b>분석 유형:</b> ${rowLabel1} × ${rowLabel2}</p>`;
+            
+            analysisInfo = `
+                <div style="margin-bottom: 15px; padding: 10px;">
+                    <div style="margin-bottom: 5px;"><strong>분석 대상:</strong> ${targetLabel}</div>
+                    <div style="margin-bottom: 5px;"><strong>기준일:</strong> ${baseDate}</div>
+                    <div style="margin-bottom: 5px;"><strong>육아휴직자:</strong> ${includeMaternity ? '포함' : '제외'}</div>
+                    <div><strong>분석 유형:</strong> ${rowLabel1} × ${rowLabel2} (2차원)</div>
+                </div>
+            `;
         } else {
+            // 1차원 분석
             const rowOption = document.querySelector('input[name="rowOption1"]:checked')?.value || '';
             const rowLabel = ROW_OPTIONS.find(opt => opt.id === rowOption)?.label || '통계';
-            analysisInfo = `<p><b>분석 대상:</b> ${targetLabel} | <b>기준일:</b> ${baseDate} | <b>육아휴직자:</b> ${includeMaternity ? '포함' : '제외'} | <b>분석 기준:</b> ${rowLabel}</p>`;
+            
+            analysisInfo = `
+                <div style="margin-bottom: 15px; padding: 10px;">
+                    <div style="margin-bottom: 5px;"><strong>분석 대상:</strong> ${targetLabel}</div>
+                    <div style="margin-bottom: 5px;"><strong>기준일:</strong> ${baseDate}</div>
+                    <div style="margin-bottom: 5px;"><strong>육아휴직자:</strong> ${includeMaternity ? '포함' : '제외'}</div>
+                    <div><strong>분석 기준:</strong> ${rowLabel}</div>
+                </div>
+            `;
         }
         
-        const pageStyle = orientation === 'landscape' 
-            ? '@page { size: A4 landscape; margin: 10mm; }' 
-            : '@page { size: A4 portrait; margin: 10mm; }';
-        
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>통계분석 인쇄</title>
-                <style>
-                    ${pageStyle}
-                    body { font-family: 'Malgun Gothic', sans-serif; margin: 0; padding: 20px; color: #000; }
-                    h2 { text-align: center; margin-bottom: 15px; color: #000; }
-                    p { margin-bottom: 15px; font-size: 12px; color: #555; }
-                    table { border-collapse: collapse; width: 100%; font-size: 11px; }
-                    th, td { 
-                        border: 1px solid #333; 
-                        padding: 6px 8px; 
-                        text-align: center; 
-                        color: #000 !important;
-                        background-color: #fff;
-                    }
-                    th { 
-                        background: #f0f0f0 !important; 
-                        font-weight: 600; 
-                        -webkit-print-color-adjust: exact; 
-                        print-color-adjust: exact; 
-                    }
-                    /* Bootstrap 클래스 대체 스타일 */
-                    .table-secondary td, tr.table-secondary td { 
-                        background: #e9ecef !important; 
-                        -webkit-print-color-adjust: exact; 
-                        print-color-adjust: exact; 
-                    }
-                    .table-light td, tr.table-light td { 
-                        background: #f8f9fa !important; 
-                        -webkit-print-color-adjust: exact; 
-                        print-color-adjust: exact; 
-                    }
-                    thead { display: table-header-group; }
-                    tr { page-break-inside: avoid; }
-                    td strong, th strong { color: #000 !important; }
-                    /* 비고 컬럼 스타일 */
-                    td[style*="pre-line"] { 
-                        font-size: 9px !important; 
-                        text-align: left !important; 
-                        color: #333 !important;
-                    }
-                    .no-print { position: fixed; top: 20px; right: 20px; background: #2196F3; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; z-index: 9999; }
-                    .no-print:hover { background: #1976D2; }
-                    @media print { body { padding: 0; } .no-print { display: none !important; } }
-                </style>
-            </head>
-            <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
-                <h2>📊 교차 통계 분석</h2>
-                ${analysisInfo}
-                ${tableHTML}
-            </body>
-            </html>
+        // 7. 인쇄 영역에 제목 + 정보 + 테이블 설정
+        printArea.innerHTML = `
+            <h2 style="text-align: center; margin-bottom: 20px; page-break-after: avoid;">${title}</h2>
+            ${analysisInfo}
+            <div style="overflow-x: auto;"></div>
         `;
         
-        // Electron 환경에서 시스템 브라우저로 열기
-        if (window.electronAPI && window.electronAPI.openInBrowser) {
-            window.electronAPI.openInBrowser(htmlContent, 'statistics_print.html');
-        } else {
-            const printWindow = window.open('', '_blank');
-            if (printWindow) {
-                printWindow.document.write(htmlContent);
-                printWindow.document.close();
-            } else {
-                alert('팝업이 차단되었습니다.');
-            }
-        }
+        // 테이블 추가
+        printArea.querySelector('div').appendChild(clonedTable);
+        
+        // 8. 인쇄유틸 호출
+        인쇄유틸_인사.print('statistics-print-area', orientation);
         
         로거_인사?.info('통계 인쇄 완료', { orientation });
         
     } catch (error) {
         console.error('[통계분석] printStatistics 에러:', error);
         로거_인사?.error('통계 인쇄 실패', error);
-        alert('❌ 인쇄 중 오류가 발생했습니다.');
+        
+        if (typeof 에러처리_인사 !== 'undefined') {
+            에러처리_인사.handle(error, '인쇄 중 오류가 발생했습니다.');
+        } else {
+            alert('❌ 인쇄 중 오류가 발생했습니다.\n' + error.message);
+        }
     }
 }

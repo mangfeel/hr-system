@@ -596,28 +596,24 @@ function _resizeImage(file, maxWidth) {
             canvas.height = height;
             ctx.drawImage(img, 0, 0, width, height);
             
-            // Base64 data URL로 변환 (브라우저에서도 접근 가능)
-            try {
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-                resolve(dataUrl);
-            } catch (e) {
-                // 변환 실패 시 FileReader 사용
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = () => resolve('');
-                reader.readAsDataURL(file);
-            }
+            // Blob으로 변환
+            canvas.toBlob(function(blob) {
+                if (blob) {
+                    const url = URL.createObjectURL(blob);
+                    resolve(url);
+                } else {
+                    // Blob 생성 실패 시 원본 사용
+                    resolve(URL.createObjectURL(file));
+                }
+            }, 'image/jpeg', 0.85);  // JPEG 85% 품질
             
             // 메모리 해제
             URL.revokeObjectURL(img.src);
         };
         
         img.onerror = function() {
-            // 로드 실패 시 FileReader로 원본 읽기
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = () => resolve('');
-            reader.readAsDataURL(file);
+            // 로드 실패 시 원본 사용
+            resolve(URL.createObjectURL(file));
         };
         
         img.src = URL.createObjectURL(file);
@@ -732,9 +728,9 @@ function _sortEmployees(employees, positionSettings, baseDate) {
         if (isMergedA !== isMergedB) return isMergedA - isMergedB;
         
         // 1차: 직위 순서
-        const posA = a._displayAsConcurrent?.targetPosition || 
+        const posA = a._displayAsConcurrent?.position || 
                     직원유틸_인사?.getPosition?.(a) || a.currentPosition?.position || '';
-        const posB = b._displayAsConcurrent?.targetPosition || 
+        const posB = b._displayAsConcurrent?.position || 
                     직원유틸_인사?.getPosition?.(b) || b.currentPosition?.position || '';
         
         const orderA = positionOrderMap.get(posA) ?? 999;
@@ -1311,23 +1307,11 @@ function _buildDepartmentPage(deptName, employees, baseDate, positionSettings, i
         employees.forEach(emp => {
             if (emp._concurrentPositions) {
                 const cpForDept = emp._concurrentPositions.find(cp => cp.targetDept === deptName);
-                if (cpForDept) {
-                    // 이미 부서에 있는 직원인지 확인
-                    const existingIndex = deptEmployees.findIndex(e => e.id === emp.id);
-                    
-                    if (existingIndex >= 0) {
-                        // 같은 부서 직원이 직무대리인 경우: _displayAsConcurrent 속성 추가
-                        deptEmployees[existingIndex] = {
-                            ...deptEmployees[existingIndex],
-                            _displayAsConcurrent: cpForDept
-                        };
-                    } else {
-                        // 다른 부서 직원이 겸직인 경우: 새로 추가
-                        deptEmployees.push({
-                            ...emp,
-                            _displayAsConcurrent: cpForDept
-                        });
-                    }
+                if (cpForDept && !deptEmployees.find(e => e.id === emp.id)) {
+                    deptEmployees.push({
+                        ...emp,
+                        _displayAsConcurrent: cpForDept
+                    });
                 }
             }
         });
@@ -1341,18 +1325,13 @@ function _buildDepartmentPage(deptName, employees, baseDate, positionSettings, i
     deptEmployees = _sortEmployees(deptEmployees, positionSettings, baseDate);
     
     // 팀장과 팀원 분리
-    // 겸직/직무대리로 배정된 직원은 해당 부서의 부서장 역할 (우선 처리)
-    let teamLeader = deptEmployees.find(emp => emp._displayAsConcurrent);
-    
-    // 겸직/직무대리가 없으면 일반 부서장 찾기
-    if (!teamLeader) {
-        teamLeader = deptEmployees.find(emp => {
-            const position = 직원유틸_인사?.getPosition?.(emp) || emp.currentPosition?.position || '';
-            const setting = positionSettings.find(p => (p.position || p.name) === position);
-            return setting?.role === 'deptHead' || 
-                   position.includes('팀장') || position.includes('실장') || position.includes('센터장');
-        });
-    }
+    const teamLeader = deptEmployees.find(emp => {
+        const position = emp._displayAsConcurrent?.position || 
+                        직원유틸_인사?.getPosition?.(emp) || emp.currentPosition?.position || '';
+        const setting = positionSettings.find(p => (p.position || p.name) === position);
+        return setting?.role === 'deptHead' || 
+               position.includes('팀장') || position.includes('실장') || position.includes('센터장');
+    });
     
     const teamMembers = deptEmployees.filter(emp => emp !== teamLeader);
     
@@ -1426,7 +1405,7 @@ function _calculateRankLocal(emp, baseDate) {
 function _buildEmployeeData(emp, baseDate, detailed, applyContinuousService = false) {
     const name = 직원유틸_인사?.getName?.(emp) || emp.personalInfo?.name || '';
     const dept = 직원유틸_인사?.getDepartment?.(emp) || emp.currentPosition?.dept || '';
-    const position = emp._displayAsConcurrent?.targetPosition || 
+    const position = emp._displayAsConcurrent?.position || 
                     직원유틸_인사?.getPosition?.(emp) || emp.currentPosition?.position || '';
     
     // 겸직/직무대리 정보
@@ -1560,320 +1539,43 @@ function printProfileCards() {
             return;
         }
         
+        // 인쇄 영역에 복사
         const cardType = document.querySelector('input[name="card-type"]:checked')?.value || 'photo';
+        const printArea = document.getElementById('profile-card-print-area');
+        
+        if (!printArea) {
+            console.error('[인사카드] 인쇄 영역을 찾을 수 없음');
+            alert('인쇄 영역을 찾을 수 없습니다.');
+            return;
+        }
         
         let html = '';
         _generatedPages.forEach((page, index) => {
             html += _renderPage(page, cardType, index + 1, true);
         });
         
-        // 인사카드 전체 스타일 (인사카드_스타일.css 전체 포함)
-        const cardStyles = `
-/* ===== 페이지 ===== */
-.profile-card-page {
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    padding: 30px;
-    min-height: 800px;
-    position: relative;
-    page-break-after: always;
-    margin-bottom: 20px;
-}
-.profile-card-page:last-child { page-break-after: auto; }
-.page-title {
-    text-align: center;
-    font-size: 24px;
-    font-weight: 700;
-    color: #1f2937;
-    padding-bottom: 20px;
-    margin-bottom: 24px;
-    border-bottom: 3px solid #667eea;
-}
-.page-content { min-height: 700px; }
-
-/* ===== 단독 카드 (사진 포함형) ===== */
-.profile-card-single.photo-type {
-    display: flex;
-    gap: 30px;
-    padding: 20px;
-}
-.card-photo-area { flex-shrink: 0; width: 200px; }
-.card-photo {
-    width: 200px;
-    height: 260px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 2px solid #e5e7eb;
-}
-.card-photo-placeholder {
-    width: 200px;
-    height: 260px;
-    background: #f3f4f6;
-    border: 2px dashed #d1d5db;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    color: #9ca3af;
-}
-.card-info-area { flex: 1; }
-.card-name { font-size: 28px; font-weight: 700; color: #1f2937; margin-bottom: 8px; }
-.card-position { font-size: 18px; color: #4b5563; margin-bottom: 8px; }
-.card-original {
-    font-size: 13px;
-    color: #6b7280;
-    padding: 6px 10px;
-    background: #fef3c7;
-    border-radius: 4px;
-    display: inline-block;
-    margin-bottom: 12px;
-}
-.card-divider { height: 1px; background: #e5e7eb; margin: 16px 0; }
-.card-details { display: flex; flex-direction: column; gap: 10px; }
-.detail-row { display: flex; gap: 16px; }
-.detail-label { width: 80px; font-weight: 600; color: #6b7280; font-size: 14px; }
-.detail-value { flex: 1; color: #374151; font-size: 14px; }
-.card-section-title { font-size: 15px; font-weight: 600; color: #4b5563; margin-bottom: 12px; }
-.card-history { display: flex; flex-direction: column; gap: 8px; }
-.history-item { display: flex; gap: 12px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid #f3f4f6; }
-.history-date { font-weight: 500; color: #4b5563; min-width: 100px; }
-.history-content { color: #6b7280; }
-.card-career { display: flex; flex-direction: column; gap: 8px; }
-.career-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 13px;
-    padding: 10px 12px;
-    margin-bottom: 8px;
-    background: #f9fafb;
-    border-radius: 6px;
-    border-left: 3px solid #6366f1;
-}
-.career-item:last-child { margin-bottom: 0; }
-.career-org { font-weight: 600; color: #1f2937; font-size: 14px; }
-.career-detail { display: flex; gap: 8px; color: #4b5563; }
-.career-dates { color: #6b7280; }
-.career-period { color: #374151; font-weight: 500; }
-.career-convert { display: flex; gap: 12px; font-size: 12px; color: #6b7280; margin-top: 2px; }
-.career-rate { color: #059669; }
-.career-converted { color: #6366f1; font-weight: 500; }
-.card-certificates { display: flex; flex-wrap: wrap; gap: 8px; }
-.cert-item { padding: 4px 10px; background: #e0e7ff; border-radius: 4px; font-size: 13px; color: #4338ca; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-.maternity-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    background: #fce7f3;
-    color: #be185d;
-    border-radius: 4px;
-    font-size: 12px;
-    margin-left: 8px;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-.maternity-badge-small { font-size: 14px; }
-
-/* ===== 단독 카드 (텍스트형) ===== */
-.profile-card-single.text-type { padding: 30px; max-width: 600px; margin: 0 auto; }
-.card-header-bar { height: 3px; background: linear-gradient(90deg, #667eea, #764ba2); margin: 16px 0; }
-.card-name-large { font-size: 32px; font-weight: 700; text-align: center; color: #1f2937; margin-bottom: 8px; }
-.card-position-large { font-size: 18px; text-align: center; color: #4b5563; margin-bottom: 8px; }
-.card-details.text-layout { background: #f9fafb; padding: 20px; border-radius: 8px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-/* ===== 부서 페이지 ===== */
-.dept-leader-section { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e5e7eb; }
-.dept-members-section { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-.dept-members-section.text-type { grid-template-columns: repeat(2, 1fr); }
-
-/* ===== 미니 카드 (사진 포함형) ===== */
-.profile-card-mini { display: flex; gap: 16px; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; }
-.profile-card-mini.leader { background: #fef3c7; border-color: #fcd34d; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-.mini-photo-area { flex-shrink: 0; }
-.mini-photo { width: 80px; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid #e5e7eb; }
-.mini-photo-placeholder {
-    width: 80px;
-    height: 100px;
-    background: #f3f4f6;
-    border: 1px dashed #d1d5db;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    color: #9ca3af;
-}
-.mini-info-area { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-.mini-name { font-size: 16px; font-weight: 700; color: #1f2937; }
-.mini-position { font-size: 14px; color: #4b5563; }
-.mini-original { font-size: 11px; color: #92400e; }
-.mini-details { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: #6b7280; }
-.mini-history { font-size: 11px; color: #9ca3af; margin-top: 4px; }
-.mini-rank { font-size: 13px; font-weight: 600; color: #4f46e5; margin-top: auto; }
-
-/* ===== 미니 카드 (텍스트형) ===== */
-.profile-card-mini-text { padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; }
-.profile-card-mini-text.leader { background: #fef3c7; border-color: #fcd34d; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-.mini-text-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.mini-text-name { font-size: 16px; font-weight: 700; color: #1f2937; }
-.mini-text-position { font-size: 13px; color: #4b5563; }
-.mini-text-original { font-size: 11px; color: #92400e; margin-bottom: 8px; }
-.mini-text-details { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: #6b7280; margin-bottom: 8px; }
-.mini-text-history { font-size: 11px; color: #9ca3af; margin-bottom: 8px; }
-.mini-text-rank { font-size: 13px; font-weight: 600; color: #4f46e5; }
-.no-data { font-size: 13px; color: #9ca3af; font-style: italic; }
-
-/* ===== 포상이력 스타일 ===== */
-.card-awards { display: flex; flex-direction: column; gap: 12px; }
-.award-category { display: flex; flex-direction: column; gap: 6px; }
-.award-category-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: #6366f1;
-    padding: 4px 8px;
-    background: #eef2ff;
-    border-radius: 4px;
-    display: inline-block;
-    width: fit-content;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-.award-list { display: flex; flex-direction: column; gap: 4px; padding-left: 8px; }
-.award-item {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    font-size: 13px;
-    padding: 6px 10px;
-    background: #f9fafb;
-    border-radius: 4px;
-    border-left: 2px solid #10b981;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-.award-date { color: #6b7280; font-size: 12px; min-width: 85px; }
-.award-honor { color: #1f2937; font-weight: 500; }
-.award-org { color: #9ca3af; font-size: 12px; }
-.award-detail { flex-basis: 100%; color: #4b5563; font-size: 12px; margin-top: 2px; padding-left: 85px; }
-
-/* ===== 2단 서식 스타일 ===== */
-.history-grid-two-column { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 16px; }
-.history-item-compact {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 6px 10px;
-    background: #f9fafb;
-    border-radius: 4px;
-    border-left: 2px solid #667eea;
-    font-size: 12px;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-.history-item-compact .history-date { font-weight: 500; color: #4b5563; min-width: 80px; }
-.history-item-compact .history-type { color: #1f2937; font-weight: 500; }
-.history-item-compact .history-dept { color: #6b7280; font-size: 11px; }
-.career-grid-two-column { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 16px; }
-.career-item-compact {
-    padding: 8px 10px;
-    background: #f0fdf4;
-    border-radius: 4px;
-    border-left: 2px solid #10b981;
-    font-size: 12px;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-.career-org-compact { font-weight: 600; color: #1f2937; margin-bottom: 2px; }
-.career-period-compact { color: #6b7280; font-size: 11px; }
-.career-rate-compact { color: #059669; font-size: 11px; margin-top: 2px; }
-.award-grid-two-column { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px 12px; padding-left: 8px; }
-.award-item-compact {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 5px 8px;
-    background: #f9fafb;
-    border-radius: 4px;
-    border-left: 2px solid #10b981;
-    font-size: 12px;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-.award-item-compact .award-date { color: #6b7280; font-size: 11px; min-width: 75px; }
-.award-item-compact .award-honor { color: #1f2937; font-weight: 500; }
-.award-item-compact .award-org { color: #9ca3af; font-size: 11px; }
-
-/* ===== 인쇄 버튼 ===== */
-.no-print {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #2196F3;
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    z-index: 9999;
-}
-.no-print:hover { background: #1976D2; }
-
-@media print {
-    body { padding: 0; margin: 0; }
-    .no-print { display: none !important; }
-    .profile-card-page {
-        page-break-after: always;
-        page-break-inside: avoid;
-        margin: 0;
-        padding: 15mm;
-        border: none !important;
-        box-shadow: none !important;
-        min-height: auto;
-        background: white !important;
-    }
-    .profile-card-page:last-child { page-break-after: auto; }
-    .page-title { font-size: 20pt; border-bottom: 2pt solid #333; margin-bottom: 20px; padding-bottom: 10px; }
-    .card-name { font-size: 18pt; }
-    .card-position { font-size: 12pt; }
-    .card-photo, .card-photo-placeholder { width: 45mm; height: 60mm; }
-    .mini-photo, .mini-photo-placeholder { width: 25mm; height: 32mm; }
-    .dept-members-section { grid-template-columns: repeat(2, 1fr); gap: 10mm; }
-}
-        `;
+        printArea.innerHTML = html;
         
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>인사카드 인쇄</title>
-                <style>
-                    @page { size: A4 portrait; margin: 10mm; }
-                    body { font-family: 'Malgun Gothic', sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
-                    ${cardStyles}
-                </style>
-            </head>
-            <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
-                ${html}
-            </body>
-            </html>
-        `;
-        
-        // Electron 환경에서 시스템 브라우저로 열기
-        if (window.electronAPI && window.electronAPI.openInBrowser) {
-            window.electronAPI.openInBrowser(htmlContent, 'profile_card_print.html');
+        // 인쇄유틸 사용
+        if (typeof 인쇄유틸_인사 !== 'undefined' && 인쇄유틸_인사.print) {
+            console.log('[인사카드] 인쇄유틸 사용');
+            인쇄유틸_인사.print('profile-card-print-area', 'portrait');
         } else {
-            const printWindow = window.open('', '_blank');
-            if (printWindow) {
-                printWindow.document.write(htmlContent);
-                printWindow.document.close();
-            } else {
-                alert('팝업이 차단되었습니다.');
-            }
+            // Fallback: 직접 인쇄 (인쇄유틸 없을 때)
+            console.log('[인사카드] Fallback 인쇄');
+            printArea.style.display = 'block';
+            document.body.classList.add('print-mode');
+            printArea.classList.add('print-active');
+            
+            setTimeout(() => {
+                window.print();
+                
+                setTimeout(() => {
+                    document.body.classList.remove('print-mode');
+                    printArea.classList.remove('print-active');
+                    printArea.style.display = 'none';
+                }, 500);
+            }, 100);
         }
         
         로거_인사?.info('인쇄 완료');
@@ -1881,7 +1583,7 @@ function printProfileCards() {
     } catch (error) {
         console.error('[인사카드] 인쇄 오류:', error);
         로거_인사?.error('인쇄 오류', error);
-        alert('인쇄 중 오류가 발생했습니다.');
+        에러처리_인사?.handle(error, '인쇄 중 오류가 발생했습니다.');
     }
 }
 

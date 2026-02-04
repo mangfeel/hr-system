@@ -2414,6 +2414,13 @@ function executeAwardsPrint() {
         // 모달 닫기
         document.getElementById('print-options-modal')?.remove();
         
+        // A3 선택 시 안내 메시지
+        if (paperSize === 'A3') {
+            alert('💡 A3 인쇄 안내\n\n' +
+                  '브라우저 인쇄 설정에서 용지 크기를 A3로 직접 선택해주세요.\n\n' +
+                  '일부 프린터는 CSS 용지 설정을 무시할 수 있습니다.');
+        }
+        
         // 현재 결과 테이블
         const reportTable = document.getElementById('report-table');
         if (!reportTable) {
@@ -2424,87 +2431,148 @@ function executeAwardsPrint() {
         // 용지 방향 결정
         let orientation = orientationOption;
         if (orientation === 'auto') {
+            // 연도별 컬럼이 많은 탭은 가로
             orientation = (currentReportTab === 'employee-external' || 
                           currentReportTab === 'employee-internal') 
                           ? 'landscape' : 'portrait';
         }
         
+        // 인쇄 영역 (없으면 생성)
+        let printArea = document.getElementById('awards-print-area');
+        if (!printArea) {
+            printArea = document.createElement('div');
+            printArea.id = 'awards-print-area';
+            printArea.style.display = 'none';
+            document.body.appendChild(printArea);
+        }
+        
         // 테이블 복제
         const tableClone = reportTable.cloneNode(true);
+        tableClone.id = 'awards-report-table-print';
         
         // 제목 생성
         const tabInfo = REPORT_TABS[currentReportTab] || { name: '포상 현황', icon: '🏆' };
         const titleText = `${tabInfo.icon} ${tabInfo.name}`;
         const today = new Date().toISOString().split('T')[0];
         
-        let titleHTML = '';
+        // 인쇄 콘텐츠 생성
+        let contentHTML = '<div style="padding: 10px;">';
+        
         if (showTitle) {
-            titleHTML = `<h2 style="text-align:center;margin-bottom:15px;font-size:18px;font-weight:600;">${titleText}</h2>`;
+            contentHTML += `
+                <h2 style="text-align: center; margin-bottom: 15px; font-size: 18px; font-weight: 600;">
+                    ${titleText}
+                </h2>
+            `;
         }
         
-        let dateHTML = '';
         if (showDate) {
-            dateHTML = `<div style="text-align:right;margin-bottom:10px;font-size:11px;color:#666;">생성일: ${today}</div>`;
+            contentHTML += `
+                <div style="text-align: right; margin-bottom: 10px; font-size: 11px; color: #666;">
+                    생성일: ${today}
+                </div>
+            `;
         }
         
+        contentHTML += tableClone.outerHTML + '</div>';
+        printArea.innerHTML = contentHTML;
+        
+        // 폰트 크기 조절 (A3는 더 크게)
         const fontSize = paperSize === 'A3' ? '9px' : (orientation === 'landscape' ? '8px' : '10px');
         const cellPadding = paperSize === 'A3' ? '5px 6px' : (orientation === 'landscape' ? '4px 5px' : '5px 6px');
         
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>포상 보고서 인쇄</title>
-                <style>
-                    @page { size: ${paperSize} ${orientation}; margin: 5mm; }
-                    body { font-family: 'Malgun Gothic', sans-serif; margin: 0; padding: 10px; }
-                    table { font-size: ${fontSize}; border-collapse: collapse; width: 100%; table-layout: auto; }
-                    th, td { padding: ${cellPadding}; border: 1px solid #333; text-align: center; }
-                    th { background: #e0e7ff !important; color: #1e293b; font-weight: bold; white-space: nowrap; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    thead { display: table-header-group; }
-                    tr { page-break-inside: avoid; }
-                    td:last-child { white-space: nowrap; }
-                    td.text-left { white-space: normal; word-break: break-word; }
-                    
-                    /* 선정여부 색상 (미리보기와 동일) */
-                    .status-selected { color: #111 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    .status-pending { color: #2563eb !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    .status-not-selected { color: #9ca3af !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    
-                    /* 연도별 포상 표시 색상 */
-                    .award-selected { color: #111 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    .award-pending { color: #2563eb !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    .award-rejected { color: #9ca3af !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    
-                    .no-print { position: fixed; top: 20px; right: 20px; background: #2196F3; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; z-index: 9999; }
-                    .no-print:hover { background: #1976D2; }
-                    @media print { body { padding: 0; } .no-print { display: none !important; } }
-                </style>
-            </head>
-            <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
-                ${titleHTML}
-                ${dateHTML}
-                ${tableClone.outerHTML}
-            </body>
-            </html>
+        // 인쇄용 스타일 추가
+        const printStyle = document.createElement('style');
+        printStyle.id = 'awards-report-print-style';
+        printStyle.textContent = `
+            @media print {
+                /* 용지 크기 및 방향 설정 */
+                @page {
+                    size: ${paperSize} ${orientation};
+                    margin: 5mm;
+                }
+                
+                /* 다른 모든 요소 숨김 */
+                body > *:not(#awards-print-area) {
+                    display: none !important;
+                }
+                
+                /* 인쇄 영역만 표시 */
+                #awards-print-area {
+                    display: block !important;
+                    position: static !important;
+                    width: 100% !important;
+                }
+                
+                /* 테이블 스타일 - 용지에 맞게 자동 조절 */
+                #awards-print-area table {
+                    font-size: ${fontSize} !important;
+                    border-collapse: collapse !important;
+                    width: 100% !important;
+                    table-layout: auto !important;
+                }
+                
+                #awards-print-area th,
+                #awards-print-area td {
+                    padding: ${cellPadding} !important;
+                    border: 1px solid #333 !important;
+                }
+                
+                /* 날짜 컬럼 줄바꿈 방지 */
+                #awards-print-area td:last-child {
+                    white-space: nowrap !important;
+                }
+                
+                #awards-print-area th {
+                    background: #e0e7ff !important;
+                    color: #1e293b !important;
+                    font-weight: bold !important;
+                    white-space: nowrap !important;
+                    border: 1px solid #a5b4fc !important;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                
+                #awards-print-area thead {
+                    display: table-header-group !important;
+                }
+                
+                #awards-print-area tr {
+                    page-break-inside: avoid;
+                }
+                
+                /* 긴 텍스트 컬럼 */
+                #awards-print-area td.text-left {
+                    white-space: normal !important;
+                    word-break: break-word !important;
+                }
+            }
         `;
         
-        // Electron 환경에서 시스템 브라우저로 열기
-        if (window.electronAPI && window.electronAPI.openInBrowser) {
-            window.electronAPI.openInBrowser(htmlContent, 'awards_report_print.html');
-        } else {
-            const printWindow = window.open('', '_blank');
-            if (printWindow) {
-                printWindow.document.write(htmlContent);
-                printWindow.document.close();
-            } else {
-                alert('팝업이 차단되었습니다.');
-            }
-        }
+        // 기존 인쇄 스타일 제거 후 새로 추가
+        const existingStyle = document.getElementById('awards-report-print-style');
+        if (existingStyle) existingStyle.remove();
+        document.head.appendChild(printStyle);
         
-        console.log('✅ 포상 보고서 인쇄 완료');
+        // 인쇄 영역 표시
+        printArea.style.display = 'block';
+        
+        // 인쇄 완료 후 정리 함수
+        const cleanup = () => {
+            printArea.style.display = 'none';
+            printArea.innerHTML = '';
+            printStyle.remove();
+            window.removeEventListener('afterprint', cleanup);
+            console.log('✅ 포상 보고서 인쇄 완료');
+        };
+        
+        // afterprint 이벤트로 정리 (인쇄 완료/취소 후)
+        window.addEventListener('afterprint', cleanup);
+        
+        // 인쇄 실행
+        setTimeout(() => {
+            window.print();
+        }, 100);
         
     } catch (error) {
         console.error('❌ 인쇄 오류:', error);

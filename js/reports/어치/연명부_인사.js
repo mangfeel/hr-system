@@ -999,71 +999,244 @@ function printRegister(orientation = 'landscape') {
     로거_인사?.info('연명부 인쇄 시작', { orientation });
     
     try {
-        const table = document.getElementById('registerTable');
+        // 테이블 확인
+        const table = typeof DOM유틸_인사 !== 'undefined'
+            ? DOM유틸_인사.getById('registerTable')
+            : document.getElementById('registerTable');
         
         if (!table) {
-            alert('⚠️ 먼저 연명부를 생성하세요.');
+            로거_인사?.warn('테이블을 찾을 수 없음');
+            
+            if (typeof 에러처리_인사 !== 'undefined') {
+                에러처리_인사.warn('먼저 연명부를 생성하세요.');
+            } else {
+                alert('⚠️ 먼저 연명부를 생성하세요.');
+            }
             return;
         }
         
-        // 제목 정보 추출
-        const cardTitle = document.querySelector('#registerResult .card-title');
-        const titleText = cardTitle ? cardTitle.textContent : '연명부';
-        
-        // 테이블 복제 및 가운데 정렬 적용
-        const tableClone = table.cloneNode(true);
-        tableClone.querySelectorAll('th, td').forEach(cell => {
-            cell.style.textAlign = 'center';
-        });
-        
-        const pageStyle = orientation === 'landscape' 
-            ? '@page { size: A4 landscape; margin: 10mm; }' 
-            : '@page { size: A4 portrait; margin: 10mm; }';
-        
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>연명부 인쇄</title>
-                <style>
-                    ${pageStyle}
-                    body { font-family: 'Malgun Gothic', sans-serif; margin: 0; padding: 20px; }
-                    h2 { text-align: center; margin-bottom: 20px; font-size: 18px; }
-                    table { border-collapse: collapse; width: 100%; font-size: ${orientation === 'landscape' ? '10px' : '12px'}; }
-                    th, td { border: 1px solid #e8ebed; padding: ${orientation === 'landscape' ? '4px' : '6px'}; text-align: center; }
-                    th { background: #f8f9fa !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    thead { display: table-header-group; }
-                    tr { page-break-inside: avoid; }
-                    .no-print { position: fixed; top: 20px; right: 20px; background: #2196F3; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; z-index: 9999; }
-                    .no-print:hover { background: #1976D2; }
-                    @media print { body { padding: 0; } .no-print { display: none !important; } }
-                </style>
-            </head>
-            <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
-                <h2>${titleText}</h2>
-                ${tableClone.outerHTML}
-            </body>
-            </html>
-        `;
-        
-        // Electron 환경에서 시스템 브라우저로 열기
-        if (window.electronAPI && window.electronAPI.openInBrowser) {
-            window.electronAPI.openInBrowser(htmlContent, 'register_print.html');
-        } else {
-            const printWindow = window.open('', '_blank');
-            if (printWindow) {
-                printWindow.document.write(htmlContent);
-                printWindow.document.close();
-            } else {
-                alert('팝업이 차단되었습니다.');
+        // ⭐ 인쇄유틸 사용 (핵심!)
+        if (typeof 인쇄유틸_인사 !== 'undefined') {
+            // 제목 정보 추출
+            const cardTitle = document.querySelector('#registerResult .card-title');
+            const titleText = cardTitle ? cardTitle.textContent : '연명부';
+            
+            로거_인사?.debug('인쇄 제목', { titleText });
+            
+            // 인쇄 전용 영역 생성 (없으면)
+            let printArea = document.getElementById('register-print-area');
+            
+            if (!printArea) {
+                로거_인사?.debug('인쇄 영역 생성');
+                
+                printArea = document.createElement('div');
+                printArea.id = 'register-print-area';
+                printArea.className = 'print-container';
+                printArea.style.display = 'none';
+                
+                document.body.appendChild(printArea);
             }
+            
+            // 테이블 복제 및 가운데 정렬 적용
+            const tableClone = table.cloneNode(true);
+            tableClone.id = 'registerTablePrint';
+            
+            // ⭐ 테이블 외곽 테두리 제거 (강력한 방법)
+            const tableStyle = tableClone.getAttribute('style') || '';
+            tableClone.setAttribute('style', tableStyle + 'border:none !important;outline:none !important;');
+            
+            // ⭐ thead, tbody, tfoot의 테두리도 제거
+            const thead = tableClone.querySelector('thead');
+            const tbody = tableClone.querySelector('tbody');
+            const tfoot = tableClone.querySelector('tfoot');
+            
+            if (thead) thead.style.border = 'none';
+            if (tbody) tbody.style.border = 'none';
+            if (tfoot) tfoot.style.border = 'none';
+            
+            // ⭐ 모든 tr의 테두리도 제거 (특히 마지막 행!)
+            const allRows = tableClone.querySelectorAll('tr');
+            allRows.forEach(row => {
+                row.style.border = 'none';
+                row.style.borderBottom = 'none';
+            });
+            
+            // ⭐ 모든 th (헤더)를 가운데 정렬
+            const allHeaders = tableClone.querySelectorAll('th');
+            allHeaders.forEach(header => {
+                const currentStyle = header.getAttribute('style') || '';
+                // 기존 text-align 제거하고 center로 통일
+                const newStyle = currentStyle.replace(/text-align:[^;]+;?/g, '') + 'text-align:center;';
+                header.setAttribute('style', newStyle);
+            });
+            
+            // ⭐ 모든 td (데이터)를 가운데 정렬
+            const allCells = tableClone.querySelectorAll('td');
+            allCells.forEach(cell => {
+                const currentStyle = cell.getAttribute('style') || '';
+                // 기존 text-align 제거하고 center로 통일
+                const newStyle = currentStyle.replace(/text-align:[^;]+;?/g, '') + 'text-align:center;';
+                cell.setAttribute('style', newStyle);
+            });
+            
+            로거_인사?.debug('테이블 정렬 적용', { 
+                headersCount: allHeaders.length,
+                cellsCount: allCells.length 
+            });
+            
+            // ⭐ 인쇄 영역 업데이트 (제목 포함)
+            printArea.innerHTML = `
+                <style>
+                    @media print {
+                        /* 🔥 모든 요소의 그림자/외곽선 제거 */
+                        * {
+                            box-shadow: none !important;
+                            outline: none !important;
+                        }
+                        
+                        /* 페이지 구분선 제거 */
+                        .register-content {
+                            page-break-after: auto !important;
+                            page-break-before: auto !important;
+                            page-break-inside: auto !important;
+                            border: none !important;
+                            box-shadow: none !important;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                        }
+                        
+                        /* 인쇄 영역 */
+                        #register-print-area {
+                            border: none !important;
+                            box-shadow: none !important;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                        }
+                        
+                        /* 테이블 하단 여백 제거 */
+                        #registerTablePrint {
+                            margin-bottom: 0 !important;
+                            padding-bottom: 0 !important;
+                            border: none !important;
+                            box-shadow: none !important;
+                        }
+                        
+                        /* tbody 하단 여백/테두리 제거 */
+                        #registerTablePrint tbody {
+                            margin-bottom: 0 !important;
+                            padding-bottom: 0 !important;
+                            border: none !important;
+                            border-bottom: none !important;
+                            box-shadow: none !important;
+                        }
+                        
+                        /* 모든 tr의 하단 처리 */
+                        #registerTablePrint tbody tr {
+                            border: none !important;
+                            border-bottom: none !important;
+                            box-shadow: none !important;
+                            page-break-inside: avoid;
+                        }
+                        
+                        /* 마지막 tr의 하단 테두리 제거 */
+                        #registerTablePrint tbody tr:last-child {
+                            border-bottom: none !important;
+                            margin-bottom: 0 !important;
+                            padding-bottom: 0 !important;
+                        }
+                        
+                        /* 마지막 행의 셀 테두리는 유지 */
+                        #registerTablePrint tbody tr:last-child td {
+                            border-bottom: 1px solid #e8ebed !important;
+                        }
+                        
+                        /* 헤더 배경 변경 */
+                        #registerTablePrint thead tr {
+                            background: #f8f9fa !important;
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                            border: none !important;
+                            box-shadow: none !important;
+                        }
+                        
+                        #registerTablePrint thead th {
+                            background: #f8f9fa !important;
+                            color: #333 !important;
+                            font-weight: 600 !important;
+                            border: 1px solid #e8ebed !important;
+                        }
+                        
+                        /* 페이지 설정 */
+                        @page {
+                            margin: 5mm;
+                            border: none;
+                        }
+                    }
+                </style>
+                <div class="register-content" style="border:none !important;outline:none !important;box-shadow:none !important;margin:0 !important;padding:0 !important;">
+                    <h2 style="text-align:center;margin-bottom:20px;font-size:18px;font-weight:600;color:#333;">
+                        ${titleText}
+                    </h2>
+                    ${tableClone.outerHTML}
+                </div>
+            `;
+            
+            // 인쇄 실행
+            인쇄유틸_인사.print('register-print-area', orientation);
+            
+        } else {
+            // ⚠️ Fallback: 레거시 방식 (하위 호환성)
+            로거_인사?.warn('인쇄유틸을 찾을 수 없음 - 레거시 방식 사용');
+            
+            // 기존 스타일 제거
+            const existingStyle = document.getElementById('print-orientation-style');
+            if (existingStyle) existingStyle.remove();
+            
+            // 인쇄 방향 스타일 추가
+            const style = document.createElement('style');
+            style.id = 'print-orientation-style';
+            style.textContent = `
+                @media print {
+                    @page {
+                        size: A4 ${orientation === 'landscape' ? 'landscape' : 'portrait'};
+                        margin: 10mm;
+                    }
+                    body { 
+                        font-size: ${orientation === 'landscape' ? '10px' : '12px'}; 
+                    }
+                    table {
+                        font-size: ${orientation === 'landscape' ? '9px' : '11px'} !important;
+                        page-break-inside: auto;
+                    }
+                    tr {
+                        page-break-inside: avoid;
+                        page-break-after: auto;
+                    }
+                    thead {
+                        display: table-header-group;
+                    }
+                    th, td {
+                        padding: ${orientation === 'landscape' ? '4px' : '6px'} !important;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 인쇄 실행
+            setTimeout(() => {
+                window.print();
+            }, 100);
         }
         
     } catch (error) {
         로거_인사?.error('연명부 인쇄 실패', error);
-        alert('❌ 인쇄 중 오류가 발생했습니다.');
+        
+        if (typeof 에러처리_인사 !== 'undefined') {
+            에러처리_인사.handle(error, '인쇄 중 오류가 발생했습니다.');
+        } else {
+            alert('❌ 인쇄 중 오류가 발생했습니다.');
+            console.error('인쇄 오류:', error);
+        }
     }
 }
 

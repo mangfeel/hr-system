@@ -1200,14 +1200,31 @@ function executeTenurePrint() {
         // 모달 닫기
         document.getElementById('tenure-print-options-modal')?.remove();
         
+        // A3 선택 시 안내 메시지
+        if (paperSize === 'A3') {
+            alert('💡 A3 인쇄 안내\n\n' +
+                  '브라우저 인쇄 설정에서 용지 크기를 A3로 직접 선택해주세요.\n\n' +
+                  '일부 프린터는 CSS 용지 설정을 무시할 수 있습니다.');
+        }
+        
         const table = document.getElementById('tenureReportTable');
         if (!table) {
             alert('⚠️ 먼저 근속현황표를 생성하세요.');
             return;
         }
         
+        // 인쇄 영역 (HTML에 있는 것 사용, 없으면 동적 생성)
+        let printArea = document.getElementById('tenure-report-print-area');
+        if (!printArea) {
+            printArea = document.createElement('div');
+            printArea.id = 'tenure-report-print-area';
+            printArea.style.display = 'none';
+            document.body.appendChild(printArea);
+        }
+        
         // 테이블 복제
         const tableClone = table.cloneNode(true);
+        tableClone.id = 'tenureReportTablePrint';
         
         // 제목 생성
         const settings = _tenureReportSettings;
@@ -1216,62 +1233,99 @@ function executeTenurePrint() {
             ? `<div style="font-size:11px;color:#666;margin-bottom:5px;">특수부서(근속 제외): ${settings.specialDepts.join(', ')}</div>`
             : '';
         
-        let titleHTML = '';
+        // 인쇄 콘텐츠 생성
+        let contentHTML = '<div style="padding:10px;">';
+        
         if (showTitle) {
-            titleHTML = `<h2 style="text-align:center;margin-bottom:10px;font-size:16px;">${titleText}</h2>${specialDeptInfo}`;
+            contentHTML += `<h2 style="text-align:center;margin-bottom:10px;font-size:16px;">${titleText}</h2>`;
+            contentHTML += specialDeptInfo;
         }
         
-        let dateHTML = '';
         if (showDate) {
-            const today = DateUtils ? DateUtils.formatDate(new Date()) : new Date().toISOString().split('T')[0];
-            dateHTML = `<div style="text-align:right;margin-bottom:10px;font-size:11px;color:#666;">생성일: ${today}</div>`;
+            contentHTML += `
+                <div style="text-align:right;margin-bottom:10px;font-size:11px;color:#666;">
+                    생성일: ${DateUtils ? DateUtils.formatDate(new Date()) : new Date().toISOString().split('T')[0]}
+                </div>
+            `;
         }
         
+        contentHTML += tableClone.outerHTML + '</div>';
+        printArea.innerHTML = contentHTML;
+        
+        // 폰트 크기 조절 (A3는 더 크게)
         const fontSize = paperSize === 'A3' ? '9px' : '7px';
         const cellPadding = paperSize === 'A3' ? '3px 4px' : '2px 3px';
         
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>근속현황표 인쇄</title>
-                <style>
-                    @page { size: ${paperSize} ${orientation}; margin: 5mm; }
-                    body { font-family: 'Malgun Gothic', sans-serif; margin: 0; padding: 10px; }
-                    table { font-size: ${fontSize}; border-collapse: collapse; width: 100%; table-layout: auto; }
-                    th, td { padding: ${cellPadding}; border: 1px solid #333; white-space: nowrap; text-align: center; }
-                    th { background: #e5e7eb !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    thead { display: table-header-group; }
-                    tr { page-break-inside: avoid; }
-                    .no-print { position: fixed; top: 20px; right: 20px; background: #2196F3; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; z-index: 9999; }
-                    .no-print:hover { background: #1976D2; }
-                    @media print { body { padding: 0; } .no-print { display: none !important; } }
-                </style>
-            </head>
-            <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
-                ${titleHTML}
-                ${dateHTML}
-                ${tableClone.outerHTML}
-            </body>
-            </html>
+        // 인쇄용 스타일 추가
+        const printStyle = document.createElement('style');
+        printStyle.id = 'tenure-report-print-style';
+        printStyle.textContent = `
+            @media print {
+                @page {
+                    size: ${paperSize} ${orientation};
+                    margin: 5mm;
+                }
+                
+                body > *:not(#tenure-report-print-area) {
+                    display: none !important;
+                }
+                
+                #tenure-report-print-area {
+                    display: block !important;
+                    position: static !important;
+                    width: 100% !important;
+                }
+                
+                #tenure-report-print-area table {
+                    font-size: ${fontSize} !important;
+                    border-collapse: collapse !important;
+                    width: 100% !important;
+                    table-layout: auto !important;
+                }
+                
+                #tenure-report-print-area th,
+                #tenure-report-print-area td {
+                    padding: ${cellPadding} !important;
+                    border: 1px solid #333 !important;
+                    white-space: nowrap !important;
+                }
+                
+                #tenure-report-print-area th {
+                    background: #e5e7eb !important;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                
+                #tenure-report-print-area thead {
+                    display: table-header-group !important;
+                }
+                
+                #tenure-report-print-area tr {
+                    page-break-inside: avoid;
+                }
+            }
         `;
         
-        // Electron 환경에서 시스템 브라우저로 열기
-        if (window.electronAPI && window.electronAPI.openInBrowser) {
-            window.electronAPI.openInBrowser(htmlContent, 'tenure_report_print.html');
-        } else {
-            const printWindow = window.open('', '_blank');
-            if (printWindow) {
-                printWindow.document.write(htmlContent);
-                printWindow.document.close();
-            } else {
-                alert('팝업이 차단되었습니다.');
-            }
-        }
+        // 기존 인쇄 스타일 제거 후 새로 추가
+        const existingStyle = document.getElementById('tenure-report-print-style');
+        if (existingStyle) existingStyle.remove();
+        document.head.appendChild(printStyle);
         
-        로거_인사?.info('근속현황표 인쇄 완료');
+        // 인쇄 영역 표시
+        printArea.style.display = 'block';
+        
+        // 인쇄 실행
+        setTimeout(() => {
+            window.print();
+            
+            // 정리
+            setTimeout(() => {
+                printArea.style.display = 'none';
+                printArea.innerHTML = '';
+                printStyle.remove();
+                로거_인사?.info('근속현황표 인쇄 완료');
+            }, 100);
+        }, 100);
         
     } catch (error) {
         console.error('[근속현황표] 인쇄 오류:', error);
