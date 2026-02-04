@@ -7,18 +7,10 @@
  * - electron-store 기반 데이터 저장
  * - 자동 업데이트
  * 
- * @version 3.2.1
+ * @version 3.1.0
  * @since 2026-01-23
  * 
  * [변경 이력]
- * v3.2.1 (2026-02-04) - 임시 파일 자동 정리
- *   - 앱 종료 시 인쇄용 임시 HTML 파일 자동 삭제
- *   - tempFiles 배열로 임시 파일 경로 관리
- * 
- * v3.2.0 (2026-02-04) - 브라우저 인쇄 지원
- *   - open-in-browser IPC 핸들러 추가
- *   - HTML 임시 파일 생성 후 시스템 브라우저로 열기
- * 
  * v3.1.0 (2026-01-28) - 업데이트 진행률 UI 개선
  *   - 진행률 팝업창 추가
  *   - 작업표시줄 진행률 표시
@@ -97,9 +89,6 @@ const isDev = !app.isPackaged;
 
 /** @type {Object} 업데이트 정보 */
 let updateInfo = null;
-
-/** @type {string[]} 임시 파일 경로 목록 (앱 종료 시 삭제) */
-let tempFiles = [];
 
 // ===== 윈도우 생성 =====
 
@@ -426,25 +415,6 @@ app.on('window-all-closed', () => {
     }
 });
 
-// 앱 종료 전 임시 파일 정리
-app.on('before-quit', () => {
-    console.log('[Main] 앱 종료 - 임시 파일 정리 시작');
-    
-    tempFiles.forEach(filePath => {
-        try {
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-                console.log('[Main] 임시 파일 삭제:', filePath);
-            }
-        } catch (err) {
-            console.warn('[Main] 임시 파일 삭제 실패:', filePath, err.message);
-        }
-    });
-    
-    tempFiles = [];  // 배열 초기화
-    console.log('[Main] 임시 파일 정리 완료');
-});
-
 // ===== IPC 핸들러: 자동 업데이트 =====
 
 /**
@@ -686,45 +656,6 @@ ipcMain.handle('quit-app', () => {
     app.quit();
 });
 
-// ===== IPC 핸들러: 브라우저로 열기 =====
-
-/**
- * HTML 내용을 임시 파일로 저장하고 시스템 브라우저로 열기
- * @param {string} htmlContent - HTML 내용
- * @param {string} filename - 파일명 (기본: print_temp.html)
- */
-ipcMain.handle('open-in-browser', async (event, htmlContent, filename = 'print_temp.html') => {
-    try {
-        const os = require('os');
-        const { shell } = require('electron');
-        
-        // 임시 폴더에 파일 생성 (영문 경로 사용)
-        const tempDir = os.tmpdir();
-        const tempFile = path.join(tempDir, 'hr_print_' + Date.now() + '.html');
-        
-        fs.writeFileSync(tempFile, htmlContent, 'utf8');
-        console.log('[Main] 임시 파일 생성:', tempFile);
-        
-        // 임시 파일 목록에 추가 (앱 종료 시 삭제용)
-        tempFiles.push(tempFile);
-        
-        // 시스템 기본 브라우저로 열기 (shell.openPath 사용)
-        const result = await shell.openPath(tempFile);
-        
-        if (result) {
-            // result가 있으면 오류 발생
-            console.error('[Main] 브라우저 열기 오류:', result);
-            return { success: false, error: result };
-        }
-        
-        console.log('[Main] 브라우저로 열기 완료');
-        return { success: true, path: tempFile };
-    } catch (error) {
-        console.error('[Main] 브라우저로 열기 오류:', error);
-        return { success: false, error: error.message };
-    }
-});
-
 // ===== 에러 핸들링 =====
 
 process.on('uncaughtException', (error) => {
@@ -735,4 +666,4 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('[Main] Promise 거부:', reason);
 });
 
-console.log('[Main] main.js 로드 완료 (v3.2.1)');
+console.log('[Main] main.js 로드 완료 (v3.1.0)');

@@ -11,35 +11,12 @@
  * - 검색 + 체크박스 테이블 UI
  * - 다중 선택 일괄 인쇄
  * - 업무 내용 미리보기 편집 기능
- * - 미리보기에서 조항 직접 편집 기능
- * - 추가 수당 등록/삭제 기능
- * - 추가 조항 등록/삭제 기능
  * 
- * @version 5.3.0
+ * @version 5.0.0
  * @since 2025-12-09
  * @location js/hr/근로계약서_인사.js
  * 
  * [변경 이력]
- * v5.3.0 (2026-02-04) ⭐ 추가 조항 기능
- *   - 기타 조항에 추가 조항 등록 가능
- *   - 추가 조항 삭제 기능 (X 버튼)
- *   - 조항 내용 편집 가능
- *   - 호봉제/연봉제/연봉제(단시간) 3개 서식 모두 적용
- *   - 인쇄 시 추가/삭제 버튼 자동 숨김
- *
- * v5.2.0 (2026-02-04) ⭐ 추가 수당 기능
- *   - 기본 수당 외 추가 수당 등록 가능
- *   - 추가 수당 삭제 기능 (X 버튼)
- *   - 수당명/금액 편집 가능
- *   - 호봉제/연봉제/연봉제(단시간) 3개 서식 모두 적용
- *   - 인쇄 시 추가/삭제 버튼 자동 숨김
- *
- * v5.1.0 (2026-02-04) ⭐ 미리보기 편집 기능 확장
- *   - 주근무장소: 미리보기에서 편집 가능 (contenteditable)
- *   - 근무일/휴일: 미리보기에서 편집 가능 (contenteditable)
- *   - 가족수당: 미리보기에서 편집 가능 (contenteditable)
- *   - 호봉제/연봉제/연봉제(단시간) 3개 서식 모두 적용
- *
  * v5.0.0 (2026-01-22) ⭐ API 전용 버전
  *   - 호봉 계산에서 저장된 값 사용 (getDynamicRankInfo가 async)
  *   - 모든 계산 로직 서버 API로 이동
@@ -93,16 +70,6 @@ let _selectedEmployees = { rank: new Set(), salary: new Set(), 'salary-parttime'
 let _employeeListCache = { rank: [], salary: [], 'salary-parttime': [] };
 let _currentPreviewIndex = 0;  // 현재 미리보기 인덱스
 let _customJobDescriptions = {};  // ⭐ 직원별 수정된 업무 내용 저장 (empId -> jobDescription)
-let _customContractFields = {};   // ⭐ 직원별 수정된 계약서 필드 저장 (empId -> { workPlace, workDays, familyAllowance })
-let _customAllowances = {};       // ⭐ 직원별 추가 수당 저장 (empId -> [{ name, value }])
-let _customClauses = {};          // ⭐ 직원별 추가 조항 저장 (empId -> [{ id, content }])
-
-// 기본값 상수
-const _defaultContractFields = {
-    workPlace: '사용자내 또는 "사용자가" 지시하는 장소(단, 업무상 필요시 조정 가능)',
-    workDays: '매주 5일근무(월~금), 주휴일 매주 일요일',
-    familyAllowance: '사회복지시설 종사자 수당 기준'
-};
 // ===== 모듈 초기화 =====
 
 /**
@@ -1197,180 +1164,41 @@ function _printSelectedEmployees(tabType) {
     
     if (contractHTMLs.length === 0) return;
     
-    // 브라우저로 열기 위한 HTML 생성
-    const htmlContent = `
+    // 인쇄 창 열기
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        alert('팝업이 차단되었습니다. 팝업 허용 후 다시 시도해주세요.');
+        return;
+    }
+    
+    printWindow.document.write(`
         <!DOCTYPE html>
         <html lang="ko">
         <head>
             <meta charset="UTF-8">
             <title>근로계약서 인쇄 (${selectedIds.length}명)</title>
+            <link rel="stylesheet" href="css/근로계약서_스타일.css">
             <style>
-                /* 기본 스타일 */
-                * { margin: 0; padding: 0; box-sizing: border-box; }
-                body { font-family: 'Malgun Gothic', sans-serif; font-size: 12px; line-height: 1.6; padding: 20px; }
-                
-                /* 인쇄 페이지 설정 - 여백 균등 */
-                @page { 
-                    size: A4; 
-                    margin: 15mm 15mm 15mm 15mm;  /* 상 우 하 좌 균등 */
-                }
-                
-                .contract-page { 
-                    page-break-after: always; 
-                    max-width: 210mm;
-                    margin: 0 auto 30px;
-                    padding: 20px;
-                    border: 1px solid #ddd;
-                    background: white;
-                }
+                .contract-page { page-break-after: always; }
                 .contract-page:last-child { page-break-after: avoid; }
-                
-                .contract-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 20px; letter-spacing: 8px; }
-                .contract-intro { margin-bottom: 15px; }
-                .contract-section { margin-bottom: 5px; }
-                .section-title { font-weight: normal; }
-                .section-content { padding-left: 15px; }
-                
-                .salary-section { padding-left: 12px; }
-                .salary-row { margin-bottom: 2px; }
-                .allowance-list { padding-left: 20px; }
-                .allowance-item { margin-bottom: 1px; }
-                .insurance-list { padding-left: 15px; }
-                
-                .data-field { font-weight: bold; }
-                .editable-field { border-bottom: 1px solid #999; padding: 0 3px; }
-                
-                /* 서명 영역 */
-                .signature-section { margin-top: 30px; page-break-inside: avoid; }
-                .contract-date { text-align: center; margin-bottom: 20px; }
-                .signature-parties { 
-                    display: table !important;
-                    width: 100% !important;
-                    table-layout: fixed !important;
-                }
-                .signature-party { 
-                    display: table-cell !important;
-                    width: 50% !important;
-                    vertical-align: top !important;
-                    padding: 0 10px !important;
-                }
-                .signature-party-title { font-weight: bold; margin-bottom: 10px; }
-                .signature-row { margin-bottom: 5px; display: flex; }
-                .signature-label { min-width: 60px; }
-                .signature-value { flex: 1; }
-                
-                /* 서명란 성명 힌트 */
-                .sign-name-hint { color: #ccc; font-weight: normal; letter-spacing: 3px; }
-                
-                /* 편집 가능 필드 - 화면에서는 밑줄 표시, 인쇄 시 숨김 */
-                .editable-field { border-bottom: 1px solid #999; padding: 0 3px; }
-                
-                /* 추가 수당 관련 스타일 */
-                .custom-allowance { position: relative; }
-                .custom-allowance-name { padding-left: 0 !important; }
-                .btn-remove-allowance {
-                    background: #ff5252; color: white; border: none;
-                    width: 18px; height: 18px; border-radius: 50%;
-                    cursor: pointer; font-size: 12px; line-height: 1;
-                    margin-left: 8px; vertical-align: middle;
-                }
-                .btn-remove-allowance:hover { background: #d32f2f; }
-                .btn-add-allowance {
-                    background: #4CAF50; color: white; border: none;
-                    padding: 4px 12px; border-radius: 4px;
-                    cursor: pointer; font-size: 11px; margin-top: 5px;
-                }
-                .btn-add-allowance:hover { background: #388E3C; }
-                .allowance-add-btn { margin-top: 5px; }
-                
-                /* 추가 조항 관련 스타일 */
-                .custom-clause-content { padding-left: 0 !important; }
-                .btn-remove-clause {
-                    background: #ff5252; color: white; border: none;
-                    width: 18px; height: 18px; border-radius: 50%;
-                    cursor: pointer; font-size: 12px; line-height: 1;
-                    margin-left: 8px; vertical-align: middle;
-                }
-                .btn-remove-clause:hover { background: #d32f2f; }
-                .btn-add-clause {
-                    background: #4CAF50; color: white; border: none;
-                    padding: 4px 12px; border-radius: 4px;
-                    cursor: pointer; font-size: 11px; margin-top: 5px;
-                }
-                .btn-add-clause:hover { background: #388E3C; }
-                .clause-add-btn { margin-top: 5px; }
-                
-                /* 호봉 테이블 */
-                table.rank-table { border-collapse: collapse; display: inline-table; margin: 0 3px; vertical-align: middle; }
-                table.rank-table td { border: 1px solid #000; padding: 4px 12px; text-align: center; font-size: 12px; }
-                
-                /* 인쇄 버튼 */
-                .no-print { 
-                    position: fixed; top: 20px; right: 20px; 
-                    background: #2196F3; color: white; 
-                    padding: 12px 24px; border: none; border-radius: 5px;
-                    font-size: 14px; cursor: pointer; z-index: 9999;
-                }
-                .no-print:hover { background: #1976D2; }
-                
-                @media print {
-                    body { padding: 0; }
-                    .contract-page { border: none; margin: 0; padding: 0; }
-                    .no-print { display: none !important; }
-                    .sign-name-hint { color: #ccc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    /* 인쇄 시 편집 필드 밑줄 숨김 */
-                    .editable-field { border-bottom: none !important; }
-                    /* 인쇄 시 추가/삭제 버튼 숨김 */
-                    .btn-remove-allowance { display: none !important; }
-                    .btn-add-allowance { display: none !important; }
-                    .allowance-add-btn { display: none !important; }
-                    .btn-remove-clause { display: none !important; }
-                    .btn-add-clause { display: none !important; }
-                    .clause-add-btn { display: none !important; }
-                }
             </style>
         </head>
         <body>
-            <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
             ${contractHTMLs.join('\n')}
+            <script>
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.print();
+                        window.close();
+                    }, 500);
+                };
+            </script>
         </body>
         </html>
-    `;
+    `);
     
-    // Electron 환경에서 시스템 브라우저로 열기
-    if (window.electronAPI && window.electronAPI.openInBrowser) {
-        window.electronAPI.openInBrowser(htmlContent, 'contract_print.html')
-            .then(result => {
-                if (result.success) {
-                    로거_인사?.info('근로계약서 브라우저로 열기: ' + result.path);
-                } else {
-                    console.error('브라우저 열기 실패:', result.error);
-                    // 실패 시 기존 방식으로 fallback
-                    _openPrintWindowFallback(htmlContent);
-                }
-            })
-            .catch(e => {
-                console.error('브라우저 열기 오류:', e);
-                _openPrintWindowFallback(htmlContent);
-            });
-    } else {
-        // Electron이 아닌 환경 (웹 브라우저) - 기존 방식
-        _openPrintWindowFallback(htmlContent);
-    }
+    printWindow.document.close();
     로거_인사?.info(`근로계약서 인쇄: ${selectedIds.length}명`);
-}
-
-/**
- * 기존 방식으로 인쇄 창 열기 (fallback)
- */
-function _openPrintWindowFallback(htmlContent) {
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-        printWindow.document.write(htmlContent);
-        printWindow.document.close();
-    } else {
-        alert('팝업이 차단되었습니다. 팝업 허용 후 다시 시도해주세요.');
-    }
 }
 
 // 기존 printEmploymentContract 함수 (호환성 유지)
@@ -1396,243 +1224,10 @@ function _saveCustomJobDescription(element) {
 }
 
 /**
- * 수정된 계약서 필드 저장 (주근무장소, 근무일/휴일, 가족수당)
- */
-function _saveCustomContractField(element) {
-    const empId = element.dataset.empId;
-    const fieldType = element.dataset.fieldType;
-    const value = element.textContent.trim();
-    
-    if (empId && fieldType && value) {
-        if (!_customContractFields[empId]) {
-            _customContractFields[empId] = {};
-        }
-        _customContractFields[empId][fieldType] = value;
-        로거_인사?.debug('계약서 필드 저장', { empId, fieldType, value });
-    }
-}
-
-/**
- * 저장된 계약서 필드 값 가져오기
- */
-function _getCustomContractField(empId, fieldType) {
-    return _customContractFields[empId]?.[fieldType] || _defaultContractFields[fieldType];
-}
-
-/**
  * 저장된 업무 내용 초기화 (모듈 초기화 시 호출)
  */
 function _clearCustomJobDescriptions() {
     _customJobDescriptions = {};
-}
-
-// ===== 추가 수당 관리 =====
-
-/**
- * 추가 수당 목록 가져오기
- */
-function _getCustomAllowances(empId) {
-    return _customAllowances[empId] || [];
-}
-
-/**
- * 추가 수당 추가
- */
-function _addCustomAllowance(empId) {
-    if (!_customAllowances[empId]) {
-        _customAllowances[empId] = [];
-    }
-    
-    const newAllowance = {
-        id: Date.now(),
-        name: '수당명',
-        value: '금액 또는 내용'
-    };
-    
-    _customAllowances[empId].push(newAllowance);
-    로거_인사?.debug('추가 수당 추가', { empId, allowance: newAllowance });
-    
-    // 미리보기 갱신
-    _refreshCurrentPreview();
-}
-
-/**
- * 추가 수당 삭제
- */
-function _removeCustomAllowance(empId, allowanceId) {
-    if (_customAllowances[empId]) {
-        _customAllowances[empId] = _customAllowances[empId].filter(a => a.id !== allowanceId);
-        로거_인사?.debug('추가 수당 삭제', { empId, allowanceId });
-        
-        // 미리보기 갱신
-        _refreshCurrentPreview();
-    }
-}
-
-/**
- * 추가 수당 수정 (이름)
- */
-function _updateCustomAllowanceName(element) {
-    const empId = element.dataset.empId;
-    const allowanceId = parseInt(element.dataset.allowanceId);
-    const value = element.textContent.trim();
-    
-    if (_customAllowances[empId]) {
-        const allowance = _customAllowances[empId].find(a => a.id === allowanceId);
-        if (allowance) {
-            allowance.name = value || '수당명';
-            로거_인사?.debug('추가 수당 이름 수정', { empId, allowanceId, name: value });
-        }
-    }
-}
-
-/**
- * 추가 수당 수정 (값)
- */
-function _updateCustomAllowanceValue(element) {
-    const empId = element.dataset.empId;
-    const allowanceId = parseInt(element.dataset.allowanceId);
-    const value = element.textContent.trim();
-    
-    if (_customAllowances[empId]) {
-        const allowance = _customAllowances[empId].find(a => a.id === allowanceId);
-        if (allowance) {
-            allowance.value = value || '금액 또는 내용';
-            로거_인사?.debug('추가 수당 값 수정', { empId, allowanceId, value });
-        }
-    }
-}
-
-/**
- * 추가 수당 HTML 생성
- */
-function _generateCustomAllowancesHTML(empId) {
-    const allowances = _getCustomAllowances(empId);
-    
-    let html = allowances.map(a => `
-        <div class="allowance-item custom-allowance" data-allowance-id="${a.id}">· <span class="editable-field custom-allowance-name" contenteditable="true" title="수당명 수정" data-emp-id="${empId}" data-allowance-id="${a.id}" onblur="_updateCustomAllowanceName(this)">${a.name}</span> : <span class="editable-field" contenteditable="true" title="금액/내용 수정" data-emp-id="${empId}" data-allowance-id="${a.id}" onblur="_updateCustomAllowanceValue(this)">${a.value}</span><button type="button" class="btn-remove-allowance" onclick="_removeCustomAllowance('${empId}', ${a.id})" title="삭제">×</button></div>
-    `).join('');
-    
-    // 추가 버튼
-    html += `
-        <div class="allowance-add-btn">
-            <button type="button" class="btn-add-allowance" onclick="_addCustomAllowance('${empId}')">+ 수당 추가</button>
-        </div>
-    `;
-    
-    return html;
-}
-
-/**
- * 현재 미리보기 갱신
- */
-function _refreshCurrentPreview() {
-    const tabType = _getCurrentContractTab();
-    const selectedIds = Array.from(_selectedEmployees[tabType]);
-    
-    if (selectedIds.length > 0 && _currentPreviewIndex < selectedIds.length) {
-        const empId = selectedIds[_currentPreviewIndex];
-        const employee = db.getEmployeeById(empId);
-        if (employee) {
-            _updatePreviewContent(employee, tabType);
-        }
-    }
-}
-
-/**
- * 미리보기 내용 업데이트
- */
-function _updatePreviewContent(employee, tabType) {
-    let contractType;
-    if (tabType === 'rank') contractType = 'rank';
-    else if (tabType === 'salary-parttime') contractType = 'salary-parttime';
-    else contractType = 'salary';
-    
-    const suffix = tabType === 'rank' ? 'Rank' : (tabType === 'salary' ? 'Salary' : 'SalaryPartTime');
-    const empCategory = _getEmploymentCategory(employee);
-    const contractHTML = _generateContractHTML(employee, contractType, empCategory, suffix);
-    
-    const previewContainer = document.getElementById('contractPreviewContainer');
-    if (previewContainer) {
-        previewContainer.innerHTML = contractHTML;
-    }
-}
-
-// ===== 추가 조항 관리 =====
-
-/**
- * 추가 조항 목록 가져오기
- */
-function _getCustomClauses(empId) {
-    return _customClauses[empId] || [];
-}
-
-/**
- * 추가 조항 추가
- */
-function _addCustomClause(empId) {
-    if (!_customClauses[empId]) {
-        _customClauses[empId] = [];
-    }
-    
-    const newClause = {
-        id: Date.now(),
-        content: '추가 조항 내용을 입력하세요'
-    };
-    
-    _customClauses[empId].push(newClause);
-    로거_인사?.debug('추가 조항 추가', { empId, clause: newClause });
-    
-    // 미리보기 갱신
-    _refreshCurrentPreview();
-}
-
-/**
- * 추가 조항 삭제
- */
-function _removeCustomClause(empId, clauseId) {
-    if (_customClauses[empId]) {
-        _customClauses[empId] = _customClauses[empId].filter(c => c.id !== clauseId);
-        로거_인사?.debug('추가 조항 삭제', { empId, clauseId });
-        
-        // 미리보기 갱신
-        _refreshCurrentPreview();
-    }
-}
-
-/**
- * 추가 조항 수정
- */
-function _updateCustomClauseContent(element) {
-    const empId = element.dataset.empId;
-    const clauseId = parseInt(element.dataset.clauseId);
-    const value = element.textContent.trim();
-    
-    if (_customClauses[empId]) {
-        const clause = _customClauses[empId].find(c => c.id === clauseId);
-        if (clause) {
-            clause.content = value || '추가 조항 내용을 입력하세요';
-            로거_인사?.debug('추가 조항 수정', { empId, clauseId, content: value });
-        }
-    }
-}
-
-/**
- * 추가 조항 HTML 생성
- */
-function _generateCustomClausesHTML(empId) {
-    const clauses = _getCustomClauses(empId);
-    
-    let html = clauses.map(c => `<br>- <span class="editable-field custom-clause-content" contenteditable="true" title="조항 내용 수정" data-emp-id="${empId}" data-clause-id="${c.id}" onblur="_updateCustomClauseContent(this)">${c.content}</span><button type="button" class="btn-remove-clause" onclick="_removeCustomClause('${empId}', ${c.id})" title="삭제">×</button>`).join('');
-    
-    // 추가 버튼
-    html += `
-        <div class="clause-add-btn">
-            <button type="button" class="btn-add-clause" onclick="_addCustomClause('${empId}')">+ 조항 추가</button>
-        </div>
-    `;
-    
-    return html;
 }
 
 // ===== 기준일 변경 =====
@@ -2352,7 +1947,7 @@ function _generateRankBasedContractHTML(data) {
             </div>
             
             <div class="contract-section">
-                <span class="section-title">2. 주근무장소 : <span class="editable-field" contenteditable="true" title="클릭하여 수정" data-emp-id="${employee.id}" data-field-type="workPlace" onblur="_saveCustomContractField(this)">${_getCustomContractField(employee.id, 'workPlace')}</span></span>
+                <span class="section-title">2. 주근무장소 : 사용자내 또는 "사용자가" 지시하는 장소(단, 업무상 필요시 조정 가능)</span>
             </div>
             
             <div class="contract-section">
@@ -2364,7 +1959,7 @@ function _generateRankBasedContractHTML(data) {
             </div>
             
             <div class="contract-section">
-                <span class="section-title">5. 근무일/휴일 : <span class="editable-field" contenteditable="true" title="클릭하여 수정" data-emp-id="${employee.id}" data-field-type="workDays" onblur="_saveCustomContractField(this)">${_getCustomContractField(employee.id, 'workDays')}</span></span>
+                <span class="section-title">5. 근무일/휴일 : 매주 5일근무(월~금), 주휴일 매주 일요일</span>
             </div>
             
             <div class="contract-section">
@@ -2424,9 +2019,8 @@ function _generateRankBasedContractHTML(data) {
                         <div class="allowance-item">· 명절휴가비 : ${holidayBonusInfo.seolRate === holidayBonusInfo.chuseokRate 
                             ? `연2회 각 호봉(설·추석이 속한 달)의 월 기본급의 <span class="data-field">${holidayBonusInfo.seolRate}</span>%`
                             : `설 기본급의 <span class="data-field">${holidayBonusInfo.seolRate}</span>%, 추석 기본급의 <span class="data-field">${holidayBonusInfo.chuseokRate}</span>%`}</div>
-                        <div class="allowance-item">· 가족수당 : <span class="editable-field" contenteditable="true" title="클릭하여 수정" data-emp-id="${employee.id}" data-field-type="familyAllowance" onblur="_saveCustomContractField(this)">${_getCustomContractField(employee.id, 'familyAllowance')}</span></div>
+                        <div class="allowance-item">· 가족수당 : 사회복지시설 종사자 수당 기준</div>
                         <div class="allowance-item">· 시간외근무수당 : (통상임금/<span class="data-field">${monthlyHours}</span>시간×1.5)×시간외근무시간</div>
-                        ${_generateCustomAllowancesHTML(employee.id)}
                     </div>
                     
                     <div class="salary-row" style="margin-top: 3px;">
@@ -2469,7 +2063,7 @@ function _generateRankBasedContractHTML(data) {
                 <div class="section-title">12. 기 타</div>
                 <div class="section-content">
                     - 이 계약에 정함이 없는 사항은 근로기준법령에 의함.<br>
-                    - 근로자가 사직하고자 할 경우 특별한 사유가 없는 한 1개월 전 사직서를 제출하여야 함.${_generateCustomClausesHTML(employee.id)}
+                    - 근로자가 사직하고자 할 경우 특별한 사유가 없는 한 1개월 전 사직서를 제출하여야 함.
                 </div>
             </div>
             
@@ -2543,7 +2137,7 @@ function _generateSalaryContractHTML(data) {
             </div>
             
             <div class="contract-section">
-                <span class="section-title">2. 주근무장소 : <span class="editable-field" contenteditable="true" title="클릭하여 수정" data-emp-id="${employee.id}" data-field-type="workPlace" onblur="_saveCustomContractField(this)">${_getCustomContractField(employee.id, 'workPlace')}</span></span>
+                <span class="section-title">2. 주근무장소 : 사용자내 또는 "사용자가" 지시하는 장소(단, 업무상 필요시 조정 가능)</span>
             </div>
             
             <div class="contract-section">
@@ -2555,7 +2149,7 @@ function _generateSalaryContractHTML(data) {
             </div>
             
             <div class="contract-section">
-                <span class="section-title">5. 근무일/휴일 : <span class="editable-field" contenteditable="true" title="클릭하여 수정" data-emp-id="${employee.id}" data-field-type="workDays" onblur="_saveCustomContractField(this)">${_getCustomContractField(employee.id, 'workDays')}</span></span>
+                <span class="section-title">5. 근무일/휴일 : 매주 5일근무(월~금), 주휴일 매주 일요일</span>
             </div>
             
             <div class="contract-section">
@@ -2576,9 +2170,8 @@ function _generateSalaryContractHTML(data) {
                             : (holidayBonusInfo.seolRate === holidayBonusInfo.chuseokRate 
                                 ? `연2회 각 호봉(설·추석이 속한 달)의 월 기본급의 <span class="data-field">${holidayBonusInfo.seolRate}</span>%`
                                 : `설 기본급의 <span class="data-field">${holidayBonusInfo.seolRate}</span>%, 추석 기본급의 <span class="data-field">${holidayBonusInfo.chuseokRate}</span>%`)}</div>
-                        <div class="allowance-item">· 가족수당 : <span class="editable-field" contenteditable="true" title="클릭하여 수정" data-emp-id="${employee.id}" data-field-type="familyAllowance" onblur="_saveCustomContractField(this)">${_getCustomContractField(employee.id, 'familyAllowance')}</span></div>
+                        <div class="allowance-item">· 가족수당 : 사회복지시설 종사자 수당 기준</div>
                         <div class="allowance-item">· 시간외근무수당 : (통상임금/<span class="data-field">${monthlyHours}</span>시간×1.5)×시간외근무시간</div>
-                        ${_generateCustomAllowancesHTML(employee.id)}
                     </div>
                     
                     <div class="salary-row" style="margin-top: 3px;">
@@ -2621,7 +2214,7 @@ function _generateSalaryContractHTML(data) {
                 <div class="section-title">12. 기 타</div>
                 <div class="section-content">
                     - 이 계약에 정함이 없는 사항은 근로기준법령에 의함.<br>
-                    - 근로자가 사직하고자 할 경우 특별한 사유가 없는 한 1개월 전 사직서를 제출하여야 함.${_generateCustomClausesHTML(employee.id)}
+                    - 근로자가 사직하고자 할 경우 특별한 사유가 없는 한 1개월 전 사직서를 제출하여야 함.
                 </div>
             </div>
             
@@ -2689,7 +2282,7 @@ function _generateSalaryPartTimeContractHTML(data) {
             </div>
             
             <div class="contract-section">
-                <span class="section-title">2. 주근무장소 : <span class="editable-field" contenteditable="true" title="클릭하여 수정" data-emp-id="${employee.id}" data-field-type="workPlace" onblur="_saveCustomContractField(this)">${_getCustomContractField(employee.id, 'workPlace')}</span></span>
+                <span class="section-title">2. 주근무장소 : 사용자내 또는 "사용자가" 지시하는 장소(단, 업무상 필요시 조정 가능)</span>
             </div>
             
             <div class="contract-section">
@@ -2701,7 +2294,7 @@ function _generateSalaryPartTimeContractHTML(data) {
             </div>
             
             <div class="contract-section">
-                <span class="section-title">5. 근무일/휴일 : <span class="editable-field" contenteditable="true" title="클릭하여 수정" data-emp-id="${employee.id}" data-field-type="workDays" onblur="_saveCustomContractField(this)">${_getCustomContractField(employee.id, 'workDays')}</span></span>
+                <span class="section-title">5. 근무일/휴일 : 매주 5일근무(월~금), 주휴일 매주 일요일</span>
             </div>
             
             <div class="contract-section">
@@ -2720,9 +2313,8 @@ function _generateSalaryPartTimeContractHTML(data) {
                         <div class="allowance-item">· 명절휴가비 : ${holidayBonusInfo.type === 'fixed' && (holidayBonusInfo.seolBonus > 0 || holidayBonusInfo.chuseokBonus > 0)
                             ? `설 <span class="data-field">${_formatNumber(holidayBonusInfo.seolBonus)}</span>원, 추석 <span class="data-field">${_formatNumber(holidayBonusInfo.chuseokBonus)}</span>원` 
                             : '별도 협의'}</div>
-                        <div class="allowance-item">· 가족수당 : <span class="editable-field" contenteditable="true" title="클릭하여 수정" data-emp-id="${employee.id}" data-field-type="familyAllowance" onblur="_saveCustomContractField(this)">${_getCustomContractField(employee.id, 'familyAllowance')}</span></div>
+                        <div class="allowance-item">· 가족수당 : 사회복지시설 종사자 수당 기준</div>
                         <div class="allowance-item">· 시간외근무수당 : (통상임금/<span class="data-field">${monthlyHours}</span>시간×1.5)×시간외근무시간</div>
-                        ${_generateCustomAllowancesHTML(employee.id)}
                     </div>
                     
                     <div class="salary-row" style="margin-top: 3px;">
@@ -2765,7 +2357,7 @@ function _generateSalaryPartTimeContractHTML(data) {
                 <div class="section-title">12. 기 타</div>
                 <div class="section-content">
                     - 이 계약에 정함이 없는 사항은 근로기준법령에 의함.<br>
-                    - 근로자가 사직하고자 할 경우 특별한 사유가 없는 한 1개월 전 사직서를 제출하여야 함.${_generateCustomClausesHTML(employee.id)}
+                    - 근로자가 사직하고자 할 경우 특별한 사유가 없는 한 1개월 전 사직서를 제출하여야 함.
                 </div>
             </div>
             
@@ -2879,4 +2471,4 @@ function printEmploymentContract() {
     }
 }
 
-console.log('✅ 근로계약서_인사.js 로드 완료 (v5.3.0 - 추가 조항 기능)');
+console.log('✅ 근로계약서_인사.js 로드 완료 (v3.6 - 휴게시간 범위 확장)');

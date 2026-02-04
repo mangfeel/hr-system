@@ -5,13 +5,10 @@
  * - contextBridge를 통해 안전한 API만 노출
  * - Node.js 직접 접근 차단
  * 
- * @version 2.1.0
+ * @version 2.0.0
  * @since 2026-01-23
  * 
  * [변경 이력]
- * v2.1.0 (2026-02-04) - 브라우저 인쇄 지원
- *   - openInBrowser API 추가
- * 
  * v2.0.0 (2026-01-23) - 7단계: 자동 업데이트 API 추가
  *   - checkForUpdates, downloadUpdate, installUpdate
  *   - getAppVersion
@@ -129,16 +126,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
      */
     readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
     
-    // ===== 브라우저로 열기 =====
-    
-    /**
-     * HTML 내용을 시스템 브라우저로 열기 (인쇄용)
-     * @param {string} htmlContent - HTML 내용
-     * @param {string} filename - 파일명 (기본: print_temp.html)
-     * @returns {Promise<Object>} { success, path?, error? }
-     */
-    openInBrowser: (htmlContent, filename) => ipcRenderer.invoke('open-in-browser', htmlContent, filename),
-    
     // ===== 앱 제어 =====
     
     /**
@@ -174,5 +161,5 @@ contextBridge.exposeInMainWorld('electronStore', {
  */
 contextBridge.exposeInMainWorld('isElectron', true);
 
-console.log('[Preload] preload.js 로드 완료 (v2.1.0)');
+console.log('[Preload] preload.js 로드 완료 (v2.0.0)');
 console.log('[Preload] electronAPI, electronStore 노출됨');

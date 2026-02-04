@@ -1,9 +1,17 @@
 /**
  * 근로계약서_스타일.css - 근로계약서 전용 스타일
  * 
- * @version 2.0
+ * @version 2.2
  * @since 2025-12-09
  * @location css/근로계약서_스타일.css
+ * 
+ * [변경 이력]
+ * v2.2 (2026-02-04) - 추가 조항 기능 스타일
+ *   - 추가/삭제 버튼 스타일
+ *   - 인쇄 시 버튼 숨김
+ * v2.1 (2026-02-04) - 추가 수당 기능 스타일
+ *   - 추가/삭제 버튼 스타일
+ *   - 인쇄 시 버튼 숨김
  * 
  * [사용 위치]
  * - 근로계약서_인사.js의 미리보기
@@ -126,6 +134,104 @@
 
 .allowance-item {
     margin-bottom: 1px;
+}
+
+/* ===== 추가 수당 관련 스타일 ===== */
+.custom-allowance {
+    position: relative;
+}
+
+.custom-allowance-name {
+    padding-left: 0 !important;
+}
+
+.btn-remove-allowance {
+    background: #ff5252;
+    color: white;
+    border: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    margin-left: 8px;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-remove-allowance:hover {
+    background: #d32f2f;
+}
+
+.btn-add-allowance {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    margin-top: 5px;
+    transition: background 0.2s;
+}
+
+.btn-add-allowance:hover {
+    background: #388E3C;
+}
+
+.allowance-add-btn {
+    margin-top: 5px;
+}
+
+/* ===== 추가 조항 관련 스타일 ===== */
+.custom-clause-content {
+    padding-left: 0 !important;
+}
+
+.btn-remove-clause {
+    background: #ff5252;
+    color: white;
+    border: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    margin-left: 8px;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-remove-clause:hover {
+    background: #d32f2f;
+}
+
+.btn-add-clause {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    margin-top: 5px;
+    transition: background 0.2s;
+}
+
+.btn-add-clause:hover {
+    background: #388E3C;
+}
+
+.clause-add-btn {
+    margin-top: 5px;
 }
 
 /* ===== 사회보험 체크박스 ===== */
@@ -327,5 +433,30 @@
         border-bottom: none !important;
         background: transparent !important;
         cursor: default !important;
+    }
+    
+    /* 인쇄 시 추가/삭제 버튼 숨김 */
+    .btn-remove-allowance {
+        display: none !important;
+    }
+    
+    .btn-add-allowance {
+        display: none !important;
+    }
+    
+    .allowance-add-btn {
+        display: none !important;
+    }
+    
+    .btn-remove-clause {
+        display: none !important;
+    }
+    
+    .btn-add-clause {
+        display: none !important;
+    }
+    
+    .clause-add-btn {
+        display: none !important;
     }
 }
