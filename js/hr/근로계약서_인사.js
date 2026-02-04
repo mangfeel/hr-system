@@ -1242,6 +1242,7 @@ function _printSelectedEmployees(tabType) {
                 
                 /* 서명 영역 */
                 .signature-section { margin-top: 30px; page-break-inside: avoid; }
+                .signature-date { text-align: center; margin-bottom: 20px; }
                 .contract-date { text-align: center; margin-bottom: 20px; }
                 .signature-parties { 
                     display: table !important;
