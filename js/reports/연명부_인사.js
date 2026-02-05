@@ -10,10 +10,14 @@
  * - 엑셀 다운로드
  * - 연속근무자 최초 입사일 적용 ⭐ v3.1.2
  * 
- * @version 6.1.0
+ * @version 6.1.1
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v6.1.1 (2026-02-05) 인쇄 헤더 안 보임 버그 수정
+ *   - 인쇄 시 헤더 행 인라인 스타일 초기화 (color:white 제거)
+ *   - 인쇄 CSS에 th { color: #333 !important } 추가
+ *
  * v6.1.0 (2026-01-27) ⭐ 개별 API 호출 제거 (성능 최적화)
  *   - 과거경력 직원: 개별 API → 로컬 계산 (RankCalculator)
  *   - 캐시 미스 시: 개별 API → 로컬 계산
@@ -1016,6 +1020,13 @@ function printRegister(orientation = 'landscape') {
             cell.style.textAlign = 'center';
         });
         
+        // ⭐ 헤더 행의 인라인 스타일 초기화 (color:white 제거)
+        const headerRow = tableClone.querySelector('thead tr');
+        if (headerRow) {
+            headerRow.style.background = '';
+            headerRow.style.color = '';
+        }
+        
         const pageStyle = orientation === 'landscape' 
             ? '@page { size: A4 landscape; margin: 10mm; }' 
             : '@page { size: A4 portrait; margin: 10mm; }';
@@ -1032,7 +1043,7 @@ function printRegister(orientation = 'landscape') {
                     h2 { text-align: center; margin-bottom: 20px; font-size: 18px; }
                     table { border-collapse: collapse; width: 100%; font-size: ${orientation === 'landscape' ? '10px' : '12px'}; }
                     th, td { border: 1px solid #e8ebed; padding: ${orientation === 'landscape' ? '4px' : '6px'}; text-align: center; }
-                    th { background: #f8f9fa !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                    th { background: #f8f9fa !important; color: #333 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                     thead { display: table-header-group; }
                     tr { page-break-inside: avoid; }
                     .no-print { position: fixed; top: 20px; right: 20px; background: #2196F3; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; z-index: 9999; }
