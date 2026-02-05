@@ -1423,9 +1423,6 @@ window.addEventListener('DOMContentLoaded', function() {
             addCareer();
         }
         
-        // 5. electron-store 동기화 (시간외근무 앱 등 외부 앱이 급여 데이터를 읽을 수 있도록)
-        _syncSettingsToElectronStore();
-        
         console.log('✅ 초기화 완료');
         로거_인사?.info('시스템 초기화 완료');
         
@@ -1435,104 +1432,6 @@ window.addEventListener('DOMContentLoaded', function() {
         // 초기화 실패해도 페이지는 표시됨
     }
 });
-
-// ===== electron-store 동기화 =====
-
-/**
- * localStorage 설정 데이터를 electron-store에 동기화
- * 
- * @description
- * 시간외근무 앱 등 외부 Electron 앱이 hrStore를 통해
- * 급여표, 직책수당, 통상임금 설정 등을 읽을 수 있도록
- * localStorage의 설정 데이터를 electron-store에 복사합니다.
- * 
- * 또한 localStorage.setItem을 감시하여 해당 키가 변경될 때
- * 자동으로 electron-store에도 동기화합니다.
- * 
- * @since v3.2.1 (2026-02-05)
- */
-function _syncSettingsToElectronStore() {
-    try {
-        // Electron 환경이 아니면 스킵
-        if (typeof window.electronStore === 'undefined') {
-            return;
-        }
-        
-        // 동기화 대상 localStorage 키 목록
-        const SYNC_KEYS = [
-            'hr_salary_grades',            // 직급 관리
-            'hr_salary_tables',            // 급여표
-            'hr_position_allowances',      // 직책수당
-            'hr_salary_settings',          // 급여 설정
-            'hr_ordinary_wage_settings',   // 통상임금 설정
-            'hr_salary_basic_settings',    // 급여 기본 설정
-            'hr_concurrent_positions',     // 겸직/직무대리
-            'hr_org_chart_settings',       // 조직도 설정
-            'hr_overtime_settings',        // 시간외근무 유형 설정
-            'hr_overtime_records',         // 시간외근무 기록
-            'hr_awards_data'              // 포상 데이터
-        ];
-        
-        // 1) 현재 localStorage → electron-store 일괄 동기화
-        let syncCount = 0;
-        SYNC_KEYS.forEach(key => {
-            try {
-                const raw = localStorage.getItem(key);
-                if (raw !== null) {
-                    const data = JSON.parse(raw);
-                    window.electronStore.set(key, data);
-                    syncCount++;
-                }
-            } catch (e) {
-                console.warn(`[동기화] ${key} 동기화 실패:`, e);
-            }
-        });
-        
-        if (syncCount > 0) {
-            console.log(`[동기화] localStorage → electron-store: ${syncCount}개 키 동기화 완료`);
-        }
-        
-        // 2) localStorage.setItem 패치 — 변경 시 자동 동기화
-        const syncKeySet = new Set(SYNC_KEYS);
-        const _originalSetItem = localStorage.setItem.bind(localStorage);
-        
-        localStorage.setItem = function(key, value) {
-            // 원래 동작 수행
-            _originalSetItem(key, value);
-            
-            // 동기화 대상 키면 electron-store에도 저장
-            if (syncKeySet.has(key) && typeof window.electronStore !== 'undefined') {
-                try {
-                    const data = JSON.parse(value);
-                    window.electronStore.set(key, data);
-                } catch (e) {
-                    // JSON 파싱 실패 시 무시 (문자열 그대로 저장)
-                }
-            }
-        };
-        
-        // 3) localStorage.removeItem 패치 — 삭제 시 electron-store에서도 삭제
-        const _originalRemoveItem = localStorage.removeItem.bind(localStorage);
-        
-        localStorage.removeItem = function(key) {
-            _originalRemoveItem(key);
-            
-            if (syncKeySet.has(key) && typeof window.electronStore !== 'undefined') {
-                try {
-                    window.electronStore.delete(key);
-                } catch (e) {
-                    // 삭제 실패 무시
-                }
-            }
-        };
-        
-        로거_인사?.info('electron-store 동기화 설정 완료', { syncCount });
-        
-    } catch (error) {
-        console.warn('[동기화] electron-store 동기화 실패 (무시):', error);
-        // 동기화 실패해도 앱 동작에는 영향 없음
-    }
-}
 
 /**
  * 날짜 필드 초기화 (Private)
