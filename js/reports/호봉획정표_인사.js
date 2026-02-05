@@ -9,10 +9,15 @@
  * - 호봉획정표 생성 (대상자, 환산결과, 경력상세)
  * - 인쇄 (A4 세로)
  * 
- * @version 6.0.0
+ * @version 6.0.1
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v6.0.1 (2026-02-05) 인쇄 기능 버그 수정
+ *   - 브라우저 인쇄 버튼 중복 문제 해결 (cert-btn-area 제거)
+ *   - 양식별 CSS 스타일 인쇄 HTML에 포함 (공문서/모던/표준)
+ *   - 인쇄 미리보기와 출력물 양식 일치하도록 수정
+ *
  * v6.0.0 (2026-01-22) ⭐ 배치 API 적용 - 성능 최적화
  *   - loadCertificateEmployeeList에서 배치 API 호출
  *   - createCertEmployeeItemHTML에 batchResults 파라미터 추가
@@ -1449,6 +1454,376 @@ function printCertificate() {
             return;
         }
         
+        // 현재 선택된 양식 타입 확인
+        const styleType = printArea.classList.contains('cert-style-official') ? 'official' 
+                        : printArea.classList.contains('cert-style-modern') ? 'modern' 
+                        : 'standard';
+        
+        // ⭐ cert-btn-area 영역 제거하여 버튼 중복 방지
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = printArea.innerHTML;
+        const btnArea = tempDiv.querySelector('.cert-btn-area');
+        if (btnArea) btnArea.remove();
+        const cleanContent = tempDiv.innerHTML;
+        
+        // ⭐ 양식별 CSS 스타일 (호봉획정표_스타일.css에서 추출)
+        const styleCSS = `
+            /* 공통 스타일 */
+            .cert-container {
+                background: white;
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            
+            /* ===== 공문서 양식 ===== */
+            .cert-style-official {
+                width: 100%;
+                border: 2px solid #333;
+                background: white;
+            }
+            
+            .cert-style-official .cert-doc-header {
+                border-bottom: 2px solid #333;
+                text-align: center;
+                padding: 18px;
+            }
+            
+            .cert-style-official .cert-doc-header h1 {
+                font-size: 26px;
+                letter-spacing: 12px;
+                font-weight: 700;
+                color: #1a1a1a;
+                margin: 0;
+            }
+            
+            .cert-style-official .cert-doc-org {
+                text-align: center;
+                padding: 12px;
+                font-size: 16px;
+                border-bottom: 1px solid #999;
+            }
+            
+            .cert-style-official .cert-doc-body {
+                padding: 24px;
+            }
+            
+            .cert-style-official .cert-doc-section {
+                margin-bottom: 20px;
+            }
+            
+            .cert-style-official .cert-doc-section-title {
+                border: 1px solid #333;
+                border-bottom: none;
+                padding: 8px 12px;
+                font-size: 13px;
+                font-weight: 700;
+                background: #f5f5f5 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .cert-style-official table {
+                width: 100%;
+                border-collapse: collapse;
+                border: 1px solid #333;
+            }
+            
+            .cert-style-official th,
+            .cert-style-official td {
+                border: 1px solid #333 !important;
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            
+            .cert-style-official th {
+                background: #f5f5f5 !important;
+                font-weight: 600;
+                text-align: center;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .cert-style-official td {
+                text-align: center;
+            }
+            
+            .cert-style-official .highlight-value {
+                font-size: 18px;
+                font-weight: 700;
+                color: #0056b3;
+            }
+            
+            .cert-style-official .career-table th,
+            .cert-style-official .career-table td {
+                padding: 8px 6px;
+                font-size: 11px;
+            }
+            
+            /* ===== 모던 양식 ===== */
+            .cert-style-modern {
+                width: 100%;
+                border-radius: 0;
+                overflow: hidden;
+                background: white;
+                border: 1px solid #ddd;
+            }
+            
+            .cert-style-modern .cert-doc-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                color: white !important;
+                padding: 28px;
+                text-align: center;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .cert-style-modern .cert-doc-header h1 {
+                font-size: 24px;
+                font-weight: 700;
+                margin: 0 0 6px 0;
+                color: white !important;
+            }
+            
+            .cert-style-modern .cert-doc-org {
+                font-size: 14px;
+                opacity: 0.9;
+                color: white !important;
+            }
+            
+            .cert-style-modern .cert-doc-body {
+                padding: 28px;
+            }
+            
+            .cert-style-modern .cert-info-card {
+                background: #f8fafc !important;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 20px;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .cert-style-modern .cert-info-card-title {
+                font-size: 13px;
+                font-weight: 700;
+                color: #667eea;
+                margin-bottom: 14px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .cert-style-modern .cert-info-card-title::before {
+                content: '';
+                width: 4px;
+                height: 16px;
+                background: #667eea !important;
+                border-radius: 2px;
+                display: inline-block;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .cert-style-modern .cert-info-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .cert-style-modern .cert-info-item {
+                display: flex;
+                align-items: center;
+            }
+            
+            .cert-style-modern .cert-info-label {
+                font-size: 12px;
+                color: #6b7280;
+                width: 80px;
+                flex-shrink: 0;
+            }
+            
+            .cert-style-modern .cert-info-value {
+                font-size: 14px;
+                font-weight: 600;
+                color: #1f2937;
+            }
+            
+            .cert-style-modern .cert-highlight-box {
+                background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%) !important;
+                border: 1px solid rgba(102,126,234,0.2);
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 20px;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .cert-style-modern .cert-highlight-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+                text-align: center;
+            }
+            
+            .cert-style-modern .cert-highlight-label {
+                font-size: 11px;
+                color: #6b7280;
+                margin-bottom: 4px;
+            }
+            
+            .cert-style-modern .cert-highlight-value {
+                font-size: 20px;
+                font-weight: 700;
+                color: #667eea;
+            }
+            
+            .cert-style-modern .cert-highlight-value small {
+                font-size: 12px;
+                font-weight: 500;
+            }
+            
+            .cert-style-modern table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 11px;
+                border: 1px solid #e2e8f0;
+            }
+            
+            .cert-style-modern thead th {
+                background: #f1f5f9 !important;
+                padding: 8px 6px;
+                font-weight: 600;
+                color: #475569;
+                border: 1px solid #e2e8f0 !important;
+                text-align: center;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .cert-style-modern tbody td {
+                padding: 8px 6px;
+                text-align: center;
+                border: 1px solid #e2e8f0 !important;
+            }
+            
+            /* ===== 표준 양식 ===== */
+            .cert-style-standard {
+                width: 100%;
+                padding: 32px;
+                border: 1px solid #ddd;
+                background: white;
+            }
+            
+            .cert-style-standard .cert-doc-header {
+                text-align: center;
+                margin-bottom: 28px;
+                padding-bottom: 20px;
+                border-bottom: 2px solid #333;
+            }
+            
+            .cert-style-standard .cert-doc-header h1 {
+                font-size: 28px;
+                font-weight: 700;
+                letter-spacing: 8px;
+                margin: 0 0 8px 0;
+            }
+            
+            .cert-style-standard .cert-doc-org {
+                font-size: 15px;
+                color: #555;
+            }
+            
+            .cert-style-standard .cert-doc-section {
+                margin-bottom: 24px;
+            }
+            
+            .cert-style-standard .cert-doc-section-title {
+                font-size: 14px;
+                font-weight: 700;
+                color: #333;
+                margin-bottom: 10px;
+                padding-left: 10px;
+                border-left: 4px solid #333;
+            }
+            
+            .cert-style-standard table {
+                width: 100%;
+                border-collapse: collapse;
+                border: 1px solid #999;
+            }
+            
+            .cert-style-standard th,
+            .cert-style-standard td {
+                border: 1px solid #999 !important;
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            
+            .cert-style-standard th {
+                background: #f5f5f5 !important;
+                font-weight: 600;
+                text-align: center;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .cert-style-standard td {
+                text-align: center;
+            }
+            
+            .cert-style-standard .main-info th {
+                width: 90px;
+                background: #e8e8e8 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .cert-style-standard .cert-result-box {
+                background: #fffbeb !important;
+                border: 2px solid #f59e0b;
+                border-radius: 8px;
+                padding: 16px 20px;
+                margin-bottom: 24px;
+                display: flex;
+                justify-content: space-around;
+                text-align: center;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .cert-style-standard .cert-result-item .label {
+                font-size: 12px;
+                color: #666;
+                margin-bottom: 4px;
+            }
+            
+            .cert-style-standard .cert-result-item .value {
+                font-size: 22px;
+                font-weight: 700;
+                color: #d97706;
+            }
+            
+            .cert-style-standard .career-table th {
+                background: #f0f0f0 !important;
+                font-size: 11px;
+                padding: 8px 4px;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .cert-style-standard .career-table td {
+                font-size: 11px;
+                padding: 8px 4px;
+            }
+            
+            .cert-style-standard .career-table .total-row {
+                font-weight: 600;
+                background: #f5f5f5 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        `;
+        
         const htmlContent = `
             <!DOCTYPE html>
             <html>
@@ -1457,22 +1832,42 @@ function printCertificate() {
                 <title>호봉획정표 인쇄</title>
                 <style>
                     @page { size: A4 portrait; margin: 15mm; }
-                    body { font-family: 'Malgun Gothic', sans-serif; margin: 0; padding: 20px; }
-                    .certificate-container { max-width: 700px; margin: 0 auto; }
-                    h2 { text-align: center; margin-bottom: 30px; }
-                    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-                    th, td { border: 1px solid #333; padding: 10px; }
-                    th { background: #f5f5f5 !important; font-weight: 600; text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    td { text-align: center; }
-                    .section-title { background: #e8e8e8 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    .no-print { position: fixed; top: 20px; right: 20px; background: #2196F3; color: white; padding: 12px 24px; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; z-index: 9999; }
+                    body { 
+                        font-family: 'Malgun Gothic', sans-serif; 
+                        margin: 0; 
+                        padding: 20px;
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                    }
+                    
+                    ${styleCSS}
+                    
+                    .no-print { 
+                        position: fixed; 
+                        top: 20px; 
+                        right: 20px; 
+                        background: #2196F3; 
+                        color: white; 
+                        padding: 12px 24px; 
+                        border: none; 
+                        border-radius: 5px; 
+                        font-size: 14px; 
+                        cursor: pointer; 
+                        z-index: 9999; 
+                    }
                     .no-print:hover { background: #1976D2; }
-                    @media print { body { padding: 0; } .no-print { display: none !important; } }
+                    
+                    @media print { 
+                        body { padding: 0; } 
+                        .no-print { display: none !important; } 
+                    }
                 </style>
             </head>
             <body>
                 <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
-                ${printArea.innerHTML}
+                <div class="cert-container cert-style-${styleType}">
+                    ${cleanContent}
+                </div>
             </body>
             </html>
         `;
@@ -1489,6 +1884,8 @@ function printCertificate() {
                 alert('팝업이 차단되었습니다.');
             }
         }
+        
+        로거_인사?.info('호봉획정표 인쇄 완료', { styleType });
         
     } catch (error) {
         로거_인사?.error('호봉획정표 인쇄 실패', error);
