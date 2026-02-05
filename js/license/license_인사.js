@@ -6,11 +6,17 @@
  * - 로컬 저장소에 라이선스 정보 캐시
  * - 만료 알림 및 차단
  * - 사용자별 라이선스 구분 (v1.1.0)
+ * - electron-store 동기화 (v1.4.0) - 시간외 앱 연동
  * 
- * @version 1.3.0
+ * @version 1.4.0
  * @since 2026-01-23
  * 
  * [변경 이력]
+ * v1.4.0 - electron-store 동기화 (2026-02-06)
+ *   - saveCachedLicense()에서 electron-store에도 라이선스 정보 저장
+ *   - clear()에서 electron-store에서도 라이선스 정보 삭제
+ *   - syncLicenseToStore() 추가: 기존 localStorage 라이선스 → electron-store 마이그레이션
+ *   - 시간외근무관리 앱에서 hrStore.get('hr_license_info')로 라이선스 확인 가능
  * v1.3.0 - 라이선스 활성화 시 사용자 검증 (2026-01-27)
  *   - activate()에서 라이선스 소유자와 현재 사용자 비교
  *   - 다른 기관 라이선스 키 입력 차단
@@ -32,6 +38,7 @@ const License = (function() {
         API_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bGFueXpudnBzcmxrcHFvdGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4ODgwNzcsImV4cCI6MjA4NDQ2NDA3N30.H-ml4_ztuNY67iLjnPokPgkQEzwEwe0ttW3Ic7K9Mlk',
         STORAGE_KEY: 'hr_license_info',
         USER_STORAGE_KEY: 'hr_current_user',
+        STORE_LICENSE_KEY: 'hr_license_info',  // ★ electron-store 키
         CACHE_HOURS: 24  // 오프라인 캐시 유효 시간
     };
 
@@ -107,14 +114,78 @@ const License = (function() {
 
     /**
      * 로컬 저장소에 라이선스 정보 저장
+     * ★ v1.4.0: electron-store에도 동기화 (시간외 앱 연동)
      */
     function saveCachedLicense(licenseInfo) {
         try {
             licenseInfo.cached_at = new Date().toISOString();
             localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(licenseInfo));
             cachedLicense = licenseInfo;
+            
+            // ★ Electron 환경에서 electron-store에도 동기화 (시간외 앱에서 읽기 위함)
+            _syncToElectronStore(licenseInfo);
+            
         } catch (e) {
             console.error('[License] 캐시 저장 오류:', e);
+        }
+    }
+
+    /**
+     * ★ v1.4.0: electron-store에 라이선스 정보 동기화
+     * @private
+     * @param {Object} licenseInfo - 라이선스 정보
+     */
+    function _syncToElectronStore(licenseInfo) {
+        try {
+            if (isElectron() && window.electronStore && typeof window.electronStore.set === 'function') {
+                window.electronStore.set(CONFIG.STORE_LICENSE_KEY, licenseInfo)
+                    .then(() => {
+                        console.log('[License] electron-store 동기화 완료');
+                    })
+                    .catch(err => {
+                        console.error('[License] electron-store 동기화 오류:', err);
+                    });
+            }
+        } catch (e) {
+            console.error('[License] electron-store 동기화 실패:', e);
+        }
+    }
+
+    /**
+     * ★ v1.4.0: electron-store에서 라이선스 정보 삭제
+     * @private
+     */
+    function _removeFromElectronStore() {
+        try {
+            if (isElectron() && window.electronStore && typeof window.electronStore.delete === 'function') {
+                window.electronStore.delete(CONFIG.STORE_LICENSE_KEY)
+                    .then(() => {
+                        console.log('[License] electron-store 라이선스 삭제 완료');
+                    })
+                    .catch(err => {
+                        console.error('[License] electron-store 삭제 오류:', err);
+                    });
+            }
+        } catch (e) {
+            console.error('[License] electron-store 삭제 실패:', e);
+        }
+    }
+
+    /**
+     * ★ v1.4.0: 기존 localStorage 라이선스를 electron-store로 마이그레이션
+     * 앱 시작 시 1회 호출하여 기존 설치에서도 시간외 앱 연동이 가능하도록 함
+     */
+    function syncLicenseToStore() {
+        try {
+            if (!isElectron()) return;
+            
+            const cached = loadCachedLicense();
+            if (cached && cached.valid) {
+                _syncToElectronStore(cached);
+                console.log('[License] 기존 라이선스 → electron-store 마이그레이션 완료');
+            }
+        } catch (e) {
+            console.error('[License] 마이그레이션 오류:', e);
         }
     }
 
@@ -338,10 +409,15 @@ const License = (function() {
 
     /**
      * 라이선스 정보 삭제 (로그아웃 시)
+     * ★ v1.4.0: electron-store에서도 삭제
      */
     function clear() {
         localStorage.removeItem(CONFIG.STORAGE_KEY);
         cachedLicense = null;
+        
+        // ★ electron-store에서도 삭제
+        _removeFromElectronStore();
+        
         console.log('[License] 라이선스 정보 삭제됨');
     }
 
@@ -405,7 +481,8 @@ const License = (function() {
         getPlanType,
         getDeviceId,
         setCurrentUser,
-        getCurrentUserId
+        getCurrentUserId,
+        syncLicenseToStore  // ★ v1.4.0: 마이그레이션 함수 노출
     };
 
 })();
@@ -413,4 +490,17 @@ const License = (function() {
 // 전역 노출
 window.License = License;
 
-console.log('[License] license_인사.js 로드됨 (v1.3.0)');
+// ★ v1.4.0: 앱 시작 시 기존 라이선스를 electron-store로 동기화
+// (기존 설치에서 electron-store에 라이선스가 없는 경우 대비)
+if (typeof window !== 'undefined' && window.isElectron === true) {
+    // DOM 로드 후 동기화 실행 (electronStore API 준비 대기)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => License.syncLicenseToStore(), 1000);
+        });
+    } else {
+        setTimeout(() => License.syncLicenseToStore(), 1000);
+    }
+}
+
+console.log('[License] license_인사.js 로드됨 (v1.4.0)');
