@@ -12,10 +12,14 @@
  * - 발령 데이터 구조 통일 ⭐ v3.4.2 추가
  * - 검증 및 저장
  * 
- * @version 4.1.0
+ * @version 4.2.0
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v4.2.0 (2026-02-06) ⭐ Electron 포커스 문제 해결
+ *   - 직원 등록 완료 후 window.focus() 호출
+ *   - 등록 후 입력란에 바로 커서가 들어가지 않는 문제 수정
+ *
  * v4.1.0 (2026-01-22) ⭐ 검증 API 연동
  *   - Validator.validateEmployeeRegistration → API_인사.validateRegistration
  *   - 서버 API로 검증 로직 보호
@@ -711,6 +715,21 @@ async function calculateAndSave() {
         
         // 폼 초기화
         resetRegisterForm();
+        
+        // ⭐ v4.2.0: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
+        // blur/focus 트릭 후 입력란에 포커스
+        const focusInput = async () => {
+            if (window.electronAPI?.focusWindow) {
+                await window.electronAPI.focusWindow();
+                // blur/focus 완료 후 입력란에 포커스
+                setTimeout(() => {
+                    const nameInput = document.getElementById('employeeName');
+                    if (nameInput) nameInput.focus();
+                }, 100);
+            }
+        };
+        setTimeout(focusInput, 500);
+        setTimeout(focusInput, 2000);
         
     } catch (error) {
         로거_인사?.error('직원 등록 실패', error);

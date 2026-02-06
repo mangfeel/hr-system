@@ -7,10 +7,14 @@
  * - electron-store 기반 데이터 저장
  * - 자동 업데이트
  * 
- * @version 3.2.1
+ * @version 3.3.0
  * @since 2026-01-23
  * 
  * [변경 이력]
+ * v3.3.0 (2026-02-06) - 윈도우 포커스 복원 API 추가
+ *   - focus-window IPC 핸들러 추가
+ *   - 직원 등록/삭제 후 입력란 포커스 문제 해결
+ *
  * v3.2.1 (2026-02-04) - 임시 파일 자동 정리
  *   - 앱 종료 시 인쇄용 임시 HTML 파일 자동 삭제
  *   - tempFiles 배열로 임시 파일 경로 관리
@@ -686,6 +690,24 @@ ipcMain.handle('quit-app', () => {
     app.quit();
 });
 
+/**
+ * 윈도우 포커스 (v3.3.0)
+ * Electron에서 윈도우 포커스 복원
+ */
+ipcMain.handle('focus-window', () => {
+    if (mainWindow) {
+        // blur 후 focus 트릭 (외부 클릭 후 재클릭 효과)
+        mainWindow.blur();
+        setTimeout(() => {
+            mainWindow.focus();
+            mainWindow.webContents.focus();
+            console.log('[Main] 윈도우 포커스 복원');
+        }, 50);
+        return { success: true };
+    }
+    return { success: false };
+});
+
 // ===== IPC 핸들러: 브라우저로 열기 =====
 
 /**
@@ -735,4 +757,4 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('[Main] Promise 거부:', reason);
 });
 
-console.log('[Main] main.js 로드 완료 (v3.2.1)');
+console.log('[Main] main.js 로드 완료 (v3.3.0)');

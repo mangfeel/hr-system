@@ -5,10 +5,14 @@
  * - contextBridge를 통해 안전한 API만 노출
  * - Node.js 직접 접근 차단
  * 
- * @version 2.1.0
+ * @version 2.2.0
  * @since 2026-01-23
  * 
  * [변경 이력]
+ * v2.2.0 (2026-02-06) - 윈도우 포커스 복원 API 추가
+ *   - focusWindow API 추가
+ *   - 직원 등록/삭제 후 입력란 포커스 문제 해결
+ *
  * v2.1.0 (2026-02-04) - 브라우저 인쇄 지원
  *   - openInBrowser API 추가
  * 
@@ -146,6 +150,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
      */
     quitApp: () => ipcRenderer.invoke('quit-app'),
     
+    /**
+     * 윈도우 포커스 복원 (v2.2.0)
+     * 직원 등록/삭제 후 입력란 포커스 복원용
+     * @returns {Promise<Object>} { success }
+     */
+    focusWindow: () => ipcRenderer.invoke('focus-window'),
+    
     // ===== Electron 환경 확인 =====
     
     /**
@@ -174,5 +185,5 @@ contextBridge.exposeInMainWorld('electronStore', {
  */
 contextBridge.exposeInMainWorld('isElectron', true);
 
-console.log('[Preload] preload.js 로드 완료 (v2.1.0)');
+console.log('[Preload] preload.js 로드 완료 (v2.2.0)');
 console.log('[Preload] electronAPI, electronStore 노출됨');

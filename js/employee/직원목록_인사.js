@@ -8,10 +8,14 @@
  * - XSS 방지
  * - 성능 최적화 (DocumentFragment)
  * 
- * @version 6.1.0
+ * @version 6.2.0
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v6.2.0 (2026-02-06) ⭐ Electron 포커스 문제 해결
+ *   - 직원 삭제 완료 후 window.focus() 호출
+ *   - 삭제 후 입력란에 바로 커서가 들어가지 않는 문제 수정
+ *
  * v6.1.0 (2026-01-27) ⭐ Electron 호환 모달로 통일
  *   - deleteEmployee()에서 prompt()/confirm() → 체크박스 모달
  *   - 웹/Electron 분기 제거, 통일된 UX 제공
@@ -821,6 +825,16 @@ async function deleteEmployee(id) {
         } else {
             alert(successMsg);
         }
+        
+        // ⭐ v6.2.0: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
+        // blur/focus 트릭으로 포커스 복원
+        const restoreFocus = async () => {
+            if (window.electronAPI?.focusWindow) {
+                await window.electronAPI.focusWindow();
+            }
+        };
+        setTimeout(restoreFocus, 500);
+        setTimeout(restoreFocus, 2000);
         
     } catch (error) {
         로거_인사?.error('직원 삭제 실패', error);

@@ -293,7 +293,8 @@ function backupToJSON() {
         );
         
         // ⭐ v4.3: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
-        setTimeout(() => window.focus(), 1500);
+        const rf = async () => { if (window.electronAPI?.focusWindow) await window.electronAPI.focusWindow(); };
+        setTimeout(rf, 500); setTimeout(rf, 2000);
         
     } catch (error) {
         로거_인사?.error('보안 백업 오류', error);
@@ -398,7 +399,8 @@ function backupToExcel() {
         );
         
         // ⭐ v4.3: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
-        setTimeout(() => window.focus(), 1500);
+        const rf = async () => { if (window.electronAPI?.focusWindow) await window.electronAPI.focusWindow(); };
+        setTimeout(rf, 500); setTimeout(rf, 2000);
         
     } catch (error) {
         로거_인사?.error('Excel 백업 오류', error);
