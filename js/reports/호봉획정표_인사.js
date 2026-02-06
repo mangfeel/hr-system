@@ -16,6 +16,8 @@
  * v6.0.2 (2026-02-06) 신규 직원 등록 시 경력 환산 내역 0 표시 버그 수정
  *   - prepareCareerTableData에서 originalPeriod/convertedPeriod 객체 형식 지원 추가
  *   - 직원등록에서 저장하는 객체 형식과 문자열 형식 모두 호환
+ *   - printHobongCertificate에서 인정 경력 읽기 수정 (career.totalYears 우선, rank.careerYears 폴백)
+ *   - careerDetails 폴백으로 pastCareers도 지원
  *
  * v6.0.1 (2026-02-05) 인쇄 기능 버그 수정
  *   - 브라우저 인쇄 버튼 중복 문제 해결 (cert-btn-area 제거)
@@ -798,6 +800,7 @@ async function printHobongCertificate(employeeId) {
         }
         
         // 데이터 객체 생성
+        // ⭐ v6.0.2: career.totalYears 우선, rank.careerYears 폴백
         const data = {
             name: typeof 직원유틸_인사 !== 'undefined'
                 ? 직원유틸_인사.getName(emp)
@@ -815,14 +818,15 @@ async function printHobongCertificate(employeeId) {
                 ? 직원유틸_인사.getEntryDate(emp)
                 : (emp.employment?.entryDate || '-'),
             
-            years: emp.rank?.careerYears || 0,
-            months: emp.rank?.careerMonths || 0,
-            days: emp.rank?.careerDays || 0,
+            // ⭐ v6.0.2: career.totalYears 우선, rank.careerYears 폴백
+            years: emp.career?.totalYears ?? emp.rank?.careerYears ?? 0,
+            months: emp.career?.totalMonths ?? emp.rank?.careerMonths ?? 0,
+            days: emp.career?.totalDays ?? emp.rank?.careerDays ?? 0,
             startRank: startRank,        // ⭐ 입사 시 획정 호봉
             currentRank: currentRank,    // ⭐ 현재 호봉
             firstUpgradeDate: firstUpgradeDate,
             nextUpgradeDate: nextUpgradeDate,
-            careerDetails: emp.careerDetails || []
+            careerDetails: emp.careerDetails || emp.pastCareers || []
         };
         
         로거_인사?.debug('데이터 객체 생성 완료', { name: data.name });
