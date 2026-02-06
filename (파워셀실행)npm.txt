@@ -43,6 +43,7 @@ v1.0.38 - Electron 포커스 문제 해결
 v1.0.39 - Electron 포커스 문제 해결
 v1.0.40 - Electron 포커스 문제 해결
 v1.0.41 - Electron 포커스 문제 해결
+v1.0.42 - 입력란 포커스 즉시 활성화 개선
 
 window.focus();
 포커스 문제

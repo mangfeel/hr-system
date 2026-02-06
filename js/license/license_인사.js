@@ -7,11 +7,16 @@
  * - 만료 알림 및 차단
  * - 사용자별 라이선스 구분 (v1.1.0)
  * - electron-store 동기화 (v1.4.0) - 시간외 앱 연동
+ * - 무효 상태도 동기화 (v1.5.0) - 정지/만료 시 시간외 앱 차단
  * 
- * @version 1.4.0
+ * @version 1.5.0
  * @since 2026-01-23
  * 
  * [변경 이력]
+ * v1.5.0 - 라이선스 무효 상태도 electron-store에 동기화 (2026-02-06)
+ *   - validateOnServer()에서 valid 여부와 관계없이 항상 saveCachedLicense() 호출
+ *   - 라이선스 정지(suspended)/만료(expired) 시 시간외 앱에서도 즉시 감지 가능
+ *   - 기존: valid=true일 때만 저장 → 변경: 항상 저장
  * v1.4.0 - electron-store 동기화 (2026-02-06)
  *   - saveCachedLicense()에서 electron-store에도 라이선스 정보 저장
  *   - clear()에서 electron-store에서도 라이선스 정보 삭제
@@ -173,6 +178,7 @@ const License = (function() {
 
     /**
      * ★ v1.4.0: 기존 localStorage 라이선스를 electron-store로 마이그레이션
+     * ★ v1.5.0: valid 여부와 관계없이 동기화 (무효 상태도 전달)
      * 앱 시작 시 1회 호출하여 기존 설치에서도 시간외 앱 연동이 가능하도록 함
      */
     function syncLicenseToStore() {
@@ -180,9 +186,9 @@ const License = (function() {
             if (!isElectron()) return;
             
             const cached = loadCachedLicense();
-            if (cached && cached.valid) {
+            if (cached) {
                 _syncToElectronStore(cached);
-                console.log('[License] 기존 라이선스 → electron-store 마이그레이션 완료');
+                console.log('[License] 기존 라이선스 → electron-store 마이그레이션 완료 (valid:', cached.valid, ')');
             }
         } catch (e) {
             console.error('[License] 마이그레이션 오류:', e);
@@ -249,18 +255,17 @@ const License = (function() {
 
             const result = await response.json();
             
-            // 유효한 경우 캐시에 저장 (user_id 포함)
-            if (result.valid) {
-                saveCachedLicense({
-                    license_key: licenseKey,
-                    user_id: result.user_id,  // 사용자 ID 저장
-                    valid: result.valid,
-                    status: result.status,
-                    plan_type: result.plan_type,
-                    expire_date: result.expire_date,
-                    days_remaining: result.days_remaining
-                });
-            }
+            // ★ v1.5.0: 서버 검증 결과를 항상 캐시에 저장 (valid 여부와 무관)
+            // 이렇게 해야 라이선스 정지/만료 시 시간외 앱에서도 감지 가능
+            saveCachedLicense({
+                license_key: licenseKey,
+                user_id: result.user_id,
+                valid: result.valid,
+                status: result.status,
+                plan_type: result.plan_type,
+                expire_date: result.expire_date,
+                days_remaining: result.days_remaining
+            });
 
             return result;
 
@@ -503,4 +508,4 @@ if (typeof window !== 'undefined' && window.isElectron === true) {
     }
 }
 
-console.log('[License] license_인사.js 로드됨 (v1.4.0)');
+console.log('[License] license_인사.js 로드됨 (v1.5.0)');
