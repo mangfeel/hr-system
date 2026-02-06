@@ -292,8 +292,8 @@ function backupToJSON() {
             `- 정기적으로 백업하는 것을 권장합니다`
         );
         
-        // ⭐ v4.2.0: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
-        window.focus();
+        // ⭐ v4.3: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
+        setTimeout(() => window.focus(), 100);
         
     } catch (error) {
         로거_인사?.error('보안 백업 오류', error);
@@ -397,8 +397,8 @@ function backupToExcel() {
             `- 과거 경력 정보는 포함되지 않습니다`
         );
         
-        // ⭐ v4.2.0: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
-        window.focus();
+        // ⭐ v4.3: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
+        setTimeout(() => window.focus(), 100);
         
     } catch (error) {
         로거_인사?.error('Excel 백업 오류', error);
