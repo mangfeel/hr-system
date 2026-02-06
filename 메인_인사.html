@@ -180,6 +180,7 @@
                 <a href="#" onclick="navigateToModule('concurrent-position'); return false;">👥 겸직/직무대리 관리</a>
                 <a href="#" onclick="navigateToModule('backup'); return false;">💾 백업/복원</a>
                 <a href="#" onclick="navigateToModule('import'); return false;">📤 가져오기</a>
+                <a href="#" onclick="openAboutModal(); return false;">ℹ️ 프로그램 정보</a>
             </div>
         </div>
     </nav>
@@ -1500,5 +1501,203 @@
     
     <!-- 8. 초기화 (마지막에 로드) -->
     <script src="js/초기화_인사.js"></script>
+    
+    <!-- 프로그램 정보 모달 -->
+    <div id="aboutModal" class="about-modal" style="display:none;">
+        <div class="about-modal-overlay" onclick="closeAboutModal()"></div>
+        <div class="about-modal-content">
+            <div class="about-modal-header">
+                <h2>ℹ️ 프로그램 정보</h2>
+                <button class="about-modal-close" onclick="closeAboutModal()">×</button>
+            </div>
+            <div class="about-modal-body">
+                <div class="about-logo">📋</div>
+                <h3 class="about-title">SW HRM</h3>
+                <p class="about-subtitle">사회복지 인사관리시스템</p>
+                <div class="about-version" id="aboutVersion">버전 정보 로딩 중...</div>
+                <div class="about-divider"></div>
+                <div class="about-info">
+                    <div class="about-info-row">
+                        <span class="about-label">저작권등록</span>
+                        <span class="about-value">제C-2026-007142호</span>
+                    </div>
+                    <div class="about-info-row">
+                        <span class="about-label">등록일</span>
+                        <span class="about-value">2026년 2월 6일</span>
+                    </div>
+                    <div class="about-info-row">
+                        <span class="about-label">창작일</span>
+                        <span class="about-value">2025년 11월 1일</span>
+                    </div>
+                </div>
+                <div class="about-footer">
+                    <p class="about-warning">본 프로그램은 저작권법에 의해 보호됩니다.<br>무단 복제 및 배포 시 법적 처벌을 받을 수 있습니다.</p>
+                    <p style="margin-top: 12px;">© 2026 SW HRM. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        /* 프로그램 정보 모달 스타일 */
+        .about-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .about-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .about-modal-content {
+            position: relative;
+            background: white;
+            border-radius: 16px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        .about-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .about-modal-header h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .about-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            opacity: 0.8;
+        }
+        .about-modal-close:hover {
+            opacity: 1;
+        }
+        .about-modal-body {
+            padding: 30px;
+            text-align: center;
+        }
+        .about-logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .about-title {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+        }
+        .about-subtitle {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .about-version {
+            margin-top: 15px;
+            padding: 8px 20px;
+            background: #f0f4f8;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #4a5568;
+            display: inline-block;
+        }
+        .about-divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 25px 0;
+        }
+        .about-info {
+            text-align: left;
+        }
+        .about-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .about-info-row:last-child {
+            border-bottom: none;
+        }
+        .about-label {
+            color: #666;
+            font-size: 14px;
+        }
+        .about-value {
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .about-footer {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .about-footer p {
+            margin: 0;
+            font-size: 12px;
+            color: #999;
+        }
+        .about-warning {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            color: #92400e;
+            line-height: 1.5;
+            margin-bottom: 0;
+        }
+    </style>
+    
+    <script>
+        // 프로그램 정보 모달 열기
+        function openAboutModal() {
+            document.getElementById('aboutModal').style.display = 'flex';
+            // 버전 정보 표시
+            if (typeof require !== 'undefined') {
+                try {
+                    const { app } = require('@electron/remote');
+                    document.getElementById('aboutVersion').textContent = 'v' + app.getVersion();
+                } catch (e) {
+                    document.getElementById('aboutVersion').textContent = 'v1.0.33';
+                }
+            } else {
+                document.getElementById('aboutVersion').textContent = 'v1.0.33';
+            }
+        }
+        
+        // 프로그램 정보 모달 닫기
+        function closeAboutModal() {
+            document.getElementById('aboutModal').style.display = 'none';
+        }
+        
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('aboutModal').style.display === 'flex') {
+                closeAboutModal();
+            }
+        });
+    </script>
 </body>
 </html>
