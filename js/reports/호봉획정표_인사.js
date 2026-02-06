@@ -9,10 +9,14 @@
  * - 호봉획정표 생성 (대상자, 환산결과, 경력상세)
  * - 인쇄 (A4 세로)
  * 
- * @version 6.0.1
+ * @version 6.0.2
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v6.0.2 (2026-02-06) 신규 직원 등록 시 경력 환산 내역 0 표시 버그 수정
+ *   - prepareCareerTableData에서 originalPeriod/convertedPeriod 객체 형식 지원 추가
+ *   - 직원등록에서 저장하는 객체 형식과 문자열 형식 모두 호환
+ *
  * v6.0.1 (2026-02-05) 인쇄 기능 버그 수정
  *   - 브라우저 인쇄 버튼 중복 문제 해결 (cert-btn-area 제거)
  *   - 양식별 CSS 스타일 인쇄 HTML에 포함 (공문서/모던/표준)
@@ -997,8 +1001,42 @@ function prepareCareerTableData(careerDetails) {
     }
     
     return careerDetails.map(career => {
-        const periodParts = career.period ? career.period.match(/(\d+)년\s*(\d+)개월\s*(\d+)일/) : null;
-        const convertedParts = career.converted ? career.converted.match(/(\d+)년\s*(\d+)개월\s*(\d+)일/) : null;
+        // ⭐ v6.0.2: originalPeriod/convertedPeriod 객체 형식 지원 추가
+        // 직원등록에서 저장할 때 객체 형식으로 저장됨
+        let py = '0', pm = '0', pd = '0';
+        let cy = '0', cm = '0', cd = '0';
+        
+        // 원본 기간 (근무 년/월/일)
+        if (career.originalPeriod && typeof career.originalPeriod === 'object') {
+            // 객체 형식: { years: 3, months: 2, days: 15 }
+            py = String(career.originalPeriod.years || 0);
+            pm = String(career.originalPeriod.months || 0);
+            pd = String(career.originalPeriod.days || 0);
+        } else if (career.period) {
+            // 문자열 형식: "3년 2개월 15일"
+            const periodParts = career.period.match(/(\d+)년\s*(\d+)개월\s*(\d+)일/);
+            if (periodParts) {
+                py = periodParts[1];
+                pm = periodParts[2];
+                pd = periodParts[3];
+            }
+        }
+        
+        // 환산 기간 (환산 년/월/일)
+        if (career.convertedPeriod && typeof career.convertedPeriod === 'object') {
+            // 객체 형식: { years: 3, months: 2, days: 15 }
+            cy = String(career.convertedPeriod.years || 0);
+            cm = String(career.convertedPeriod.months || 0);
+            cd = String(career.convertedPeriod.days || 0);
+        } else if (career.converted) {
+            // 문자열 형식: "3년 2개월 15일"
+            const convertedParts = career.converted.match(/(\d+)년\s*(\d+)개월\s*(\d+)일/);
+            if (convertedParts) {
+                cy = convertedParts[1];
+                cm = convertedParts[2];
+                cd = convertedParts[3];
+            }
+        }
         
         const safeName = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.escapeHtml(career.name || '-')
@@ -1011,14 +1049,14 @@ function prepareCareerTableData(careerDetails) {
             name: safeName,
             startDate: career.startDate || '-',
             endDate: career.endDate || '-',
-            py: periodParts ? periodParts[1] : '0',
-            pm: periodParts ? periodParts[2] : '0',
-            pd: periodParts ? periodParts[3] : '0',
+            py: py,
+            pm: pm,
+            pd: pd,
             workingHours: career.workingHours || 40,
             rate: career.rate || '100%',
-            cy: convertedParts ? convertedParts[1] : '0',
-            cm: convertedParts ? convertedParts[2] : '0',
-            cd: convertedParts ? convertedParts[3] : '0',
+            cy: cy,
+            cm: cm,
+            cd: cd,
             note: safePartTime
         };
     });

@@ -30,3 +30,4 @@ v1.0.25 - 연명부/입사자/퇴사자 목록 인쇄 헤더 버그 수정
 v1.0.26 - localStorage → electron-store 자동 동기화
 v1.0.27 - 라이선스 electron-store 동기화
 v1.0.28 - Private 저장소 자동 업데이트 지원
+v1.0.29 - 불필요한 토큰 제거
