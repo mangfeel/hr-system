@@ -8,10 +8,14 @@
  * - Excel 날짜 변환 유틸리티
  * - 발령 데이터 자동 마이그레이션 ⭐ v3.5 추가
  * 
- * @version 4.3
+ * @version 4.4
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v4.4 - Electron 포커스 문제 해결 (2026-02-06)
+ *   - Excel 가져오기 완료 후 window.focus() 호출
+ *   - 가져오기 후 입력란에 바로 커서가 들어가지 않는 문제 수정
+ *
  * v4.3 - 복원 결과 메시지 한글화 (2026-01-30)
  *   - 시스템 설정 복원 결과 메시지에서 영어 키 이름을 한글로 변환
  *   - salaryGrades → 직급 관리, salaryTables → 급여표 등
@@ -593,6 +597,9 @@ function importFromGoogleSheets(file) {
                 if (typeof loadEmployeeList === 'function') {
                     loadEmployeeList();
                 }
+                
+                // ⭐ v4.4: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
+                window.focus();
                 
             } catch (error) {
                 로거_인사?.error('Excel 가져오기 오류', error);
