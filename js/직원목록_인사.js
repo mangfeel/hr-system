@@ -827,7 +827,7 @@ async function deleteEmployee(id) {
         }
         
         // ⭐ v6.2.0: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
-        setTimeout(() => window.focus(), 100);
+        setTimeout(() => window.focus(), 500);
         
     } catch (error) {
         로거_인사?.error('직원 삭제 실패', error);
