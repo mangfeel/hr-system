@@ -9,7 +9,7 @@
  * - 호봉획정표 생성 (대상자, 환산결과, 경력상세)
  * - 인쇄 (A4 세로)
  * 
- * @version 6.0.2
+ * @version 6.0.3
  * @since 2024-11-05
  * 
  * [변경 이력]
@@ -18,6 +18,10 @@
  *   - 직원등록에서 저장하는 객체 형식과 문자열 형식 모두 호환
  *   - printHobongCertificate에서 인정 경력 읽기 수정 (career.totalYears 우선, rank.careerYears 폴백)
  *   - careerDetails 폴백으로 pastCareers도 지원
+ *
+ * v6.0.3 (2026-02-06) 기존 백업 데이터 호환성 수정
+ *   - ?? 연산자 → || 연산자 변경 (career.totalYears가 0인 경우 rank.careerYears로 폴백)
+ *   - 기존 백업 데이터: career={totalYears:0}, rank={careerYears:7} → 7 반환
  *
  * v6.0.1 (2026-02-05) 인쇄 기능 버그 수정
  *   - 브라우저 인쇄 버튼 중복 문제 해결 (cert-btn-area 제거)
@@ -801,6 +805,7 @@ async function printHobongCertificate(employeeId) {
         
         // 데이터 객체 생성
         // ⭐ v6.0.2: career.totalYears 우선, rank.careerYears 폴백
+        // ⭐ v6.0.3: || 연산자 사용 (기존 백업 데이터의 career가 0인 경우 폴백)
         const data = {
             name: typeof 직원유틸_인사 !== 'undefined'
                 ? 직원유틸_인사.getName(emp)
@@ -818,10 +823,10 @@ async function printHobongCertificate(employeeId) {
                 ? 직원유틸_인사.getEntryDate(emp)
                 : (emp.employment?.entryDate || '-'),
             
-            // ⭐ v6.0.2: career.totalYears 우선, rank.careerYears 폴백
-            years: emp.career?.totalYears ?? emp.rank?.careerYears ?? 0,
-            months: emp.career?.totalMonths ?? emp.rank?.careerMonths ?? 0,
-            days: emp.career?.totalDays ?? emp.rank?.careerDays ?? 0,
+            // ⭐ v6.0.3: || 연산자 사용 (0도 falsy로 폴백 처리)
+            years: emp.career?.totalYears || emp.rank?.careerYears || 0,
+            months: emp.career?.totalMonths || emp.rank?.careerMonths || 0,
+            days: emp.career?.totalDays || emp.rank?.careerDays || 0,
             startRank: startRank,        // ⭐ 입사 시 획정 호봉
             currentRank: currentRank,    // ⭐ 현재 호봉
             firstUpgradeDate: firstUpgradeDate,
