@@ -599,7 +599,7 @@ function importFromGoogleSheets(file) {
                 }
                 
                 // ⭐ v4.4: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
-                setTimeout(() => window.focus(), 500);
+                setTimeout(() => window.focus(), 1500);
                 
             } catch (error) {
                 로거_인사?.error('Excel 가져오기 오류', error);
