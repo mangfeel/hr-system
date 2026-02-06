@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>인사관리 시스템 v3.0</title>
+    <title>인사관리 시스템</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="css/스타일_인사.css">
     <link rel="stylesheet" href="css/통계분석_스타일.css">
@@ -107,7 +107,7 @@
     <!-- 사이드바 -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h1>🏢 <span id="orgNameDisplay">인사관리 시스템</span> <span class="version-badge">v3.0</span></h1>
+            <h1>🏢 <span id="orgNameDisplay">인사관리 시스템</span></h1>
             <p>HR Management System</p>
         </div>
         
@@ -1674,17 +1674,23 @@
         // 프로그램 정보 모달 열기
         function openAboutModal() {
             document.getElementById('aboutModal').style.display = 'flex';
-            // 버전 정보 표시
+            // 버전 정보 표시 (Electron app.getVersion() 사용)
+            let version = '-';
             if (typeof require !== 'undefined') {
                 try {
                     const { app } = require('@electron/remote');
-                    document.getElementById('aboutVersion').textContent = 'v' + app.getVersion();
+                    version = 'v' + app.getVersion();
                 } catch (e) {
-                    document.getElementById('aboutVersion').textContent = 'v1.0.33';
+                    // @electron/remote 실패 시 ipcRenderer로 시도
+                    try {
+                        const { ipcRenderer } = require('electron');
+                        version = 'v' + ipcRenderer.sendSync('get-app-version');
+                    } catch (e2) {
+                        version = '버전 정보 없음';
+                    }
                 }
-            } else {
-                document.getElementById('aboutVersion').textContent = 'v1.0.33';
             }
+            document.getElementById('aboutVersion').textContent = version;
         }
         
         // 프로그램 정보 모달 닫기
