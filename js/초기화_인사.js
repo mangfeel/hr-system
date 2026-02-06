@@ -6,10 +6,14 @@
  * - 대시보드 업데이트
  * - 조직 설정 관리
  * 
- * @version 3.3.0
+ * @version 3.4.0
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v3.4.0 (2026-02-06) ⭐ Electron 포커스 문제 해결
+ *   - 페이지 초기화 완료 후 윈도우 포커스 복원
+ *   - 복원/전체삭제 후 입력란에 커서가 안 들어가는 문제 수정
+ *
  * v3.3.0 (2026-02-06) ⭐ 날짜 입력 필드 개선
  *   - 연도 4자리 제한 (5자리 이상 입력 방지)
  *   - date input에 min/max 속성 자동 설정 (1900-01-01 ~ 2099-12-31)
@@ -1434,6 +1438,13 @@ window.addEventListener('DOMContentLoaded', function() {
         
         // 6. ⭐ v3.3.0: 날짜 입력 필드 개선 (연도 4자리 제한, 자동 이동)
         _initializeDateInputEnhancements();
+        
+        // 7. ⭐ v3.4.0: 윈도우 포커스 복원 (복원/전체삭제 후 포커스 문제 해결)
+        if (window.electronAPI?.focusWindow) {
+            setTimeout(async () => {
+                await window.electronAPI.focusWindow();
+            }, 500);
+        }
         
         console.log('✅ 초기화 완료');
         로거_인사?.info('시스템 초기화 완료');
