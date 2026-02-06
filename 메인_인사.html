@@ -1672,22 +1672,17 @@
     
     <script>
         // 프로그램 정보 모달 열기
-        function openAboutModal() {
+        async function openAboutModal() {
             document.getElementById('aboutModal').style.display = 'flex';
-            // 버전 정보 표시 (Electron app.getVersion() 사용)
+            // 버전 정보 표시 (electronAPI 사용)
             let version = '-';
-            if (typeof require !== 'undefined') {
+            if (window.electronAPI && window.electronAPI.getAppVersion) {
                 try {
-                    const { app } = require('@electron/remote');
-                    version = 'v' + app.getVersion();
+                    const versionInfo = await window.electronAPI.getAppVersion();
+                    version = 'v' + versionInfo.version;
                 } catch (e) {
-                    // @electron/remote 실패 시 ipcRenderer로 시도
-                    try {
-                        const { ipcRenderer } = require('electron');
-                        version = 'v' + ipcRenderer.sendSync('get-app-version');
-                    } catch (e2) {
-                        version = '버전 정보 없음';
-                    }
+                    console.error('버전 정보 조회 실패:', e);
+                    version = '버전 정보 없음';
                 }
             }
             document.getElementById('aboutVersion').textContent = version;

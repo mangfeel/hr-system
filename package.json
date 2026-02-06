@@ -1,6 +1,6 @@
 {
   "name": "hr-system",
-  "version": "1.0.35",
+  "version": "1.0.36",
   "description": "HR Management System",
   "main": "main.js",
   "scripts": {
