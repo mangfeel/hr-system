@@ -48,10 +48,14 @@
             color: #111827;
             background: #f9fafb;
         }
+        .top-menu-item:hover .top-menu-icon svg { color: #374151; }
         .top-menu-item.active {
             color: #4f46e5;
             border-bottom-color: #4f46e5;
         }
+        .top-menu-item.active .top-menu-icon svg { color: #4f46e5; }
+        .top-menu-icon { display: inline-flex; align-items: center; }
+        .top-menu-icon svg { width: 18px; height: 18px; color: #9ca3af; transition: color 0.2s; }
         .main-content {
             margin-top: 50px;
         }
@@ -82,19 +86,19 @@
     <header class="top-header">
         <nav class="top-nav">
             <button class="top-menu-item active" data-category="dashboard" onclick="showCategory('dashboard')">
-                <span>📊</span><span>대시보드</span>
+                <span class="top-menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span><span>대시보드</span>
             </button>
             <button class="top-menu-item" data-category="hr" onclick="showCategory('hr')">
-                <span>👥</span><span>인력관리</span>
+                <span class="top-menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>인력관리</span>
             </button>
             <button class="top-menu-item" data-category="labor" onclick="showCategory('labor')">
-                <span>💰</span><span>노무관리</span>
+                <span class="top-menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span>노무관리</span>
             </button>
             <button class="top-menu-item" data-category="reports" onclick="showCategory('reports')">
-                <span>📊</span><span>보고서</span>
+                <span class="top-menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><span>보고서</span>
             </button>
             <button class="top-menu-item" data-category="system" onclick="showCategory('system')">
-                <span>⚙️</span><span>시스템</span>
+                <span class="top-menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span>시스템</span>
             </button>
         </nav>
         <!-- 라이선스 정보 표시 -->
@@ -107,80 +111,83 @@
     <!-- 사이드바 -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h1>🏢 <span id="orgNameDisplay">인사관리 시스템</span></h1>
-            <p>HR Management System</p>
+            <div class="sidebar-logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg></div>
+            <div class="sidebar-header-text">
+                <h1><span id="orgNameDisplay">인사관리 시스템</span></h1>
+                <p>HR Management System</p>
+            </div>
         </div>
         
         <div class="quick-search">
             <button class="search-trigger" onclick="openSearchModal()">
-                <span>🔍 빠른 검색...</span>
+                <span style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> 빠른 검색...</span>
                 <span class="search-shortcut">Ctrl+K</span>
             </button>
         </div>
         
         <div class="menu-category" data-category="dashboard">
-            <div class="category-header" onclick="navigateToModule('dashboard')">📊 대시보드</div>
+            <div class="category-header" onclick="navigateToModule('dashboard')"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span> 대시보드</div>
         </div>
         
         <div class="menu-category" data-category="hr">
             <div class="category-header" onclick="toggleCategory('hr')">
-                <span>👥 인력 관리</span>
+                <span class="category-label"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> 인력 관리</span>
                 <span class="toggle-icon" id="toggle-hr">▼</span>
             </div>
             <div class="category-items" id="hr-items">
-                <a href="#" onclick="navigateToModule('employee-register'); return false;">➕ 신규 직원 등록</a>
-                <a href="#" onclick="navigateToModule('employee-list'); return false;">📋 직원 목록/수정</a>
-                <a href="#" onclick="navigateToModule('career-manage'); return false;">📝 경력 관리</a>
-                <a href="#" onclick="navigateToModule('assignment'); return false;">📄 인사 발령</a>
-                <a href="#" onclick="navigateToModule('employment-contract'); return false;">📃 근로계약서</a>
-                <a href="#" onclick="navigateToModule('maternity'); return false;">🤱 육아 휴직</a>
-                <a href="#" onclick="navigateToModule('reduced-work'); return false;">⏰ 단축근로 관리</a>
-                <a href="#" onclick="navigateToModule('awards-manage'); return false;">🏆 포상 등록</a>
+                <a href="#" onclick="navigateToModule('employee-register'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></span> 신규 직원 등록</a>
+                <a href="#" onclick="navigateToModule('employee-list'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg></span> 직원 목록/수정</a>
+                <a href="#" onclick="navigateToModule('career-manage'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span> 경력 관리</a>
+                <a href="#" onclick="navigateToModule('assignment'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg></span> 인사 발령</a>
+                <a href="#" onclick="navigateToModule('employment-contract'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span> 근로계약서</a>
+                <a href="#" onclick="navigateToModule('maternity'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg></span> 육아 휴직</a>
+                <a href="#" onclick="navigateToModule('reduced-work'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> 단축근로 관리</a>
+                <a href="#" onclick="navigateToModule('awards-manage'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></span> 포상 등록</a>
             </div>
         </div>
         
         <div class="menu-category" data-category="labor">
             <div class="category-header" onclick="toggleCategory('labor')">
-                <span>💰 노무 관리</span>
+                <span class="category-label"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> 노무 관리</span>
                 <span class="toggle-icon" id="toggle-labor">▼</span>
             </div>
             <div class="category-items" id="labor-items">
-                <a href="#" onclick="navigateToModule('salary-settings'); return false;">⚙️ 급여 설정</a>
-                <a href="#" onclick="navigateToModule('salary-status'); return false;">📊 급여 현황표</a>
-                <a href="#" onclick="navigateToModule('overtime'); return false;">⏰ 시간외근무 관리</a>
+                <a href="#" onclick="navigateToModule('salary-settings'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> 급여 설정</a>
+                <a href="#" onclick="navigateToModule('salary-status'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> 급여 현황표</a>
+                <a href="#" onclick="navigateToModule('overtime'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> 시간외근무 관리</a>
             </div>
         </div>
         
         <div class="menu-category" data-category="reports">
             <div class="category-header" onclick="toggleCategory('reports')">
-                <span>📊 보고서</span>
+                <span class="category-label"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> 보고서</span>
                 <span class="toggle-icon" id="toggle-reports">▼</span>
             </div>
             <div class="category-items" id="reports-items">
-                <a href="#" onclick="navigateToModule('org-chart'); return false;">🏛️ 조직도</a>
-                <a href="#" onclick="navigateToModule('profile-card'); return false;">📇 인사카드</a>
-                <a href="#" onclick="navigateToModule('awards-report'); return false;">🏆 포상 현황</a>
-                <a href="#" onclick="navigateToModule('statistics'); return false;">📊 교차 통계 분석</a>
-                <a href="#" onclick="navigateToModule('tenure-report'); return false;">📈 근속현황표</a>
-                <a href="#" onclick="navigateToModule('register'); return false;">📋 연명부</a>
-                <a href="#" onclick="navigateToModule('certificate'); return false;">📄 호봉획정표</a>
-                <a href="#" onclick="navigateToModule('new-employee-list'); return false;">📥 입사자 목록</a>
-                <a href="#" onclick="navigateToModule('retired-list'); return false;">🚪 퇴사자 목록</a>
+                <a href="#" onclick="navigateToModule('org-chart'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg></span> 조직도</a>
+                <a href="#" onclick="navigateToModule('profile-card'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/><path d="M14 15h4"/></svg></span> 인사카드</a>
+                <a href="#" onclick="navigateToModule('awards-report'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></span> 포상 현황</a>
+                <a href="#" onclick="navigateToModule('statistics'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></span> 교차 통계 분석</a>
+                <a href="#" onclick="navigateToModule('tenure-report'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span> 근속현황표</a>
+                <a href="#" onclick="navigateToModule('register'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span> 연명부</a>
+                <a href="#" onclick="navigateToModule('certificate'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg></span> 호봉획정표</a>
+                <a href="#" onclick="navigateToModule('new-employee-list'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="19 8 19 14"/><polyline points="16 11 19 14 22 11"/></svg></span> 입사자 목록</a>
+                <a href="#" onclick="navigateToModule('retired-list'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span> 퇴사자 목록</a>
             </div>
         </div>
         
         <div class="menu-category" data-category="system">
             <div class="category-header" onclick="toggleCategory('system')">
-                <span>⚙️ 시스템</span>
+                <span class="category-label"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> 시스템</span>
                 <span class="toggle-icon" id="toggle-system">▼</span>
             </div>
             <div class="category-items" id="system-items">
-                <a href="#" onclick="navigateToModule('settings'); return false;">⚙️ 조직 설정</a>
-                <a href="#" onclick="navigateToModule('org-chart-settings'); return false;">🏛️ 조직도 설정</a>
-                <a href="#" onclick="navigateToModule('concurrent-position'); return false;">👥 겸직/직무대리 관리</a>
-                <a href="#" onclick="navigateToModule('backup'); return false;">💾 백업/복원</a>
-                <a href="#" onclick="navigateToModule('import'); return false;">📤 가져오기</a>
-                <a href="#" onclick="openAboutModal(); return false;">ℹ️ 프로그램 정보</a>
+                <a href="#" onclick="navigateToModule('settings'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> 조직 설정</a>
+                <a href="#" onclick="navigateToModule('org-chart-settings'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg></span> 조직도 설정</a>
+                <a href="#" onclick="navigateToModule('concurrent-position'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> 겸직/직무대리 관리</a>
+                <a href="#" onclick="navigateToModule('backup'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span> 백업/복원</a>
+                <a href="#" onclick="navigateToModule('import'); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></span> 가져오기</a>
+                <a href="#" onclick="openAboutModal(); return false;"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span> 프로그램 정보</a>
             </div>
         </div>
     </nav>
@@ -188,9 +195,9 @@
     <!-- 메인 컨텐츠 -->
     <main class="main-content">
         <div class="top-search-bar">
-            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
             <div class="search-input-wrapper">
-                <span class="search-icon">🔍</span>
+                <span class="search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
                 <input type="text" class="search-input" placeholder="직원, 메뉴 검색..." onclick="openSearchModal()" readonly>
                 <span class="search-kbd">Ctrl+K</span>
             </div>
@@ -202,7 +209,7 @@
                 <!-- 인사말 헤더 -->
                 <div class="dashboard-greeting">
                     <div class="greeting-text">
-                        <h2>👋 안녕하세요!</h2>
+                        <h2>안녕하세요!</h2>
                         <p id="dashboard-org-name">인사관리시스템</p>
                     </div>
                     <div class="greeting-date" id="dashboard-today"></div>
@@ -211,38 +218,38 @@
                 <!-- 통계 카드 -->
                 <div class="dashboard-stats">
                     <div class="dash-stat-card">
-                        <div class="dash-stat-icon">👥</div>
+                        <div class="dash-stat-icon-wrap blue"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
                         <div class="dash-stat-info">
-                            <div class="dash-stat-value" id="dash-stat-total">0</div>
                             <div class="dash-stat-label">전체 직원</div>
+                            <div class="dash-stat-value" id="dash-stat-total">0</div>
                         </div>
                     </div>
                     <div class="dash-stat-card">
-                        <div class="dash-stat-icon">✅</div>
+                        <div class="dash-stat-icon-wrap green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
                         <div class="dash-stat-info">
-                            <div class="dash-stat-value" id="dash-stat-active">0</div>
                             <div class="dash-stat-label">재직 중</div>
+                            <div class="dash-stat-value" id="dash-stat-active">0</div>
                         </div>
                     </div>
                     <div class="dash-stat-card">
-                        <div class="dash-stat-icon">🤱</div>
+                        <div class="dash-stat-icon-wrap amber"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
                         <div class="dash-stat-info">
-                            <div class="dash-stat-value" id="dash-stat-leave">0</div>
                             <div class="dash-stat-label">휴직 중</div>
+                            <div class="dash-stat-value" id="dash-stat-leave">0</div>
                         </div>
                     </div>
                     <div class="dash-stat-card">
-                        <div class="dash-stat-icon">🚪</div>
+                        <div class="dash-stat-icon-wrap red"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
                         <div class="dash-stat-info">
-                            <div class="dash-stat-value" id="dash-stat-retired">0</div>
                             <div class="dash-stat-label">퇴사</div>
+                            <div class="dash-stat-value" id="dash-stat-retired">0</div>
                         </div>
                     </div>
                     <div class="dash-stat-card highlight">
-                        <div class="dash-stat-icon">📊</div>
+                        <div class="dash-stat-icon-wrap indigo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
                         <div class="dash-stat-info">
-                            <div class="dash-stat-value" id="dash-stat-avgrank">0</div>
                             <div class="dash-stat-label">평균 호봉</div>
+                            <div class="dash-stat-value" id="dash-stat-avgrank">0</div>
                         </div>
                     </div>
                 </div>
@@ -253,22 +260,22 @@
                     <div class="dashboard-left">
                         <!-- 빠른 실행 -->
                         <div class="dashboard-card">
-                            <div class="dashboard-card-title">⚡ 빠른 실행</div>
+                            <div class="dashboard-card-title"><span class="card-title-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span> 빠른 실행</div>
                             <div class="quick-actions">
                                 <button class="quick-action-btn" onclick="navigateToModule('employee-register')">
-                                    <span class="quick-action-icon">➕</span>
+                                    <span class="quick-action-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></span>
                                     <span>직원 등록</span>
                                 </button>
                                 <button class="quick-action-btn" onclick="navigateToModule('assignment')">
-                                    <span class="quick-action-icon">📋</span>
+                                    <span class="quick-action-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg></span>
                                     <span>인사발령</span>
                                 </button>
                                 <button class="quick-action-btn" onclick="navigateToModule('maternity')">
-                                    <span class="quick-action-icon">🤱</span>
+                                    <span class="quick-action-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg></span>
                                     <span>육아휴직</span>
                                 </button>
                                 <button class="quick-action-btn" onclick="navigateToModule('certificate')">
-                                    <span class="quick-action-icon">📄</span>
+                                    <span class="quick-action-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg></span>
                                     <span>호봉획정표</span>
                                 </button>
                             </div>
@@ -276,7 +283,7 @@
                         
                         <!-- 알림/예정 -->
                         <div class="dashboard-card">
-                            <div class="dashboard-card-title">🔔 알림 / 예정</div>
+                            <div class="dashboard-card-title"><span class="card-title-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span> 알림 / 예정</div>
                             <div id="dashboard-alerts">
                                 <div class="dashboard-empty">알림이 없습니다.</div>
                             </div>
@@ -287,7 +294,7 @@
                     <div class="dashboard-right">
                         <!-- 이번 달 현황 -->
                         <div class="dashboard-card">
-                            <div class="dashboard-card-title">📅 이번 달 현황</div>
+                            <div class="dashboard-card-title"><span class="card-title-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> 이번 달 현황</div>
                             <div class="monthly-stats">
                                 <div class="monthly-stat-item">
                                     <span class="monthly-stat-label">입사</span>
@@ -310,7 +317,7 @@
                         
                         <!-- 부서별 현황 -->
                         <div class="dashboard-card">
-                            <div class="dashboard-card-title">👥 부서별 현황</div>
+                            <div class="dashboard-card-title"><span class="card-title-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> 부서별 현황</div>
                             <div id="dashboard-dept-stats">
                                 <div class="dashboard-empty">부서 정보가 없습니다.</div>
                             </div>
@@ -320,7 +327,7 @@
                 
                 <!-- 최근 활동 -->
                 <div class="dashboard-card full-width">
-                    <div class="dashboard-card-title">📊 최근 활동</div>
+                    <div class="dashboard-card-title"><span class="card-title-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span> 최근 활동</div>
                     <div id="dashboard-recent-activity">
                         <div class="dashboard-empty">최근 활동이 없습니다.</div>
                     </div>
@@ -328,9 +335,9 @@
                 
                 <!-- 시스템 정보 (축소) -->
                 <div class="dashboard-system-info">
-                    <span>💾 저장용량: <strong id="dash-storage-size">0 KB</strong></span>
-                    <span>🔢 다음 고유번호: <strong id="dash-next-code">H001</strong></span>
-                    <span>📦 데이터 버전: <strong>v3.0</strong></span>
+                    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> 저장용량: <strong id="dash-storage-size">0 KB</strong></span>
+                    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg> 다음 고유번호: <strong id="dash-next-code">H001</strong></span>
+                    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> 데이터 버전: <strong>v3.0</strong></span>
                 </div>
             </div>
             
@@ -412,7 +419,7 @@
             <!-- 신규 직원 등록 -->
             <div id="module-employee-register" class="module-content">
                 <div class="register-header">
-                    <h2 class="register-title">➕ 신규 직원 등록</h2>
+                    <h2 class="register-title"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></span> 신규 직원 등록</h2>
                     <p class="register-subtitle">새로운 직원의 정보를 입력하고 호봉을 자동으로 계산합니다.</p>
                 </div>
                 
@@ -805,7 +812,7 @@
             <!-- 근로계약서 -->
             <div id="module-employment-contract" class="module-content">
                 <div class="card">
-                    <div class="card-title">📃 근로계약서</div>
+                    <div class="card-title"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span> 근로계약서</div>
                     <div class="alert alert-info">
                         <span>💡</span>
                         <span>기준일을 설정하면 해당 날짜 기준으로 호봉제/연봉제 직원이 분류됩니다.</span>
@@ -1029,10 +1036,10 @@
             <!-- 연명부 -->
             <div id="module-register" class="module-content">
                 <div class="card">
-                    <div class="card-title">📋 연명부 생성</div>
+                    <div class="card-title"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span> 연명부 생성</div>
                     <div class="alert alert-info"><span>ℹ️</span><span>기준일에 재직 중이었던 모든 직원이 표시됩니다.</span></div>
                     <div class="form-group"><label>기준일</label><input type="date" id="registerBaseDate" class="form-control"></div>
-                    <button class="btn btn-primary" onclick="generateRegister()">📋 연명부 생성</button>
+                    <button class="btn btn-primary" onclick="generateRegister()"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span> 연명부 생성</button>
                 </div>
                 <div id="registerResult"></div>
             </div>
@@ -1042,7 +1049,7 @@
                 <div class="card">
                     <!-- 헤더 -->
                     <div class="cert-card-header">
-                        <div class="card-title">📄 호봉획정표 생성</div>
+                        <div class="card-title"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg></span> 호봉획정표 생성</div>
                         <div class="cert-card-subtitle">입사 시 과거 경력 환산 내역을 출력합니다</div>
                     </div>
                     
@@ -1117,7 +1124,7 @@
                     
                     <!-- 생성 버튼 -->
                     <button class="cert-generate-btn" id="certGenerateBtn" onclick="generateCertificateFromReport()" disabled>
-                        📄 호봉획정표 생성 (<span id="certGenerateCount">0</span>명)
+                        <span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg></span> 호봉획정표 생성 (<span id="certGenerateCount">0</span>명)
                     </button>
                 </div>
             </div>
@@ -1125,7 +1132,7 @@
             <!-- 입사자 목록 -->
             <div id="module-new-employee-list" class="module-content">
                 <div class="card">
-                    <div class="card-title">📥 입사자 목록 생성</div>
+                    <div class="card-title"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="19 8 19 14"/><polyline points="16 11 19 14 22 11"/></svg></span> 입사자 목록 생성</div>
                     <div class="alert alert-info">
                         <span>ℹ️</span>
                         <span>지정한 기간 동안 입사한 직원 목록을 생성합니다. 재직자는 기간 종료일 기준, 퇴사자는 퇴사일 기준으로 호봉과 근속기간이 계산됩니다.</span>
@@ -1140,7 +1147,7 @@
                             <input type="date" id="newEmployeeEndDate" class="form-control">
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="generateNewEmployeeList()">📥 입사자 목록 생성</button>
+                    <button class="btn btn-primary" onclick="generateNewEmployeeList()"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="19 8 19 14"/><polyline points="16 11 19 14 22 11"/></svg></span> 입사자 목록 생성</button>
                 </div>
                 <div id="newEmployeeListResult"></div>
             </div>
@@ -1148,7 +1155,7 @@
             <!-- 퇴사자 목록 -->
             <div id="module-retired-list" class="module-content">
                 <div class="card">
-                    <div class="card-title">🚪 퇴사자 목록 생성</div>
+                    <div class="card-title"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span> 퇴사자 목록 생성</div>
                     <div class="alert alert-info">
                         <span>ℹ️</span>
                         <span>지정한 기간 동안 퇴사한 직원 목록을 생성합니다. (종료일 다음날부터 퇴사한 직원이 포함됩니다)</span>
@@ -1163,7 +1170,7 @@
                             <input type="date" id="retiredEndDate" class="form-control">
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="generateRetiredList()">🚪 퇴사자 목록 생성</button>
+                    <button class="btn btn-primary" onclick="generateRetiredList()"><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span> 퇴사자 목록 생성</button>
                 </div>
                 <div id="retiredListResult"></div>
             </div>
@@ -1251,34 +1258,34 @@
                     </div>
                 </div>
             </div>
-    <!-- 📈 근속현황표 -->
+    <!-- <span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span> 근속현황표 -->
             <div id="module-tenure-report" class="module-content">
                 <!-- 근속현황표_인사.js에서 동적으로 생성됨 -->
             </div>
             
-    <!-- 📊 교차 통계 분석 -->
+    <!-- <span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></span> 교차 통계 분석 -->
             <div id="module-statistics" class="module-content"></div>
             
     <!-- 🏛️ 조직도 -->
             <div id="module-org-chart" class="module-content"></div>
             
-    <!-- 🏛️ 조직도 설정 -->
+    <!-- <span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg></span> 조직도 설정 -->
             <div id="module-org-chart-settings" class="module-content"></div>
             
-    <!-- 👥 겸직/직무대리 관리 -->
+    <!-- <span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> 겸직/직무대리 관리 -->
             <div id="module-concurrent-position" class="module-content"></div>
             
     <!-- 🪪 인사카드 -->
             <div id="module-profile-card" class="module-content"></div>
             
-    <!-- 🏆 포상 등록 (인력관리) -->
+    <!-- <span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></span> 포상 등록 (인력관리) -->
             <div id="module-awards-manage" class="module-content">
                 <div id="awards-manage-module">
                     <!-- 포상관리_인사.js에서 동적으로 생성됨 -->
                 </div>
             </div>
             
-    <!-- 🏆 포상 현황 (보고서) -->
+    <!-- <span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></span> 포상 현황 (보고서) -->
             <div id="module-awards-report" class="module-content">
                 <div id="awards-report-module">
                     <!-- 포상관리_인사.js에서 동적으로 생성됨 -->
@@ -1507,7 +1514,7 @@
         <div class="about-modal-overlay" onclick="closeAboutModal()"></div>
         <div class="about-modal-content">
             <div class="about-modal-header">
-                <h2>ℹ️ 프로그램 정보</h2>
+                <h2><span class="sidebar-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span> 프로그램 정보</h2>
                 <button class="about-modal-close" onclick="closeAboutModal()">×</button>
             </div>
             <div class="about-modal-body">
