@@ -20,103 +20,103 @@
  * 
  * [변경 이력]
  * v4.1.0 (2026-01-22) ⭐ 검증/경력환산 API 연동
- *   - Validator.validateAssignmentDate → API_인사.validateAssignment
- *   - TenureCalculator.calculate → API_인사.calculateTenure
- *   - CareerCalculator.applyConversionRate → API_인사.applyConversionRate
- *   - forEach → for...of (async/await 지원)
- *   - API 검증 시 전체 데이터 전달 (부서, 직위 포함)
+ * - Validator.validateAssignmentDate → API_인사.validateAssignment
+ * - TenureCalculator.calculate → API_인사.calculateTenure
+ * - CareerCalculator.applyConversionRate → API_인사.applyConversionRate
+ * - forEach → for...of (async/await 지원)
+ * - API 검증 시 전체 데이터 전달 (부서, 직위 포함)
  * 
  * v4.0.0 (2026-01-21) ⭐ API 연동 버전
- *   - saveAssignmentEdit() async 변경
- *   - 호봉 계산 API 우선 사용 (API_인사)
- *   - 서버 API로 계산 로직 보호
+ * - saveAssignmentEdit() async 변경
+ * - 호봉 계산 API 우선 사용 (API_인사)
+ * - 서버 API로 계산 로직 보호
  * 
  * v3.5.0 (2026-01-07) ⭐ 퇴사자/종료 발령 수정 시 즉시 반영
- *   - 문제: 퇴사자 발령 수정 시 직원목록/퇴사자목록에 반영 안 됨 (F5 눌러도 안 됨)
- *   - 원인: 활성 발령만 currentPosition 업데이트, 종료 발령은 무시
- *   - 해결: 마지막 발령(가장 최근 시작일)이면 currentPosition 업데이트
- *   - _isLastAssignment() 헬퍼 함수 추가
- *   - saveAssignmentEdit(): 마지막 발령 여부 확인 후 currentPosition 갱신
- *   - loadEmployeeList(): 활성/종료 여부와 관계없이 항상 호출
+ * - 문제: 퇴사자 발령 수정 시 직원목록/퇴사자목록에 반영 안 됨 (F5 눌러도 안 됨)
+ * - 원인: 활성 발령만 currentPosition 업데이트, 종료 발령은 무시
+ * - 해결: 마지막 발령(가장 최근 시작일)이면 currentPosition 업데이트
+ * - _isLastAssignment() 헬퍼 함수 추가
+ * - saveAssignmentEdit(): 마지막 발령 여부 확인 후 currentPosition 갱신
+ * - loadEmployeeList(): 활성/종료 여부와 관계없이 항상 호출
  * 
  * v3.4.1 (2025-12-10) ⭐ 신규직원 발령 수정 버그 수정
- *   - 발령 ID 타입 불일치 문제 해결 (숫자 vs 문자열)
- *   - 신규직원의 첫 발령 ID가 숫자(1)로 저장되나, 
- *     HTML onclick에서 문자열('1')로 전달되어 === 비교 실패
- *   - editAssignment(): String() 변환으로 타입 안전 비교
- *   - saveAssignmentEdit(): String() 변환으로 타입 안전 비교
- *   - deleteAssignment(): String() 변환으로 타입 안전 비교
- *   - _generateEditAssignmentModalHTML(): 일관성 위해 동일 적용
+ * - 발령 ID 타입 불일치 문제 해결 (숫자 vs 문자열)
+ * - 신규직원의 첫 발령 ID가 숫자(1)로 저장되나, 
+ * HTML onclick에서 문자열('1')로 전달되어 === 비교 실패
+ * - editAssignment(): String() 변환으로 타입 안전 비교
+ * - saveAssignmentEdit(): String() 변환으로 타입 안전 비교
+ * - deleteAssignment(): String() 변환으로 타입 안전 비교
+ * - _generateEditAssignmentModalHTML(): 일관성 위해 동일 적용
  * 
  * v3.3.3 (2025-12-04) ⭐ UI/UX 전면 개편
- *   - 인사발령 화면을 탭 방식으로 분리 (등록/내역)
- *   - 탭 디자인: 언더라인 스타일로 현대적 개선
- *   - 등록 폼: 카드 테두리 제거, 섹션 구분선으로 가볍게
- *   - 급여방식: 세그먼트 컨트롤 스타일 (토글 버튼)
- *   - 테이블: 호버 효과, 줄무늬, 세련된 버튼
- *   - 그라데이션 스텝 배지, 등록 버튼 호버 효과
- *   - 검색/필터 기능 및 필터 버그 수정
- *   - 이전 발령 경력 인정율 설명 개선 (보건복지부 가이드라인)
- *   - 발령일 기본값을 오늘 날짜로 자동 설정
+ * - 인사발령 화면을 탭 방식으로 분리 (등록/내역)
+ * - 탭 디자인: 언더라인 스타일로 현대적 개선
+ * - 등록 폼: 카드 테두리 제거, 섹션 구분선으로 가볍게
+ * - 급여방식: 세그먼트 컨트롤 스타일 (토글 버튼)
+ * - 테이블: 호버 효과, 줄무늬, 세련된 버튼
+ * - 그라데이션 스텝 배지, 등록 버튼 호버 효과
+ * - 검색/필터 기능 및 필터 버그 수정
+ * - 이전 발령 경력 인정율 설명 개선 (보건복지부 가이드라인)
+ * - 발령일 기본값을 오늘 날짜로 자동 설정
  * 
  * v3.3.2 (2025-12-03) ⭐ 발령별 개별 인정율 지원
- *   - priorCareerRates 데이터 구조 추가 (각 이전 발령에 개별 인정율)
- *   - 수정 모달에서 모든 이전 발령의 인정율 개별 설정 가능
- *   - toggleEditPriorRateItem() 함수 추가
- *   - 하위 호환: 기존 priorCareerRate 데이터 자동 마이그레이션
+ * - priorCareerRates 데이터 구조 추가 (각 이전 발령에 개별 인정율)
+ * - 수정 모달에서 모든 이전 발령의 인정율 개별 설정 가능
+ * - toggleEditPriorRateItem() 함수 추가
+ * - 하위 호환: 기존 priorCareerRate 데이터 자동 마이그레이션
  * 
  * v3.3.1 (2025-12-03) ⭐ 이전 경력 인정율 UI 개선
- *   - 새 발령 등록 폼에 월소정근로시간 자동 표시
- *   - 발령 수정 모달에 월소정근로시간 자동 표시
- *   - calculateMonthlyWorkingHoursForAssignment() 함수 추가
- *   - updateAssignmentMonthlyHours() 함수 추가
- *   - updateEditAssignMonthlyHours() 함수 추가
- *   - 올림 처리: 공무원 규정(209시간)과 동일 기준
+ * - 새 발령 등록 폼에 월소정근로시간 자동 표시
+ * - 발령 수정 모달에 월소정근로시간 자동 표시
+ * - calculateMonthlyWorkingHoursForAssignment() 함수 추가
+ * - updateAssignmentMonthlyHours() 함수 추가
+ * - updateEditAssignMonthlyHours() 함수 추가
+ * - 올림 처리: 공무원 규정(209시간)과 동일 기준
  * 
  * v3.1.1 (2025-11-26) ⭐ 발령 급여방식 자동 저장 버그 수정
- *   - 새 발령 등록 시 paymentMethod, isRankBased 필드 추가
- *   - _collectAssignmentFormData()에 급여방식 수집 추가
- *   - 레거시 발령(164건) 급여방식 "정보없음" 문제 근본 해결
- *   - 향후 모든 발령에 급여방식 자동 저장됨
+ * - 새 발령 등록 시 paymentMethod, isRankBased 필드 추가
+ * - _collectAssignmentFormData()에 급여방식 수집 추가
+ * - 레거시 발령(164건) 급여방식 "정보없음" 문제 근본 해결
+ * - 향후 모든 발령에 급여방식 자동 저장됨
  * 
  * v3.1.0 (2025-11-26) ⭐ 주당근무시간 비율 적용
- *   - 발령 등록 폼에 "주당근무시간" 필드 추가 (1~40시간)
- *   - 발령 수정 모달에 "주당근무시간" 필드 추가
- *   - 발령 데이터에 workingHours 저장
- *   - 기존 발령은 기본값 40시간으로 표시 (하위 호환)
- *   - 호봉 계산 시 근무시간 비율 적용을 위한 데이터 준비
+ * - 발령 등록 폼에 "주당근무시간" 필드 추가 (1~40시간)
+ * - 발령 수정 모달에 "주당근무시간" 필드 추가
+ * - 발령 데이터에 workingHours 저장
+ * - 기존 발령은 기본값 40시간으로 표시 (하위 호환)
+ * - 호봉 계산 시 근무시간 비율 적용을 위한 데이터 준비
  * 
  * v3.0.7 - Phase 3 기능 추가: 호봉 자동 재계산 (2025-11-11)
- *   ⭐ 신규 기능: 활성 발령 수정 시 연봉제 → 호봉제 전환 시 호봉 자동 재계산
- *   - 경력이 있으면 경력 기반 호봉 계산
- *   - 경력이 없으면 입사일 기준 1호봉부터 시작
- *   - startRank, firstUpgradeDate, currentRank 자동 설정
- *   - 직원수정_인사.js v3.0.8 패턴 적용
- *   - 호봉 배지가 정상적으로 표시됨
+ * ⭐ 신규 기능: 활성 발령 수정 시 연봉제 → 호봉제 전환 시 호봉 자동 재계산
+ * - 경력이 있으면 경력 기반 호봉 계산
+ * - 경력이 없으면 입사일 기준 1호봉부터 시작
+ * - startRank, firstUpgradeDate, currentRank 자동 설정
+ * - 직원수정_인사.js v3.0.8 패턴 적용
+ * - 호봉 배지가 정상적으로 표시됨
  * 
  * v3.0.6 - Phase 3-3: 발령 수정 시 급여방식 수정 가능 (2025-11-11)
- *   - 발령 수정 모달에 급여방식 라디오 버튼 추가
- *   - 폼 데이터 수집에 급여방식 포함
- *   - 발령 객체에 급여방식 저장
- *   - 활성 발령 수정 시 현재 급여방식 자동 동기화
- *   - 성공 메시지에 급여방식 정보 표시
+ * - 발령 수정 모달에 급여방식 라디오 버튼 추가
+ * - 폼 데이터 수집에 급여방식 포함
+ * - 발령 객체에 급여방식 저장
+ * - 활성 발령 수정 시 현재 급여방식 자동 동기화
+ * - 성공 메시지에 급여방식 정보 표시
  * 
  * v3.0.5 - 기간 중복 검증 추가 (2025-11-06)
- *   🔴 v1.8 가이드 패턴 5 적용
- *   - 발령 기간 중복 검증 로직 추가
- *   - _validateAssignmentDateOverlap() 함수 추가
- *   - saveAssignment()에 중복 검증 적용
- *   - saveAssignmentEdit()에 중복 검증 적용
- *   - assignments 배열 생성 시 로깅 추가 (패턴 4)
- *   - 하위 호환성 100% 유지
+ * v1.8 가이드 패턴 5 적용
+ * - 발령 기간 중복 검증 로직 추가
+ * - _validateAssignmentDateOverlap() 함수 추가
+ * - saveAssignment()에 중복 검증 적용
+ * - saveAssignmentEdit()에 중복 검증 적용
+ * - assignments 배열 생성 시 로깅 추가 (패턴 4)
+ * - 하위 호환성 100% 유지
  * 
  * v3.0 - 프로덕션급 리팩토링
- *   - Phase 1 유틸리티 적용 (직원유틸, DOM유틸)
- *   - 완벽한 에러 처리
- *   - 체계적 로깅
- *   - JSDoc 주석 추가
- *   - XSS 방지
- *   - 검증 강화 유지
+ * - Phase 1 유틸리티 적용 (직원유틸, DOM유틸)
+ * - 완벽한 에러 처리
+ * - 체계적 로깅
+ * - JSDoc 주석 추가
+ * - XSS 방지
+ * - 검증 강화 유지
  * 
  * [하위 호환성]
  * - 모든 기존 함수명 유지
@@ -169,7 +169,7 @@ function loadAssignmentTab() {
         
         로거_인사?.debug('재직자 조회 완료', { count: employees.length });
         
-        // 직원 선택 드롭다운 생성
+ // 직원 선택 드롭다운 생성
         const select = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('assignmentEmployeeSelect')
             : document.getElementById('assignmentEmployeeSelect');
@@ -179,7 +179,7 @@ function loadAssignmentTab() {
             return;
         }
         
-        // ✅ XSS 방지
+ // XSS 방지
         const escapeHtml = (text) => {
             if (typeof DOM유틸_인사 !== 'undefined') {
                 return DOM유틸_인사.escapeHtml(text || '');
@@ -208,14 +208,14 @@ function loadAssignmentTab() {
             
             const safeName = escapeHtml(name);
             const safeDept = escapeHtml(dept);
-            const leaveIcon = isOnLeave ? ' 🤱' : '';
+            const leaveIcon = isOnLeave ? ' (휴직)' : '';
             
             return `<option value="${emp.id}">${safeName} (${safeDept})${leaveIcon}</option>`;
         }).join('');
         
         select.innerHTML = '<option value="">선택하세요</option>' + options;
         
-        // ⭐ v3.3.3: 발령일 기본값을 오늘 날짜로 설정
+ // ⭐ v3.3.3: 발령일 기본값을 오늘 날짜로 설정
         const assignmentDateField = document.getElementById('assignmentDate');
         if (assignmentDateField && !assignmentDateField.value) {
             const today = new Date();
@@ -226,13 +226,13 @@ function loadAssignmentTab() {
             로거_인사?.debug('발령일 기본값 설정', { date: assignmentDateField.value });
         }
         
-        // ⭐ v3.3.0: 이전 경력 인정율 UI 동적 추가
+ // ⭐ v3.3.0: 이전 경력 인정율 UI 동적 추가
         _injectPriorCareerRateUI();
         
-        // ⭐ v3.3.3: 급여방식 세그먼트 컨트롤 스타일 초기화
+ // ⭐ v3.3.3: 급여방식 세그먼트 컨트롤 스타일 초기화
         _initPaymentMethodSegment();
         
-        // 발령 이력 로드
+ // 발령 이력 로드
         loadAssignmentHistory();
         
         로거_인사?.info('인사발령 탭 로드 완료', { employeeCount: employees.length });
@@ -257,7 +257,7 @@ function loadAssignmentTab() {
  */
 function loadEmployeeForAssignment() {
     try {
-        // ⭐ v3.3.2: XSS 방지용 escapeHtml 함수
+ // ⭐ v3.3.2: XSS 방지용 escapeHtml 함수
         const escapeHtml = (text) => {
             if (!text) return '';
             const div = document.createElement('div');
@@ -282,7 +282,7 @@ function loadEmployeeForAssignment() {
             return;
         }
         
-        // 현재 직위 정보 가져오기
+ // 현재 직위 정보 가져오기
         const dept = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.getDepartment(emp)
             : (emp.currentPosition?.dept || emp.dept || '');
@@ -295,7 +295,7 @@ function loadEmployeeForAssignment() {
             ? 직원유틸_인사.getGrade(emp)
             : (emp.currentPosition?.grade || '');
         
-        // 폼에 입력
+ // 폼에 입력
         const deptField = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('assignmentDept')
             : document.getElementById('assignmentDept');
@@ -332,25 +332,25 @@ function loadEmployeeForAssignment() {
             }
         }
         
-        // ⭐ v3.3.3: 이전 모든 발령에 대한 인정율 UI 동적 생성 (개선)
+ // ⭐ v3.3.3: 이전 모든 발령에 대한 인정율 UI 동적 생성 (개선)
         const priorCareerRateSection = document.getElementById('assignmentPriorCareerRateSection');
         if (priorCareerRateSection) {
             const existingAssignments = emp.assignments || [];
             
             if (existingAssignments.length === 0) {
-                // 첫 발령(입사 발령)이 될 것이므로 인정율 섹션 숨김
+ // 첫 발령(입사 발령)이 될 것이므로 인정율 섹션 숨김
                 priorCareerRateSection.style.display = 'none';
                 로거_인사?.debug('첫 발령 - 인정율 섹션 숨김');
             } else {
-                // 두 번째 이상 발령이므로 인정율 섹션 표시
+ // 두 번째 이상 발령이므로 인정율 섹션 표시
                 priorCareerRateSection.style.display = 'block';
                 
-                // 발령을 날짜순 정렬
+ // 발령을 날짜순 정렬
                 const sortedAssignments = [...existingAssignments].sort((a, b) => 
                     new Date(a.startDate) - new Date(b.startDate)
                 );
                 
-                // 이전 발령 목록 HTML 생성 (개선된 UI)
+ // 이전 발령 목록 HTML 생성 (개선된 UI)
                 let priorAssignmentsHTML = '';
                 
                 if (sortedAssignments.length === 0) {
@@ -392,7 +392,7 @@ function loadEmployeeForAssignment() {
                                             ${statusBadge}
                                         </div>
                                         <div style="font-size:0.85em;color:#6b7280;margin-top:4px;">
-                                            📅 ${assign.startDate} ~ ${endDate}
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${assign.startDate} ~ ${endDate}
                                         </div>
                                     </div>
                                 </label>
@@ -417,7 +417,7 @@ function loadEmployeeForAssignment() {
                                         </div>
                                     </div>
                                     <div style="font-size:0.8em;color:#64748b;margin-top:8px;">
-                                        💡 이 발령 기간의 경력을 새 호봉 계산에 몇 %로 반영할지 설정합니다.
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> 이 발령 기간의 경력을 새 호봉 계산에 몇 %로 반영할지 설정합니다.
                                     </div>
                                 </div>
                             </div>
@@ -425,7 +425,7 @@ function loadEmployeeForAssignment() {
                     }
                 }
                 
-                // 목록 컨테이너에 삽입
+ // 목록 컨테이너에 삽입
                 const listContainer = document.getElementById('assignmentPriorCareerRatesList');
                 if (listContainer) {
                     listContainer.innerHTML = priorAssignmentsHTML;
@@ -462,32 +462,32 @@ async function saveAssignment() {
     try {
         로거_인사?.debug('인사발령 저장 시작');
         
-        // 입력값 수집
+ // 입력값 수집
         const formData = _collectAssignmentFormData();
         
-        // 기본 검증
+ // 기본 검증
         if (!formData.empId || !formData.assignmentDate || !formData.newDept || !formData.newPosition) {
             로거_인사?.warn('필수 항목 누락');
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('필수 항목을 입력하세요.');
             } else {
-                alert('⚠️ 필수 항목을 입력하세요.');
+                alert('[주의] 필수 항목을 입력하세요.');
             }
             return;
         }
         
-        // 직원 정보 조회
+ // 직원 정보 조회
         const emp = db.findEmployee(formData.empId);
         if (!emp) {
             로거_인사?.error('[saveAssignment] 직원을 찾을 수 없습니다', { empId: formData.empId });
             
-            console.error('❌ [saveAssignment] 직원을 찾을 수 없습니다:', formData.empId);
+            console.error(' [saveAssignment] 직원을 찾을 수 없습니다:', formData.empId);
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('[발령 등록] 직원을 찾을 수 없습니다.');
             } else {
-                alert('⚠️ [발령 등록] 직원을 찾을 수 없습니다.');
+                alert('[주의] [발령 등록] 직원을 찾을 수 없습니다.');
             }
             return;
         }
@@ -500,7 +500,7 @@ async function saveAssignment() {
             ? 직원유틸_인사.getEntryDate(emp)
             : emp.employment?.entryDate;
         
-        // ✅ v4.1.0: 발령 검증 - API 우선 사용
+ // v4.1.0: 발령 검증 - API 우선 사용
         let validation;
         if (typeof API_인사 !== 'undefined' && typeof API_인사.validateAssignment === 'function') {
             try {
@@ -522,7 +522,7 @@ async function saveAssignment() {
         if (!validation.valid) {
             로거_인사?.warn('발령일 검증 실패', { errors: validation.errors });
             
-            const errorMsg = '⚠️ 발령일 검증 실패:\n\n' +
+            const errorMsg = '[주의] 발령일 검증 실패:\n\n' +
                 validation.errors.join('\n') +
                 '\n\n입사일: ' + entryDate +
                 '\n발령일: ' + formData.assignmentDate;
@@ -535,39 +535,39 @@ async function saveAssignment() {
             return;
         }
         
-        // ✅ v4.1.0: 날짜 범위 검증 - 로컬 사용 (단순 체크)
+ // v4.1.0: 날짜 범위 검증 - 로컬 사용 (단순 체크)
         if (!Validator.isDateInValidRange(formData.assignmentDate)) {
             로거_인사?.warn('발령일이 유효 범위를 벗어남', { date: formData.assignmentDate });
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('발령일이 유효한 범위(1900~2100)를 벗어났습니다.');
             } else {
-                alert('⚠️ 발령일이 유효한 범위(1900~2100)를 벗어났습니다.');
+                alert('[주의] 발령일이 유효한 범위(1900~2100)를 벗어났습니다.');
             }
             return;
         }
         
-        // 부서/직위 검증
+ // 부서/직위 검증
         if (!Validator.isNotEmpty(formData.newDept)) {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('부서를 입력하세요.');
             } else {
-                alert('⚠️ 부서를 입력하세요.');
+                alert('[주의] 부서를 입력하세요.');
             }
             return;
         }
         
-        // 직위 검증
+ // 직위 검증
         if (!Validator.isNotEmpty(formData.newPosition)) {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('직위를 입력하세요.');
             } else {
-                alert('⚠️ 직위를 입력하세요.');
+                alert('[주의] 직위를 입력하세요.');
             }
             return;
         }
         
-        // ⭐ v3.0.5: 발령 기간 중복 검증 추가
+ // ⭐ v3.0.5: 발령 기간 중복 검증 추가
         const overlapValidation = _validateAssignmentDateOverlap(emp, formData.assignmentDate);
         if (!overlapValidation.valid) {
             로거_인사?.warn('발령 기간 중복', { date: formData.assignmentDate });
@@ -575,12 +575,12 @@ async function saveAssignment() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn(overlapValidation.message);
             } else {
-                alert('⚠️ ' + overlapValidation.message);
+                alert('[주의] ' + overlapValidation.message);
             }
             return;
         }
         
-        // 기존 활성 발령 종료
+ // 기존 활성 발령 종료
         if (emp.assignments && emp.assignments.length > 0) {
             const activeAssignments = emp.assignments.filter(a => a.status === 'active');
             activeAssignments.forEach(assign => {
@@ -592,7 +592,7 @@ async function saveAssignment() {
             로거_인사?.debug('기존 활성 발령 종료', { count: activeAssignments.length });
         }
         
-        // 새 발령 생성
+ // 새 발령 생성
         const assignmentNumber = (emp.assignments?.length || 0) + 1;
         const newAssignment = {
             id: `ASSIGN${Date.now()}`,
@@ -609,7 +609,7 @@ async function saveAssignment() {
             status: 'active'
         };
         
-        // ⭐ v3.3.2: 발령별 개별 인정율 저장
+ // ⭐ v3.3.2: 발령별 개별 인정율 저장
         if (formData.priorCareerRates && Object.keys(formData.priorCareerRates).length > 0) {
             newAssignment.priorCareerRates = formData.priorCareerRates;
             로거_인사?.debug('이전 경력 인정율 적용', { 
@@ -617,7 +617,7 @@ async function saveAssignment() {
             });
         }
         
-        // ⭐ v3.0.5: 배열 생성 시 로깅 추가 (패턴 4)
+ // ⭐ v3.0.5: 배열 생성 시 로깅 추가 (패턴 4)
         if (!emp.assignments) {
             로거_인사?.debug('assignments 배열 생성 (구버전 데이터)', { 
                 empId: emp.id,
@@ -627,7 +627,7 @@ async function saveAssignment() {
         }
         emp.assignments.push(newAssignment);
         
-        // 현재 직위 정보 업데이트
+ // 현재 직위 정보 업데이트
         emp.currentPosition = {
             dept: formData.newDept,
             position: formData.newPosition,
@@ -635,7 +635,7 @@ async function saveAssignment() {
             jobType: emp.currentPosition?.jobType || ''
         };
         
-        // ⭐ v3.1.1: 새 발령 등록 시 현재 급여방식도 동기화
+ // ⭐ v3.1.1: 새 발령 등록 시 현재 급여방식도 동기화
         if (!emp.rank) emp.rank = {};
         if (!emp.salaryInfo) emp.salaryInfo = {};
         
@@ -643,7 +643,7 @@ async function saveAssignment() {
         emp.salaryInfo.isRankBased = formData.isRankBased;
         emp.salaryInfo.paymentMethod = formData.paymentMethod;
         
-        // ⭐ v3.2.0: 고용형태 동기화
+ // ⭐ v3.2.0: 고용형태 동기화
         if (!emp.employment) emp.employment = {};
         if (formData.employmentType && emp.employment.type !== formData.employmentType) {
             로거_인사?.info('고용형태 변경', { 
@@ -659,7 +659,7 @@ async function saveAssignment() {
             isRankBased: formData.isRankBased
         });
         
-        // 저장
+ // 저장
         db.saveEmployee(emp);
         
         로거_인사?.info('인사발령 등록 완료', {
@@ -670,13 +670,13 @@ async function saveAssignment() {
             position: formData.newPosition
         });
         
-        // ⭐ v3.3.2: priorCareerRates가 있으면 재계산 여부 확인
+ // ⭐ v3.3.2: priorCareerRates가 있으면 재계산 여부 확인
         const hasPriorCareerRates = formData.priorCareerRates && Object.keys(formData.priorCareerRates).length > 0;
         
         if (hasPriorCareerRates) {
-            // 재계산 확인 모달 표시
+ // 재계산 확인 모달 표시
             _showRecalculateConfirmModal(emp.id, name, () => {
-                // 폼 초기화 및 목록 갱신
+ // 폼 초기화 및 목록 갱신
                 _resetAssignmentForm();
                 loadAssignmentHistory();
                 if (typeof loadEmployeeList === 'function') {
@@ -687,8 +687,8 @@ async function saveAssignment() {
                 }
             });
         } else {
-            // 성공 메시지
-            const successMsg = `✅ ${name} 님의 인사발령이 등록되었습니다.\n\n` +
+ // 성공 메시지
+            const successMsg = `${name} 님의 인사발령이 등록되었습니다.\n\n` +
                              `발령코드: ${newAssignment.code}\n` +
                              `발령일: ${formData.assignmentDate}\n` +
                              `부서: ${formData.newDept}\n` +
@@ -700,18 +700,18 @@ async function saveAssignment() {
                 alert(successMsg);
             }
             
-            // 폼 초기화
+ // 폼 초기화
             _resetAssignmentForm();
             
-            // 발령 이력 갱신
+ // 발령 이력 갱신
             loadAssignmentHistory();
             
-            // 직원 목록 갱신
+ // 직원 목록 갱신
             if (typeof loadEmployeeList === 'function') {
                 loadEmployeeList();
             }
             
-            // 대시보드 갱신
+ // 대시보드 갱신
             if (typeof updateDashboard === 'function') {
                 updateDashboard();
             }
@@ -745,7 +745,7 @@ function loadAssignmentHistory() {
         
         const employees = db.getEmployees();
         
-        // 모든 발령 수집
+ // 모든 발령 수집
         const allAssignments = [];
         
         employees.forEach(emp => {
@@ -764,25 +764,25 @@ function loadAssignmentHistory() {
             }
         });
         
-        // 최신순 정렬
+ // 최신순 정렬
         allAssignments.sort((a, b) => {
             return new Date(b.startDate) - new Date(a.startDate);
         });
         
         로거_인사?.debug('발령 이력 수집 완료', { count: allAssignments.length });
         
-        // ⭐ v3.3.3: 전역 변수에 저장 (필터링용)
+ // ⭐ v3.3.3: 전역 변수에 저장 (필터링용)
         window._allAssignmentHistory = allAssignments;
         
-        // ⭐ v3.3.3: 최근 20건만 표시
+ // ⭐ v3.3.3: 최근 20건만 표시
         const DISPLAY_LIMIT = 20;
         const totalCount = allAssignments.length;
         const displayAssignments = allAssignments.slice(0, DISPLAY_LIMIT);
         
-        // HTML 생성 (테이블 형식)
+ // HTML 생성 (테이블 형식)
         const html = _generateAssignmentHistoryTableHTML(displayAssignments);
         
-        // DOM 업데이트 - 테이블 tbody에 삽입
+ // DOM 업데이트 - 테이블 tbody에 삽입
         const tableBody = document.getElementById('assignmentHistoryTableBody');
         const emptyState = document.getElementById('assignmentHistoryEmpty');
         const moreInfo = document.getElementById('assignmentHistoryMore');
@@ -791,28 +791,28 @@ function loadAssignmentHistory() {
             tableBody.innerHTML = html;
         }
         
-        // 빈 상태 처리
+ // 빈 상태 처리
         if (emptyState) {
             emptyState.style.display = totalCount === 0 ? 'block' : 'none';
         }
         
-        // 더보기 안내
+ // 더보기 안내
         if (moreInfo) {
             if (totalCount > DISPLAY_LIMIT) {
                 moreInfo.style.display = 'block';
-                moreInfo.innerHTML = `📋 최근 ${DISPLAY_LIMIT}건 표시 중 (전체 ${totalCount}건)<br><small>개별 직원의 전체 발령 이력은 "직원 목록/수정"에서 확인하세요.</small>`;
+                moreInfo.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 최근 ${DISPLAY_LIMIT}건 표시 중 (전체 ${totalCount}건)<br><small>개별 직원의 전체 발령 이력은 "직원 목록/수정"에서 확인하세요.</small>`;
             } else {
                 moreInfo.style.display = 'none';
             }
         }
         
-        // 건수 표시 업데이트
+ // 건수 표시 업데이트
         const countElem = document.getElementById('assignmentHistoryCount');
         if (countElem) {
             countElem.textContent = `${totalCount}건`;
         }
         
-        // 탭 배지 업데이트
+ // 탭 배지 업데이트
         const badgeElem = document.getElementById('assignmentHistoryBadge');
         if (badgeElem) {
             badgeElem.textContent = totalCount;
@@ -845,7 +845,7 @@ function editAssignment(empId, assignmentId) {
     try {
         로거_인사?.debug('발령 수정 모달 표시', { empId, assignmentId });
         
-        // 직원 조회
+ // 직원 조회
         const emp = db.findEmployee(empId);
         if (!emp) {
             로거_인사?.warn('직원을 찾을 수 없습니다', { empId });
@@ -853,12 +853,12 @@ function editAssignment(empId, assignmentId) {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('직원을 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 직원을 찾을 수 없습니다.');
+                alert('[주의] 직원을 찾을 수 없습니다.');
             }
             return;
         }
         
-        // 발령 조회 - ⭐ v3.4.1: 타입 안전 비교 (숫자/문자열 호환)
+ // 발령 조회 - ⭐ v3.4.1: 타입 안전 비교 (숫자/문자열 호환)
         const assignment = emp.assignments?.find(a => String(a.id) === String(assignmentId));
         if (!assignment) {
             로거_인사?.warn('발령을 찾을 수 없습니다', { assignmentId, assignmentIdType: typeof assignmentId });
@@ -866,19 +866,19 @@ function editAssignment(empId, assignmentId) {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('발령을 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 발령을 찾을 수 없습니다.');
+                alert('[주의] 발령을 찾을 수 없습니다.');
             }
             return;
         }
         
-        // 전역 변수 설정
+ // 전역 변수 설정
         currentEmployeeIdForAssignment = empId;
         currentAssignmentId = assignmentId;
         
-        // 모달 HTML 생성
+ // 모달 HTML 생성
         const modalHTML = _generateEditAssignmentModalHTML(emp, assignment);
         
-        // 모달 표시
+ // 모달 표시
         const modal = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('editAssignmentModal')
             : document.getElementById('editAssignmentModal');
@@ -915,11 +915,11 @@ function closeEditAssignmentModal() {
     try {
         로거_인사?.debug('발령 수정 모달 닫기');
         
-        // 전역 변수 초기화
+ // 전역 변수 초기화
         currentEmployeeIdForAssignment = null;
         currentAssignmentId = null;
         
-        // 모달 닫기
+ // 모달 닫기
         const modal = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('editAssignmentModal')
             : document.getElementById('editAssignmentModal');
@@ -953,19 +953,19 @@ async function saveAssignmentEdit() {
             assignmentId: currentAssignmentId
         });
         
-        // ID 확인
+ // ID 확인
         if (!currentEmployeeIdForAssignment || !currentAssignmentId) {
             로거_인사?.warn('수정 중인 발령 정보가 없습니다');
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('발령 정보를 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 발령 정보를 찾을 수 없습니다.');
+                alert('[주의] 발령 정보를 찾을 수 없습니다.');
             }
             return;
         }
         
-        // 직원 조회
+ // 직원 조회
         const emp = db.findEmployee(currentEmployeeIdForAssignment);
         if (!emp) {
             로거_인사?.error('직원을 찾을 수 없습니다', { empId: currentEmployeeIdForAssignment });
@@ -973,12 +973,12 @@ async function saveAssignmentEdit() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('직원을 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 직원을 찾을 수 없습니다.');
+                alert('[주의] 직원을 찾을 수 없습니다.');
             }
             return;
         }
         
-        // 발령 조회 - ⭐ v3.4.1: 타입 안전 비교 (숫자/문자열 호환)
+ // 발령 조회 - ⭐ v3.4.1: 타입 안전 비교 (숫자/문자열 호환)
         const assignment = emp.assignments?.find(a => String(a.id) === String(currentAssignmentId));
         if (!assignment) {
             로거_인사?.error('발령을 찾을 수 없습니다', { assignmentId: currentAssignmentId });
@@ -986,24 +986,24 @@ async function saveAssignmentEdit() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('발령을 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 발령을 찾을 수 없습니다.');
+                alert('[주의] 발령을 찾을 수 없습니다.');
             }
             return;
         }
         
-        // 폼 데이터 수집
+ // 폼 데이터 수집
         const formData = _collectEditAssignmentFormData();
         
         로거_인사?.debug('폼 데이터 수집 완료', formData);
         
-        // 기본 검증
+ // 기본 검증
         if (!formData.newStartDate || !formData.newDept || !formData.newPosition) {
             로거_인사?.warn('필수 항목 누락');
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('필수 항목을 입력하세요.');
             } else {
-                alert('⚠️ 필수 항목을 입력하세요.');
+                alert('[주의] 필수 항목을 입력하세요.');
             }
             return;
         }
@@ -1016,7 +1016,7 @@ async function saveAssignmentEdit() {
             ? 직원유틸_인사.getEntryDate(emp)
             : emp.employment?.entryDate;
         
-        // ✅ v4.1.0: 발령 검증 - API 우선 사용
+ // v4.1.0: 발령 검증 - API 우선 사용
         let validation;
         if (typeof API_인사 !== 'undefined' && typeof API_인사.validateAssignment === 'function') {
             try {
@@ -1041,25 +1041,25 @@ async function saveAssignmentEdit() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.showValidationErrors(validation.errors);
             } else {
-                const errorMsg = '⚠️ 발령일 검증 실패:\n\n' + validation.errors.join('\n');
+                const errorMsg = '[주의] 발령일 검증 실패:\n\n' + validation.errors.join('\n');
                 alert(errorMsg);
             }
             return;
         }
         
-        // 날짜 범위 검증 (로컬)
+ // 날짜 범위 검증 (로컬)
         if (!Validator.isDateInValidRange(formData.newStartDate)) {
             로거_인사?.warn('발령일이 유효 범위를 벗어남', { date: formData.newStartDate });
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('발령일이 유효한 범위(1900~2100)를 벗어났습니다.');
             } else {
-                alert('⚠️ 발령일이 유효한 범위(1900~2100)를 벗어났습니다.');
+                alert('[주의] 발령일이 유효한 범위(1900~2100)를 벗어났습니다.');
             }
             return;
         }
         
-        // ⭐ v3.0.5: 발령 기간 중복 검증 추가 (수정 중인 발령 제외)
+ // ⭐ v3.0.5: 발령 기간 중복 검증 추가 (수정 중인 발령 제외)
         const overlapValidation = _validateAssignmentDateOverlap(
             emp, 
             formData.newStartDate, 
@@ -1071,26 +1071,26 @@ async function saveAssignmentEdit() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn(overlapValidation.message);
             } else {
-                alert('⚠️ ' + overlapValidation.message);
+                alert('[주의] ' + overlapValidation.message);
             }
             return;
         }
         
-        // 발령 정보 업데이트
+ // 발령 정보 업데이트
         assignment.startDate = formData.newStartDate;
         assignment.dept = formData.newDept;
         assignment.position = formData.newPosition;
         assignment.grade = formData.newGrade;
         assignment.workingHours = formData.workingHours;  // ⭐ v3.1.0: 주당근무시간
         
-        // ⭐ Phase 3-3: 급여방식 업데이트
+ // ⭐ Phase 3-3: 급여방식 업데이트
         const isRankBased = (formData.paymentMethod === '호봉제');
         assignment.paymentMethod = formData.paymentMethod;
         assignment.isRankBased = isRankBased;
         assignment.employmentType = formData.employmentType;  // ⭐ v3.2.0: 고용형태
         
-        // ⭐ v3.3.2: 발령별 개별 인정율 업데이트
-        // 기존 priorCareerRate/priorCareerRateNote는 제거하고 priorCareerRates 사용
+ // ⭐ v3.3.2: 발령별 개별 인정율 업데이트
+ // 기존 priorCareerRate/priorCareerRateNote는 제거하고 priorCareerRates 사용
         delete assignment.priorCareerRate;
         delete assignment.priorCareerRateNote;
         
@@ -1106,14 +1106,14 @@ async function saveAssignmentEdit() {
             priorCareerRates: formData.priorCareerRates
         });
         
-        // 활성 발령인 경우 현재 직위 정보도 업데이트
+ // 활성 발령인 경우 현재 직위 정보도 업데이트
         const isActiveAssignment = assignment.status === 'active';
         
-        // ⭐ [v3.5.0] 마지막 발령 여부 확인 (퇴사자 발령 수정 지원)
+ // ⭐ [v3.5.0] 마지막 발령 여부 확인 (퇴사자 발령 수정 지원)
         const isLastAssignment = _isLastAssignment(emp, assignment);
         
-        // ⭐ [v3.5.0] 활성 발령이거나 마지막 발령이면 currentPosition 업데이트
-        // - 퇴사자의 경우 활성 발령이 없으므로 마지막 발령 수정 시 반영 필요
+ // ⭐ [v3.5.0] 활성 발령이거나 마지막 발령이면 currentPosition 업데이트
+ // - 퇴사자의 경우 활성 발령이 없으므로 마지막 발령 수정 시 반영 필요
         if (isActiveAssignment || isLastAssignment) {
             emp.currentPosition = {
                 dept: formData.newDept,
@@ -1122,7 +1122,7 @@ async function saveAssignmentEdit() {
                 jobType: emp.currentPosition?.jobType || ''
             };
             
-            // ⭐ Phase 3-3: 활성 발령이면 현재 급여방식도 동기화
+ // ⭐ Phase 3-3: 활성 발령이면 현재 급여방식도 동기화
             if (!emp.rank) emp.rank = {};
             if (!emp.salaryInfo) emp.salaryInfo = {};
             
@@ -1132,7 +1132,7 @@ async function saveAssignmentEdit() {
             emp.rank.isRankBased = isRankBased;
             emp.salaryInfo.isRankBased = isRankBased;
             
-            // ⭐ v3.2.0: 고용형태 동기화
+ // ⭐ v3.2.0: 고용형태 동기화
             if (!emp.employment) emp.employment = {};
             if (formData.employmentType && emp.employment.type !== formData.employmentType) {
                 로거_인사?.info('고용형태 변경', { 
@@ -1143,16 +1143,16 @@ async function saveAssignmentEdit() {
                 emp.employment.type = formData.employmentType;
             }
             
-            // ⭐⭐⭐ Phase 3 추가: 연봉제 → 호봉제 전환 시 처리 (2025-11-11)
+ // ⭐⭐⭐ Phase 3 추가: 연봉제 → 호봉제 전환 시 처리 (2025-11-11)
             if (newPaymentMethod === '호봉제' && oldPaymentMethod === '연봉제') {
                 로거_인사?.info('급여방식 변경 감지: 연봉제 → 호봉제');
                 
-                // ⚠️ 임시: 데이터 오류 가능성 때문에 무조건 재계산
-                // TODO: 나중에 사용자 확인 메시지 추가
+ // ️ 임시: 데이터 오류 가능성 때문에 무조건 재계산
+ // TODO: 나중에 사용자 확인 메시지 추가
                 const hasValidRankInfo = false; // 강제로 재계산
                 
                 if (hasValidRankInfo) {
-                    // (현재는 실행되지 않음)
+ // (현재는 실행되지 않음)
                     로거_인사?.info('기존 호봉 정보 유효 - startRank, firstUpgradeDate 유지', {
                         empId: emp.id,
                         startRank: emp.rank.startRank,
@@ -1160,7 +1160,7 @@ async function saveAssignmentEdit() {
                     });
                     
                     try {
-                        // ✅ v4.0.0: API 우선 사용
+ // v4.0.0: API 우선 사용
                         const today = DateUtils.formatDate(new Date());
                         let currentRank, nextUpgradeDate;
                         
@@ -1200,31 +1200,31 @@ async function saveAssignmentEdit() {
                         로거_인사?.error('현재 호봉 재계산 오류', error);
                     }
                 } else {
-                    // ⭐ 무조건 처음부터 재계산 (데이터 오류 수정)
+ // ⭐ 무조건 처음부터 재계산 (데이터 오류 수정)
                     로거_인사?.info('호봉 처음부터 재계산 시작 (데이터 검증)');
                     
                     try {
-                        // ✅ v4.1.0: API 또는 로컬 계산기 사용
+ // v4.1.0: API 또는 로컬 계산기 사용
                         const hasAPI = typeof API_인사 !== 'undefined';
                         const hasLocalCalc = typeof RankCalculator !== 'undefined' && typeof TenureCalculator !== 'undefined';
                         
                         if (hasAPI || hasLocalCalc) {
-                            // 1. 과거 경력 계산 (입사 전 경력만!)
+ // 1. 과거 경력 계산 (입사 전 경력만!)
                             const entryDate = emp.employment?.entryDate || emp.entryDate;
                             const careers = emp.careers || emp.careerDetails || [];
                             
                             로거_인사?.debug('경력 데이터', { entryDate, careersCount: careers.length });
                             
-                            // 과거 경력 합산 (입사 전 경력만 사용)
+ // 과거 경력 합산 (입사 전 경력만 사용)
                             let totalYears = 0;
                             let totalMonths = 0;
                             let totalDays = 0;
                             
-                            // ✅ v4.1.0: forEach → for...of (async/await 지원)
+ // v4.1.0: forEach → for...of (async/await 지원)
                             for (let index = 0; index < careers.length; index++) {
                                 const career = careers[index];
                                 try {
-                                    // ✅ v4.1.0: 기간 계산 - API 우선 사용
+ // v4.1.0: 기간 계산 - API 우선 사용
                                     let period;
                                     if (hasAPI) {
                                         period = await API_인사.calculateTenure(
@@ -1238,13 +1238,13 @@ async function saveAssignmentEdit() {
                                         );
                                     }
                                     
-                                    // rate가 "100%" 형식의 문자열일 수 있음 → 숫자로 변환
+ // rate가 "100%" 형식의 문자열일 수 있음 → 숫자로 변환
                                     let rateValue = career.rate || 100;
                                     if (typeof rateValue === 'string') {
                                         rateValue = parseInt(rateValue.replace('%', '')) || 100;
                                     }
                                     
-                                    // ✅ v4.1.0: 인정률 적용 - API 우선 사용
+ // v4.1.0: 인정률 적용 - API 우선 사용
                                     let converted;
                                     if (hasAPI) {
                                         converted = await API_인사.applyConversionRate(period, rateValue);
@@ -1265,7 +1265,7 @@ async function saveAssignmentEdit() {
                                 }
                             }
                             
-                            // 정규화
+ // 정규화
                             if (totalDays >= 30) {
                                 totalMonths += Math.floor(totalDays / 30);
                                 totalDays = totalDays % 30;
@@ -1277,13 +1277,13 @@ async function saveAssignmentEdit() {
                             
                             로거_인사?.debug('과거 경력 합계', { totalYears, totalMonths, totalDays });
                             
-                            // 2. 호봉 계산
-                            // 입사호봉 = 1호봉 + 과거경력년수
+ // 2. 호봉 계산
+ // 입사호봉 = 1호봉 + 과거경력년수
                             const startRank = 1 + totalYears;
                             
                             로거_인사?.debug(`입사호봉 계산: 1 + ${totalYears} = ${startRank}호봉`);
                             
-                            // ✅ v4.0.0: 첫승급일 계산 - API 우선 사용
+ // v4.0.0: 첫승급일 계산 - API 우선 사용
                             let firstUpgradeDate;
                             if (typeof API_인사 !== 'undefined') {
                                 firstUpgradeDate = await API_인사.calculateFirstUpgradeDate(
@@ -1303,7 +1303,7 @@ async function saveAssignmentEdit() {
                             
                             로거_인사?.debug(`첫승급일 계산: ${firstUpgradeDate}`);
                             
-                            // ✅ v4.0.0: 현재 호봉 계산 - API 우선 사용
+ // v4.0.0: 현재 호봉 계산 - API 우선 사용
                             const today = DateUtils.formatDate(new Date());
                             let currentRank;
                             if (typeof API_인사 !== 'undefined') {
@@ -1322,7 +1322,7 @@ async function saveAssignmentEdit() {
                             
                             로거_인사?.debug(`현재 호봉 계산: ${currentRank}호봉`);
                             
-                            // ✅ v4.0.0: 차기승급일 계산 - API 우선 사용
+ // v4.0.0: 차기승급일 계산 - API 우선 사용
                             let nextUpgradeDate;
                             if (typeof API_인사 !== 'undefined') {
                                 nextUpgradeDate = await API_인사.calculateNextUpgradeDate(
@@ -1343,7 +1343,7 @@ async function saveAssignmentEdit() {
                                 nextUpgradeDate
                             });
                             
-                            // 3. rank 정보 업데이트
+ // 3. rank 정보 업데이트
                             emp.rank.startRank = startRank;
                             emp.rank.firstUpgradeDate = firstUpgradeDate;
                             emp.rank.currentRank = currentRank;
@@ -1360,7 +1360,7 @@ async function saveAssignmentEdit() {
                         }
                     } catch (error) {
                         로거_인사?.error('호봉 재계산 오류', error);
-                        // 에러가 발생해도 급여방식 변경은 계속 진행
+ // 에러가 발생해도 급여방식 변경은 계속 진행
                     }
                 }
             }
@@ -1372,7 +1372,7 @@ async function saveAssignmentEdit() {
             });
         }
         
-        // 저장
+ // 저장
         db.saveEmployee(emp);
         
         로거_인사?.info('발령 수정 완료', {
@@ -1383,34 +1383,34 @@ async function saveAssignmentEdit() {
             paymentMethod: formData.paymentMethod // ⭐ Phase 3-3
         });
         
-        // ⭐ v3.3.2: priorCareerRates가 있으면 재계산 여부 확인
+ // ⭐ v3.3.2: priorCareerRates가 있으면 재계산 여부 확인
         const hasPriorCareerRates = formData.priorCareerRates && Object.keys(formData.priorCareerRates).length > 0;
         
-        // ✅ ID 백업 (모달 닫기 전)
+ // ID 백업 (모달 닫기 전)
         const empIdToRefresh = currentEmployeeIdForAssignment;
         
         if (hasPriorCareerRates) {
-            // 모달 닫기 먼저
+ // 모달 닫기 먼저
             closeEditAssignmentModal();
             
-            // 재계산 확인 모달 표시
+ // 재계산 확인 모달 표시
             _showRecalculateConfirmModal(emp.id, name, () => {
-                // 직원 상세 모달 갱신
+ // 직원 상세 모달 갱신
                 if (typeof showEmployeeDetail === 'function') {
                     showEmployeeDetail(empIdToRefresh);
                 }
-                // 발령 이력 갱신
+ // 발령 이력 갱신
                 loadAssignmentHistory();
-                // ⭐ [v3.5.0] 직원 목록 갱신 (활성/종료 발령 모두)
+ // ⭐ [v3.5.0] 직원 목록 갱신 (활성/종료 발령 모두)
                 if (typeof loadEmployeeList === 'function') {
                     loadEmployeeList();
                 }
             });
         } else {
-            // ⭐ [v3.5.0] 성공 메시지 (활성 발령 또는 마지막 발령이면 직원 정보 변경 안내)
+ // ⭐ [v3.5.0] 성공 메시지 (활성 발령 또는 마지막 발령이면 직원 정보 변경 안내)
             const successMsg = (isActiveAssignment || isLastAssignment)
-                ? `✅ ${name} 님의 발령이 수정되었습니다.\n\n발령코드: ${assignment.code}\n발령일: ${formData.newStartDate}\n부서: ${formData.newDept}\n직위: ${formData.newPosition}\n급여방식: ${formData.paymentMethod}\n\n직원의 현재 직위 정보도 함께 변경되었습니다.`
-                : `✅ ${name} 님의 발령이 수정되었습니다.\n\n발령코드: ${assignment.code}\n발령일: ${formData.newStartDate}\n부서: ${formData.newDept}\n직위: ${formData.newPosition}\n급여방식: ${formData.paymentMethod}`;
+                ? `${name} 님의 발령이 수정되었습니다.\n\n발령코드: ${assignment.code}\n발령일: ${formData.newStartDate}\n부서: ${formData.newDept}\n직위: ${formData.newPosition}\n급여방식: ${formData.paymentMethod}\n\n직원의 현재 직위 정보도 함께 변경되었습니다.`
+                : `${name} 님의 발령이 수정되었습니다.\n\n발령코드: ${assignment.code}\n발령일: ${formData.newStartDate}\n부서: ${formData.newDept}\n직위: ${formData.newPosition}\n급여방식: ${formData.paymentMethod}`;
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.success(successMsg);
@@ -1418,21 +1418,21 @@ async function saveAssignmentEdit() {
                 alert(successMsg);
             }
             
-            // ✅ 직원 상세 모달 갱신
+ // 직원 상세 모달 갱신
             if (typeof showEmployeeDetail === 'function') {
                 showEmployeeDetail(empIdToRefresh);
             }
             
-            // 발령 이력 갱신
+ // 발령 이력 갱신
             loadAssignmentHistory();
             
-            // ⭐ [v3.5.0] 직원 목록 갱신 (활성/종료 발령 모두 - 퇴사자 목록 등 즉시 반영)
+ // ⭐ [v3.5.0] 직원 목록 갱신 (활성/종료 발령 모두 - 퇴사자 목록 등 즉시 반영)
             if (typeof loadEmployeeList === 'function') {
                 로거_인사?.debug('직원 목록 갱신 호출 (발령 수정)');
                 loadEmployeeList();
             }
             
-            // ✅ 마지막으로 모달 닫기
+ // 마지막으로 모달 닫기
             closeEditAssignmentModal();
         }
         
@@ -1463,7 +1463,7 @@ function deleteAssignment(empId, assignmentId) {
     try {
         로거_인사?.debug('발령 삭제 시도', { empId, assignmentId });
         
-        // 직원 조회
+ // 직원 조회
         const emp = db.findEmployee(empId);
         if (!emp) {
             로거_인사?.error('직원을 찾을 수 없습니다', { empId });
@@ -1471,12 +1471,12 @@ function deleteAssignment(empId, assignmentId) {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('직원을 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 직원을 찾을 수 없습니다.');
+                alert('[주의] 직원을 찾을 수 없습니다.');
             }
             return;
         }
         
-        // 발령 조회 - ⭐ v3.4.1: 타입 안전 비교 (숫자/문자열 호환)
+ // 발령 조회 - ⭐ v3.4.1: 타입 안전 비교 (숫자/문자열 호환)
         const assignmentIndex = emp.assignments?.findIndex(a => String(a.id) === String(assignmentId));
         
         if (assignmentIndex === undefined || assignmentIndex === -1) {
@@ -1485,7 +1485,7 @@ function deleteAssignment(empId, assignmentId) {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('발령을 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 발령을 찾을 수 없습니다.');
+                alert('[주의] 발령을 찾을 수 없습니다.');
             }
             return;
         }
@@ -1497,8 +1497,8 @@ function deleteAssignment(empId, assignmentId) {
             ? 직원유틸_인사.getName(emp)
             : (emp.personalInfo?.name || emp.name);
         
-        // 확인
-        const confirmMsg = `📋 발령 삭제\n\n` +
+ // 확인
+        const confirmMsg = `발령 삭제\n\n` +
                          `직원: ${name}\n` +
                          `발령일: ${assignment.startDate}\n` +
                          `부서: ${assignment.dept}\n` +
@@ -1515,7 +1515,7 @@ function deleteAssignment(empId, assignmentId) {
             return;
         }
         
-        // 발령 삭제
+ // 발령 삭제
         emp.assignments.splice(assignmentIndex, 1);
         
         로거_인사?.debug('발령 삭제 완료', { 
@@ -1524,10 +1524,10 @@ function deleteAssignment(empId, assignmentId) {
             wasActive: isActiveAssignment 
         });
         
-        // 활성 발령을 삭제한 경우 이전 발령 활성화 또는 입사 시 직위로 복원
+ // 활성 발령을 삭제한 경우 이전 발령 활성화 또는 입사 시 직위로 복원
         if (isActiveAssignment) {
             if (emp.assignments.length > 0) {
-                // 가장 최근 발령을 활성화
+ // 가장 최근 발령을 활성화
                 const sortedAssignments = [...emp.assignments].sort((a, b) => {
                     return new Date(b.startDate) - new Date(a.startDate);
                 });
@@ -1536,7 +1536,7 @@ function deleteAssignment(empId, assignmentId) {
                 latestAssignment.status = 'active';
                 latestAssignment.endDate = null;
                 
-                // 현재 직위 정보 업데이트
+ // 현재 직위 정보 업데이트
                 emp.currentPosition = {
                     dept: latestAssignment.dept,
                     position: latestAssignment.position,
@@ -1549,34 +1549,34 @@ function deleteAssignment(empId, assignmentId) {
                     startDate: latestAssignment.startDate 
                 });
             } else {
-                // 발령이 모두 삭제된 경우 입사 시 직위로 복원
-                // (직원 등록 시 입력한 정보가 있다면 그대로 유지)
+ // 발령이 모두 삭제된 경우 입사 시 직위로 복원
+ // (직원 등록 시 입력한 정보가 있다면 그대로 유지)
                 로거_인사?.debug('모든 발령 삭제됨, 입사 시 직위 유지');
             }
         }
         
-        // 저장
+ // 저장
         db.saveEmployee(emp);
         
         로거_인사?.info('발령 삭제 및 저장 완료', { empId, assignmentId });
         
-        // 성공 메시지
+ // 성공 메시지
         const successMsg = isActiveAssignment
-            ? '✅ 발령이 삭제되고 이전 발령으로 복원되었습니다.'
-            : '✅ 발령이 삭제되었습니다.';
+            ? '발령이 삭제되고 이전 발령으로 복원되었습니다.'
+            : '발령이 삭제되었습니다.';
         
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.success(successMsg);
         } else {
-            alert('✅ ' + successMsg);
+            alert('' + successMsg);
         }
         
-        // ✅ 직원 상세 모달 갱신
+ // 직원 상세 모달 갱신
         if (typeof showEmployeeDetail === 'function') {
             showEmployeeDetail(empId);
         }
         
-        // ✅ 직원 목록도 갱신 (활성 발령 삭제 시 부서/직위 변경됨)
+ // 직원 목록도 갱신 (활성 발령 삭제 시 부서/직위 변경됨)
         if (isActiveAssignment && typeof loadEmployeeList === 'function') {
             로거_인사?.debug('직원 목록 갱신 호출');
             loadEmployeeList();
@@ -1610,14 +1610,14 @@ function _collectAssignmentFormData() {
         return elem ? (elem.value || '').trim() : '';
     };
     
-    // ⭐ v3.1.0: 주당근무시간 (기본값 40)
+ // ⭐ v3.1.0: 주당근무시간 (기본값 40)
     let workingHours = parseInt(getValue('assignmentWorkingHours')) || 40;
     
-    // 최대 40시간, 최소 1시간 제한
+ // 최대 40시간, 최소 1시간 제한
     if (workingHours > 40) workingHours = 40;
     if (workingHours < 1) workingHours = 1;
     
-    // ⭐ v3.1.1: 급여방식 수집 추가
+ // ⭐ v3.1.1: 급여방식 수집 추가
     const getPaymentMethod = () => {
         const radioButtons = document.getElementsByName('assignmentPaymentMethod');
         for (let radio of radioButtons) {
@@ -1630,15 +1630,15 @@ function _collectAssignmentFormData() {
     
     const paymentMethod = getPaymentMethod();
     
-    // ⭐ v3.2.0: 고용형태 수집
+ // ⭐ v3.2.0: 고용형태 수집
     const employmentType = getValue('assignmentEmploymentType') || '정규직';
     
-    // ⭐ v3.3.2: 발령별 개별 인정율 수집
+ // ⭐ v3.3.2: 발령별 개별 인정율 수집
     const priorCareerRates = {};
     const listContainer = document.getElementById('assignmentPriorCareerRatesList');
     
     if (listContainer) {
-        // 체크박스들 찾기
+ // 체크박스들 찾기
         const checkboxes = listContainer.querySelectorAll('input[type="checkbox"][id^="newAssignPriorRateEnabled_"]');
         
         checkboxes.forEach(checkbox => {
@@ -1702,13 +1702,13 @@ function _resetAssignmentForm() {
     setValue('assignmentPosition', '');
     setValue('assignmentGrade', '');
     
-    // ⭐ v3.3.2: 발령별 개별 인정율 초기화
+ // ⭐ v3.3.2: 발령별 개별 인정율 초기화
     const priorCareerRatesList = document.getElementById('assignmentPriorCareerRatesList');
     if (priorCareerRatesList) {
         priorCareerRatesList.innerHTML = '';
     }
     
-    // 인정율 섹션 숨기기
+ // 인정율 섹션 숨기기
     const priorCareerRateSection = document.getElementById('assignmentPriorCareerRateSection');
     if (priorCareerRateSection) {
         priorCareerRateSection.style.display = 'none';
@@ -1731,7 +1731,7 @@ function _resetAssignmentForm() {
 function _isLastAssignment(emp, assignment) {
     if (!emp.assignments || emp.assignments.length === 0) return false;
     
-    // 시작일 기준 내림차순 정렬하여 가장 최근 발령 찾기
+ // 시작일 기준 내림차순 정렬하여 가장 최근 발령 찾기
     const sortedAssignments = [...emp.assignments].sort((a, b) => {
         const dateA = a.startDate || '';
         const dateB = b.startDate || '';
@@ -1760,7 +1760,7 @@ function _isLastAssignment(emp, assignment) {
  * @example
  * const result = _validateAssignmentDateOverlap(emp, '2024-01-01');
  * if (!result.valid) {
- *     alert(result.message);
+ * alert(result.message);
  * }
  */
 function _validateAssignmentDateOverlap(emp, newStartDate, currentAssignmentId = null) {
@@ -1771,33 +1771,33 @@ function _validateAssignmentDateOverlap(emp, newStartDate, currentAssignmentId =
             currentAssignmentId 
         });
         
-        // assignments 배열 확인
+ // assignments 배열 확인
         if (!emp.assignments || emp.assignments.length === 0) {
             로거_인사?.debug('기존 발령 없음, 검증 통과');
             return { valid: true, message: '' };
         }
         
-        // 중복 확인
+ // 중복 확인
         let overlappingAssignment = null;
         
         for (const assign of emp.assignments) {
-            // 수정 중인 발령은 제외
+ // 수정 중인 발령은 제외
             if (currentAssignmentId && assign.id === currentAssignmentId) {
                 continue;
             }
             
-            // 활성 발령은 자동 종료되므로 제외
+ // 활성 발령은 자동 종료되므로 제외
             if (assign.status === 'active') {
                 continue;
             }
             
-            // 종료일이 없으면 스킵 (방어 코드)
+ // 종료일이 없으면 스킵 (방어 코드)
             if (!assign.endDate) {
                 continue;
             }
             
-            // 날짜 겹침 확인: 새 시작일이 기존 종료일 이전이면 겹침
-            // (새시작 <= 기존끝)
+ // 날짜 겹침 확인: 새 시작일이 기존 종료일 이전이면 겹침
+ // (새시작 <= 기존끝)
             if (new Date(newStartDate) <= new Date(assign.endDate)) {
                 overlappingAssignment = assign;
                 break;
@@ -1805,7 +1805,7 @@ function _validateAssignmentDateOverlap(emp, newStartDate, currentAssignmentId =
         }
         
         if (overlappingAssignment) {
-            const message = `⚠️ 발령 기간 중복\n\n` +
+            const message = `[주의] 발령 기간 중복\n\n` +
                           `이미 등록된 발령 기간과 겹칩니다.\n\n` +
                           `기존 발령:\n` +
                           `• 기간: ${overlappingAssignment.startDate} ~ ${overlappingAssignment.endDate}\n` +
@@ -1827,7 +1827,7 @@ function _validateAssignmentDateOverlap(emp, newStartDate, currentAssignmentId =
         
     } catch (error) {
         로거_인사?.error('발령 기간 중복 검증 오류', error);
-        // 검증 실패 시 안전을 위해 통과 처리
+ // 검증 실패 시 안전을 위해 통과 처리
         return { valid: true, message: '' };
     }
 }
@@ -1840,12 +1840,12 @@ function _validateAssignmentDateOverlap(emp, newStartDate, currentAssignmentId =
  * @returns {string} HTML 문자열
  */
 function _generateAssignmentHistoryHTML(assignments) {
-    // 이 함수는 하위 호환성을 위해 유지 (다른 곳에서 사용할 수 있음)
+ // 이 함수는 하위 호환성을 위해 유지 (다른 곳에서 사용할 수 있음)
     if (assignments.length === 0) {
         return '<div class="empty-state"><p>인사발령 내역이 없습니다</p></div>';
     }
     
-    // ✅ XSS 방지
+ // XSS 방지
     const escapeHtml = (text) => {
         if (typeof DOM유틸_인사 !== 'undefined') {
             return DOM유틸_인사.escapeHtml(text || '-');
@@ -1911,7 +1911,7 @@ function _generateAssignmentHistoryTableHTML(assignments) {
         return '';
     }
     
-    // ✅ XSS 방지
+ // XSS 방지
     const escapeHtml = (text) => {
         if (typeof DOM유틸_인사 !== 'undefined') {
             return DOM유틸_인사.escapeHtml(text || '-');
@@ -1931,7 +1931,7 @@ function _generateAssignmentHistoryTableHTML(assignments) {
         const safeDept = escapeHtml(assign.dept);
         const safePosition = escapeHtml(assign.position);
         
-        // ⭐ status 명시적 확인 (undefined 방지)
+ // ⭐ status 명시적 확인 (undefined 방지)
         const isActive = assign.status === 'active';
         const statusValue = isActive ? 'active' : 'completed';
         
@@ -1939,7 +1939,7 @@ function _generateAssignmentHistoryTableHTML(assignments) {
             ? '<span style="display:inline-block;background:#dcfce7;color:#166534;padding:4px 10px;border-radius:12px;font-size:0.8em;font-weight:500;">현재</span>' 
             : '<span style="display:inline-block;background:#f3f4f6;color:#6b7280;padding:4px 10px;border-radius:12px;font-size:0.8em;font-weight:500;">종료</span>';
         
-        // 짝수/홀수 행 배경색
+ // 짝수/홀수 행 배경색
         const rowBg = index % 2 === 0 ? 'background:#ffffff;' : 'background:#f9fafb;';
         
         return `
@@ -1970,20 +1970,20 @@ function _generateAssignmentHistoryTableHTML(assignments) {
 function switchAssignmentTab(tabName) {
     로거_인사?.debug('인사발령 탭 전환', { tabName });
     
-    // 탭 버튼
+ // 탭 버튼
     const registerTab = document.getElementById('assignmentTabRegister');
     const historyTab = document.getElementById('assignmentTabHistory');
     
-    // 탭 컨텐츠
+ // 탭 컨텐츠
     const registerContent = document.getElementById('assignmentTabContentRegister');
     const historyContent = document.getElementById('assignmentTabContentHistory');
     
     if (tabName === 'register') {
-        // 등록 탭 활성화 (언더라인 스타일)
+ // 등록 탭 활성화 (언더라인 스타일)
         if (registerTab) {
-            registerTab.style.color = '#667eea';
+            registerTab.style.color = '#4f46e5';
             registerTab.style.fontWeight = '600';
-            registerTab.style.borderBottom = '2px solid #667eea';
+            registerTab.style.borderBottom = '2px solid #4f46e5';
         }
         if (historyTab) {
             historyTab.style.color = '#6b7280';
@@ -1993,21 +1993,21 @@ function switchAssignmentTab(tabName) {
         if (registerContent) registerContent.style.display = 'block';
         if (historyContent) historyContent.style.display = 'none';
     } else if (tabName === 'history') {
-        // 내역 탭 활성화 (언더라인 스타일)
+ // 내역 탭 활성화 (언더라인 스타일)
         if (registerTab) {
             registerTab.style.color = '#6b7280';
             registerTab.style.fontWeight = '500';
             registerTab.style.borderBottom = '2px solid transparent';
         }
         if (historyTab) {
-            historyTab.style.color = '#667eea';
+            historyTab.style.color = '#4f46e5';
             historyTab.style.fontWeight = '600';
-            historyTab.style.borderBottom = '2px solid #667eea';
+            historyTab.style.borderBottom = '2px solid #4f46e5';
         }
         if (registerContent) registerContent.style.display = 'none';
         if (historyContent) historyContent.style.display = 'block';
         
-        // 내역 탭 진입 시 데이터 새로고침
+ // 내역 탭 진입 시 데이터 새로고침
         loadAssignmentHistory();
     }
 }
@@ -2033,12 +2033,12 @@ function filterAssignmentHistory() {
         const dept = (row.dataset.dept || '').toLowerCase();
         const status = row.dataset.status || '';
         
-        // 검색 조건
+ // 검색 조건
         const matchesSearch = searchText === '' || 
             empName.includes(searchText) || 
             dept.includes(searchText);
         
-        // 필터 조건
+ // 필터 조건
         let matchesFilter = true;
         if (filterValue === 'active') {
             matchesFilter = status === 'active';
@@ -2046,7 +2046,7 @@ function filterAssignmentHistory() {
             matchesFilter = status === 'completed';
         }
         
-        // 표시/숨김
+ // 표시/숨김
         if (matchesSearch && matchesFilter) {
             row.style.display = '';
             visibleCount++;
@@ -2055,7 +2055,7 @@ function filterAssignmentHistory() {
         }
     });
     
-    // 건수 업데이트
+ // 건수 업데이트
     const countElem = document.getElementById('assignmentHistoryCount');
     if (countElem) {
         const totalCount = window._allAssignmentHistory?.length || 0;
@@ -2066,7 +2066,7 @@ function filterAssignmentHistory() {
         }
     }
     
-    // 빈 상태 처리
+ // 빈 상태 처리
     const emptyState = document.getElementById('assignmentHistoryEmpty');
     if (emptyState) {
         emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
@@ -2084,7 +2084,7 @@ function filterAssignmentHistory() {
 function _generateEditAssignmentModalHTML(emp, assignment) {
 
 
-    // ✅ XSS 방지
+ // XSS 방지
     const escapeHtml = (text) => {
         if (typeof DOM유틸_인사 !== 'undefined') {
             return DOM유틸_인사.escapeHtml(text || '');
@@ -2104,35 +2104,35 @@ function _generateEditAssignmentModalHTML(emp, assignment) {
     const safePosition = escapeHtml(assignment.position);
     const safeGrade = escapeHtml(assignment.grade);
     
-    // ⭐ Phase 3-3: 급여방식 초기값 설정
+ // ⭐ Phase 3-3: 급여방식 초기값 설정
     const currentPaymentMethod = assignment.paymentMethod || '호봉제'; // 기본값: 호봉제
     const isRankChecked = currentPaymentMethod === '호봉제' ? 'checked' : '';
     const isSalaryChecked = currentPaymentMethod === '연봉제' ? 'checked' : '';
     
-    // ⭐ v3.1.0: 주당근무시간 (기존 데이터 없으면 40시간)
+ // ⭐ v3.1.0: 주당근무시간 (기존 데이터 없으면 40시간)
     const workingHours = assignment.workingHours ?? 40;
     
-    // ⭐ v3.2.0: 월소정근로시간 계산
+ // ⭐ v3.2.0: 월소정근로시간 계산
     const monthlyHours = calculateMonthlyWorkingHoursForAssignment(workingHours);
     
-    // ⭐ v3.2.0: 고용형태
+ // ⭐ v3.2.0: 고용형태
     const currentEmploymentType = assignment.employmentType || emp.employment?.type || '정규직';
     
-    // ⭐ v3.3.1: 첫 번째 발령(입사)인지 확인
+ // ⭐ v3.3.1: 첫 번째 발령(입사)인지 확인
     const sortedAssignments = [...(emp.assignments || [])].sort((a, b) => 
         new Date(a.startDate) - new Date(b.startDate)
     );
-    // ⭐ v3.4.1: 타입 안전 비교 (숫자/문자열 호환)
+ // ⭐ v3.4.1: 타입 안전 비교 (숫자/문자열 호환)
     const isEntryAssignment = sortedAssignments.length > 0 && String(sortedAssignments[0].id) === String(assignment.id);
     
-    // ⭐ v3.3.2: 이전 모든 발령에 대한 인정율 UI 생성
+ // ⭐ v3.3.2: 이전 모든 발령에 대한 인정율 UI 생성
     let priorAssignmentsHTML = '';
     if (!isEntryAssignment) {
-        // ⭐ v3.4.1: 타입 안전 비교 (숫자/문자열 호환)
+ // ⭐ v3.4.1: 타입 안전 비교 (숫자/문자열 호환)
         const currentIndex = sortedAssignments.findIndex(a => String(a.id) === String(assignment.id));
         const priorCareerRates = assignment.priorCareerRates || {};
         
-        // 하위 호환: 기존 priorCareerRate가 있고 priorCareerRates가 없으면 직전 발령에 적용
+ // 하위 호환: 기존 priorCareerRate가 있고 priorCareerRates가 없으면 직전 발령에 적용
         const legacyRate = assignment.priorCareerRate;
         const legacyNote = assignment.priorCareerRateNote || '';
         
@@ -2141,10 +2141,10 @@ function _generateEditAssignmentModalHTML(emp, assignment) {
             const nextAssign = sortedAssignments[i + 1];
             const prevEndDate = nextAssign ? DateUtils.addDays(nextAssign.startDate, -1) : assignment.startDate ? DateUtils.addDays(assignment.startDate, -1) : '-';
             
-            // 이 발령에 대한 인정율 정보
+ // 이 발령에 대한 인정율 정보
             let rateInfo = priorCareerRates[prevAssign.id];
             
-            // 하위 호환: 직전 발령이고 기존 priorCareerRate가 있으면 사용
+ // 하위 호환: 직전 발령이고 기존 priorCareerRate가 있으면 사용
             if (!rateInfo && i === currentIndex - 1 && legacyRate !== null && legacyRate !== undefined) {
                 rateInfo = { rate: legacyRate, note: legacyNote };
             }
@@ -2195,11 +2195,11 @@ function _generateEditAssignmentModalHTML(emp, assignment) {
     return `
         <div class="modal-content" style="max-width:600px;">
             <div class="modal-header">
-                <div class="modal-title">📋 인사발령 수정</div>
+                <div class="modal-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 인사발령 수정</div>
                 <button class="modal-close" onclick="closeEditAssignmentModal()">×</button>
             </div>
             <div class="alert alert-info">
-                <span>💡</span>
+                <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
                 <span>발령일은 입사일(${entryDate}) 이후여야 합니다.</span>
             </div>
             <div class="form-group">
@@ -2243,7 +2243,7 @@ function _generateEditAssignmentModalHTML(emp, assignment) {
                         </label>
                     </div>
                     <small style="color: #666; display: block; margin-top: 4px;">
-                        💡 이 발령의 급여 방식을 수정합니다.
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> 이 발령의 급여 방식을 수정합니다.
                     </small>
                 </div>
                 <div class="form-group" style="flex:1;">
@@ -2259,13 +2259,13 @@ function _generateEditAssignmentModalHTML(emp, assignment) {
             ${isEntryAssignment ? `
             <!-- 입사 발령: 이전 경력 인정율 해당 없음 -->
             <div style="margin-top:16px;padding:12px 16px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;color:#6b7280;font-size:0.9em;">
-                <span>📌 입사 발령 - 이전 경력 인정율 해당 없음</span>
+                <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 입사 발령 - 이전 경력 인정율 해당 없음</span>
             </div>
             ` : `
             <!-- ⭐ v3.3.2: 이전 발령별 개별 인정율 설정 -->
             <div class="form-group" style="margin-top:16px;padding:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
                 <div style="font-weight:600;margin-bottom:12px;">
-                    📊 이전 경력 인정율 재산정
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 이전 경력 인정율 재산정
                 </div>
                 <p style="font-size:0.85em;color:#64748b;margin-bottom:12px;">
                     이전 발령 중 인정율을 적용할 항목을 선택하세요. 체크된 발령의 경력에 해당 인정율이 적용됩니다.
@@ -2277,7 +2277,7 @@ function _generateEditAssignmentModalHTML(emp, assignment) {
             `}
             
             <div style="display:flex;gap:10px;margin-top:20px;">
-                <button class="btn btn-primary" style="flex:1;" onclick="saveAssignmentEdit()">💾 저장</button>
+                <button class="btn btn-primary" style="flex:1;" onclick="saveAssignmentEdit()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> 저장</button>
                 <button class="btn btn-secondary" onclick="closeEditAssignmentModal()">취소</button>
             </div>
         </div>
@@ -2295,21 +2295,21 @@ function _generateEditAssignmentModalHTML(emp, assignment) {
  */
 function _collectEditAssignmentFormData() {
 
-    // ✅ DOM유틸을 사용하지 않고 직접 읽기 (캐시 방지)
+ // DOM유틸을 사용하지 않고 직접 읽기 (캐시 방지)
     const startDateInput = document.getElementById('editAssignStartDate');
     const deptInput = document.getElementById('editAssignDept');
     const positionInput = document.getElementById('editAssignPosition');
     const gradeInput = document.getElementById('editAssignGrade');
     
-    // ⭐ v3.1.0: 주당근무시간
+ // ⭐ v3.1.0: 주당근무시간
     const workingHoursInput = document.getElementById('editAssignWorkingHours');
     let workingHours = parseInt(workingHoursInput?.value) || 40;
     
-    // 최대 40시간, 최소 1시간 제한
+ // 최대 40시간, 최소 1시간 제한
     if (workingHours > 40) workingHours = 40;
     if (workingHours < 1) workingHours = 1;
     
-    // ⭐ Phase 3-3: 급여방식 수집
+ // ⭐ Phase 3-3: 급여방식 수집
     const getPaymentMethod = () => {
         const radioButtons = document.getElementsByName('editAssignmentPaymentMethod');
         for (let radio of radioButtons) {
@@ -2320,16 +2320,16 @@ function _collectEditAssignmentFormData() {
         return '호봉제'; // 기본값
     };
     
-    // ⭐ v3.2.0: 고용형태 수집
+ // ⭐ v3.2.0: 고용형태 수집
     const employmentTypeInput = document.getElementById('editAssignEmploymentType');
     const employmentType = employmentTypeInput?.value || '정규직';
     
-    // ⭐ v3.3.2: 발령별 개별 인정율 수집
+ // ⭐ v3.3.2: 발령별 개별 인정율 수집
     const priorCareerRates = {};
     const listContainer = document.getElementById('editPriorCareerRatesList');
     
     if (listContainer) {
-        // 체크박스들 찾기
+ // 체크박스들 찾기
         const checkboxes = listContainer.querySelectorAll('input[type="checkbox"][id^="editPriorRateEnabled_"]');
         
         checkboxes.forEach(checkbox => {
@@ -2369,7 +2369,7 @@ function _collectEditAssignmentFormData() {
 }
 
 /**
- * 📊 리팩토링 통계
+ * 리팩토링 통계
  * 
  * v3.0.5 (2025-11-06):
  * - 발령 기간 중복 검증 로직 추가
@@ -2380,20 +2380,20 @@ function _collectEditAssignmentFormData() {
  * Before (v3.0):
  * - 총 줄 수: 1,149줄
  * - 함수 개수: 14개 (8 public + 6 private)
- * - 중복 검증: 없음 ❌
+ * - 중복 검증: 없음 
  * 
  * After (v3.0.5):
  * - 총 줄 수: 약 1,250줄 (주석 포함)
  * - 함수 개수: 15개 (8 public + 7 private)
- * - 중복 검증: 완벽 ✅
- * - 객체 안전성: 완벽 ✅
+ * - 중복 검증: 완벽 
+ * - 객체 안전성: 완벽 
  * 
  * 개선 효과:
- * ✅ 발령 기간 중복 방지 (데이터 무결성)
- * ✅ 구버전 데이터 안전 처리 (로깅)
- * ✅ 육아휴직 패턴 일관성 유지
- * ✅ 하위 호환성 100% 유지
- * ✅ 기존 동작 완벽 보존
+ * 발령 기간 중복 방지 (데이터 무결성)
+ * 구버전 데이터 안전 처리 (로깅)
+ * 육아휴직 패턴 일관성 유지
+ * 하위 호환성 100% 유지
+ * 기존 동작 완벽 보존
  * 
  * 핵심 개선 사항:
  * 1. 발령 기간 중복 검증 로직 추가 (v1.8 패턴 5)
@@ -2505,24 +2505,24 @@ function _initPaymentMethodSegment() {
         if (rankRadio?.checked) {
             rankLabel.style.background = 'white';
             rankLabel.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-            rankLabel.querySelector('span').style.color = '#667eea';
+            rankLabel.querySelector('span').style.color = '#4f46e5';
             salaryLabel.style.background = 'transparent';
             salaryLabel.style.boxShadow = 'none';
             salaryLabel.querySelector('span').style.color = '#6b7280';
         } else if (salaryRadio?.checked) {
             salaryLabel.style.background = 'white';
             salaryLabel.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-            salaryLabel.querySelector('span').style.color = '#667eea';
+            salaryLabel.querySelector('span').style.color = '#4f46e5';
             rankLabel.style.background = 'transparent';
             rankLabel.style.boxShadow = 'none';
             rankLabel.querySelector('span').style.color = '#6b7280';
         }
     };
     
-    // 초기 스타일 적용
+ // 초기 스타일 적용
     updateSegmentStyle();
     
-    // 이벤트 리스너 추가
+ // 이벤트 리스너 추가
     rankLabel.addEventListener('click', updateSegmentStyle);
     salaryLabel.addEventListener('click', updateSegmentStyle);
     
@@ -2541,31 +2541,31 @@ function _initPaymentMethodSegment() {
  */
 function _injectPriorCareerRateUI() {
     try {
-        // 이미 추가되어 있으면 스킵
+ // 이미 추가되어 있으면 스킵
         if (document.getElementById('assignmentPriorCareerRateSection')) {
             로거_인사?.debug('이전 경력 인정율 UI 이미 존재');
             return;
         }
         
-        // 주당근무시간 필드의 부모 요소를 찾음
+ // 주당근무시간 필드의 부모 요소를 찾음
         const workingHoursField = document.getElementById('assignmentWorkingHours');
         if (!workingHoursField) {
             로거_인사?.warn('주당근무시간 필드를 찾을 수 없어 이전 경력 인정율 UI 추가 스킵');
             return;
         }
         
-        // 발령 등록 버튼 찾기
+ // 발령 등록 버튼 찾기
         const saveButton = document.querySelector('#module-assignment button[onclick="saveAssignment()"]');
         if (!saveButton) {
             로거_인사?.warn('발령 등록 버튼을 찾을 수 없어 이전 경력 인정율 UI 추가 스킵');
             return;
         }
         
-        // ⭐ v3.3.3: 발령별 개별 인정율 UI HTML 생성 (사용자 친화적 설명 포함)
+ // ⭐ v3.3.3: 발령별 개별 인정율 UI HTML 생성 (사용자 친화적 설명 포함)
         const priorCareerRateHTML = `
             <div id="assignmentPriorCareerRateSection" class="card" style="margin-bottom:16px;display:none;border:2px solid #fbbf24;background:linear-gradient(to bottom, #fffbeb, #ffffff);">
                 <div class="card-title" style="display:flex;align-items:center;gap:8px;">
-                    <span style="background:#fef3c7;color:#b45309;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85em;font-weight:700;">⚡</span>
+                    <span style="background:#fef3c7;color:#b45309;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85em;font-weight:700;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
                     <span>이전 발령 경력 인정율 설정</span>
                     <span style="background:#fef3c7;color:#b45309;font-size:0.75em;padding:2px 8px;border-radius:10px;font-weight:600;">선택</span>
                 </div>
@@ -2573,7 +2573,7 @@ function _injectPriorCareerRateUI() {
                 <!-- 이 기능에 대한 친절한 설명 -->
                 <div style="background:#fef3c7;border-radius:8px;padding:16px;margin-bottom:16px;">
                     <div style="font-weight:700;color:#92400e;margin-bottom:8px;font-size:0.95em;">
-                        🤔 이 기능은 언제 사용하나요?
+                        이 기능은 언제 사용하나요?
                     </div>
                     <p style="color:#78350f;font-size:0.9em;margin:0 0 12px 0;line-height:1.6;">
                         인사발령 시 이전 발령 기간의 경력을 새 호봉 계산에 <strong>몇 %로 반영할지</strong> 설정합니다.
@@ -2581,7 +2581,7 @@ function _injectPriorCareerRateUI() {
                     </p>
                     
                     <div style="background:white;border-radius:6px;padding:12px;border:1px solid #fcd34d;">
-                        <div style="font-weight:600;color:#92400e;margin-bottom:8px;font-size:0.85em;">💡 인정율 기준 (보건복지부 가이드라인 참고)</div>
+                        <div style="font-weight:600;color:#92400e;margin-bottom:8px;font-size:0.85em;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> 인정율 기준 (보건복지부 가이드라인 참고)</div>
                         <ul style="margin:0;padding-left:20px;font-size:0.85em;color:#78350f;line-height:1.8;">
                             <li><strong>동일 직종 유지</strong> (사회복지사 → 사회복지사): <strong>100%</strong> 인정</li>
                             <li><strong>유사 직종/직무</strong> (동종 자격 업무 수행): <strong>80%</strong> 인정</li>
@@ -2596,7 +2596,7 @@ function _injectPriorCareerRateUI() {
                 
                 <!-- 이전 발령 목록 -->
                 <div style="font-weight:600;color:#374151;margin-bottom:8px;font-size:0.9em;">
-                    📋 인정율을 조정할 이전 발령을 선택하세요
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 인정율을 조정할 이전 발령을 선택하세요
                 </div>
                 <div id="assignmentPriorCareerRatesList" style="max-height:250px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:8px;background:white;">
                     <!-- 직원 선택 시 동적으로 채워짐 -->
@@ -2604,12 +2604,12 @@ function _injectPriorCareerRateUI() {
                 
                 <!-- 안내 메시지 -->
                 <div style="margin-top:12px;padding:10px;background:#f0fdf4;border:1px solid #86efac;border-radius:6px;font-size:0.85em;color:#166534;">
-                    <strong>✅ 설정 후:</strong> 발령 등록 완료 시 호봉 재계산 여부를 확인합니다.
+                    <strong>설정 후:</strong> 발령 등록 완료 시 호봉 재계산 여부를 확인합니다.
                 </div>
             </div>
         `;
         
-        // 버튼 바로 앞에 삽입
+ // 버튼 바로 앞에 삽입
         saveButton.insertAdjacentHTML('beforebegin', priorCareerRateHTML);
         
         로거_인사?.info('이전 경력 인정율 UI 동적 추가 완료 (v3.3.3)');
@@ -2733,24 +2733,24 @@ function _showRecalculateConfirmModal(empId, empName, afterCallback) {
     try {
         로거_인사?.debug('호봉 재계산 확인 모달 표시', { empId, empName });
         
-        // 기존 모달 제거
+ // 기존 모달 제거
         const existingModal = document.getElementById('recalculateConfirmModal');
         if (existingModal) {
             existingModal.remove();
         }
         
-        // 모달 HTML 생성
+ // 모달 HTML 생성
         const modalHTML = `
             <div id="recalculateConfirmModal" class="modal" style="display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;justify-content:center;align-items:center;">
                 <div class="modal-content" style="background:white;border-radius:12px;padding:24px;max-width:450px;width:90%;box-shadow:0 4px 20px rgba(0,0,0,0.15);">
                     <div style="text-align:center;margin-bottom:20px;">
-                        <div style="font-size:48px;margin-bottom:12px;">✅</div>
+                        <div style="font-size:48px;margin-bottom:12px;">완료</div>
                         <h3 style="margin:0;font-size:1.2em;color:#1f2937;">발령이 저장되었습니다</h3>
                     </div>
                     
                     <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:16px;margin-bottom:20px;">
                         <p style="margin:0 0 12px 0;font-weight:600;color:#166534;">
-                            📊 이전 경력 인정율이 설정되었습니다.
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 이전 경력 인정율이 설정되었습니다.
                         </p>
                         <p style="margin:0;font-size:0.95em;color:#15803d;">
                             지금 호봉을 재계산하시겠습니까?
@@ -2760,7 +2760,7 @@ function _showRecalculateConfirmModal(empId, empName, afterCallback) {
                     <div style="display:flex;gap:12px;margin-bottom:16px;">
                         <button onclick="_doRecalculateNow('${empId}')" 
                                 style="flex:1;padding:12px 16px;background:#2563eb;color:white;border:none;border-radius:8px;font-size:1em;font-weight:600;cursor:pointer;">
-                            🔄 지금 재계산
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> 지금 재계산
                         </button>
                         <button onclick="_closeRecalculateModal()" 
                                 style="flex:1;padding:12px 16px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:8px;font-size:1em;font-weight:600;cursor:pointer;">
@@ -2769,7 +2769,7 @@ function _showRecalculateConfirmModal(empId, empName, afterCallback) {
                     </div>
                     
                     <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:12px;font-size:0.85em;color:#92400e;">
-                        <strong>💡 나중에 재계산하려면:</strong><br>
+                        <strong><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> 나중에 재계산하려면:</strong><br>
                         <span style="display:inline-block;margin-top:6px;">
                             경력 관리 메뉴 → ${empName} 선택 → <strong>경력편집</strong> → <strong>재계산</strong> 버튼
                         </span>
@@ -2778,10 +2778,10 @@ function _showRecalculateConfirmModal(empId, empName, afterCallback) {
             </div>
         `;
         
-        // 모달 추가
+ // 모달 추가
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         
-        // 콜백 저장 (전역)
+ // 콜백 저장 (전역)
         window._recalculateModalCallback = afterCallback;
         window._recalculateModalEmpId = empId;
         
@@ -2789,8 +2789,8 @@ function _showRecalculateConfirmModal(empId, empName, afterCallback) {
         console.error('호봉 재계산 확인 모달 표시 실패:', error);
         로거_인사?.error('호봉 재계산 확인 모달 표시 실패', error);
         
-        // 오류 시 기본 알림
-        alert('✅ 발령이 저장되었습니다.\n\n호봉 재계산이 필요합니다.\n경력 관리 > 경력편집 > 재계산 버튼을 이용해주세요.');
+ // 오류 시 기본 알림
+        alert('발령이 저장되었습니다.\n\n호봉 재계산이 필요합니다.\n경력 관리 > 경력편집 > 재계산 버튼을 이용해주세요.');
         
         if (afterCallback) afterCallback();
     }
@@ -2806,7 +2806,7 @@ function _closeRecalculateModal() {
         modal.remove();
     }
     
-    // 콜백 실행
+ // 콜백 실행
     if (window._recalculateModalCallback) {
         window._recalculateModalCallback();
         window._recalculateModalCallback = null;
@@ -2824,37 +2824,37 @@ function _doRecalculateNow(empId) {
     try {
         로거_인사?.info('지금 재계산 선택', { empId });
         
-        // 모달 닫기
+ // 모달 닫기
         const modal = document.getElementById('recalculateConfirmModal');
         if (modal) {
             modal.remove();
         }
         
-        // 콜백 실행
+ // 콜백 실행
         if (window._recalculateModalCallback) {
             window._recalculateModalCallback();
             window._recalculateModalCallback = null;
         }
         
-        // 경력편집 모달 직접 열기
+ // 경력편집 모달 직접 열기
         if (typeof showEditCareerModal === 'function') {
-            // 약간의 딜레이 후 경력편집 모달 열기
+ // 약간의 딜레이 후 경력편집 모달 열기
             setTimeout(() => {
                 showEditCareerModal(empId, 'assignment');
                 
-                // 성공 메시지
+ // 성공 메시지
                 if (typeof 에러처리_인사 !== 'undefined') {
                     에러처리_인사.info('경력편집 화면입니다. 하단의 재계산 버튼을 클릭하세요.');
                 }
             }, 200);
         } else {
             로거_인사?.warn('showEditCareerModal 함수를 찾을 수 없습니다');
-            alert('💡 경력 관리 메뉴에서 해당 직원을 선택하여\n경력편집 > 재계산 버튼을 클릭해주세요.');
+            alert('[안내] 경력 관리 메뉴에서 해당 직원을 선택하여\n경력편집 > 재계산 버튼을 클릭해주세요.');
         }
         
     } catch (error) {
         console.error('재계산 이동 실패:', error);
         로거_인사?.error('재계산 이동 실패', error);
-        alert('💡 경력 관리 메뉴에서 해당 직원을 선택하여\n경력편집 > 재계산 버튼을 클릭해주세요.');
+        alert('[안내] 경력 관리 메뉴에서 해당 직원을 선택하여\n경력편집 > 재계산 버튼을 클릭해주세요.');
     }
 }

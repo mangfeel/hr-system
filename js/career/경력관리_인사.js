@@ -12,43 +12,43 @@
  * @since 2024-11-04
  * 
  * [변경 이력]
- * v4.0.0 (2026-01-21) ⭐ API 연동 버전
- *   - 직원유틸_인사.getCurrentRankAsync, getNextUpgradeDateAsync 사용
- *   - _collectCareerData, _collectUpgradeList 비동기 처리
- *   - loadCareerOverview, loadUpgradeSchedule Promise 기반 처리
- *   - 서버 API 호출로 호봉 계산 로직 보호
+ * v4.0.0 (2026-01-21) API 연동 버전
+ * - 직원유틸_인사.getCurrentRankAsync, getNextUpgradeDateAsync 사용
+ * - _collectCareerData, _collectUpgradeList 비동기 처리
+ * - loadCareerOverview, loadUpgradeSchedule Promise 기반 처리
+ * - 서버 API 호출로 호봉 계산 로직 보호
  * 
- * v3.0.4 (2025-11-07) ✨ UI 개선 - 통계 카드 복원
- *   - 리팩토링 이전 UI의 통계 카드 4개 복원
- *   - 전체 재직자, 호봉제, 연봉제, 과거경력 보유 한눈에 파악
- *   - 승급 예정자 탭과 일관성 있는 카드 디자인
- *   - 통계가 필터 드롭다운에만 있어 시각성 부족 → 카드로 개선
+ * v3.0.4 (2025-11-07) UI 개선 - 통계 카드 복원
+ * - 리팩토링 이전 UI의 통계 카드 4개 복원
+ * - 전체 재직자, 호봉제, 연봉제, 과거경력 보유 한눈에 파악
+ * - 승급 예정자 탭과 일관성 있는 카드 디자인
+ * - 통계가 필터 드롭다운에만 있어 시각성 부족 → 카드로 개선
  * 
- * v3.0.3 (2025-11-06) 🔥 긴급 수정 - console.error 실행 순서 변경
- *   - console.error를 로거보다 먼저 실행
- *   - 로거_인사?.error()에서 에러 발생 시에도 console.error 보장
- *   - 재방문 시 탭 먹통 문제 디버깅 완료
+ * v3.0.3 (2025-11-06) 긴급 수정 - console.error 실행 순서 변경
+ * - console.error를 로거보다 먼저 실행
+ * - 로거_인사?.error()에서 에러 발생 시에도 console.error 보장
+ * - 재방문 시 탭 먹통 문제 디버깅 완료
  * 
- * v3.0.2 (2025-11-06) 🐛 디버깅 개선 - console.error 추가
- *   - 모든 try-catch 블록에 console.error 추가
- *   - 에러 발생 시 브라우저 콘솔에서 즉시 확인 가능
- *   - 에러 스택 트레이스 출력
- *   - 재방문 시 탭 먹통 문제 디버깅 용이
+ * v3.0.2 (2025-11-06) 디버깅 개선 - console.error 추가
+ * - 모든 try-catch 블록에 console.error 추가
+ * - 에러 발생 시 브라우저 콘솔에서 즉시 확인 가능
+ * - 에러 스택 트레이스 출력
+ * - 재방문 시 탭 먹통 문제 디버깅 용이
  * 
  * v3.0.1 (2025-11-06)
- *   - 경력 관리에서 직원 상세 모달 건너뛰고 바로 경력 편집 모달 열기
- *   - 버튼: "상세보기" → "📝 경력 편집"
- *   - 클릭 수 감소 (2번 → 1번)
- *   - 경력 편집 후 갱신 문제 완전 해결
+ * - 경력 관리에서 직원 상세 모달 건너뛰고 바로 경력 편집 모달 열기
+ * - 버튼: "상세보기" → "경력 편집"
+ * - 클릭 수 감소 (2번 → 1번)
+ * - 경력 편집 후 갱신 문제 완전 해결
  * 
  * v3.0 - 프로덕션급 리팩토링
- *   - Phase 1 유틸리티 적용 (직원유틸, DOM유틸)
- *   - 완벽한 에러 처리
- *   - 체계적 로깅
- *   - JSDoc 주석 추가
- *   - XSS 방지
- *   - 긴 함수 분리 (200줄+ → 모듈화)
- *   - 중복 코드 제거
+ * - Phase 1 유틸리티 적용 (직원유틸, DOM유틸)
+ * - 완벽한 에러 처리
+ * - 체계적 로깅
+ * - JSDoc 주석 추가
+ * - XSS 방지
+ * - 긴 함수 분리 (200줄+ → 모듈화)
+ * - 중복 코드 제거
  * 
  * [하위 호환성]
  * - 모든 기존 함수명 유지
@@ -85,7 +85,7 @@ function loadCareerManagementTab() {
         
         const today = DateUtils.formatDate(new Date());
         
-        // 탭 UI 생성
+ // 탭 UI 생성
         const careerManageDiv = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('module-career-manage')
             : document.getElementById('module-career-manage');
@@ -98,13 +98,13 @@ function loadCareerManagementTab() {
         const tabHTML = _generateTabHTML();
         careerManageDiv.innerHTML = tabHTML;
         
-        // 기본 탭 표시
+ // 기본 탭 표시
         showCareerTab('overview');
         
         로거_인사?.info('경력관리 탭 로드 완료');
         
     } catch (error) {
-        // ⭐ console.error를 먼저 실행
+ // console.error를 먼저 실행
         console.error('[경력관리] loadCareerManagementTab 에러:', error);
         console.error('[경력관리] 에러 스택:', error.stack);
         
@@ -113,7 +113,7 @@ function loadCareerManagementTab() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '경력관리 화면을 불러오는 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 경력관리 화면을 불러오는 중 오류가 발생했습니다.');
+            alert('[오류] 경력관리 화면을 불러오는 중 오류가 발생했습니다.');
         }
     }
 }
@@ -136,7 +136,7 @@ function showCareerTab(tabName) {
     try {
         로거_인사?.debug('탭 전환', { tabName });
         
-        // 탭 버튼 활성화 상태 변경
+ // 탭 버튼 활성화 상태 변경
         const overviewTab = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('tab-career-overview')
             : document.getElementById('tab-career-overview');
@@ -153,7 +153,7 @@ function showCareerTab(tabName) {
             upgradeTab.className = tabName === 'upgrade' ? 'btn btn-primary' : 'btn btn-secondary';
         }
         
-        // 탭 콘텐츠 로드
+ // 탭 콘텐츠 로드
         if (tabName === 'overview') {
             loadCareerOverview();
         } else if (tabName === 'upgrade') {
@@ -161,7 +161,7 @@ function showCareerTab(tabName) {
         }
         
     } catch (error) {
-        // ⭐ console.error를 먼저 실행
+ // console.error를 먼저 실행
         console.error('[경력관리] showCareerTab 에러:', error);
         console.error('[경력관리] 에러 스택:', error.stack);
         
@@ -193,18 +193,18 @@ function loadCareerOverview() {
         
         로거_인사?.debug('재직자 조회 완료', { count: employees.length });
         
-        // ✅ v4.0.0: 비동기 경력 데이터 수집
+ // v4.0.0: 비동기 경력 데이터 수집
         _collectCareerData(employees, today).then(careerData => {
-            // 통계 계산
+ // 통계 계산
             const stats = _calculateCareerStats(careerData);
             
             로거_인사?.debug('경력 데이터 수집 완료', { ...stats });
             
-            // HTML 생성
+ // HTML 생성
             const contentHTML = _generateCareerOverviewHTML(careerData, stats);
             
-            // 콘텐츠 표시
-            // ⭐ DOM유틸_인사 버그로 인해 직접 접근
+ // 콘텐츠 표시
+ // DOM유틸_인사 버그로 인해 직접 접근
             const contentDiv = document.getElementById('career-tab-content');
             
             if (contentDiv) {
@@ -218,7 +218,7 @@ function loadCareerOverview() {
         });
         
     } catch (error) {
-        // ⭐ console.error를 먼저 실행 (로거가 에러를 발생시킬 수 있음)
+ // console.error를 먼저 실행 (로거가 에러를 발생시킬 수 있음)
         console.error('[경력관리] loadCareerOverview 에러:', error);
         console.error('[경력관리] 에러 스택:', error.stack);
         
@@ -258,7 +258,7 @@ function filterCareerList() {
         
         const filterValue = filterSelect.value;
         
-        // 모든 행 가져오기
+ // 모든 행 가져오기
         const rows = document.querySelectorAll('.career-row');
         let visibleCount = 0;
         
@@ -301,20 +301,20 @@ function exportCareerToExcel() {
     try {
         로거_인사?.debug('엑셀 다운로드 시작');
         
-        // SheetJS 확인
+ // SheetJS 확인
         if (typeof XLSX === 'undefined') {
             로거_인사?.error('SheetJS 라이브러리를 찾을 수 없습니다');
             throw new Error('엑셀 다운로드 기능을 사용할 수 없습니다.');
         }
         
-        // 테이블 가져오기
+ // 테이블 가져오기
         const table = document.getElementById('careerTable');
         if (!table) {
             로거_인사?.warn('경력 테이블을 찾을 수 없습니다');
             throw new Error('다운로드할 데이터가 없습니다.');
         }
         
-        // 보이는 행만 복제
+ // 보이는 행만 복제
         const clonedTable = table.cloneNode(true);
         const rows = clonedTable.querySelectorAll('.career-row');
         
@@ -324,7 +324,7 @@ function exportCareerToExcel() {
             }
         });
         
-        // 엑셀 생성
+ // 엑셀 생성
         const wb = XLSX.utils.table_to_book(clonedTable, { sheet: '경력현황' });
         const today = DateUtils.formatDate(new Date());
         const filename = `경력현황_${today}.xlsx`;
@@ -336,7 +336,7 @@ function exportCareerToExcel() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.success('경력 현황이 엑셀로 다운로드되었습니다.');
         } else {
-            alert('✅ 경력 현황이 엑셀로 다운로드되었습니다.');
+            alert('경력 현황이 엑셀로 다운로드되었습니다.');
         }
         
     } catch (error) {
@@ -345,7 +345,7 @@ function exportCareerToExcel() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '엑셀 다운로드 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 엑셀 다운로드 중 오류가 발생했습니다.');
+            alert('[오류] 엑셀 다운로드 중 오류가 발생했습니다.');
         }
     }
 }
@@ -370,11 +370,11 @@ function loadUpgradeSchedule() {
         const today = new Date();
         const todayStr = DateUtils.formatDate(today);
         
-        // ⭐ 수정: 이번 달 1일부터 포함
+ // 수정: 이번 달 1일부터 포함
         const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
         const thisMonthStartStr = DateUtils.formatDate(thisMonthStart);
         
-        // 3개월 후 날짜 (이번 달 포함하여 3개월)
+ // 3개월 후 날짜 (이번 달 포함하여 3개월)
         const threeMonthsLater = new Date(today);
         threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
         const threeMonthsLaterStr = DateUtils.formatDate(threeMonthsLater);
@@ -385,21 +385,21 @@ function loadUpgradeSchedule() {
             threeMonthsLater: threeMonthsLaterStr 
         });
         
-        // ✅ v4.0.0: 비동기 승급 예정자 수집
+ // v4.0.0: 비동기 승급 예정자 수집
         _collectUpgradeList(employees, today, thisMonthStartStr, threeMonthsLaterStr).then(upgradeList => {
             로거_인사?.debug('승급 예정자 수집 완료', { count: upgradeList.length });
             
-            // 날짜순 정렬 (가까운 순)
+ // 날짜순 정렬 (가까운 순)
             upgradeList.sort((a, b) => a.diffDays - b.diffDays);
             
-            // 통계
+ // 통계
             const stats = _calculateUpgradeStats(upgradeList);
             
-            // HTML 생성
+ // HTML 생성
             const contentHTML = _generateUpgradeScheduleHTML(upgradeList, stats);
             
-            // 콘텐츠 표시
-            // ⭐ DOM유틸_인사 버그로 인해 직접 접근
+ // 콘텐츠 표시
+ // DOM유틸_인사 버그로 인해 직접 접근
             const contentDiv = document.getElementById('career-tab-content');
             
             if (contentDiv) {
@@ -413,7 +413,7 @@ function loadUpgradeSchedule() {
         });
         
     } catch (error) {
-        // ⭐ console.error를 먼저 실행
+ // console.error를 먼저 실행
         console.error('[경력관리] loadUpgradeSchedule 에러:', error);
         console.error('[경력관리] 에러 스택:', error.stack);
         
@@ -436,19 +436,19 @@ function loadUpgradeSchedule() {
 function _generateTabHTML() {
     return `
         <div class="card">
-            <div class="card-title">📝 경력 관리</div>
+            <div class="card-title"><span class="card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span> 경력 관리</div>
             <div class="alert alert-info">
-                <span>💡</span>
+                <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
                 <span>전체 직원의 경력 현황과 승급 예정자를 확인할 수 있습니다.</span>
             </div>
             
             <!-- 탭 버튼 -->
             <div style="display:flex;gap:10px;margin-bottom:20px;border-bottom:2px solid #e8ebed;padding-bottom:10px;">
                 <button class="btn btn-primary" id="tab-career-overview" onclick="showCareerTab('overview')" style="flex:1;">
-                    📊 전체 경력 현황
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 전체 경력 현황
                 </button>
                 <button class="btn btn-secondary" id="tab-career-upgrade" onclick="showCareerTab('upgrade')" style="flex:1;">
-                    📅 승급 예정자
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 승급 예정자
                 </button>
             </div>
             
@@ -470,14 +470,14 @@ function _generateTabHTML() {
  */
 async function _collectCareerData(employees, today) {
     return await Promise.all(employees.map(async emp => {
-        // ✅ Before: 중복 코드 (59-72줄)
-        // const name = emp.personalInfo?.name || emp.name;
-        // const dept = emp.currentPosition?.dept || emp.dept;
-        // const position = emp.currentPosition?.position || emp.position;
-        // const hasValidFirstUpgradeDate = ...
-        // const isRankBased = ...
+ // Before: 중복 코드 (59-72줄)
+ // const name = emp.personalInfo?.name || emp.name;
+ // const dept = emp.currentPosition?.dept || emp.dept;
+ // const position = emp.currentPosition?.position || emp.position;
+ // const hasValidFirstUpgradeDate = ...
+ // const isRankBased = ...
         
-        // ✅ After: 직원유틸_인사 사용
+ // After: 직원유틸_인사 사용
         const name = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.getName(emp)
             : (emp.personalInfo?.name || emp.name);
@@ -506,7 +506,7 @@ async function _collectCareerData(employees, today) {
             startRank = emp.rank?.startRank || 1;
             
             try {
-                // ✅ v4.0.0: API 버전 사용
+ // v4.0.0: API 버전 사용
                 if (typeof 직원유틸_인사 !== 'undefined' && typeof 직원유틸_인사.getCurrentRankAsync === 'function') {
                     currentRank = await 직원유틸_인사.getCurrentRankAsync(emp, today);
                     if (currentRank === '-') currentRank = startRank;
@@ -590,7 +590,7 @@ function _calculateCareerStats(careerData) {
  * @returns {string} HTML 문자열
  */
 function _generateCareerOverviewHTML(careerData, stats) {
-    // ✅ XSS 방지
+ // XSS 방지
     const escapeHtml = (text) => {
         if (typeof DOM유틸_인사 !== 'undefined') {
             return DOM유틸_인사.escapeHtml(text || '-');
@@ -604,7 +604,7 @@ function _generateCareerOverviewHTML(careerData, stats) {
         }[m]));
     };
     
-    // 통계 카드 HTML (리팩토링 이전 UI 복원)
+ // 통계 카드 HTML (리팩토링 이전 UI 복원)
     const statsCardsHTML = `
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px;">
             <div style="background:#f0f9ff;padding:16px;border-radius:12px;border:1.5px solid #bfdbfe;">
@@ -626,7 +626,7 @@ function _generateCareerOverviewHTML(careerData, stats) {
         </div>
     `;
     
-    // 필터 HTML
+ // 필터 HTML
     const filterHTML = `
         <div style="margin-bottom:20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
             <label style="font-weight:600;">필터:</label>
@@ -636,16 +636,16 @@ function _generateCareerOverviewHTML(careerData, stats) {
                 <option value="salary">연봉제만 (${stats.salaryBasedCount}명)</option>
                 <option value="hasCareer">과거경력 보유자 (${stats.hasCareerCount}명)</option>
             </select>
-            <button class="btn btn-success btn-small" onclick="exportCareerToExcel()">📥 엑셀 다운로드</button>
+            <button class="btn btn-success btn-small" onclick="exportCareerToExcel()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀 다운로드</button>
         </div>
     `;
     
-    // 테이블 헤더
+ // 테이블 헤더
     let tableHTML = `
         <div style="overflow-x:auto;">
             <table id="careerTable" style="width:100%;border-collapse:collapse;margin-top:20px;">
                 <thead>
-                    <tr style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;">
+                    <tr style="background:linear-gradient(135deg, #4f46e5 0%, #764ba2 100%);color:white;">
                         <th style="padding:12px;border:1px solid #e8ebed;text-align:center;">No</th>
                         <th style="padding:12px;border:1px solid #e8ebed;text-align:center;">성명</th>
                         <th style="padding:12px;border:1px solid #e8ebed;text-align:center;">부서</th>
@@ -662,7 +662,7 @@ function _generateCareerOverviewHTML(careerData, stats) {
                 <tbody id="careerTableBody">
     `;
     
-    // 테이블 행
+ // 테이블 행
     careerData.forEach((data, index) => {
         const safeName = escapeHtml(data.name);
         const safeDept = escapeHtml(data.dept);
@@ -671,7 +671,7 @@ function _generateCareerOverviewHTML(careerData, stats) {
         const safeCareerSummary = escapeHtml(data.careerSummary);
         
         const rankBadge = data.isRankBased 
-            ? '<span style="color:#667eea;font-weight:600;">호봉제</span>' 
+            ? '<span style="color:#4f46e5;font-weight:600;">호봉제</span>' 
             : '<span style="color:#6b7280;">연봉제</span>';
         
         const careerBadge = data.hasCareer 
@@ -692,11 +692,11 @@ function _generateCareerOverviewHTML(careerData, stats) {
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;">${safeEntryDate}</td>
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;">${rankBadge}</td>
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;">${startRankDisplay}</td>
-                <td style="padding:10px;border:1px solid #e8ebed;text-align:center;font-weight:600;color:#667eea;">${currentRankDisplay}</td>
+                <td style="padding:10px;border:1px solid #e8ebed;text-align:center;font-weight:600;color:#4f46e5;">${currentRankDisplay}</td>
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;">${safeCareerSummary}</td>
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;">${careerBadge}</td>
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;">
-                    <button class="btn btn-primary btn-small" onclick="showEditCareerModal('${data.id}', 'career-manage')">📝 경력 편집</button>
+                    <button class="btn btn-primary btn-small" onclick="showEditCareerModal('${data.id}', 'career-manage')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 경력 편집</button>
                 </td>
             </tr>
         `;
@@ -752,10 +752,10 @@ async function _collectUpgradeList(employees, today, startDateStr, endDateStr) {
             const firstUpgradeDate = emp.rank?.firstUpgradeDate;
             
             try {
-                // 오늘 기준 현재 호봉
+ // 오늘 기준 현재 호봉
                 const todayStr = DateUtils.formatDate(today);
                 
-                // ✅ v4.0.0: API 버전 사용
+ // v4.0.0: API 버전 사용
                 let currentRank;
                 if (typeof 직원유틸_인사 !== 'undefined' && typeof 직원유틸_인사.getCurrentRankAsync === 'function') {
                     currentRank = parseInt(await 직원유틸_인사.getCurrentRankAsync(emp, todayStr));
@@ -765,12 +765,12 @@ async function _collectUpgradeList(employees, today, startDateStr, endDateStr) {
                     currentRank = RankCalculator.calculateCurrentRank(startRank, firstUpgradeDate, todayStr);
                 }
                 
-                // ⭐ 핵심 수정: 지난 달 마지막 날 기준으로 차기승급일 계산
-                // 이렇게 해야 이번 달 1일~오늘까지 승급한 직원도 포함됨
+ // 핵심 수정: 지난 달 마지막 날 기준으로 차기승급일 계산
+ // 이렇게 해야 이번 달 1일~오늘까지 승급한 직원도 포함됨
                 const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
                 const lastMonthEndStr = DateUtils.formatDate(lastMonthEnd);
                 
-                // ✅ v4.0.0: API 버전 사용
+ // v4.0.0: API 버전 사용
                 let nextUpgradeDate;
                 if (typeof 직원유틸_인사 !== 'undefined' && typeof 직원유틸_인사.getNextUpgradeDateAsync === 'function') {
                     nextUpgradeDate = await 직원유틸_인사.getNextUpgradeDateAsync(emp, lastMonthEndStr);
@@ -780,15 +780,15 @@ async function _collectUpgradeList(employees, today, startDateStr, endDateStr) {
                     nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(firstUpgradeDate, lastMonthEndStr);
                 }
                 
-                // ⭐ 수정: 이번 달 1일부터 3개월 후까지의 승급자
-                // startDateStr <= nextUpgradeDate <= endDateStr
+ // 수정: 이번 달 1일부터 3개월 후까지의 승급자
+ // startDateStr <= nextUpgradeDate <= endDateStr
                 if (nextUpgradeDate && nextUpgradeDate >= startDateStr && nextUpgradeDate <= endDateStr) {
-                    // 남은 일수 계산 (음수 가능 - 이미 승급한 경우)
+ // 남은 일수 계산 (음수 가능 - 이미 승급한 경우)
                     const upgradeDate = new Date(nextUpgradeDate);
                     const diffTime = upgradeDate - today;
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                     
-                    // 우선순위 계산 (today와 upgradeDate 전달)
+ // 우선순위 계산 (today와 upgradeDate 전달)
                     const priority = _calculatePriority(diffDays, today, upgradeDate);
                     
                     upgradeList.push({
@@ -832,29 +832,29 @@ function _calculatePriority(diffDays, today, upgradeDate) {
     let priorityLabel = '3개월 이내';
     let priorityColor = '#f59e0b';
     
-    // 현재 년/월
+ // 현재 년/월
     const todayYear = today.getFullYear();
     const todayMonth = today.getMonth(); // 0-11
     
-    // 승급일 년/월
+ // 승급일 년/월
     const upgradeYear = upgradeDate.getFullYear();
     const upgradeMonth = upgradeDate.getMonth(); // 0-11
     
-    // 월 차이 계산
+ // 월 차이 계산
     const monthDiff = (upgradeYear - todayYear) * 12 + (upgradeMonth - todayMonth);
     
     if (monthDiff === 0) {
-        // 이번 달
+ // 이번 달
         priority = 'high';
         priorityLabel = '이번 달';
         priorityColor = '#ef4444';
     } else if (monthDiff === 1) {
-        // 다음 달
+ // 다음 달
         priority = 'medium';
         priorityLabel = '다음 달';
         priorityColor = '#f97316';
     } else {
-        // 2개월 후 또는 3개월 후
+ // 2개월 후 또는 3개월 후
         priority = 'low';
         priorityLabel = '3개월 이내';
         priorityColor = '#f59e0b';
@@ -887,7 +887,7 @@ function _calculateUpgradeStats(upgradeList) {
  * @returns {string} HTML 문자열
  */
 function _generateUpgradeScheduleHTML(upgradeList, stats) {
-    // ✅ XSS 방지
+ // XSS 방지
     const escapeHtml = (text) => {
         if (typeof DOM유틸_인사 !== 'undefined') {
             return DOM유틸_인사.escapeHtml(text || '-');
@@ -901,29 +901,29 @@ function _generateUpgradeScheduleHTML(upgradeList, stats) {
         }[m]));
     };
     
-    // 통계 카드
+ // 통계 카드
     let html = `
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px;">
             <div style="background:#fee2e2;padding:16px;border-radius:12px;border:1.5px solid #fecaca;">
-                <div style="font-size:13px;color:#991b1b;margin-bottom:4px;">🔴 이번 달 (30일 이내)</div>
+                <div style="font-size:13px;color:#991b1b;margin-bottom:4px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#dc2626;margin-right:4px;"></span> 이번 달 (30일 이내)</div>
                 <div style="font-size:28px;font-weight:700;color:#ef4444;">${stats.highCount}명</div>
             </div>
             <div style="background:#ffedd5;padding:16px;border-radius:12px;border:1.5px solid #fed7aa;">
-                <div style="font-size:13px;color:#9a3412;margin-bottom:4px;">🟠 다음 달 (60일 이내)</div>
+                <div style="font-size:13px;color:#9a3412;margin-bottom:4px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ea580c;margin-right:4px;"></span> 다음 달 (60일 이내)</div>
                 <div style="font-size:28px;font-weight:700;color:#f97316;">${stats.mediumCount}명</div>
             </div>
             <div style="background:#fef3c7;padding:16px;border-radius:12px;border:1.5px solid #fde68a;">
-                <div style="font-size:13px;color:#92400e;margin-bottom:4px;">🟡 3개월 이내</div>
+                <div style="font-size:13px;color:#92400e;margin-bottom:4px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#eab308;margin-right:4px;"></span> 3개월 이내</div>
                 <div style="font-size:28px;font-weight:700;color:#f59e0b;">${stats.lowCount}명</div>
             </div>
         </div>
     `;
     
-    // 승급 예정자 없음
+ // 승급 예정자 없음
     if (upgradeList.length === 0) {
         html += `
             <div class="empty-state">
-                <div class="empty-state-icon">📅</div>
+                <div class="empty-state-icon" style="display:flex;justify-content:center;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
                 <h3>3개월 이내 승급 예정자가 없습니다</h3>
                 <p style="color:#6b7280;margin-top:8px;">모든 직원의 승급일이 3개월 이후입니다.</p>
             </div>
@@ -931,12 +931,12 @@ function _generateUpgradeScheduleHTML(upgradeList, stats) {
         return html;
     }
     
-    // 테이블
+ // 테이블
     html += `
         <div style="overflow-x:auto;">
             <table style="width:100%;border-collapse:collapse;">
                 <thead>
-                    <tr style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;">
+                    <tr style="background:linear-gradient(135deg, #4f46e5 0%, #764ba2 100%);color:white;">
                         <th style="padding:12px;border:1px solid #e8ebed;text-align:center;">우선순위</th>
                         <th style="padding:12px;border:1px solid #e8ebed;text-align:center;">성명</th>
                         <th style="padding:12px;border:1px solid #e8ebed;text-align:center;">부서</th>
@@ -972,14 +972,14 @@ function _generateUpgradeScheduleHTML(upgradeList, stats) {
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;font-weight:600;">${safeName}</td>
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;">${safeDept}</td>
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;">${safePosition}</td>
-                <td style="padding:10px;border:1px solid #e8ebed;text-align:center;font-weight:600;color:#667eea;">${item.currentRank}호봉</td>
+                <td style="padding:10px;border:1px solid #e8ebed;text-align:center;font-weight:600;color:#4f46e5;">${item.currentRank}호봉</td>
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;font-weight:600;color:#10b981;">${item.nextRank}호봉 ⬆️</td>
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;">${safeUpgradeDate}</td>
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;font-weight:600;color:${item.priorityColor};">
                     ${dDayText}
                 </td>
                 <td style="padding:10px;border:1px solid #e8ebed;text-align:center;">
-                    <button class="btn btn-primary btn-small" onclick="showEditCareerModal('${item.id}', 'career-manage')">📝 경력 편집</button>
+                    <button class="btn btn-primary btn-small" onclick="showEditCareerModal('${item.id}', 'career-manage')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 경력 편집</button>
                 </td>
             </tr>
         `;
@@ -995,34 +995,34 @@ function _generateUpgradeScheduleHTML(upgradeList, stats) {
 }
 
 /**
- * 📊 리팩토링 통계
+ * 리팩토링 통계
  * 
  * Before (원본):
  * - 총 줄 수: 471줄 (가장 긴 파일)
  * - 중복 코드: 약 80줄
  * - 에러 처리: 1곳 (console.error만)
  * - 로깅: 1곳
- * - XSS 방지: 0곳 ⚠️
+ * - XSS 방지: 0곳 
  * - 함수 개수: 6개
  * - 최장 함수: 200줄+ (loadCareerOverview)
  * 
  * After (리팩토링):
  * - 총 줄 수: 약 950줄 (주석 포함)
  * - 실제 코드: 약 630줄
- * - 중복 코드: 0줄 ✅ (100% 제거)
+ * - 중복 코드: 0줄 (100% 제거)
  * - 에러 처리: 6곳 (모든 public 함수)
  * - 로깅: 28곳 (debug 17, info 4, warn 2, error 5)
- * - XSS 방지: 100% ✅ (모든 출력)
+ * - XSS 방지: 100% (모든 출력)
  * - 함수 개수: 18개 (12개 private 헬퍼)
  * - 최장 함수: 약 80줄
  * 
  * 개선 효과:
- * ✅ 중복 코드 80줄 → 0줄 (100% 감소)
- * ✅ 함수 길이 200줄+ → 80줄 (60% 감소)
- * ✅ 모듈화 6개 → 18개 (3배 향상)
- * ✅ XSS 공격 100% 방지
- * ✅ 에러 추적 100% 가능
- * ✅ 유지보수성 5배 향상
+ * 중복 코드 80줄 → 0줄 (100% 감소)
+ * 함수 길이 200줄+ → 80줄 (60% 감소)
+ * 모듈화 6개 → 18개 (3배 향상)
+ * XSS 공격 100% 방지
+ * 에러 추적 100% 가능
+ * 유지보수성 5배 향상
  * 
  * 핵심 개선 사항:
  * 1. 직원유틸_인사 사용 → 중복 코드 80줄 제거

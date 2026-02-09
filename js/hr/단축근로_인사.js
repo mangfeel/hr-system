@@ -63,10 +63,10 @@ function loadReducedWorkTab() {
             throw new Error('단축근로 모듈 컨테이너를 찾을 수 없습니다.');
         }
         
-        // 탭 UI 생성
+ // 탭 UI 생성
         container.innerHTML = _generateReducedWorkTabHTML();
         
-        // 기본 탭(임신기) 로드
+ // 기본 탭(임신기) 로드
         switchReducedWorkSubTab('pregnancy');
         
     } catch (error) {
@@ -83,15 +83,15 @@ function _generateReducedWorkTabHTML() {
     return `
         <div class="reduced-work-tabs">
             <button class="reduced-work-tab active" data-tab="pregnancy" onclick="switchReducedWorkSubTab('pregnancy')">
-                <span>🤰</span>
+                <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg></span>
                 <span>임신기 단축근로</span>
             </button>
             <button class="reduced-work-tab" data-tab="childcare" onclick="switchReducedWorkSubTab('childcare')">
-                <span>👶</span>
+                <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg></span>
                 <span>육아기 단축근로</span>
             </button>
             <button class="reduced-work-tab" data-tab="flexTime" onclick="switchReducedWorkSubTab('flexTime')">
-                <span>🕙</span>
+                <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
                 <span>10시 출근제</span>
             </button>
         </div>
@@ -115,12 +115,12 @@ function switchReducedWorkSubTab(tabName) {
         currentReducedWorkTab = tabName;
         editingReducedWorkId = null;
         
-        // 탭 버튼 활성화 상태 업데이트
+ // 탭 버튼 활성화 상태 업데이트
         document.querySelectorAll('.reduced-work-tab').forEach(tab => {
             tab.classList.toggle('active', tab.dataset.tab === tabName);
         });
         
-        // 탭 콘텐츠 로드
+ // 탭 콘텐츠 로드
         const contentContainer = document.getElementById('reducedWorkTabContent');
         if (!contentContainer) return;
         
@@ -159,10 +159,10 @@ function switchReducedWorkSubTab(tabName) {
 function _generatePregnancyTabHTML() {
     return `
         <div class="card">
-            <div class="card-title">🤰 임신기 근로시간 단축 등록</div>
+            <div class="card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg> 임신기 근로시간 단축 등록</div>
             
             <div class="reduced-work-notice danger">
-                <span>⚠️</span>
+                <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
                 <span><strong>임신기 근로자는 시간외근로·야간근로·휴일근로가 금지됩니다.</strong><br>
                 (근로기준법 제74조, 제70조 / 위반 시 2년 이하 징역 또는 2천만원 이하 벌금)</span>
             </div>
@@ -230,7 +230,7 @@ function _generatePregnancyTabHTML() {
                 </div>
                 
                 <div class="reduced-work-notice info">
-                    <span>💡</span>
+                    <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
                     <span>임신기 단축근로는 <strong>1일 2시간 단축</strong>이며, <strong>급여 100% 보전</strong>됩니다.</span>
                 </div>
                 
@@ -240,16 +240,16 @@ function _generatePregnancyTabHTML() {
                 </div>
                 
                 <button class="btn btn-primary" style="width: 100%;" onclick="savePregnancyReduction()">
-                    🤰 임신기 단축근로 등록
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg> 임신기 단축근로 등록
                 </button>
             </div>
         </div>
         
         <div class="card">
-            <div class="card-title">📋 임신기 단축근로 현황</div>
+            <div class="card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 임신기 단축근로 현황</div>
             <div id="pregnancyReductionList">
                 <div class="reduced-work-empty">
-                    <div class="reduced-work-empty-icon">📂</div>
+                    <div class="reduced-work-empty-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
                     <p>등록된 임신기 단축근로가 없습니다.</p>
                 </div>
             </div>
@@ -292,7 +292,7 @@ function onPregnancyEmployeeChange() {
         currentReducedWorkEmployeeId = select.value;
         formFields.style.display = select.value ? 'block' : 'none';
         
-        // 수정 모드 해제
+ // 수정 모드 해제
         editingReducedWorkId = null;
         _resetPregnancyForm();
     }
@@ -318,7 +318,7 @@ function savePregnancyReduction() {
     try {
         로거_인사?.info('임신기 단축근로 저장 시작');
         
-        // 1. 데이터 수집
+ // 1. 데이터 수집
         const empId = document.getElementById('pregnancyEmployeeSelect')?.value;
         const type = document.querySelector('input[name="pregnancyType"]:checked')?.value;
         const dueDate = document.getElementById('pregnancyDueDate')?.value;
@@ -327,27 +327,27 @@ function savePregnancyReduction() {
         const method = document.querySelector('input[name="pregnancyMethod"]:checked')?.value;
         const note = document.getElementById('pregnancyNote')?.value || '';
         
-        // 2. 필수 입력 검증
+ // 2. 필수 입력 검증
         if (!empId) {
-            alert('⚠️ 직원을 선택해주세요.');
+            alert('[주의] 직원을 선택해주세요.');
             return;
         }
         if (!startDate || !endDate) {
-            alert('⚠️ 단축 기간을 입력해주세요.');
+            alert('[주의] 단축 기간을 입력해주세요.');
             return;
         }
         if (new Date(startDate) > new Date(endDate)) {
-            alert('⚠️ 종료일은 시작일 이후여야 합니다.');
+            alert('[주의] 종료일은 시작일 이후여야 합니다.');
             return;
         }
         
-        // 3. 기간 중복 검증
+ // 3. 기간 중복 검증
         if (_checkPeriodOverlap(empId, 'pregnancy', startDate, endDate, editingReducedWorkId)) {
-            alert('⚠️ 해당 기간에 이미 등록된 임신기 단축근로가 있습니다.');
+            alert('[주의] 해당 기간에 이미 등록된 임신기 단축근로가 있습니다.');
             return;
         }
         
-        // 4. 데이터 구성
+ // 4. 데이터 구성
         const workHours = _calculateWorkHours(method);
         const reductionData = {
             id: editingReducedWorkId || _generateReducedWorkId('pregnancy'),
@@ -369,13 +369,13 @@ function savePregnancyReduction() {
             updatedAt: new Date().toISOString()
         };
         
-        // 5. 저장
+ // 5. 저장
         const emp = db.findEmployee(empId);
         if (!emp) {
             throw new Error('직원 정보를 찾을 수 없습니다.');
         }
         
-        // reducedWork 구조 보장
+ // reducedWork 구조 보장
         if (!emp.reducedWork) {
             emp.reducedWork = { pregnancy: [], childcare: [], flexTime: [] };
         }
@@ -384,32 +384,32 @@ function savePregnancyReduction() {
         }
         
         if (editingReducedWorkId) {
-            // 수정
+ // 수정
             const index = emp.reducedWork.pregnancy.findIndex(r => r.id === editingReducedWorkId);
             if (index !== -1) {
                 reductionData.createdAt = emp.reducedWork.pregnancy[index].createdAt;
                 emp.reducedWork.pregnancy[index] = reductionData;
             }
         } else {
-            // 신규
+ // 신규
             emp.reducedWork.pregnancy.push(reductionData);
         }
         
         db.saveEmployee(emp);
         
-        // 6. UI 갱신
+ // 6. UI 갱신
         loadPregnancyReductionList();
         _resetPregnancyForm();
         document.getElementById('pregnancyEmployeeSelect').value = '';
         document.getElementById('pregnancyFormFields').style.display = 'none';
         editingReducedWorkId = null;
         
-        // 전체 직원 목록 갱신
+ // 전체 직원 목록 갱신
         if (typeof loadEmployeeList === 'function') {
             loadEmployeeList();
         }
         
-        alert(editingReducedWorkId ? '✅ 임신기 단축근로가 수정되었습니다.' : '✅ 임신기 단축근로가 등록되었습니다.');
+        alert(editingReducedWorkId ? '임신기 단축근로가 수정되었습니다.' : '임신기 단축근로가 등록되었습니다.');
         로거_인사?.info('임신기 단축근로 저장 완료', { empId, reductionData });
         
     } catch (error) {
@@ -431,14 +431,14 @@ function loadPregnancyReductionList() {
         if (allReductions.length === 0) {
             container.innerHTML = `
                 <div class="reduced-work-empty">
-                    <div class="reduced-work-empty-icon">📂</div>
+                    <div class="reduced-work-empty-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
                     <p>등록된 임신기 단축근로가 없습니다.</p>
                 </div>
             `;
             return;
         }
         
-        // 상태별 정렬: 진행중 > 예정 > 종료
+ // 상태별 정렬: 진행중 > 예정 > 종료
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         
@@ -461,7 +461,7 @@ function loadPregnancyReductionList() {
             return { ...item, status, statusOrder };
         }).sort((a, b) => a.statusOrder - b.statusOrder);
         
-        // 테이블 HTML 생성
+ // 테이블 HTML 생성
         let html = `
             <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
                 <thead>
@@ -486,7 +486,7 @@ function loadPregnancyReductionList() {
             const typeLabel = PREGNANCY_TYPE_LABELS[item.data.type] || item.data.type;
             const workTime = `${item.data.workStart || '11:00'}~${item.data.workEnd || '18:00'}`;
             
-            // 상태 배지
+ // 상태 배지
             let statusBadge = '';
             let rowBgColor = idx % 2 === 0 ? '#ffffff' : '#fdf2f8';
             
@@ -547,7 +547,7 @@ function editPregnancyReduction(empId, id) {
         const record = emp.reducedWork.pregnancy.find(r => r.id === id);
         if (!record) return;
         
-        // 폼에 데이터 채우기
+ // 폼에 데이터 채우기
         document.getElementById('pregnancyEmployeeSelect').value = empId;
         document.getElementById('pregnancyFormFields').style.display = 'block';
         
@@ -566,7 +566,7 @@ function editPregnancyReduction(empId, id) {
         currentReducedWorkEmployeeId = empId;
         editingReducedWorkId = id;
         
-        // 스크롤 이동
+ // 스크롤 이동
         document.getElementById('pregnancyEmployeeSelect').scrollIntoView({ behavior: 'smooth' });
         
     } catch (error) {
@@ -578,7 +578,7 @@ function editPregnancyReduction(empId, id) {
  * 임신기 단축근로 삭제
  */
 function deletePregnancyReduction(empId, id) {
-    if (!confirm('⚠️ 이 임신기 단축근로 기록을 삭제하시겠습니까?')) return;
+    if (!confirm('[주의] 이 임신기 단축근로 기록을 삭제하시겠습니까?')) return;
     
     try {
         const emp = db.findEmployee(empId);
@@ -588,7 +588,7 @@ function deletePregnancyReduction(empId, id) {
         db.saveEmployee(emp);
         
         loadPregnancyReductionList();
-        alert('✅ 삭제되었습니다.');
+        alert('삭제되었습니다.');
         
     } catch (error) {
         로거_인사?.error('임신기 단축근로 삭제 오류', error);
@@ -607,10 +607,10 @@ function deletePregnancyReduction(empId, id) {
 function _generateChildcareTabHTML() {
     return `
         <div class="card">
-            <div class="card-title">👶 육아기 근로시간 단축 등록</div>
+            <div class="card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg> 육아기 근로시간 단축 등록</div>
             
             <div class="reduced-work-notice info">
-                <span>💡</span>
+                <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
                 <span>만 12세 이하(초6 이하) 자녀 양육을 위해 주 15~35시간으로 근로시간을 단축할 수 있습니다.<br>
                 급여는 근로시간에 비례하여 조정되며, 고용보험에서 급여 지원을 받을 수 있습니다.</span>
             </div>
@@ -624,7 +624,7 @@ function _generateChildcareTabHTML() {
             
             <div id="childcareFormFields" style="display: none;">
                 <div class="card" style="background: #f9fafb; margin: 16px 0;">
-                    <div class="card-title" style="font-size: 14px;">👶 자녀 정보</div>
+                    <div class="card-title" style="font-size: 14px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg> 자녀 정보</div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>자녀 이름 *</label>
@@ -666,13 +666,13 @@ function _generateChildcareTabHTML() {
                     <div class="schedule-type-selector">
                         <label class="schedule-type-option selected" onclick="selectScheduleType('uniform')">
                             <input type="radio" name="scheduleType" value="uniform" checked>
-                            <div class="schedule-type-icon">📊</div>
+                            <div class="schedule-type-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
                             <div class="schedule-type-label">균등 단축</div>
                             <div class="schedule-type-desc">매일 동일한 시간</div>
                         </label>
                         <label class="schedule-type-option" onclick="selectScheduleType('daily')">
                             <input type="radio" name="scheduleType" value="daily">
-                            <div class="schedule-type-icon">📅</div>
+                            <div class="schedule-type-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
                             <div class="schedule-type-label">요일별 차등</div>
                             <div class="schedule-type-desc">요일마다 다른 시간</div>
                         </label>
@@ -703,7 +703,7 @@ function _generateChildcareTabHTML() {
                             </div>
                         </div>
                         <div style="background: #e0f2fe; padding: 10px 12px; border-radius: 6px; font-size: 13px; color: #0c4a6e;">
-                            📌 점심시간 12:00~13:00 (1시간) 제외 기준
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 점심시간 12:00~13:00 (1시간) 제외 기준
                         </div>
                     </div>
                 </div>
@@ -712,7 +712,7 @@ function _generateChildcareTabHTML() {
                     <div class="card" style="background: #f0f9ff; border: 1px solid #bae6fd; margin: 12px 0;">
                         <div style="font-weight: 600; margin-bottom: 12px; color: #0369a1;">⏰ 요일별 근무시간 설정</div>
                         <div style="background: #e0f2fe; padding: 8px 12px; border-radius: 6px; font-size: 12px; color: #0c4a6e; margin-bottom: 12px;">
-                            📌 점심시간 12:00~13:00 (1시간) 제외 기준 | 근무 없는 날은 출근/퇴근 모두 "--" 선택
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 점심시간 12:00~13:00 (1시간) 제외 기준 | 근무 없는 날은 출근/퇴근 모두 "--" 선택
                         </div>
                         <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
                             <thead>
@@ -814,7 +814,7 @@ function _generateChildcareTabHTML() {
                 </div>
                 
                 <div class="reduced-work-notice info" style="margin-top: 16px;">
-                    <span>💡</span>
+                    <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
                     <span>근로자 명시적 청구 시 <strong>주 12시간 범위 내 연장근로</strong>가 가능합니다.</span>
                 </div>
                 
@@ -824,16 +824,16 @@ function _generateChildcareTabHTML() {
                 </div>
                 
                 <button class="btn btn-primary" style="width: 100%;" onclick="saveChildcareReduction()">
-                    👶 육아기 단축근로 등록
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg> 육아기 단축근로 등록
                 </button>
             </div>
         </div>
         
         <div class="card">
-            <div class="card-title">📋 육아기 단축근로 현황</div>
+            <div class="card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 육아기 단축근로 현황</div>
             <div id="childcareReductionList">
                 <div class="reduced-work-empty">
-                    <div class="reduced-work-empty-icon">📂</div>
+                    <div class="reduced-work-empty-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
                     <p>등록된 육아기 단축근로가 없습니다.</p>
                 </div>
             </div>
@@ -894,14 +894,14 @@ function _resetChildcareForm() {
     document.getElementById('childcareEndDate').value = '';
     selectScheduleType('uniform');
     
-    // 균등 단축 초기화
+ // 균등 단축 초기화
     const uniformStart = document.getElementById('childcareUniformStart');
     if (uniformStart) {
         uniformStart.value = '09:00';
         updateUniformEndTime();
     }
     
-    // 요일별 스케줄 초기화
+ // 요일별 스케줄 초기화
     ['mon', 'tue', 'wed', 'thu', 'fri'].forEach(day => {
         const startSelect = document.getElementById(`scheduleStart_${day}`);
         const endSelect = document.getElementById(`scheduleEnd_${day}`);
@@ -960,12 +960,12 @@ function calculateWorkHoursBetween(startTime, endTime) {
     
     let totalMinutes = endMinutes - startMinutes;
     
-    // 점심시간 (12:00~13:00) 제외
+ // 점심시간 (12:00~13:00) 제외
     const lunchStart = 12 * 60;  // 720
     const lunchEnd = 13 * 60;    // 780
     
     if (startMinutes < lunchEnd && endMinutes > lunchStart) {
-        // 점심시간과 겹치는 경우
+ // 점심시간과 겹치는 경우
         const overlapStart = Math.max(startMinutes, lunchStart);
         const overlapEnd = Math.min(endMinutes, lunchEnd);
         if (overlapEnd > overlapStart) {
@@ -986,7 +986,7 @@ function updateUniformEndTime() {
     
     const [startH] = startTime.split(':').map(Number);
     
-    // 퇴근시간 옵션 생성 (점심 1시간 포함하여 3~7시간 + 1 = 4~8시간 후)
+ // 퇴근시간 옵션 생성 (점심 1시간 포함하여 3~7시간 + 1 = 4~8시간 후)
     const options = [];
     for (let h = 3; h <= 7; h++) {
         let endH = startH + h + 1;  // 점심 1시간 포함
@@ -998,7 +998,7 @@ function updateUniformEndTime() {
     
     endSelect.innerHTML = options.join('');
     
-    // 기본값 6시간 근무로 설정
+ // 기본값 6시간 근무로 설정
     const defaultEnd = `${String(startH + 7).padStart(2, '0')}:00`;  // 6시간 + 점심 1시간
     if (endSelect.querySelector(`option[value="${defaultEnd}"]`)) {
         endSelect.value = defaultEnd;
@@ -1063,10 +1063,10 @@ function updateWeeklyHoursDisplay() {
     if (valueEl) valueEl.textContent = weeklyHours;
     if (changeEl) changeEl.textContent = `기존 ${originalHours}시간 → ${weeklyHours}시간 (${ratio}%)`;
     
-    // 범위 검증 (15~35시간)
+ // 범위 검증 (15~35시간)
     if (weeklyHours < 15 || weeklyHours > 35) {
         if (valueEl) valueEl.style.color = '#dc2626';
-        if (changeEl) changeEl.innerHTML = `⚠️ 주당 근무시간은 <strong>15~35시간</strong> 범위여야 합니다.`;
+        if (changeEl) changeEl.innerHTML = `주당 근무시간은 <strong>15~35시간</strong> 범위여야 합니다.`;
     } else {
         if (valueEl) valueEl.style.color = '#4f46e5';
     }
@@ -1079,7 +1079,7 @@ function saveChildcareReduction() {
     try {
         로거_인사?.info('육아기 단축근로 저장 시작');
         
-        // 1. 데이터 수집
+ // 1. 데이터 수집
         const empId = document.getElementById('childcareEmployeeSelect')?.value;
         const childName = document.getElementById('childcareName')?.value?.trim();
         const childBirthDate = document.getElementById('childcareBirthDate')?.value;
@@ -1090,32 +1090,32 @@ function saveChildcareReduction() {
         const recognitionRate = parseInt(document.getElementById('childcareRecognitionRate')?.value) || 100;
         const note = document.getElementById('childcareNote')?.value || '';
         
-        // 2. 필수 입력 검증
+ // 2. 필수 입력 검증
         if (!empId) {
-            alert('⚠️ 직원을 선택해주세요.');
+            alert('[주의] 직원을 선택해주세요.');
             return;
         }
         if (!childName || !childBirthDate) {
-            alert('⚠️ 자녀 정보를 입력해주세요.');
+            alert('[주의] 자녀 정보를 입력해주세요.');
             return;
         }
         if (!startDate || !endDate) {
-            alert('⚠️ 단축 기간을 입력해주세요.');
+            alert('[주의] 단축 기간을 입력해주세요.');
             return;
         }
         if (new Date(startDate) > new Date(endDate)) {
-            alert('⚠️ 종료일은 시작일 이후여야 합니다.');
+            alert('[주의] 종료일은 시작일 이후여야 합니다.');
             return;
         }
         
-        // 3. 자녀 연령 검증
+ // 3. 자녀 연령 검증
         const ageValidation = _validateChildAge(childBirthDate, startDate);
         if (!ageValidation.valid) {
-            alert(`⚠️ ${ageValidation.message}`);
+            alert(`[주의] ${ageValidation.message}`);
             return;
         }
         
-        // 4. 근무시간 수집 및 검증
+ // 4. 근무시간 수집 및 검증
         let weeklyHours = 0;
         let schedule = null;
         let uniformSchedule = null;
@@ -1152,17 +1152,17 @@ function saveChildcareReduction() {
         }
         
         if (weeklyHours < 15 || weeklyHours > 35) {
-            alert('⚠️ 주당 근무시간은 15~35시간 범위여야 합니다.');
+            alert('[주의] 주당 근무시간은 15~35시간 범위여야 합니다.');
             return;
         }
         
-        // 5. 기간 중복 검증
+ // 5. 기간 중복 검증
         if (_checkPeriodOverlap(empId, 'childcare', startDate, endDate, editingReducedWorkId)) {
-            alert('⚠️ 해당 기간에 이미 등록된 육아기 단축근로가 있습니다.\n스케줄 변경 시 기존 이력을 종료하고 새로 등록해주세요.');
+            alert('[주의] 해당 기간에 이미 등록된 육아기 단축근로가 있습니다.\n스케줄 변경 시 기존 이력을 종료하고 새로 등록해주세요.');
             return;
         }
         
-        // 6. 데이터 구성
+ // 6. 데이터 구성
         const reductionData = {
             id: editingReducedWorkId || _generateReducedWorkId('childcare'),
             childName: childName,
@@ -1183,7 +1183,7 @@ function saveChildcareReduction() {
             updatedAt: new Date().toISOString()
         };
         
-        // 7. 저장
+ // 7. 저장
         const emp = db.findEmployee(empId);
         if (!emp) {
             throw new Error('직원 정보를 찾을 수 없습니다.');
@@ -1208,7 +1208,7 @@ function saveChildcareReduction() {
         
         db.saveEmployee(emp);
         
-        // 8. UI 갱신
+ // 8. UI 갱신
         loadChildcareReductionList();
         _resetChildcareForm();
         document.getElementById('childcareEmployeeSelect').value = '';
@@ -1219,7 +1219,7 @@ function saveChildcareReduction() {
             loadEmployeeList();
         }
         
-        alert('✅ 육아기 단축근로가 등록되었습니다.');
+        alert('육아기 단축근로가 등록되었습니다.');
         로거_인사?.info('육아기 단축근로 저장 완료', { empId, reductionData });
         
     } catch (error) {
@@ -1241,14 +1241,14 @@ function loadChildcareReductionList() {
         if (allReductions.length === 0) {
             container.innerHTML = `
                 <div class="reduced-work-empty">
-                    <div class="reduced-work-empty-icon">📂</div>
+                    <div class="reduced-work-empty-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
                     <p>등록된 육아기 단축근로가 없습니다.</p>
                 </div>
             `;
             return;
         }
         
-        // 상태별 정렬: 진행중 > 예정 > 종료
+ // 상태별 정렬: 진행중 > 예정 > 종료
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         
@@ -1271,7 +1271,7 @@ function loadChildcareReductionList() {
             return { ...item, status, statusOrder };
         }).sort((a, b) => a.statusOrder - b.statusOrder);
         
-        // 테이블 HTML 생성
+ // 테이블 HTML 생성
         let html = `
             <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
                 <thead>
@@ -1296,7 +1296,7 @@ function loadChildcareReductionList() {
             
             const ratio = Math.round((item.data.weeklyHours / item.data.originalWeeklyHours) * 100);
             
-            // 근무시간 표시
+ // 근무시간 표시
             let workTimeText = '';
             if (item.data.scheduleType === 'uniform') {
                 if (item.data.uniformSchedule) {
@@ -1308,7 +1308,7 @@ function loadChildcareReductionList() {
                 workTimeText = '요일별 차등';
             }
             
-            // 상태 배지
+ // 상태 배지
             let statusBadge = '';
             let rowBgColor = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
             
@@ -1382,7 +1382,7 @@ function editChildcareReduction(empId, id) {
         selectScheduleType(record.scheduleType || 'uniform');
         
         if (record.scheduleType === 'uniform') {
-            // 새 구조 또는 레거시 호환
+ // 새 구조 또는 레거시 호환
             if (record.uniformSchedule) {
                 document.getElementById('childcareUniformStart').value = record.uniformSchedule.workStart || '09:00';
                 updateUniformEndTime();
@@ -1391,11 +1391,11 @@ function editChildcareReduction(empId, id) {
                     updateWeeklyHoursDisplay();
                 }, 50);
             } else if (record.uniformHours) {
-                // 레거시: uniformHours만 있는 경우
+ // 레거시: uniformHours만 있는 경우
                 document.getElementById('childcareUniformStart').value = '09:00';
                 updateUniformEndTime();
                 setTimeout(() => {
-                    // 시간에 맞는 퇴근시간 계산 (점심 포함)
+ // 시간에 맞는 퇴근시간 계산 (점심 포함)
                     const endHour = 9 + record.uniformHours + 1;
                     document.getElementById('childcareUniformEnd').value = `${String(endHour).padStart(2, '0')}:00`;
                     updateWeeklyHoursDisplay();
@@ -1409,18 +1409,18 @@ function editChildcareReduction(empId, id) {
                 const dayData = record.schedule[day];
                 
                 if (dayData && typeof dayData === 'object') {
-                    // 새 구조
+ // 새 구조
                     if (startSelect) startSelect.value = dayData.workStart || '';
                     if (endSelect) endSelect.value = dayData.workEnd || '';
                 } else if (typeof dayData === 'number') {
-                    // 레거시 (시간만 있는 경우)
+ // 레거시 (시간만 있는 경우)
                     if (startSelect) startSelect.value = '09:00';
                     if (endSelect) {
                         const endHour = 9 + dayData + 1;
                         endSelect.value = `${String(endHour).padStart(2, '0')}:00`;
                     }
                 } else {
-                    // null인 경우
+ // null인 경우
                     if (startSelect) startSelect.value = '';
                     if (endSelect) endSelect.value = '';
                 }
@@ -1448,7 +1448,7 @@ function editChildcareReduction(empId, id) {
  * 육아기 단축근로 삭제
  */
 function deleteChildcareReduction(empId, id) {
-    if (!confirm('⚠️ 이 육아기 단축근로 기록을 삭제하시겠습니까?')) return;
+    if (!confirm('[주의] 이 육아기 단축근로 기록을 삭제하시겠습니까?')) return;
     
     try {
         const emp = db.findEmployee(empId);
@@ -1458,7 +1458,7 @@ function deleteChildcareReduction(empId, id) {
         db.saveEmployee(emp);
         
         loadChildcareReductionList();
-        alert('✅ 삭제되었습니다.');
+        alert('삭제되었습니다.');
         
     } catch (error) {
         로거_인사?.error('육아기 단축근로 삭제 오류', error);
@@ -1477,10 +1477,10 @@ function deleteChildcareReduction(empId, id) {
 function _generateFlexTimeTabHTML() {
     return `
         <div class="card">
-            <div class="card-title">🕙 육아기 10시 출근제 등록</div>
+            <div class="card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 육아기 10시 출근제 등록</div>
             
             <div class="reduced-work-notice info">
-                <span>💡</span>
+                <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
                 <span>유아·초등학생 자녀를 둔 부모가 임금 삭감 없이 출퇴근 시간을 1시간 조정할 수 있는 제도입니다.<br>
                 이 제도는 <strong>"시간 조정"</strong>으로, 총 근무시간(8시간)은 동일합니다. 조정된 퇴근시간 이후 근무 시 <strong>시간외수당이 정상 지급</strong>됩니다.</span>
             </div>
@@ -1494,7 +1494,7 @@ function _generateFlexTimeTabHTML() {
             
             <div id="flexTimeFormFields" style="display: none;">
                 <div class="card" style="background: #f9fafb; margin: 16px 0;">
-                    <div class="card-title" style="font-size: 14px;">👶 자녀 정보</div>
+                    <div class="card-title" style="font-size: 14px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg> 자녀 정보</div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>자녀 이름 *</label>
@@ -1536,11 +1536,11 @@ function _generateFlexTimeTabHTML() {
                     <div class="radio-group">
                         <label class="radio-label">
                             <input type="radio" name="flexTimeType" value="late_start" checked onchange="updateFlexTimeDisplay()">
-                            <span>🌅 10시 출근 (09:00 → 10:00)</span>
+                            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg> 10시 출근 (09:00 → 10:00)</span>
                         </label>
                         <label class="radio-label">
                             <input type="radio" name="flexTimeType" value="early_end" onchange="updateFlexTimeDisplay()">
-                            <span>🌆 1시간 조기 퇴근 (18:00 → 17:00)</span>
+                            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="16 6 12 10 8 6"/></svg> 1시간 조기 퇴근 (18:00 → 17:00)</span>
                         </label>
                     </div>
                 </div>
@@ -1557,16 +1557,16 @@ function _generateFlexTimeTabHTML() {
                 </div>
                 
                 <button class="btn btn-primary" style="width: 100%;" onclick="saveFlexTime()">
-                    🕙 10시 출근제 등록
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 10시 출근제 등록
                 </button>
             </div>
         </div>
         
         <div class="card">
-            <div class="card-title">📋 10시 출근제 사용 현황</div>
+            <div class="card-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 10시 출근제 사용 현황</div>
             <div id="flexTimeList">
                 <div class="reduced-work-empty">
-                    <div class="reduced-work-empty-icon">📂</div>
+                    <div class="reduced-work-empty-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
                     <p>등록된 10시 출근제 사용 이력이 없습니다.</p>
                 </div>
             </div>
@@ -1652,7 +1652,7 @@ function saveFlexTime() {
     try {
         로거_인사?.info('10시 출근제 저장 시작');
         
-        // 1. 데이터 수집
+ // 1. 데이터 수집
         const empId = document.getElementById('flexTimeEmployeeSelect')?.value;
         const childName = document.getElementById('flexTimeName')?.value?.trim();
         const childBirthDate = document.getElementById('flexTimeBirthDate')?.value;
@@ -1662,41 +1662,41 @@ function saveFlexTime() {
         const flexType = document.querySelector('input[name="flexTimeType"]:checked')?.value;
         const note = document.getElementById('flexTimeNote')?.value || '';
         
-        // 2. 필수 입력 검증
+ // 2. 필수 입력 검증
         if (!empId) {
-            alert('⚠️ 직원을 선택해주세요.');
+            alert('[주의] 직원을 선택해주세요.');
             return;
         }
         if (!childName || !childBirthDate) {
-            alert('⚠️ 자녀 정보를 입력해주세요.');
+            alert('[주의] 자녀 정보를 입력해주세요.');
             return;
         }
         if (!startDate || !endDate) {
-            alert('⚠️ 사용 기간을 입력해주세요.');
+            alert('[주의] 사용 기간을 입력해주세요.');
             return;
         }
         if (new Date(startDate) > new Date(endDate)) {
-            alert('⚠️ 종료일은 시작일 이후여야 합니다.');
+            alert('[주의] 종료일은 시작일 이후여야 합니다.');
             return;
         }
         
-        // 3. 기간 검증 (최대 1년)
+ // 3. 기간 검증 (최대 1년)
         const daysDiff = Math.floor((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
         if (daysDiff > 365) {
-            if (!confirm('⚠️ 10시 출근제는 최대 1년까지 사용 가능합니다.\n1년을 초과하는 기간으로 등록하시겠습니까?')) {
+            if (!confirm('[주의] 10시 출근제는 최대 1년까지 사용 가능합니다.\n1년을 초과하는 기간으로 등록하시겠습니까?')) {
                 return;
             }
         }
         
-        // 4. 기간 중복 검증
+ // 4. 기간 중복 검증
         if (_checkPeriodOverlap(empId, 'flexTime', startDate, endDate, editingReducedWorkId)) {
-            alert('⚠️ 해당 기간에 이미 등록된 10시 출근제 사용 이력이 있습니다.');
+            alert('[주의] 해당 기간에 이미 등록된 10시 출근제 사용 이력이 있습니다.');
             return;
         }
         
-        // 5. 데이터 구성
-        // 10시 출근제: 퇴근시간은 그대로, 출근만 1시간 늦춤 (09~10시 유급)
-        // 조기 퇴근제: 출근시간은 그대로, 퇴근만 1시간 앞당김 (17~18시 유급)
+ // 5. 데이터 구성
+ // 10시 출근제: 퇴근시간은 그대로, 출근만 1시간 늦춤 (09~10시 유급)
+ // 조기 퇴근제: 출근시간은 그대로, 퇴근만 1시간 앞당김 (17~18시 유급)
         const workTimes = flexType === 'late_start' 
             ? { start: '10:00', end: '18:00' }   // 10시 출근, 18시 퇴근 (실근무 7h + 유급 1h)
             : { start: '09:00', end: '17:00' };  // 9시 출근, 17시 퇴근 (실근무 7h + 유급 1h)
@@ -1719,7 +1719,7 @@ function saveFlexTime() {
             updatedAt: new Date().toISOString()
         };
         
-        // 7. 저장
+ // 7. 저장
         const emp = db.findEmployee(empId);
         if (!emp) {
             throw new Error('직원 정보를 찾을 수 없습니다.');
@@ -1744,7 +1744,7 @@ function saveFlexTime() {
         
         db.saveEmployee(emp);
         
-        // 8. UI 갱신
+ // 8. UI 갱신
         loadFlexTimeList();
         _resetFlexTimeForm();
         document.getElementById('flexTimeEmployeeSelect').value = '';
@@ -1755,7 +1755,7 @@ function saveFlexTime() {
             loadEmployeeList();
         }
         
-        alert('✅ 10시 출근제가 등록되었습니다.');
+        alert('10시 출근제가 등록되었습니다.');
         로거_인사?.info('10시 출근제 저장 완료', { empId, flexTimeData });
         
     } catch (error) {
@@ -1777,14 +1777,14 @@ function loadFlexTimeList() {
         if (allReductions.length === 0) {
             container.innerHTML = `
                 <div class="reduced-work-empty">
-                    <div class="reduced-work-empty-icon">📂</div>
+                    <div class="reduced-work-empty-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
                     <p>등록된 10시 출근제 사용 이력이 없습니다.</p>
                 </div>
             `;
             return;
         }
         
-        // 상태별 정렬: 진행중 > 예정 > 종료
+ // 상태별 정렬: 진행중 > 예정 > 종료
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         
@@ -1807,7 +1807,7 @@ function loadFlexTimeList() {
             return { ...item, status, statusOrder };
         }).sort((a, b) => a.statusOrder - b.statusOrder);
         
-        // 테이블 HTML 생성
+ // 테이블 HTML 생성
         let html = `
             <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
                 <thead>
@@ -1833,7 +1833,7 @@ function loadFlexTimeList() {
             const flexTypeLabel = item.data.flexType === 'late_start' ? '10시 출근' : '조기 퇴근';
             const workTime = `${item.data.workStart}~${item.data.workEnd}`;
             
-            // 상태 배지
+ // 상태 배지
             let statusBadge = '';
             let rowBgColor = idx % 2 === 0 ? '#ffffff' : '#fffbeb';
             
@@ -1925,7 +1925,7 @@ function editFlexTime(empId, id) {
  * 10시 출근제 삭제
  */
 function deleteFlexTime(empId, id) {
-    if (!confirm('⚠️ 이 10시 출근제 기록을 삭제하시겠습니까?')) return;
+    if (!confirm('[주의] 이 10시 출근제 기록을 삭제하시겠습니까?')) return;
     
     try {
         const emp = db.findEmployee(empId);
@@ -1935,7 +1935,7 @@ function deleteFlexTime(empId, id) {
         db.saveEmployee(emp);
         
         loadFlexTimeList();
-        alert('✅ 삭제되었습니다.');
+        alert('삭제되었습니다.');
         
     } catch (error) {
         로거_인사?.error('10시 출근제 삭제 오류', error);
@@ -2024,13 +2024,13 @@ function _validateChildAge(childBirthDate, startDate) {
 function _calculateWorkHours(method) {
     switch (method) {
         case 'late_start':
-            // 출근 2시간 늦춤: 11:00~18:00 (점심 제외 6시간)
+ // 출근 2시간 늦춤: 11:00~18:00 (점심 제외 6시간)
             return { start: '11:00', end: '18:00' };
         case 'early_end':
-            // 퇴근 2시간 앞당김: 09:00~16:00 (점심 제외 6시간)
+ // 퇴근 2시간 앞당김: 09:00~16:00 (점심 제외 6시간)
             return { start: '09:00', end: '16:00' };
         case 'both':
-            // 출퇴근 각 1시간 조정: 10:00~17:00 (점심 제외 6시간)
+ // 출퇴근 각 1시간 조정: 10:00~17:00 (점심 제외 6시간)
             return { start: '10:00', end: '17:00' };
         default:
             return { start: '11:00', end: '18:00' };
@@ -2057,7 +2057,7 @@ function _getAllReducedWorkByType(type) {
         }
     });
     
-    // 시작일 기준 내림차순 정렬
+ // 시작일 기준 내림차순 정렬
     results.sort((a, b) => new Date(b.data.startDate) - new Date(a.data.startDate));
     
     return results;
@@ -2084,7 +2084,7 @@ function getActiveReducedWork(empId, date) {
         
         const baseDaily = emp.weeklyWorkHours ? emp.weeklyWorkHours / 5 : 8;
         
-        // 1. 임신기 단축근로 확인 (우선순위 높음)
+ // 1. 임신기 단축근로 확인 (우선순위 높음)
         const pregnancy = emp.reducedWork.pregnancy?.find(r => {
             const start = new Date(r.startDate);
             const end = new Date(r.endDate);
@@ -2103,7 +2103,7 @@ function getActiveReducedWork(empId, date) {
             };
         }
         
-        // 2. 육아기 단축근로 확인
+ // 2. 육아기 단축근로 확인
         const childcare = emp.reducedWork.childcare?.find(r => {
             const start = new Date(r.startDate);
             const end = new Date(r.endDate);
@@ -2116,27 +2116,27 @@ function getActiveReducedWork(empId, date) {
             let workEnd = '18:00';
             
             if (childcare.scheduleType === 'daily' && childcare.schedule) {
-                // 요일별 스케줄
+ // 요일별 스케줄
                 const dayData = childcare.schedule[dayName];
                 if (dayData && typeof dayData === 'object') {
-                    // 새 구조
+ // 새 구조
                     dailyHours = dayData.hours || 0;
                     workStart = dayData.workStart || '09:00';
                     workEnd = dayData.workEnd || '18:00';
                 } else if (typeof dayData === 'number') {
-                    // 레거시
+ // 레거시
                     dailyHours = dayData;
                     workEnd = `${String(9 + dayData + 1).padStart(2, '0')}:00`;
                 } else {
                     dailyHours = 0;  // 근무 없는 날
                 }
             } else if (childcare.uniformSchedule) {
-                // 새 구조: 균등
+ // 새 구조: 균등
                 dailyHours = childcare.uniformSchedule.dailyHours || 6;
                 workStart = childcare.uniformSchedule.workStart || '09:00';
                 workEnd = childcare.uniformSchedule.workEnd || '16:00';
             } else if (childcare.uniformHours) {
-                // 레거시
+ // 레거시
                 dailyHours = childcare.uniformHours;
                 workEnd = `${String(9 + dailyHours + 1).padStart(2, '0')}:00`;
             }
@@ -2154,7 +2154,7 @@ function getActiveReducedWork(empId, date) {
             };
         }
         
-        // 3. 10시 출근제 확인
+ // 3. 10시 출근제 확인
         const flexTime = emp.reducedWork.flexTime?.find(r => {
             const start = new Date(r.startDate);
             const end = new Date(r.endDate);
@@ -2200,7 +2200,7 @@ function calculateMonthlyPayRatio(empId, year, month) {
         let weightedRatio = 0;
         let processedDays = 0;
         
-        // 육아기 단축근로만 급여에 비례 영향
+ // 육아기 단축근로만 급여에 비례 영향
         const childcareRecords = emp.reducedWork?.childcare || [];
         
         for (const record of childcareRecords) {

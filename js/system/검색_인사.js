@@ -12,14 +12,14 @@
  * 
  * [변경 이력]
  * v3.0 - 프로덕션급 리팩토링
- *   - Phase 1 유틸리티 적용 (로거, 에러처리, 직원유틸, DOM유틸)
- *   - 완벽한 에러 처리
- *   - 체계적 로깅
- *   - XSS 방지 (HTML 이스케이프)
- *   - 코드 정리 및 주석 추가
- *   - 함수 분리 (가독성 향상)
- *   - 메뉴 데이터 상수화
- *   - null 체크 강화
+ * - Phase 1 유틸리티 적용 (로거, 에러처리, 직원유틸, DOM유틸)
+ * - 완벽한 에러 처리
+ * - 체계적 로깅
+ * - XSS 방지 (HTML 이스케이프)
+ * - 코드 정리 및 주석 추가
+ * - 함수 분리 (가독성 향상)
+ * - 메뉴 데이터 상수화
+ * - null 체크 강화
  * 
  * [하위 호환성]
  * - 모든 기존 함수명 유지
@@ -45,17 +45,17 @@
  * @constant {Array<Object>} SEARCH_MENUS
  */
 const SEARCH_MENUS = [
-    { name: '신규 직원 등록', module: 'employee-register', icon: '➕' },
-    { name: '직원 목록', module: 'employee-list', icon: '📋' },
-    { name: '경력 관리', module: 'career-manage', icon: '📝' },
-    { name: '인사 발령', module: 'assignment', icon: '📄' },
-    { name: '육아 휴직', module: 'maternity', icon: '🤱' },
-    { name: '연명부', module: 'register', icon: '📋' },
-    { name: '호봉획정표', module: 'certificate', icon: '📄' },
-    { name: '입사자 목록', module: 'new-employee-list', icon: '📋' },
-    { name: '퇴사자 목록', module: 'retired-list', icon: '📋' },
-    { name: '백업', module: 'backup', icon: '💾' },
-    { name: '조직 설정', module: 'settings', icon: '⚙️' }
+    { name: '신규 직원 등록', module: 'employee-register', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>' },
+    { name: '직원 목록', module: 'employee-list', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
+    { name: '경력 관리', module: 'career-manage', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' },
+    { name: '인사 발령', module: 'assignment', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>' },
+    { name: '육아 휴직', module: 'maternity', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg>' },
+    { name: '연명부', module: 'register', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>' },
+    { name: '호봉획정표', module: 'certificate', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>' },
+    { name: '입사자 목록', module: 'new-employee-list', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>' },
+    { name: '퇴사자 목록', module: 'retired-list', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>' },
+    { name: '백업', module: 'backup', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>' },
+    { name: '조직 설정', module: 'settings', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>' }
 ];
 
 // ===== 검색 모달 제어 =====
@@ -82,10 +82,10 @@ function openSearchModal() {
             return;
         }
         
-        // 모달 표시
+ // 모달 표시
         modal.classList.add('active');
         
-        // 입력 필드에 포커스
+ // 입력 필드에 포커스
         if (input) {
             input.focus();
         }
@@ -114,7 +114,7 @@ function openSearchModal() {
  */
 function closeSearchModal(e) {
     try {
-        // 배경 클릭이 아니면 무시
+ // 배경 클릭이 아니면 무시
         if (e && e.target && e.target.id !== 'searchModal') {
             return;
         }
@@ -130,15 +130,15 @@ function closeSearchModal(e) {
             return;
         }
         
-        // 모달 숨기기
+ // 모달 숨기기
         modal.classList.remove('active');
         
-        // 입력 내용 초기화
+ // 입력 내용 초기화
         if (input) {
             input.value = '';
         }
         
-        // 결과 초기화
+ // 결과 초기화
         if (results) {
             results.innerHTML = '<div class="no-results">검색어를 입력하세요</div>';
         }
@@ -147,7 +147,7 @@ function closeSearchModal(e) {
         
     } catch (error) {
         로거_인사?.error('검색 모달 닫기 오류', error);
-        // 닫기 오류는 사용자에게 알리지 않음 (UX)
+ // 닫기 오류는 사용자에게 알리지 않음 (UX)
     }
 }
 
@@ -179,25 +179,25 @@ function performSearch(query) {
             return;
         }
         
-        // 검색어 정규화: trim만 수행 (공백 제거는 각 검색 함수에서)
+ // 검색어 정규화: trim만 수행 (공백 제거는 각 검색 함수에서)
         const normalizedQuery = query.trim();
         
-        // 빈 검색어 처리
+ // 빈 검색어 처리
         if (!normalizedQuery) {
             container.innerHTML = '<div class="no-results">검색어를 입력하세요</div>';
             return;
         }
         
-        // 1. 검색 실행
+ // 1. 검색 실행
         const results = {
             employees: _searchEmployees(normalizedQuery),
             menus: _searchMenus(normalizedQuery)
         };
         
-        // 2. 결과 HTML 생성
+ // 2. 결과 HTML 생성
         const resultHTML = _buildResultHTML(results);
         
-        // 3. 결과 표시
+ // 3. 결과 표시
         container.innerHTML = resultHTML;
         
         로거_인사?.info('검색 완료', {
@@ -232,7 +232,7 @@ function performSearch(query) {
  */
 function _searchEmployees(query) {
     try {
-        // DB 확인
+ // DB 확인
         if (typeof db === 'undefined' || !db) {
             로거_인사?.error('DB를 찾을 수 없습니다');
             console.error('검색 오류: db 객체가 없습니다');
@@ -241,7 +241,7 @@ function _searchEmployees(query) {
         
         const employees = db.getEmployees();
         
-        // 직원 데이터 확인
+ // 직원 데이터 확인
         if (!employees || employees.length === 0) {
             로거_인사?.warn('직원 데이터가 없습니다');
             console.warn('검색: 직원 데이터 없음');
@@ -256,7 +256,7 @@ function _searchEmployees(query) {
         
         const results = [];
         
-        // 검색어 정규화: 공백 제거 + 소문자 변환
+ // 검색어 정규화: 공백 제거 + 소문자 변환
         const searchQuery = query.replace(/\s+/g, '').toLowerCase();
         
         if (!searchQuery) {
@@ -267,7 +267,7 @@ function _searchEmployees(query) {
         
         employees.forEach(emp => {
             try {
-                // 직원 정보 추출
+ // 직원 정보 추출
                 const name = (typeof 직원유틸_인사 !== 'undefined')
                     ? 직원유틸_인사.getName(emp)
                     : (emp.personalInfo?.name || emp.name || '');
@@ -278,12 +278,12 @@ function _searchEmployees(query) {
                 
                 const code = emp.uniqueCode || '';
                 
-                // 데이터 정규화: 공백 제거 + 소문자 변환
+ // 데이터 정규화: 공백 제거 + 소문자 변환
                 const normalizedName = name.replace(/\s+/g, '').toLowerCase();
                 const normalizedDept = dept.replace(/\s+/g, '').toLowerCase();
                 const normalizedCode = code.replace(/\s+/g, '').toLowerCase();
                 
-                // 검색 매칭: 부분 문자열 포함 검사
+ // 검색 매칭: 부분 문자열 포함 검사
                 const isMatch = 
                     normalizedName.includes(searchQuery) || 
                     normalizedDept.includes(searchQuery) || 
@@ -304,7 +304,7 @@ function _searchEmployees(query) {
             }
         });
         
-        // ✅ 이름 가나다순 정렬
+ // 이름 가나다순 정렬
         results.sort((a, b) => {
             return a.name.localeCompare(b.name, 'ko-KR');
         });
@@ -315,7 +315,7 @@ function _searchEmployees(query) {
         });
         console.log('검색 결과:', results.length, '명 (가나다순 정렬)');
         
-        // 최대 50개만 반환
+ // 최대 50개만 반환
         return results.slice(0, 50);
         
     } catch (error) {
@@ -341,7 +341,7 @@ function _searchMenus(query) {
     try {
         const results = [];
         
-        // 검색어 정규화: 공백 제거 + 소문자 변환
+ // 검색어 정규화: 공백 제거 + 소문자 변환
         const searchQuery = query.replace(/\s+/g, '').toLowerCase();
         
         if (!searchQuery) {
@@ -349,10 +349,10 @@ function _searchMenus(query) {
         }
         
         SEARCH_MENUS.forEach(menu => {
-            // 메뉴명 정규화: 공백 제거 + 소문자 변환
+ // 메뉴명 정규화: 공백 제거 + 소문자 변환
             const menuName = menu.name.replace(/\s+/g, '').toLowerCase();
             
-            // 검색 매칭: 부분 문자열 포함 검사
+ // 검색 매칭: 부분 문자열 포함 검사
             if (menuName.includes(searchQuery)) {
                 results.push(menu);
             }
@@ -388,19 +388,19 @@ function _buildResultHTML(results) {
     try {
         const { employees, menus } = results;
         
-        // 결과 없음
+ // 결과 없음
         if (employees.length === 0 && menus.length === 0) {
             return '<div class="no-results">검색 결과가 없습니다</div>';
         }
         
         let html = '';
         
-        // 직원 결과
+ // 직원 결과
         if (employees.length > 0) {
             html += '<div class="result-group"><div class="group-title">직원</div>';
             
             employees.forEach(emp => {
-                // ✅ XSS 방지
+ // XSS 방지
                 const safeName = (typeof DOM유틸_인사 !== 'undefined')
                     ? DOM유틸_인사.escapeHtml(emp.name)
                     : emp.name.replace(/[&<>"']/g, function(m) {
@@ -426,7 +426,7 @@ function _buildResultHTML(results) {
                     });
                 
                 html += `<div class="result-item" onclick="executeSearchResult('employee', '${safeId}')">
-                    <div class="result-icon">👤</div>
+                    <div class="result-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
                     <div class="result-content">
                         <div class="result-name">${safeName}</div>
                         <div class="result-meta">${safeDept} · ${safeCode}</div>
@@ -437,12 +437,12 @@ function _buildResultHTML(results) {
             html += '</div>';
         }
         
-        // 메뉴 결과
+ // 메뉴 결과
         if (menus.length > 0) {
             html += '<div class="result-group"><div class="group-title">메뉴</div>';
             
             menus.forEach(menu => {
-                // ✅ XSS 방지
+ // XSS 방지
                 const safeName = (typeof DOM유틸_인사 !== 'undefined')
                     ? DOM유틸_인사.escapeHtml(menu.name)
                     : menu.name.replace(/[&<>"']/g, function(m) {
@@ -455,9 +455,8 @@ function _buildResultHTML(results) {
                         return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
                     });
                 
-                const safeIcon = (typeof DOM유틸_인사 !== 'undefined')
-                    ? DOM유틸_인사.escapeHtml(menu.icon)
-                    : menu.icon;
+                // icon은 내부 SVG 데이터이므로 이스케이프 불필요
+                const safeIcon = menu.icon;
                 
                 html += `<div class="result-item" onclick="executeSearchResult('menu', '${safeModule}')">
                     <div class="result-icon">${safeIcon}</div>
@@ -497,12 +496,12 @@ function executeSearchResult(type, id) {
     try {
         로거_인사?.debug('검색 결과 실행', { type, id });
         
-        // 모달 닫기
+ // 모달 닫기
         closeSearchModal();
         
-        // 타입별 처리
+ // 타입별 처리
         if (type === 'employee') {
-            // 직원 상세 페이지
+ // 직원 상세 페이지
             if (typeof showEmployeeDetail === 'function') {
                 showEmployeeDetail(id);
                 로거_인사?.info('직원 상세 페이지 열림', { id });
@@ -512,7 +511,7 @@ function executeSearchResult(type, id) {
             }
             
         } else if (type === 'menu') {
-            // 메뉴로 이동
+ // 메뉴로 이동
             if (typeof navigateToModule === 'function') {
                 navigateToModule(id);
                 로거_인사?.info('메뉴로 이동', { module: id });
@@ -547,14 +546,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         document.addEventListener('keydown', function(e) {
             try {
-                // Ctrl+K 또는 Cmd+K
+ // Ctrl+K 또는 Cmd+K
                 if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                     e.preventDefault();
                     openSearchModal();
                     로거_인사?.debug('검색 단축키 실행 (Ctrl/Cmd+K)');
                 }
                 
-                // ESC로 검색 모달 닫기
+ // ESC로 검색 모달 닫기
                 if (e.key === 'Escape') {
                     const modal = document.getElementById('searchModal');
                     if (modal && modal.classList.contains('active')) {
@@ -571,6 +570,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
     } catch (error) {
         로거_인사?.error('검색 키보드 단축키 등록 오류', error);
-        // 단축키 등록 실패해도 시스템은 계속 동작
+ // 단축키 등록 실패해도 시스템은 계속 동작
     }
 });

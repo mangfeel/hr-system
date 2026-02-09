@@ -13,13 +13,13 @@
  * 
  * [변경 이력]
  * v3.0 - 프로덕션급 리팩토링
- *   - Phase 1 유틸리티 적용 (직원유틸, DOM유틸)
- *   - 완벽한 에러 처리
- *   - 체계적 로깅
- *   - JSDoc 주석 추가
- *   - XSS 방지
- *   - 검증 강화 유지
- *   - 🔧 버그 수정: emp.employment 객체 없을 때 에러 수정
+ * - Phase 1 유틸리티 적용 (직원유틸, DOM유틸)
+ * - 완벽한 에러 처리
+ * - 체계적 로깅
+ * - JSDoc 주석 추가
+ * - XSS 방지
+ * - 검증 강화 유지
+ * - 버그 수정: emp.employment 객체 없을 때 에러 수정
  * 
  * [하위 호환성]
  * - 모든 기존 함수명 유지
@@ -75,14 +75,14 @@ function showRetireModal(id) {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('직원을 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 직원을 찾을 수 없습니다.');
+                alert('[주의] 직원을 찾을 수 없습니다.');
             }
             return;
         }
         
         const today = DateUtils.formatDate(new Date());
         
-        // 입사일 가져오기 (하위 호환)
+ // 입사일 가져오기 (하위 호환)
         const entryDate = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.getEntryDate(emp)
             : (emp.employment?.entryDate || emp.entryDate || '-');
@@ -96,7 +96,7 @@ function showRetireModal(id) {
             return;
         }
         
-        // XSS 방지
+ // XSS 방지
         const safeEntryDate = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.escapeHtml(entryDate)
             : entryDate;
@@ -111,7 +111,7 @@ function showRetireModal(id) {
                     <button class="modal-close" onclick="closeRetireModal()">×</button>
                 </div>
                 <div class="alert alert-info">
-                    <span>💡</span>
+                    <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
                     <span>퇴사일은 입사일(${safeEntryDate}) 이후여야 합니다.</span>
                 </div>
                 <div class="form-group">
@@ -174,7 +174,7 @@ function closeRetireModal() {
  * - 검증 2: 날짜 범위 (1900~2100)
  * - 활성 발령 자동 종료
  * - 육아휴직 중 퇴사 처리
- * - 🔧 버그 수정: employment 객체 없을 때 생성
+ * - 버그 수정: employment 객체 없을 때 생성
  * 
  * @example
  * processRetirement(); // 폼 데이터 검증 및 퇴사 처리
@@ -188,7 +188,7 @@ function processRetirement() {
         
         로거_인사?.info('퇴사 처리 시작', { empId: currentEmployeeIdForRetire });
         
-        // ===== 입력값 수집 =====
+ // ===== 입력값 수집 =====
         const retirementDateField = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('retirementDate')
             : document.getElementById('retirementDate');
@@ -206,7 +206,7 @@ function processRetirement() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('퇴사일을 선택하세요.');
             } else {
-                alert('⚠️ 퇴사일을 선택하세요.');
+                alert('[주의] 퇴사일을 선택하세요.');
             }
             return;
         }
@@ -218,7 +218,7 @@ function processRetirement() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('직원을 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 직원을 찾을 수 없습니다.');
+                alert('[주의] 직원을 찾을 수 없습니다.');
             }
             return;
         }
@@ -227,24 +227,24 @@ function processRetirement() {
             ? 직원유틸_인사.getName(emp)
             : (emp.personalInfo?.name || emp.name);
         
-        // 입사일 가져오기 (하위 호환)
+ // 입사일 가져오기 (하위 호환)
         const entryDate = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.getEntryDate(emp)
             : (emp.employment?.entryDate || emp.entryDate);
         
         로거_인사?.debug('퇴사 정보', { name, entryDate, retirementDate });
         
-        // ===== 검증: 퇴사일 유효성 검증 =====
-        // validateRetirementDate에서 다음을 모두 검증:
-        // - 날짜 형식 (YYYY-MM-DD)
-        // - 날짜 범위 (1900~2100) - 검증_인사.js에서 처리
-        // - 퇴사일이 입사일 이후인지
+ // ===== 검증: 퇴사일 유효성 검증 =====
+ // validateRetirementDate에서 다음을 모두 검증:
+ // - 날짜 형식 (YYYY-MM-DD)
+ // - 날짜 범위 (1900~2100) - 검증_인사.js에서 처리
+ // - 퇴사일이 입사일 이후인지
         const validation = Validator.validateRetirementDate(entryDate, retirementDate);
         
         if (!validation.valid) {
             로거_인사?.warn('퇴사일 검증 실패', { errors: validation.errors });
             
-            const errorMsg = '⚠️ 퇴사일 검증 실패:\n\n' +
+            const errorMsg = '[주의] 퇴사일 검증 실패:\n\n' +
                 validation.errors.join('\n') +
                 '\n\n입사일: ' + entryDate +
                 '\n퇴사일: ' + retirementDate;
@@ -257,8 +257,8 @@ function processRetirement() {
             return;
         }
         
-        // ===== 확인 메시지 =====
-        const confirmMsg = `⚠️ ${name} 님을 퇴사 처리하시겠습니까?\n\n입사일: ${entryDate}\n퇴사일: ${retirementDate}\n\n※ 퇴사 처리 후에도 취소할 수 있습니다.`;
+ // ===== 확인 메시지 =====
+        const confirmMsg = `[주의] ${name} 님을 퇴사 처리하시겠습니까?\n\n입사일: ${entryDate}\n퇴사일: ${retirementDate}\n\n※ 퇴사 처리 후에도 취소할 수 있습니다.`;
         
         const confirmed = typeof 에러처리_인사 !== 'undefined'
             ? 에러처리_인사.confirm(confirmMsg)
@@ -269,8 +269,8 @@ function processRetirement() {
             return;
         }
         
-        // ===== 🔧 버그 수정: employment 객체 확보 =====
-        // 구버전 데이터는 employment 객체가 없을 수 있음
+ // ===== 버그 수정: employment 객체 확보 =====
+ // 구버전 데이터는 employment 객체가 없을 수 있음
         if (!emp.employment) {
             로거_인사?.debug('employment 객체 생성 (구버전 데이터)');
             
@@ -282,16 +282,16 @@ function processRetirement() {
             };
         }
         
-        // ===== 퇴사일 설정 =====
+ // ===== 퇴사일 설정 =====
         emp.employment.retirementDate = retirementDate;
         emp.employment.status = '퇴사';
         
-        // 하위 호환성: 구버전 필드도 업데이트
+ // 하위 호환성: 구버전 필드도 업데이트
         emp.retirementDate = retirementDate;
         
         로거_인사?.debug('퇴사 정보 설정 완료');
         
-        // ===== 활성 발령 종료 처리 =====
+ // ===== 활성 발령 종료 처리 =====
         if (emp.assignments && emp.assignments.length > 0) {
             let closedCount = 0;
             
@@ -308,14 +308,14 @@ function processRetirement() {
             }
         }
         
-        // ===== 육아휴직 중이었다면 처리 =====
+ // ===== 육아휴직 중이었다면 처리 =====
         if (emp.maternityLeave?.isOnLeave) {
             로거_인사?.debug('육아휴직 중 퇴사 처리');
             
-            // 복직하지 않고 퇴사한 경우
+ // 복직하지 않고 퇴사한 경우
             emp.maternityLeave.isOnLeave = false;
             
-            // 이력에 기록
+ // 이력에 기록
             if (emp.maternityLeave.history && emp.maternityLeave.history.length > 0) {
                 const lastIndex = emp.maternityLeave.history.length - 1;
                 emp.maternityLeave.history[lastIndex].actualEndDate = null; // 복직 안함
@@ -326,12 +326,12 @@ function processRetirement() {
             }
         }
         
-        // ===== 저장 =====
+ // ===== 저장 =====
         db.saveEmployee(emp);
         
         로거_인사?.info('퇴사 처리 완료', { name, retirementDate });
         
-        // ===== UI 업데이트 =====
+ // ===== UI 업데이트 =====
         closeRetireModal();
         
         if (typeof closeDetailModal === 'function') {
@@ -346,8 +346,8 @@ function processRetirement() {
             updateDashboard();
         }
         
-        // 성공 메시지
-        const successMsg = `✅ ${name} 님 퇴사 처리 완료\n\n입사일: ${entryDate}\n퇴사일: ${retirementDate}\n\n💡 퇴사를 취소하려면 직원 상세보기에서 "퇴사 취소" 버튼을 클릭하세요.`;
+ // 성공 메시지
+        const successMsg = `${name} 님 퇴사 처리 완료\n\n입사일: ${entryDate}\n퇴사일: ${retirementDate}\n\n[안내] 퇴사를 취소하려면 직원 상세보기에서 "퇴사 취소" 버튼을 클릭하세요.`;
         
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.success(`${name} 님 퇴사 처리 완료`);
@@ -361,7 +361,7 @@ function processRetirement() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '퇴사 처리 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 퇴사 처리 중 오류가 발생했습니다.');
+            alert('[오류] 퇴사 처리 중 오류가 발생했습니다.');
         }
     }
 }
@@ -379,7 +379,7 @@ function processRetirement() {
  * - 재직 상태로 변경
  * - 발령 상태 복구 (active로 변경)
  * - 육아휴직 중 퇴사였으면 휴직 상태 복구
- * - 🔧 버그 수정: employment 객체 없을 때 생성
+ * - 버그 수정: employment 객체 없을 때 생성
  * 
  * @example
  * cancelRetirement('employee-id'); // 퇴사 취소
@@ -395,7 +395,7 @@ function cancelRetirement(id) {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('직원을 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 직원을 찾을 수 없습니다.');
+                alert('[주의] 직원을 찾을 수 없습니다.');
             }
             return;
         }
@@ -410,8 +410,8 @@ function cancelRetirement(id) {
         
         로거_인사?.debug('퇴사 취소 정보', { name, retirementDate });
         
-        // ===== 확인 메시지 =====
-        const confirmMsg = `⚠️ ${name} 님의 퇴사를 취소하시겠습니까?\n\n퇴사일: ${retirementDate}\n\n※ 재직 상태로 복구됩니다.`;
+ // ===== 확인 메시지 =====
+        const confirmMsg = `[주의] ${name} 님의 퇴사를 취소하시겠습니까?\n\n퇴사일: ${retirementDate}\n\n※ 재직 상태로 복구됩니다.`;
         
         const confirmed = typeof 에러처리_인사 !== 'undefined'
             ? 에러처리_인사.confirm(confirmMsg)
@@ -422,8 +422,8 @@ function cancelRetirement(id) {
             return;
         }
         
-        // ===== 🔧 버그 수정: employment 객체 확보 =====
-        // 구버전 데이터는 employment 객체가 없을 수 있음
+ // ===== 버그 수정: employment 객체 확보 =====
+ // 구버전 데이터는 employment 객체가 없을 수 있음
         if (!emp.employment) {
             로거_인사?.debug('employment 객체 생성 (구버전 데이터)');
             
@@ -435,16 +435,16 @@ function cancelRetirement(id) {
             };
         }
         
-        // ===== 퇴사 정보 제거 =====
+ // ===== 퇴사 정보 제거 =====
         emp.employment.retirementDate = null;
         emp.employment.status = '재직';
         
-        // 하위 호환성: 구버전 필드도 업데이트
+ // 하위 호환성: 구버전 필드도 업데이트
         emp.retirementDate = null;
         
         로거_인사?.debug('퇴사 정보 제거 완료');
         
-        // ===== 발령 상태 복구 =====
+ // ===== 발령 상태 복구 =====
         if (emp.assignments && emp.assignments.length > 0) {
             let restoredCount = 0;
             
@@ -461,14 +461,14 @@ function cancelRetirement(id) {
             }
         }
         
-        // ===== 육아휴직 중 퇴사 취소인 경우 =====
+ // ===== 육아휴직 중 퇴사 취소인 경우 =====
         if (emp.maternityLeave?.history && emp.maternityLeave.history.length > 0) {
             const lastHistory = emp.maternityLeave.history[emp.maternityLeave.history.length - 1];
             
             if (lastHistory.retiredWithoutReturn) {
                 로거_인사?.debug('육아휴직 상태 복구');
                 
-                // 다시 육아휴직 중으로 복구
+ // 다시 육아휴직 중으로 복구
                 emp.maternityLeave.isOnLeave = true;
                 lastHistory.retiredWithoutReturn = false;
                 lastHistory.actualEndDate = null;
@@ -476,12 +476,12 @@ function cancelRetirement(id) {
             }
         }
         
-        // ===== 저장 =====
+ // ===== 저장 =====
         db.saveEmployee(emp);
         
         로거_인사?.info('퇴사 취소 완료', { name });
         
-        // ===== UI 업데이트 =====
+ // ===== UI 업데이트 =====
         if (typeof closeDetailModal === 'function') {
             closeDetailModal();
         }
@@ -494,8 +494,8 @@ function cancelRetirement(id) {
             updateDashboard();
         }
         
-        // 성공 메시지
-        const successMsg = `✅ ${name} 님 퇴사 취소 완료\n\n재직 상태로 복구되었습니다.`;
+ // 성공 메시지
+        const successMsg = `${name} 님 퇴사 취소 완료\n\n재직 상태로 복구되었습니다.`;
         
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.success(`${name} 님 퇴사 취소 완료`);
@@ -509,7 +509,7 @@ function cancelRetirement(id) {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '퇴사 취소 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 퇴사 취소 중 오류가 발생했습니다.');
+            alert('[오류] 퇴사 취소 중 오류가 발생했습니다.');
         }
     }
 }

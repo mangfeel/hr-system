@@ -14,62 +14,62 @@
  * 
  * [변경 이력]
  * v6.0.2 (2026-02-06) 신규 직원 등록 시 경력 환산 내역 0 표시 버그 수정
- *   - prepareCareerTableData에서 originalPeriod/convertedPeriod 객체 형식 지원 추가
- *   - 직원등록에서 저장하는 객체 형식과 문자열 형식 모두 호환
- *   - printHobongCertificate에서 인정 경력 읽기 수정 (career.totalYears 우선, rank.careerYears 폴백)
- *   - careerDetails 폴백으로 pastCareers도 지원
+ * - prepareCareerTableData에서 originalPeriod/convertedPeriod 객체 형식 지원 추가
+ * - 직원등록에서 저장하는 객체 형식과 문자열 형식 모두 호환
+ * - printHobongCertificate에서 인정 경력 읽기 수정 (career.totalYears 우선, rank.careerYears 폴백)
+ * - careerDetails 폴백으로 pastCareers도 지원
  *
  * v6.0.3 (2026-02-06) 기존 백업 데이터 호환성 수정
- *   - ?? 연산자 → || 연산자 변경 (career.totalYears가 0인 경우 rank.careerYears로 폴백)
- *   - 기존 백업 데이터: career={totalYears:0}, rank={careerYears:7} → 7 반환
+ * - ?? 연산자 → || 연산자 변경 (career.totalYears가 0인 경우 rank.careerYears로 폴백)
+ * - 기존 백업 데이터: career={totalYears:0}, rank={careerYears:7} → 7 반환
  *
  * v6.0.1 (2026-02-05) 인쇄 기능 버그 수정
- *   - 브라우저 인쇄 버튼 중복 문제 해결 (cert-btn-area 제거)
- *   - 양식별 CSS 스타일 인쇄 HTML에 포함 (공문서/모던/표준)
- *   - 인쇄 미리보기와 출력물 양식 일치하도록 수정
+ * - 브라우저 인쇄 버튼 중복 문제 해결 (cert-btn-area 제거)
+ * - 양식별 CSS 스타일 인쇄 HTML에 포함 (공문서/모던/표준)
+ * - 인쇄 미리보기와 출력물 양식 일치하도록 수정
  *
- * v6.0.0 (2026-01-22) ⭐ 배치 API 적용 - 성능 최적화
- *   - loadCertificateEmployeeList에서 배치 API 호출
- *   - createCertEmployeeItemHTML에 batchResults 파라미터 추가
- *   - printHobongCertificate에서 로컬 계산 사용
- *   - N회 API 호출 → 1회로 감소
+ * v6.0.0 (2026-01-22) 배치 API 적용 - 성능 최적화
+ * - loadCertificateEmployeeList에서 배치 API 호출
+ * - createCertEmployeeItemHTML에 batchResults 파라미터 추가
+ * - printHobongCertificate에서 로컬 계산 사용
+ * - N회 API 호출 → 1회로 감소
  *
  * v5.0.0 (2026-01-22) API 전용 버전
- *   - 직원유틸_인사.getDynamicRankInfo() await 추가
- *   - 모든 계산 로직 서버 API로 이동
+ * - 직원유틸_인사.getDynamicRankInfo() await 추가
+ * - 모든 계산 로직 서버 API로 이동
  *
  * v4.0.0 (2026-01-21) API 연동 버전
- *   - loadCertificateEmployeeList(), printHobongCertificate() 비동기 처리
- *   - 호봉 계산 API 우선 사용
- *   - 서버 API로 계산 로직 보호
+ * - loadCertificateEmployeeList(), printHobongCertificate() 비동기 처리
+ * - 호봉 계산 API 우선 사용
+ * - 서버 API로 계산 로직 보호
  * 
  * v3.2.0 (2025-12-05) - UI 전면 개선 및 3가지 양식 지원
- *   - UI 전면 개선 (그라데이션 헤더, 카드형 레이아웃)
- *   - 양식 선택 기능 추가 (공문서/모던/표준)
- *   - 재직/퇴사 필터 탭 추가
- *   - 선택한 양식 localStorage 저장/복원
- *   - 표준 양식에 합계 행 추가
- *   - 별도 CSS 파일 분리 (호봉획정표_스타일.css)
+ * - UI 전면 개선 (그라데이션 헤더, 카드형 레이아웃)
+ * - 양식 선택 기능 추가 (공문서/모던/표준)
+ * - 재직/퇴사 필터 탭 추가
+ * - 선택한 양식 localStorage 저장/복원
+ * - 표준 양식에 합계 행 추가
+ * - 별도 CSS 파일 분리 (호봉획정표_스타일.css)
  * 
  * v3.1.0 (2025-12-01) - 직원 검색 및 다중 선택 기능 추가
- *   - 드롭다운 → 체크박스 목록으로 UI 변경
- *   - 이름/부서/직위 검색 기능 추가
- *   - 전체선택/해제 기능 추가
- *   - 다중 직원 일괄 호봉획정표 출력 지원
- *   - 선택 인원 카운트 표시
+ * - 드롭다운 → 체크박스 목록으로 UI 변경
+ * - 이름/부서/직위 검색 기능 추가
+ * - 전체선택/해제 기능 추가
+ * - 다중 직원 일괄 호봉획정표 출력 지원
+ * - 선택 인원 카운트 표시
  * 
  * v3.0.1 (2025-11-26) - 과거 경력 주당근무시간 표시 추가
- *   - 근무경력 상세 테이블에 "주당근무" 컬럼 추가
- *   - 레거시 경력 데이터는 40시간으로 표시
- *   - 테이블 컬럼 11개 → 12개
+ * - 근무경력 상세 테이블에 "주당근무" 컬럼 추가
+ * - 레거시 경력 데이터는 40시간으로 표시
+ * - 테이블 컬럼 11개 → 12개
  * 
  * v3.0 - 프로덕션급 리팩토링
- *   - Phase 1 유틸리티 적용 (직원유틸, DOM유틸, 인쇄유틸)
- *   - 완벽한 에러 처리
- *   - 체계적 로깅
- *   - JSDoc 주석 추가
- *   - XSS 방지
- *   - 인쇄 문제 해결 (표 선 끊김, 여백 최적화)
+ * - Phase 1 유틸리티 적용 (직원유틸, DOM유틸, 인쇄유틸)
+ * - 완벽한 에러 처리
+ * - 체계적 로깅
+ * - JSDoc 주석 추가
+ * - XSS 방지
+ * - 인쇄 문제 해결 (표 선 끊김, 여백 최적화)
  * 
  * [하위 호환성]
  * - 모든 기존 함수명 유지
@@ -124,7 +124,7 @@ async function loadCertificateEmployeeList() {
             return;
         }
         
-        // 재직자/퇴사자 분류
+ // 재직자/퇴사자 분류
         const activeEmployees = employees.filter(e => e.employment?.status !== '퇴사');
         const retiredEmployees = employees.filter(e => e.employment?.status === '퇴사');
         
@@ -133,10 +133,10 @@ async function loadCertificateEmployeeList() {
             retired: retiredEmployees.length
         });
         
-        // 필터 카운트 업데이트
+ // 필터 카운트 업데이트
         updateFilterCounts(employees.length, activeEmployees.length, retiredEmployees.length);
         
-        // 직원이 없는 경우
+ // 직원이 없는 경우
         if (employees.length === 0) {
             listContainer.innerHTML = `
                 <div class="cert-empty-message">
@@ -147,7 +147,7 @@ async function loadCertificateEmployeeList() {
             return;
         }
         
-        // ⭐ v6.0.0: 배치 API로 전체 직원 한 번에 계산 (성능 최적화)
+ // v6.0.0: 배치 API로 전체 직원 한 번에 계산 (성능 최적화)
         const today = new Date().toISOString().split('T')[0];
         let batchResults = new Map();
         if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
@@ -165,7 +165,7 @@ async function loadCertificateEmployeeList() {
             }
         }
         
-        // HTML 생성 (재직자 먼저, 퇴사자 나중) - ✅ v6.0.0: batchResults 전달
+ // HTML 생성 (재직자 먼저, 퇴사자 나중) - v6.0.0: batchResults 전달
         const activePromises = activeEmployees.map(emp => createCertEmployeeItemHTML(emp, false, batchResults));
         const retiredPromises = retiredEmployees.map(emp => createCertEmployeeItemHTML(emp, true, batchResults));
         
@@ -176,22 +176,22 @@ async function loadCertificateEmployeeList() {
         
         listContainer.innerHTML = html;
         
-        // 검색창 초기화
+ // 검색창 초기화
         const searchInput = document.getElementById('certEmployeeSearch');
         if (searchInput) {
             searchInput.value = '';
         }
         
-        // 필터 초기화
+ // 필터 초기화
         _certCurrentFilter = 'all';
         document.querySelectorAll('.cert-filter-tab').forEach(tab => {
             tab.classList.toggle('active', tab.dataset.filter === 'all');
         });
         
-        // 선택 카운트 초기화
+ // 선택 카운트 초기화
         updateCertificateSelectionCount();
         
-        // 양식 선택 복원
+ // 양식 선택 복원
         loadCertificateStylePreference();
         
         로거_인사?.info('호봉획정표 직원 목록 로드 완료 (v6.0.0)', {
@@ -263,7 +263,7 @@ function loadCertificateStylePreference() {
  * @version 6.0.0 - 배치 API 적용
  */
 async function createCertEmployeeItemHTML(emp, isRetired, batchResults = new Map()) {
-    // 직원 정보 추출
+ // 직원 정보 추출
     const name = typeof 직원유틸_인사 !== 'undefined'
         ? 직원유틸_인사.getName(emp)
         : (emp.personalInfo?.name || emp.name || '');
@@ -276,21 +276,21 @@ async function createCertEmployeeItemHTML(emp, isRetired, batchResults = new Map
         ? 직원유틸_인사.getPosition(emp)
         : (emp.currentPosition?.position || emp.position || '');
     
-    // 호봉제 확인
+ // 호봉제 확인
     const isRankBased = typeof 직원유틸_인사 !== 'undefined'
         ? 직원유틸_인사.isRankBased(emp)
         : (emp.rank?.isRankBased !== false && emp.rank?.firstUpgradeDate);
     
-    // ⭐ v6.0.0: 배치 결과에서 현재 호봉 가져오기
+ // v6.0.0: 배치 결과에서 현재 호봉 가져오기
     let currentRank = '-';
     if (isRankBased) {
         try {
-            // 1. 배치 결과에서 조회
+ // 1. 배치 결과에서 조회
             const batchResult = batchResults.get(emp.id);
             if (batchResult && batchResult.currentRank !== undefined) {
                 currentRank = batchResult.currentRank + '호봉';
             } else if (emp.rank?.startRank && emp.rank?.firstUpgradeDate) {
-                // 2. 배치에 없으면 로컬 계산 (fallback)
+ // 2. 배치에 없으면 로컬 계산 (fallback)
                 const today = new Date().toISOString().split('T')[0];
                 let rank;
                 if (typeof RankCalculator !== 'undefined') {
@@ -309,7 +309,7 @@ async function createCertEmployeeItemHTML(emp, isRetired, batchResults = new Map
         }
     }
     
-    // XSS 방지
+ // XSS 방지
     const safeName = typeof DOM유틸_인사 !== 'undefined'
         ? DOM유틸_인사.escapeHtml(name)
         : name;
@@ -320,7 +320,7 @@ async function createCertEmployeeItemHTML(emp, isRetired, batchResults = new Map
         ? DOM유틸_인사.escapeHtml(position)
         : position;
     
-    // v3.2.0: 새 UI 배지 클래스
+ // v3.2.0: 새 UI 배지 클래스
     let badgeClass = 'salary';
     let badgeText = '연봉제';
     
@@ -332,7 +332,7 @@ async function createCertEmployeeItemHTML(emp, isRetired, batchResults = new Map
         badgeText = currentRank;
     }
     
-    // v3.2.0: 새 UI HTML
+ // v3.2.0: 새 UI HTML
     return `
         <div class="cert-employee-item-new" 
              data-emp-id="${emp.id}" 
@@ -365,12 +365,12 @@ function toggleCertEmployeeSelection(element) {
 function filterCertificateEmployees(filter) {
     _certCurrentFilter = filter;
     
-    // 탭 활성화 상태 변경
+ // 탭 활성화 상태 변경
     document.querySelectorAll('.cert-filter-tab').forEach(tab => {
         tab.classList.toggle('active', tab.dataset.filter === filter);
     });
     
-    // 직원 항목 필터링
+ // 직원 항목 필터링
     const items = document.querySelectorAll('.cert-employee-item-new');
     items.forEach(item => {
         const isRetired = item.dataset.retired === 'true';
@@ -379,7 +379,7 @@ function filterCertificateEmployees(filter) {
         if (filter === 'active' && isRetired) visible = false;
         if (filter === 'retired' && !isRetired) visible = false;
         
-        // 검색어도 함께 적용
+ // 검색어도 함께 적용
         const searchInput = document.getElementById('certEmployeeSearch');
         const searchTerm = (searchInput?.value || '').trim().toLowerCase();
         
@@ -418,18 +418,18 @@ function searchCertificateEmployees(query) {
             const position = (item.dataset.position || '').toLowerCase();
             const isRetired = item.dataset.retired === 'true';
             
-            // 검색어 매칭
+ // 검색어 매칭
             const matchesSearch = !searchTerm || 
                 name.includes(searchTerm) || 
                 dept.includes(searchTerm) || 
                 position.includes(searchTerm);
             
-            // 필터 매칭
+ // 필터 매칭
             let matchesFilter = true;
             if (_certCurrentFilter === 'active' && isRetired) matchesFilter = false;
             if (_certCurrentFilter === 'retired' && !isRetired) matchesFilter = false;
             
-            // 둘 다 만족해야 표시
+ // 둘 다 만족해야 표시
             item.classList.toggle('hidden', !(matchesSearch && matchesFilter));
         });
         
@@ -456,7 +456,7 @@ function toggleAllCertificateEmployees(selectAll) {
         let count = 0;
         
         items.forEach(item => {
-            // 보이는 항목만 처리 (hidden 클래스 없는 것)
+ // 보이는 항목만 처리 (hidden 클래스 없는 것)
             if (!item.classList.contains('hidden')) {
                 if (selectAll) {
                     item.classList.add('selected');
@@ -487,19 +487,19 @@ function updateCertificateSelectionCount() {
         const selectedItems = document.querySelectorAll('.cert-employee-item-new.selected');
         const count = selectedItems.length;
         
-        // 카운트 표시 업데이트
+ // 카운트 표시 업데이트
         const countEl = document.getElementById('certSelectionCount');
         if (countEl) {
             countEl.textContent = count;
         }
         
-        // 버튼 카운트 업데이트
+ // 버튼 카운트 업데이트
         const generateCountEl = document.getElementById('certGenerateCount');
         if (generateCountEl) {
             generateCountEl.textContent = count;
         }
         
-        // 생성 버튼 활성화/비활성화
+ // 생성 버튼 활성화/비활성화
         const generateBtn = document.getElementById('certGenerateBtn');
         if (generateBtn) {
             generateBtn.disabled = count === 0;
@@ -519,7 +519,7 @@ function updateCertificateSelectionCount() {
  * 하위 호환성을 위해 유지하며, 실제 동작은 하지 않습니다.
  */
 function loadEmployeeForCertificate() {
-    // v3.1.0: 다중 선택 방식으로 변경됨 - 이 함수는 더 이상 사용되지 않음
+ // v3.1.0: 다중 선택 방식으로 변경됨 - 이 함수는 더 이상 사용되지 않음
     로거_인사?.debug('loadEmployeeForCertificate (레거시) - 다중 선택 방식으로 대체됨');
 }
 
@@ -546,26 +546,26 @@ function generateCertificateFromReport() {
     try {
         로거_인사?.debug('호봉획정표 생성 시작 (v3.2.0)');
         
-        // 양식 선택 저장
+ // 양식 선택 저장
         saveCertificateStylePreference();
         
-        // 선택된 직원 ID 목록 가져오기 (v3.2.0 새 UI)
+ // 선택된 직원 ID 목록 가져오기 (v3.2.0 새 UI)
         const selectedItems = document.querySelectorAll('.cert-employee-item-new.selected');
         const selectedIds = Array.from(selectedItems).map(item => item.dataset.empId);
         
-        // 검증: 직원 선택
+ // 검증: 직원 선택
         if (selectedIds.length === 0) {
             로거_인사?.warn('직원 미선택');
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('직원을 선택하세요.');
             } else {
-                alert('⚠️ 직원을 선택하세요.');
+                alert('[주의] 직원을 선택하세요.');
             }
             return;
         }
         
-        // 선택된 직원 정보 수집
+ // 선택된 직원 정보 수집
         const selectedEmployees = [];
         const salaryBasedNames = [];
         
@@ -593,14 +593,14 @@ function generateCertificateFromReport() {
             salaryBased: salaryBasedNames.length 
         });
         
-        // 연봉제 직원이 포함된 경우 경고
+ // 연봉제 직원이 포함된 경우 경고
         if (salaryBasedNames.length > 0) {
             const message = salaryBasedNames.length === 1
-                ? `⚠️ ${salaryBasedNames[0]} 님은 연봉제 직원입니다.\n\n` +
+                ? `[주의] ${salaryBasedNames[0]} 님은 연봉제 직원입니다.\n\n` +
                   `호봉획정표는 호봉제 직원만 출력 가능합니다.\n\n` +
                   `그래도 출력하시겠습니까?\n` +
                   `(호봉 정보 없이 기본 정보만 표시됩니다)`
-                : `⚠️ 다음 ${salaryBasedNames.length}명은 연봉제 직원입니다:\n` +
+                : `[주의] 다음 ${salaryBasedNames.length}명은 연봉제 직원입니다:\n` +
                   `${salaryBasedNames.join(', ')}\n\n` +
                   `호봉획정표는 호봉제 직원만 출력 가능합니다.\n\n` +
                   `그래도 출력하시겠습니까?\n` +
@@ -616,17 +616,17 @@ function generateCertificateFromReport() {
             }
         }
         
-        // 1명인 경우 바로 출력
+ // 1명인 경우 바로 출력
         if (selectedEmployees.length === 1) {
             printHobongCertificate(selectedEmployees[0].id);
             return;
         }
         
-        // 다중 출력: 순차적으로 출력
+ // 다중 출력: 순차적으로 출력
         _certPendingEmployees = selectedEmployees;
         _certCurrentIndex = 0;
         
-        // 첫 번째 직원 출력
+ // 첫 번째 직원 출력
         showNextCertificate();
         
     } catch (error) {
@@ -635,7 +635,7 @@ function generateCertificateFromReport() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '호봉획정표 생성 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 호봉획정표 생성 중 오류가 발생했습니다.');
+            alert('[오류] 호봉획정표 생성 중 오류가 발생했습니다.');
         }
     }
 }
@@ -648,7 +648,7 @@ function generateCertificateFromReport() {
  */
 function showNextCertificate() {
     if (_certCurrentIndex >= _certPendingEmployees.length) {
-        // 모든 출력 완료
+ // 모든 출력 완료
         _certPendingEmployees = [];
         _certCurrentIndex = 0;
         로거_인사?.info('모든 호봉획정표 출력 완료');
@@ -689,7 +689,7 @@ function moveToNextCertificate() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.success(`${_certPendingEmployees.length}명의 호봉획정표 출력을 완료했습니다.`);
         } else {
-            alert(`✅ ${_certPendingEmployees.length}명의 호봉획정표 출력을 완료했습니다.`);
+            alert(`${_certPendingEmployees.length}명의 호봉획정표 출력을 완료했습니다.`);
         }
         
         _certPendingEmployees = [];
@@ -754,7 +754,7 @@ async function printHobongCertificate(employeeId) {
     try {
         로거_인사?.debug('호봉획정표 출력 준비', { employeeId });
         
-        // 직원 조회
+ // 직원 조회
         const emp = db.findEmployee(employeeId);
         
         if (!emp) {
@@ -768,16 +768,16 @@ async function printHobongCertificate(employeeId) {
             return;
         }
         
-        // 오늘 날짜
+ // 오늘 날짜
         const today = DateUtils.formatDate(new Date());
         
-        // ⭐ v3.2.0: 획정호봉(입사시)과 현재호봉 분리
+ // v3.2.0: 획정호봉(입사시)과 현재호봉 분리
         const startRank = emp.rank?.startRank || 1;  // 입사 시 획정 호봉
         let firstUpgradeDate = emp.rank?.firstUpgradeDate || '-';
         let nextUpgradeDate = emp.rank?.nextUpgradeDate || '-';
         let currentRank = startRank;  // 현재 호봉 (동적 계산)
         
-        // ✅ v5.0.0: 직원유틸 (모든 함수가 async)
+ // v5.0.0: 직원유틸 (모든 함수가 async)
         if (typeof 직원유틸_인사 !== 'undefined') {
             if (typeof 직원유틸_인사.getDynamicRankInfoAsync === 'function') {
                 const rankInfo = await 직원유틸_인사.getDynamicRankInfoAsync(emp, today);
@@ -785,14 +785,14 @@ async function printHobongCertificate(employeeId) {
                 nextUpgradeDate = rankInfo.nextUpgradeDate || nextUpgradeDate;
                 currentRank = rankInfo.currentRank || startRank;
             } else if (typeof 직원유틸_인사.getDynamicRankInfo === 'function') {
-                // ⭐ v5.0.0: await 추가 (getDynamicRankInfo도 async)
+ // v5.0.0: await 추가 (getDynamicRankInfo도 async)
                 const rankInfo = await 직원유틸_인사.getDynamicRankInfo(emp, today);
                 firstUpgradeDate = rankInfo.firstUpgradeDate || firstUpgradeDate;
                 nextUpgradeDate = rankInfo.nextUpgradeDate || nextUpgradeDate;
                 currentRank = rankInfo.currentRank || startRank;
             }
         } else if (emp.rank?.isRankBased !== false && firstUpgradeDate !== '-') {
-            // ⭐ v6.0.0: 로컬 계산 사용 (API 호출 제거)
+ // v6.0.0: 로컬 계산 사용 (API 호출 제거)
             try {
                 if (typeof RankCalculator !== 'undefined') {
                     nextUpgradeDate = RankCalculator.calculateNextUpgradeDate(firstUpgradeDate, today);
@@ -803,9 +803,9 @@ async function printHobongCertificate(employeeId) {
             }
         }
         
-        // 데이터 객체 생성
-        // ⭐ v6.0.2: career.totalYears 우선, rank.careerYears 폴백
-        // ⭐ v6.0.3: || 연산자 사용 (기존 백업 데이터의 career가 0인 경우 폴백)
+ // 데이터 객체 생성
+ // v6.0.2: career.totalYears 우선, rank.careerYears 폴백
+ // v6.0.3: || 연산자 사용 (기존 백업 데이터의 career가 0인 경우 폴백)
         const data = {
             name: typeof 직원유틸_인사 !== 'undefined'
                 ? 직원유틸_인사.getName(emp)
@@ -823,7 +823,7 @@ async function printHobongCertificate(employeeId) {
                 ? 직원유틸_인사.getEntryDate(emp)
                 : (emp.employment?.entryDate || '-'),
             
-            // ⭐ v6.0.3: || 연산자 사용 (0도 falsy로 폴백 처리)
+ // v6.0.3: || 연산자 사용 (0도 falsy로 폴백 처리)
             years: emp.career?.totalYears || emp.rank?.careerYears || 0,
             months: emp.career?.totalMonths || emp.rank?.careerMonths || 0,
             days: emp.career?.totalDays || emp.rank?.careerDays || 0,
@@ -836,7 +836,7 @@ async function printHobongCertificate(employeeId) {
         
         로거_인사?.debug('데이터 객체 생성 완료', { name: data.name });
         
-        // 호봉획정표 생성
+ // 호봉획정표 생성
         generateCertificate(data);
         
     } catch (error) {
@@ -845,7 +845,7 @@ async function printHobongCertificate(employeeId) {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '호봉획정표 출력 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 호봉획정표 출력 중 오류가 발생했습니다.');
+            alert('[오류] 호봉획정표 출력 중 오류가 발생했습니다.');
         }
     }
 }
@@ -883,7 +883,7 @@ function generateCertificate(data) {
         const { name, dept, position, entryDate, years, months, days, 
                 startRank, currentRank, firstUpgradeDate, nextUpgradeDate, careerDetails } = data;
         
-        // 잔여월일 계산 (년/월/일로 변환) - 입사 시 획정호봉 기준
+ // 잔여월일 계산 (년/월/일로 변환) - 입사 시 획정호봉 기준
         const totalMonthsNeeded = startRank * 12;
         const currentTotalMonths = years * 12 + months;
         let remainingTotalMonths = totalMonthsNeeded - currentTotalMonths;
@@ -893,15 +893,15 @@ function generateCertificate(data) {
             remainingTotalMonths -= 1;
         }
         
-        // 음수 방지
+ // 음수 방지
         if (remainingTotalMonths < 0) remainingTotalMonths = 0;
         if (remainingDays < 0) remainingDays = 0;
         
-        // 년/월 분리
+ // 년/월 분리
         const remainingYears = Math.floor(remainingTotalMonths / 12);
         const remainingMonths = remainingTotalMonths % 12;
         
-        // 표시 형식 결정
+ // 표시 형식 결정
         let remainingDisplay = '';
         if (remainingYears > 0) {
             remainingDisplay = `${remainingYears}년 ${remainingMonths}개월 ${remainingDays}일`;
@@ -909,24 +909,24 @@ function generateCertificate(data) {
             remainingDisplay = `${remainingMonths}개월 ${remainingDays}일`;
         }
         
-        // 경력 테이블 데이터 준비
+ // 경력 테이블 데이터 준비
         const careerData = prepareCareerTableData(careerDetails);
         
-        // 조직명
+ // 조직명
         const organizationName = db.getOrganizationName();
         
-        // XSS 방지
+ // XSS 방지
         const safeName = typeof DOM유틸_인사 !== 'undefined' ? DOM유틸_인사.escapeHtml(name) : name;
         const safeDept = typeof DOM유틸_인사 !== 'undefined' ? DOM유틸_인사.escapeHtml(dept) : dept;
         const safePosition = typeof DOM유틸_인사 !== 'undefined' ? DOM유틸_인사.escapeHtml(position) : position;
         const safeOrgName = typeof DOM유틸_인사 !== 'undefined' ? DOM유틸_인사.escapeHtml(organizationName) : organizationName;
         
-        // 다중 출력 여부 확인
+ // 다중 출력 여부 확인
         const isMultiple = _certPendingEmployees.length > 1;
         const currentNum = _certCurrentIndex + 1;
         const totalNum = _certPendingEmployees.length;
         
-        // 준비된 데이터 객체 (v3.2.0: 획정호봉/현재호봉 분리)
+ // 준비된 데이터 객체 (v3.2.0: 획정호봉/현재호봉 분리)
         const certData = {
             name: safeName,
             dept: safeDept,
@@ -942,11 +942,11 @@ function generateCertificate(data) {
             isMultiple, currentNum, totalNum
         };
         
-        // v3.2.0: 선택된 양식 타입 확인
+ // v3.2.0: 선택된 양식 타입 확인
         const styleType = document.querySelector('input[name="certStyleType"]:checked')?.value || 'standard';
         로거_인사?.debug('선택된 양식', { styleType });
         
-        // 양식별 HTML 생성
+ // 양식별 HTML 생성
         let documentHTML;
         switch (styleType) {
             case 'official':
@@ -961,30 +961,30 @@ function generateCertificate(data) {
                 break;
         }
         
-        // 네비게이션 버튼
+ // 네비게이션 버튼
         const navHTML = generateCertificateNavHTML(isMultiple, currentNum, totalNum);
         
-        // 최종 HTML 조합
+ // 최종 HTML 조합
         const certificateHTML = `
             <div class="cert-overlay show" id="certificateOverlay" onclick="closeCertificate()"></div>
             <div class="cert-container show cert-style-${styleType}" id="certificate-print-area">
                 <div class="cert-btn-area no-print">
                     ${navHTML}
-                    <button class="cert-btn cert-btn-print" onclick="event.stopPropagation(); printCertificate()">🖨️ 인쇄</button>
+                    <button class="cert-btn cert-btn-print" onclick="event.stopPropagation(); printCertificate()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄</button>
                     <button class="cert-btn cert-btn-close" onclick="event.stopPropagation(); closeCertificate()">✕ 닫기</button>
                 </div>
                 ${documentHTML}
             </div>
         `;
         
-        // 기존 호봉획정표 제거
+ // 기존 호봉획정표 제거
         const existingCert = document.getElementById('certificate-print-area');
         if (existingCert) existingCert.remove();
         
         const existingOverlay = document.getElementById('certificateOverlay');
         if (existingOverlay) existingOverlay.remove();
         
-        // 새 호봉획정표 추가
+ // 새 호봉획정표 추가
         document.body.insertAdjacentHTML('beforeend', certificateHTML);
         document.body.style.overflow = 'hidden';
         
@@ -996,7 +996,7 @@ function generateCertificate(data) {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '호봉획정표 생성 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 호봉획정표 생성 중 오류가 발생했습니다.');
+            alert('[오류] 호봉획정표 생성 중 오류가 발생했습니다.');
         }
     }
 }
@@ -1010,19 +1010,19 @@ function prepareCareerTableData(careerDetails) {
     }
     
     return careerDetails.map(career => {
-        // ⭐ v6.0.2: originalPeriod/convertedPeriod 객체 형식 지원 추가
-        // 직원등록에서 저장할 때 객체 형식으로 저장됨
+ // v6.0.2: originalPeriod/convertedPeriod 객체 형식 지원 추가
+ // 직원등록에서 저장할 때 객체 형식으로 저장됨
         let py = '0', pm = '0', pd = '0';
         let cy = '0', cm = '0', cd = '0';
         
-        // 원본 기간 (근무 년/월/일)
+ // 원본 기간 (근무 년/월/일)
         if (career.originalPeriod && typeof career.originalPeriod === 'object') {
-            // 객체 형식: { years: 3, months: 2, days: 15 }
+ // 객체 형식: { years: 3, months: 2, days: 15 }
             py = String(career.originalPeriod.years || 0);
             pm = String(career.originalPeriod.months || 0);
             pd = String(career.originalPeriod.days || 0);
         } else if (career.period) {
-            // 문자열 형식: "3년 2개월 15일"
+ // 문자열 형식: "3년 2개월 15일"
             const periodParts = career.period.match(/(\d+)년\s*(\d+)개월\s*(\d+)일/);
             if (periodParts) {
                 py = periodParts[1];
@@ -1031,14 +1031,14 @@ function prepareCareerTableData(careerDetails) {
             }
         }
         
-        // 환산 기간 (환산 년/월/일)
+ // 환산 기간 (환산 년/월/일)
         if (career.convertedPeriod && typeof career.convertedPeriod === 'object') {
-            // 객체 형식: { years: 3, months: 2, days: 15 }
+ // 객체 형식: { years: 3, months: 2, days: 15 }
             cy = String(career.convertedPeriod.years || 0);
             cm = String(career.convertedPeriod.months || 0);
             cd = String(career.convertedPeriod.days || 0);
         } else if (career.converted) {
-            // 문자열 형식: "3년 2개월 15일"
+ // 문자열 형식: "3년 2개월 15일"
             const convertedParts = career.converted.match(/(\d+)년\s*(\d+)개월\s*(\d+)일/);
             if (convertedParts) {
                 cy = convertedParts[1];
@@ -1292,7 +1292,7 @@ function generateCertificateModern(data) {
  * 표준 양식 스타일 HTML 생성
  */
 function generateCertificateStandard(data) {
-    // 합계 계산
+ // 합계 계산
     let totalPY = 0, totalPM = 0, totalPD = 0;
     let totalCY = 0, totalCM = 0, totalCD = 0;
     
@@ -1305,7 +1305,7 @@ function generateCertificateStandard(data) {
         totalCD += parseInt(c.cd) || 0;
     });
     
-    // 일/월 정규화
+ // 일/월 정규화
     totalPM += Math.floor(totalPD / 30);
     totalPD = totalPD % 30;
     totalPY += Math.floor(totalPM / 12);
@@ -1446,24 +1446,24 @@ function closeCertificate() {
     try {
         로거_인사?.debug('호봉획정표 닫기');
         
-        // 호봉획정표 제거
+ // 호봉획정표 제거
         const cert = document.getElementById('certificate-print-area');
         if (cert) {
             cert.remove();
             로거_인사?.debug('호봉획정표 제거');
         }
         
-        // 오버레이 제거
+ // 오버레이 제거
         const overlay = document.getElementById('certificateOverlay');
         if (overlay) {
             overlay.remove();
             로거_인사?.debug('오버레이 제거');
         }
         
-        // ⚠️ 레거시 클래스 정리 (하위 호환성)
+ // 레거시 클래스 정리 (하위 호환성)
         document.body.classList.remove('printing-certificate');
         
-        // body 스크롤 복원
+ // body 스크롤 복원
         document.body.style.overflow = '';
         document.body.style.position = '';
         
@@ -1472,7 +1472,7 @@ function closeCertificate() {
     } catch (error) {
         로거_인사?.error('호봉획정표 닫기 오류', error);
         
-        // 에러 발생해도 최소한의 정리는 수행
+ // 에러 발생해도 최소한의 정리는 수행
         document.body.style.overflow = '';
         document.body.style.position = '';
     }
@@ -1497,32 +1497,32 @@ function printCertificate() {
     try {
         const printArea = document.getElementById('certificate-print-area');
         if (!printArea || !printArea.innerHTML.trim()) {
-            alert('⚠️ 먼저 호봉획정표를 생성하세요.');
+            alert('[주의] 먼저 호봉획정표를 생성하세요.');
             return;
         }
         
-        // 현재 선택된 양식 타입 확인
+ // 현재 선택된 양식 타입 확인
         const styleType = printArea.classList.contains('cert-style-official') ? 'official' 
                         : printArea.classList.contains('cert-style-modern') ? 'modern' 
                         : 'standard';
         
-        // ⭐ cert-btn-area 영역 제거하여 버튼 중복 방지
+ // cert-btn-area 영역 제거하여 버튼 중복 방지
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = printArea.innerHTML;
         const btnArea = tempDiv.querySelector('.cert-btn-area');
         if (btnArea) btnArea.remove();
         const cleanContent = tempDiv.innerHTML;
         
-        // ⭐ 양식별 CSS 스타일 (호봉획정표_스타일.css에서 추출)
+ // 양식별 CSS 스타일 (호봉획정표_스타일.css에서 추출)
         const styleCSS = `
-            /* 공통 스타일 */
+ /* 공통 스타일 */
             .cert-container {
                 background: white;
                 max-width: 800px;
                 margin: 0 auto;
             }
             
-            /* ===== 공문서 양식 ===== */
+ /* ===== 공문서 양식 ===== */
             .cert-style-official {
                 width: 100%;
                 border: 2px solid #333;
@@ -1606,7 +1606,7 @@ function printCertificate() {
                 font-size: 11px;
             }
             
-            /* ===== 모던 양식 ===== */
+ /* ===== 모던 양식 ===== */
             .cert-style-modern {
                 width: 100%;
                 border-radius: 0;
@@ -1616,7 +1616,7 @@ function printCertificate() {
             }
             
             .cert-style-modern .cert-doc-header {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                background: linear-gradient(135deg, #4f46e5 0%, #764ba2 100%) !important;
                 color: white !important;
                 padding: 28px;
                 text-align: center;
@@ -1653,7 +1653,7 @@ function printCertificate() {
             .cert-style-modern .cert-info-card-title {
                 font-size: 13px;
                 font-weight: 700;
-                color: #667eea;
+                color: #4f46e5;
                 margin-bottom: 14px;
                 display: flex;
                 align-items: center;
@@ -1664,7 +1664,7 @@ function printCertificate() {
                 content: '';
                 width: 4px;
                 height: 16px;
-                background: #667eea !important;
+                background: #4f46e5 !important;
                 border-radius: 2px;
                 display: inline-block;
                 -webkit-print-color-adjust: exact;
@@ -1721,7 +1721,7 @@ function printCertificate() {
             .cert-style-modern .cert-highlight-value {
                 font-size: 20px;
                 font-weight: 700;
-                color: #667eea;
+                color: #4f46e5;
             }
             
             .cert-style-modern .cert-highlight-value small {
@@ -1753,7 +1753,7 @@ function printCertificate() {
                 border: 1px solid #e2e8f0 !important;
             }
             
-            /* ===== 표준 양식 ===== */
+ /* ===== 표준 양식 ===== */
             .cert-style-standard {
                 width: 100%;
                 padding: 32px;
@@ -1911,7 +1911,7 @@ function printCertificate() {
                 </style>
             </head>
             <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
+                <button class="no-print" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄하기 (Ctrl+P)</button>
                 <div class="cert-container cert-style-${styleType}">
                     ${cleanContent}
                 </div>
@@ -1919,7 +1919,7 @@ function printCertificate() {
             </html>
         `;
         
-        // Electron 환경에서 시스템 브라우저로 열기
+ // Electron 환경에서 시스템 브라우저로 열기
         if (window.electronAPI && window.electronAPI.openInBrowser) {
             window.electronAPI.openInBrowser(htmlContent, 'hobong_certificate_print.html');
         } else {
@@ -1936,40 +1936,40 @@ function printCertificate() {
         
     } catch (error) {
         로거_인사?.error('호봉획정표 인쇄 실패', error);
-        alert('❌ 인쇄 중 오류가 발생했습니다.');
+        alert('[오류] 인쇄 중 오류가 발생했습니다.');
     }
 }
 
 /**
- * 📊 리팩토링 통계
+ * 리팩토링 통계
  * 
  * Before (원본):
  * - 총 줄 수: 320줄
  * - 중복 코드: 약 40줄 (직원 정보 접근)
  * - 에러 처리: 1곳 (closeCertificate try-catch만)
  * - 로깅: 1곳 (console.error)
- * - XSS 방지: 0곳 ⚠️
+ * - XSS 방지: 0곳 
  * - 함수 개수: 7개
  * - 인쇄 방식: body.printing-certificate (문제 있음)
  * 
  * After (리팩토링):
  * - 총 줄 수: 약 810줄 (주석 포함)
  * - 실제 코드: 약 530줄
- * - 중복 코드: 0줄 ✅ (100% 제거)
+ * - 중복 코드: 0줄 (100% 제거)
  * - 에러 처리: 7곳 (모든 함수)
  * - 로깅: 35곳 (debug 20, info 6, warn 6, error 3)
- * - XSS 방지: 100% ✅ (모든 출력)
+ * - XSS 방지: 100% (모든 출력)
  * - 함수 개수: 7개 (동일)
  * - 인쇄 방식: 인쇄유틸_인사.print() (문제 해결!)
  * 
  * 개선 효과:
- * ✅ 중복 코드 40줄 → 0줄 (100% 감소)
- * ✅ XSS 공격 100% 방지
- * ✅ 에러 추적 100% 가능
- * ✅ 표 선 끊김 해결 (border-collapse)
- * ✅ 여백 최적화 (A4 세로 최적화)
- * ✅ 사이드바/메뉴 인쇄 방지 (ID 기반 격리)
- * ✅ 인쇄 안정성 향상 (인쇄유틸 사용)
+ * 중복 코드 40줄 → 0줄 (100% 감소)
+ * XSS 공격 100% 방지
+ * 에러 추적 100% 가능
+ * 표 선 끊김 해결 (border-collapse)
+ * 여백 최적화 (A4 세로 최적화)
+ * 사이드바/메뉴 인쇄 방지 (ID 기반 격리)
+ * 인쇄 안정성 향상 (인쇄유틸 사용)
  * 
  * 핵심 개선 사항:
  * 1. 직원유틸_인사 사용 → 중복 코드 제거

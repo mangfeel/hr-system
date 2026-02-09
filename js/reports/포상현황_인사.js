@@ -20,14 +20,14 @@ let currentReportTab = 'employee-awards';
 
 // ===== 보고서 탭 정보 =====
 const REPORT_TABS = {
-    'basic': { name: '기본', icon: '📊', desc: '전체 목록 + 필터' },
-    'employee-awards': { name: '직원별 포상내역', icon: '📋', desc: '전체 포상 목록' },
-    'employee-external': { name: '직원별 외부포상', icon: '🌐', desc: '연도별 컬럼 형태' },
-    'employee-internal': { name: '직원별 내부포상', icon: '🏢', desc: '연도별 컬럼 형태' },
-    'yearly-awards': { name: '연도별 포상내역', icon: '📅', desc: '연도별 정렬' },
-    'internal-selected': { name: '내부포상(선정)', icon: '🎖️', desc: '선정된 내부 포상' },
-    'external-selected': { name: '외부포상(선정)', icon: '🏆', desc: '선정된 외부 포상' },
-    'photo-print': { name: '포상사진 출력', icon: '📷', desc: 'A4 사진 출력' }
+    'basic': { name: '기본', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>', desc: '전체 목록 + 필터' },
+    'employee-awards': { name: '직원별 포상내역', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>', desc: '전체 포상 목록' },
+    'employee-external': { name: '직원별 외부포상', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>', desc: '연도별 컬럼 형태' },
+    'employee-internal': { name: '직원별 내부포상', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><line x1="8" y1="6" x2="10" y2="6"/><line x1="14" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/></svg>', desc: '연도별 컬럼 형태' },
+    'yearly-awards': { name: '연도별 포상내역', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>', desc: '연도별 정렬' },
+    'internal-selected': { name: '내부포상(선정)', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>', desc: '선정된 내부 포상' },
+    'external-selected': { name: '외부포상(선정)', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>', desc: '선정된 외부 포상' },
+    'photo-print': { name: '포상사진 출력', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>', desc: 'A4 사진 출력' }
 };
 
 // ===== 모듈 로드 =====
@@ -44,12 +44,12 @@ function loadAwardsReportModule() {
         return;
     }
     
-    // 포상 데이터 재직/퇴사 상태 동기화
+ // 포상 데이터 재직/퇴사 상태 동기화
     _syncAwardsRetirementStatus();
     
     container.innerHTML = _renderAwardsReportUI();
     
-    // 기본 탭 선택
+ // 기본 탭 선택
     selectReportTab('basic');
 }
 
@@ -62,7 +62,7 @@ function _syncAwardsRetirementStatus() {
         const awards = awardsManager.getAll();
         const employees = db.getEmployees();
         
-        // 직원 이름 → 퇴사 여부 맵 생성
+ // 직원 이름 → 퇴사 여부 맵 생성
         const retirementMap = new Map();
         employees.forEach(emp => {
             const empName = emp.personalInfo?.name || emp.name;
@@ -79,7 +79,7 @@ function _syncAwardsRetirementStatus() {
             if (award.name && retirementMap.has(award.name)) {
                 const dbIsRetired = retirementMap.get(award.name);
                 
-                // DB 상태와 다르면 동기화
+ // DB 상태와 다르면 동기화
                 if (award.isRetired !== dbIsRetired) {
                     award.isRetired = dbIsRetired;
                     updatedCount++;
@@ -87,14 +87,14 @@ function _syncAwardsRetirementStatus() {
             }
         });
         
-        // 변경된 경우에만 저장
+ // 변경된 경우에만 저장
         if (updatedCount > 0) {
             awardsManager.save();
-            console.log(`✅ 포상 데이터 재직/퇴사 상태 동기화: ${updatedCount}건 업데이트`);
+            console.log(` 포상 데이터 재직/퇴사 상태 동기화: ${updatedCount}건 업데이트`);
         }
         
     } catch (error) {
-        console.error('❌ 포상 재직/퇴사 상태 동기화 오류:', error);
+        console.error(' 포상 재직/퇴사 상태 동기화 오류:', error);
     }
 }
 
@@ -112,7 +112,7 @@ function _renderAwardsReportUI() {
                     max-width: 1600px;
                     margin: 0 auto;
                 }
-                /* 헤더 */
+ /* 헤더 */
                 .awards-report-header {
                     display: flex;
                     justify-content: space-between;
@@ -140,7 +140,7 @@ function _renderAwardsReportUI() {
                     font-weight: 500;
                     backdrop-filter: blur(10px);
                 }
-                /* 탭 */
+ /* 탭 */
                 .report-tabs {
                     display: flex;
                     gap: 6px;
@@ -185,7 +185,7 @@ function _renderAwardsReportUI() {
                 .report-tab .tab-icon {
                     font-size: 15px;
                 }
-                /* 기본 탭 강조 */
+ /* 기본 탭 강조 */
                 .report-tab[data-tab="basic"] {
                     border-left: 3px solid #22c55e;
                     padding-left: 15px;
@@ -193,7 +193,7 @@ function _renderAwardsReportUI() {
                 .report-tab[data-tab="basic"].active {
                     border-left-color: white;
                 }
-                /* 필터 영역 */
+ /* 필터 영역 */
                 .report-filters {
                     background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
                     padding: 0;
@@ -312,7 +312,7 @@ function _renderAwardsReportUI() {
                     background: #f1f5f9;
                     border-color: #cbd5e1;
                 }
-                /* 결과 영역 */
+ /* 결과 영역 */
                 .report-result-wrap {
                     max-height: 60vh;
                     overflow: scroll !important;
@@ -369,14 +369,14 @@ function _renderAwardsReportUI() {
                 .report-table td.text-left {
                     text-align: left;
                 }
-                /* 이전이력 셀 */
+ /* 이전이력 셀 */
                 .previous-history {
                     font-size: 11px;
                     color: #6b7280;
                     text-align: left;
                     max-width: 200px;
                 }
-                /* 상태 배지 */
+ /* 상태 배지 */
                 .status-selected {
                     color: #059669;
                     font-weight: 600;
@@ -388,7 +388,7 @@ function _renderAwardsReportUI() {
                 .status-not-selected {
                     color: #9ca3af;
                 }
-                /* 포상구분 배지 */
+ /* 포상구분 배지 */
                 .badge {
                     display: inline-block;
                     padding: 2px 8px;
@@ -404,7 +404,7 @@ function _renderAwardsReportUI() {
                     background: #fff3e0;
                     color: #e65100;
                 }
-                /* 포상 표시 (연도별 컬럼) */
+ /* 포상 표시 (연도별 컬럼) */
                 .award-selected {
                     color: #111;
                     font-weight: 600;
@@ -415,7 +415,7 @@ function _renderAwardsReportUI() {
                 .award-rejected {
                     color: #9ca3af;
                 }
-                /* 요약 */
+ /* 요약 */
                 .report-summary {
                     display: flex;
                     justify-content: space-between;
@@ -451,7 +451,7 @@ function _renderAwardsReportUI() {
                     border-color: #9ca3af;
                     transform: translateY(-1px);
                 }
-                /* 범례 */
+ /* 범례 */
                 .report-legend {
                     display: flex;
                     gap: 20px;
@@ -468,7 +468,7 @@ function _renderAwardsReportUI() {
                     gap: 6px;
                     font-weight: 500;
                 }
-                /* 빈 상태 */
+ /* 빈 상태 */
                 .empty-state {
                     padding: 60px 20px;
                     text-align: center;
@@ -477,13 +477,13 @@ function _renderAwardsReportUI() {
                 .empty-state p {
                     margin: 0;
                 }
-                /* 로딩 */
+ /* 로딩 */
                 .loading {
                     padding: 40px;
                     text-align: center;
                     color: #6b7280;
                 }
-                /* 인쇄 시 - 기본 설정 (실제 인쇄는 printAwardsReport에서 동적 스타일 적용) */
+ /* 인쇄 시 - 기본 설정 (실제 인쇄는 printAwardsReport에서 동적 스타일 적용) */
                 @media print {
                     .no-print,
                     .awards-report-header,
@@ -500,14 +500,14 @@ function _renderAwardsReportUI() {
             <!-- 헤더 -->
             <div class="awards-report-header no-print">
                 <h2>
-                    🏆 포상 현황
+                    <span class="card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span> 포상 현황
                     <span class="count-badge">총 ${totalCount}건</span>
                 </h2>
             </div>
             
             ${totalCount === 0 ? `
             <div class="alert alert-info" style="margin-bottom: 16px;">
-                <span>💡</span>
+                <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
                 <span>포상 데이터가 없습니다. <strong>인력관리 → 포상 등록</strong> 또는 <strong>시스템 → 가져오기</strong>에서 데이터를 추가하세요.</span>
             </div>
             ` : ''}
@@ -542,23 +542,23 @@ function _renderAwardsReportUI() {
 function selectReportTab(tabId) {
     currentReportTab = tabId;
     
-    // 탭 활성화 상태 변경
+ // 탭 활성화 상태 변경
     document.querySelectorAll('.report-tab').forEach(tab => {
         tab.classList.toggle('active', tab.dataset.tab === tabId);
     });
     
-    // 필터 UI 렌더링
+ // 필터 UI 렌더링
     _renderFilterUI(tabId);
     
-    // 기본 탭이면 바로 데이터 표시 (이미 _renderFilterUI에서 호출됨)
+ // 기본 탭이면 바로 데이터 표시 (이미 _renderFilterUI에서 호출됨)
     if (tabId === 'basic') {
         return;
     }
     
-    // 결과 초기화
+ // 결과 초기화
     document.getElementById('report-result-area').innerHTML = `
         <div class="empty-state">
-            <p>🔍 필터를 설정하고 <strong>보고서 생성</strong> 버튼을 클릭하세요.</p>
+            <p><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> 필터를 설정하고 <strong>보고서 생성</strong> 버튼을 클릭하세요.</p>
         </div>
     `;
 }
@@ -575,28 +575,28 @@ function _renderFilterUI(tabId) {
     const minYear = years.length > 0 ? Math.min(...years) : new Date().getFullYear() - 5;
     const maxYear = years.length > 0 ? Math.max(...years) : new Date().getFullYear();
     
-    // 기본 탭은 별도 UI
+ // 기본 탭은 별도 UI
     if (tabId === 'basic') {
         container.innerHTML = _renderBasicFilterUI(years);
-        // 기본 탭은 바로 데이터 표시
+ // 기본 탭은 바로 데이터 표시
         _loadBasicReport();
         return;
     }
     
-    // 포상사진 출력은 별도 UI
+ // 포상사진 출력은 별도 UI
     if (tabId === 'photo-print') {
         container.innerHTML = _renderPhotoFilterUI(minYear, maxYear);
         return;
     }
     
-    // 공통 필터 + 보고서별 추가 필터
+ // 공통 필터 + 보고서별 추가 필터
     let advancedFilterHtml = '';
     
-    // 직원별 포상내역만 상세 필터 제공
+ // 직원별 포상내역만 상세 필터 제공
     if (tabId === 'employee-awards') {
         advancedFilterHtml = `
             <div class="filter-section">
-                <div class="filter-section-title">🔍 상세 필터</div>
+                <div class="filter-section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> 상세 필터</div>
                 <div class="filter-row">
                     <div class="filter-group">
                         <label>직원 검색</label>
@@ -625,7 +625,7 @@ function _renderFilterUI(tabId) {
         `;
     }
     
-    // 직원별 외부포상에만 선정여부 체크박스 필터 추가
+ // 직원별 외부포상에만 선정여부 체크박스 필터 추가
     let statusFilterHtml = '';
     if (tabId === 'employee-external') {
         statusFilterHtml = `
@@ -656,7 +656,7 @@ function _renderFilterUI(tabId) {
     container.innerHTML = `
         <!-- 기본 필터 -->
         <div class="filter-section">
-            <div class="filter-section-title">📋 기본 필터</div>
+            <div class="filter-section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 기본 필터</div>
             <div class="filter-row">
                 <div class="filter-group">
                     <label>직원 구분</label>
@@ -697,10 +697,10 @@ function _renderFilterUI(tabId) {
         <!-- 버튼 -->
         <div class="filter-actions">
             <button class="btn btn-primary" onclick="generateReport()">
-                🔍 보고서 생성
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> 보고서 생성
             </button>
             <button class="btn btn-secondary" onclick="resetFilters()">
-                🔄 필터 초기화
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> 필터 초기화
             </button>
         </div>
     `;
@@ -712,7 +712,7 @@ function _renderFilterUI(tabId) {
 function _renderBasicFilterUI(years) {
     return `
         <div class="filter-section">
-            <div class="filter-section-title">🔍 검색 필터</div>
+            <div class="filter-section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> 검색 필터</div>
             <div class="filter-row">
                 <div class="filter-group">
                     <label>정렬 기준</label>
@@ -758,7 +758,7 @@ function _renderBasicFilterUI(years) {
             </div>
         </div>
         <div class="filter-section">
-            <div class="filter-section-title">📅 기간 검색</div>
+            <div class="filter-section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 기간 검색</div>
             <div class="filter-row">
                 <div class="filter-group">
                     <label>수상일 (시작)</label>
@@ -772,7 +772,7 @@ function _renderBasicFilterUI(years) {
         </div>
         <div class="filter-actions">
             <button class="btn btn-secondary" onclick="_resetBasicFilters()">
-                🔄 필터 초기화
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> 필터 초기화
             </button>
         </div>
     `;
@@ -806,7 +806,7 @@ function _loadBasicReport() {
     
     let awards = awardsManager.getAll();
     
-    // 필터 적용
+ // 필터 적용
     if (typeFilter !== '전체') {
         awards = awards.filter(a => a.type === typeFilter);
     }
@@ -836,7 +836,7 @@ function _loadBasicReport() {
         });
     }
     
-    // 정렬
+ // 정렬
     switch (sortBy) {
         case 'date-desc':
             awards.sort((a, b) => (_formatDate(b.awardDate) || '').localeCompare(_formatDate(a.awardDate) || ''));
@@ -852,7 +852,7 @@ function _loadBasicReport() {
             break;
     }
     
-    // 통계 계산
+ // 통계 계산
     const total = awards.length;
     const selected = awards.filter(a => a.status === '선정').length;
     const notSelected = awards.filter(a => a.status === '미선정').length;
@@ -871,8 +871,8 @@ function _loadBasicReport() {
         <div class="report-summary">
             <h4>검색 결과: ${total}건 | 선정 ${selected} / 미선정 ${notSelected} / 미발표 ${pending} | 내부 ${internal} / 외부 ${external}</h4>
             <div class="report-actions">
-                <button onclick="exportReportToExcel('basic')">📥 엑셀</button>
-                <button onclick="printAwardsReport()">🖨️ 인쇄</button>
+                <button onclick="exportReportToExcel('basic')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀</button>
+                <button onclick="printAwardsReport()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄</button>
             </div>
         </div>
         <div class="report-result-wrap">
@@ -925,7 +925,7 @@ function _renderPhotoFilterUI(minYear, maxYear) {
     
     return `
         <div class="filter-section">
-            <div class="filter-section-title">📷 포상사진 출력 (선정된 외부 포상)</div>
+            <div class="filter-section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> 포상사진 출력 (선정된 외부 포상)</div>
             <p style="color: #64748b; margin-bottom: 16px; font-size: 13px; line-height: 1.6;">
                 선정된 외부 포상의 <strong>성명</strong>과 <strong>수상일</strong>을 기준으로 상장사진을 자동 매칭하여 출력합니다.
             </p>
@@ -949,7 +949,7 @@ function _renderPhotoFilterUI(minYear, maxYear) {
         </div>
         
         <div class="filter-section">
-            <div class="filter-section-title">📁 사진 폴더 선택</div>
+            <div class="filter-section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> 사진 폴더 선택</div>
             <div class="photo-folder-selector" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                 <input type="file" id="award-photo-folder" 
                        webkitdirectory multiple 
@@ -957,19 +957,19 @@ function _renderPhotoFilterUI(minYear, maxYear) {
                        style="display:none;">
                 <button type="button" class="btn btn-secondary" style="padding:10px 16px;"
                         onclick="document.getElementById('award-photo-folder').click()">
-                    📂 폴더 선택...
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> 폴더 선택...
                 </button>
                 <span id="award-photo-status" class="photo-status" style="font-size:13px;">
                     ${lastFolderMsg}
                 </span>
             </div>
             <p style="color:#94a3b8; font-size:11px; margin-top:8px;">
-                💡 상장/수상 사진이 있는 폴더를 선택하면 자동으로 매칭됩니다. (페이지 새로고침 시 재선택 필요)
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> 상장/수상 사진이 있는 폴더를 선택하면 자동으로 매칭됩니다. (페이지 새로고침 시 재선택 필요)
             </p>
         </div>
         
         <div class="filter-section" style="background:#f0fdf4; margin:-1px -20px -1px; padding:16px 20px; border-radius:0 0 12px 12px;">
-            <div style="font-weight:600; color:#166534; margin-bottom:10px; font-size:13px;">📝 인식 가능한 파일명 형식</div>
+            <div style="font-weight:600; color:#166534; margin-bottom:10px; font-size:13px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 인식 가능한 파일명 형식</div>
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:8px;">
                 <div style="background:white; padding:8px 12px; border-radius:6px; border:1px solid #bbf7d0;">
                     <code style="font-size:12px; color:#15803d;">홍길동(2024.10.15).jpg</code>
@@ -995,10 +995,10 @@ function _renderPhotoFilterUI(minYear, maxYear) {
         
         <div class="filter-actions">
             <button class="btn btn-primary" onclick="showPhotosList()">
-                📋 대상 목록 보기
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 대상 목록 보기
             </button>
             <button class="btn btn-secondary" onclick="printPhotos()">
-                📷 사진 출력 미리보기
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> 사진 출력 미리보기
             </button>
         </div>
     `;
@@ -1039,7 +1039,7 @@ function resetFilters() {
         refDate.value = new Date().toISOString().split('T')[0];
     }
     
-    // 연도 초기화
+ // 연도 초기화
     const years = awardsManager.getYears();
     if (years.length > 0) {
         const yearStart = document.getElementById('filter-year-start');
@@ -1048,7 +1048,7 @@ function resetFilters() {
         if (yearEnd) yearEnd.value = Math.max(...years);
     }
     
-    // 상세 필터 초기화
+ // 상세 필터 초기화
     const empName = document.getElementById('filter-employee-name');
     const awardType = document.getElementById('filter-award-type');
     const selStatus = document.getElementById('filter-selection-status');
@@ -1065,13 +1065,13 @@ function resetFilters() {
 function generateReport() {
     const resultArea = document.getElementById('report-result-area');
     
-    // 필터 값 수집
+ // 필터 값 수집
     const filters = _collectFilters();
     
-    // 로딩 표시
-    resultArea.innerHTML = '<div class="loading">📊 보고서 생성 중...</div>';
+ // 로딩 표시
+    resultArea.innerHTML = '<div class="loading"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 보고서 생성 중...</div>';
     
-    // 약간의 지연 후 보고서 생성
+ // 약간의 지연 후 보고서 생성
     setTimeout(() => {
         switch(currentReportTab) {
             case 'employee-awards':
@@ -1100,12 +1100,12 @@ function generateReport() {
  * 필터 값 수집
  */
 function _collectFilters() {
-    // 선정여부 체크박스 (직원별 외부/내부 포상용)
+ // 선정여부 체크박스 (직원별 외부/내부 포상용)
     const statusSelected = document.getElementById('filter-status-selected')?.checked ?? true;
     const statusPending = document.getElementById('filter-status-pending')?.checked ?? false;
     const statusRejected = document.getElementById('filter-status-rejected')?.checked ?? false;
     
-    // 선택된 상태 배열 생성
+ // 선택된 상태 배열 생성
     const selectedStatuses = [];
     if (statusSelected) selectedStatuses.push('선정');
     if (statusPending) selectedStatuses.push('미발표');
@@ -1120,7 +1120,7 @@ function _collectFilters() {
         employeeName: document.getElementById('filter-employee-name')?.value?.trim() || '',
         awardType: document.getElementById('filter-award-type')?.value || '',
         selectionStatus: document.getElementById('filter-selection-status')?.value || '',
-        // 직원별 외부/내부 포상용 선정여부 배열
+ // 직원별 외부/내부 포상용 선정여부 배열
         selectedStatuses: selectedStatuses
     };
 }
@@ -1133,19 +1133,19 @@ function _collectFilters() {
 function _formatDate(dateStr) {
     if (!dateStr) return '';
     
-    // 이미 YYYY-MM-DD 형식이면 그대로 반환
+ // 이미 YYYY-MM-DD 형식이면 그대로 반환
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
     
-    // 먼저 공백 제거 및 정리
+ // 먼저 공백 제거 및 정리
     let cleaned = String(dateStr).trim();
     
-    // 공백 제거 (2022. 12. 6. → 2022.12.6)
+ // 공백 제거 (2022. 12. 6. → 2022.12.6)
     cleaned = cleaned.replace(/\s+/g, '');
     
-    // 마지막 점 제거 (2022.12.6. → 2022.12.6)
+ // 마지막 점 제거 (2022.12.6. → 2022.12.6)
     cleaned = cleaned.replace(/\.+$/, '');
     
-    // 점 구분자
+ // 점 구분자
     if (cleaned.includes('.')) {
         const parts = cleaned.split('.').filter(p => p); // 빈 문자열 제거
         if (parts.length >= 3) {
@@ -1156,7 +1156,7 @@ function _formatDate(dateStr) {
         }
     }
     
-    // 슬래시 구분자
+ // 슬래시 구분자
     if (cleaned.includes('/')) {
         const parts = cleaned.split('/').filter(p => p);
         if (parts.length >= 3) {
@@ -1167,7 +1167,7 @@ function _formatDate(dateStr) {
         }
     }
     
-    // 하이픈 구분자 (이미 하이픈이지만 형식이 다른 경우)
+ // 하이픈 구분자 (이미 하이픈이지만 형식이 다른 경우)
     if (cleaned.includes('-')) {
         const parts = cleaned.split('-').filter(p => p);
         if (parts.length >= 3) {
@@ -1217,11 +1217,11 @@ function _generatePreviousHistory(awards, yearStart) {
  */
 function _applyAwardFilters(awards, filters) {
     return awards.filter(award => {
-        // 연도 범위
+ // 연도 범위
         const year = parseInt(award.year);
         if (year < filters.yearStart || year > filters.yearEnd) return false;
         
-        // 직원 재직 여부 (기준일이 아닐 때)
+ // 직원 재직 여부 (기준일이 아닐 때)
         if (!filters.dateActive) {
             if (filters.employeeStatus === 'active' && award.isRetired) return false;
             if (filters.employeeStatus === 'retired' && !award.isRetired) return false;
@@ -1239,14 +1239,14 @@ function _getEmployeesOnReferenceDate(referenceDate) {
     const employees = typeof db !== 'undefined' ? db.getEmployees() : [];
     
     return employees.filter(emp => {
-        // 입사일: employment.entryDate
+ // 입사일: employment.entryDate
         const hireDate = emp.employment?.entryDate ? new Date(emp.employment.entryDate) : null;
-        // 퇴사일: employment.retirementDate
+ // 퇴사일: employment.retirementDate
         const retireDate = emp.employment?.retirementDate ? new Date(emp.employment.retirementDate) : null;
         
-        // 입사일이 기준일 이후면 제외
+ // 입사일이 기준일 이후면 제외
         if (hireDate && hireDate > refDate) return false;
-        // 퇴사일이 기준일 이전이면 제외
+ // 퇴사일이 기준일 이전이면 제외
         if (retireDate && retireDate < refDate) return false;
         
         return true;
@@ -1258,20 +1258,20 @@ function _getEmployeesOnReferenceDate(referenceDate) {
 function _generateEmployeeAwardsReport(container, filters) {
     let awards = awardsManager.getAll();
     
-    // 필터 적용
+ // 필터 적용
     awards = _applyAwardFilters(awards, filters);
     
-    // 직원명 검색
+ // 직원명 검색
     if (filters.employeeName) {
         awards = awards.filter(a => a.name?.includes(filters.employeeName));
     }
     
-    // 포상구분
+ // 포상구분
     if (filters.awardType) {
         awards = awards.filter(a => a.type === filters.awardType);
     }
     
-    // 선정여부
+ // 선정여부
     if (filters.selectionStatus) {
         awards = awards.filter(a => a.status === filters.selectionStatus);
     }
@@ -1281,7 +1281,7 @@ function _generateEmployeeAwardsReport(container, filters) {
         return;
     }
     
-    // 정렬: 재직자 우선 → 이름순
+ // 정렬: 재직자 우선 → 이름순
     awards.sort((a, b) => {
         if (a.isRetired !== b.isRetired) return a.isRetired ? 1 : -1;
         return (a.name || '').localeCompare(b.name || '');
@@ -1296,8 +1296,8 @@ function _generateEmployeeAwardsReport(container, filters) {
         <div class="report-summary">
             <h4>총 ${awards.length}건${filterSummary}</h4>
             <div class="report-actions">
-                <button onclick="exportReportToExcel('employee-awards')">📥 엑셀</button>
-                <button onclick="printAwardsReport()">🖨️ 인쇄</button>
+                <button onclick="exportReportToExcel('employee-awards')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀</button>
+                <button onclick="printAwardsReport()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄</button>
             </div>
         </div>
         <div class="report-result-wrap">
@@ -1341,21 +1341,21 @@ function _generateEmployeeExternalReport(container, filters) {
     const allAwards = awardsManager.getAll().filter(a => a.type === '외부');
     let awards = _applyAwardFilters(allAwards, filters);
     
-    // 선정여부 필터 적용 (체크박스)
+ // 선정여부 필터 적용 (체크박스)
     if (filters.selectedStatuses && filters.selectedStatuses.length > 0) {
         awards = awards.filter(a => filters.selectedStatuses.includes(a.status));
     }
     
-    // 직원별 그룹화
+ // 직원별 그룹화
     let employees;
     
     if (filters.dateActive) {
-        // 기준일 재직자 전체
+ // 기준일 재직자 전체
         const allEmps = _getEmployeesOnReferenceDate(filters.referenceDate);
         const employeeMap = new Map();
         
         allEmps.forEach(emp => {
-            // 이름: personalInfo.name 또는 name
+ // 이름: personalInfo.name 또는 name
             const empName = emp.personalInfo?.name || emp.name;
             if (!empName) return;
             
@@ -1368,7 +1368,7 @@ function _generateEmployeeExternalReport(container, filters) {
             });
         });
         
-        // 포상 매칭 (이름 기준) - 필터된 awards만
+ // 포상 매칭 (이름 기준) - 필터된 awards만
         allAwards.forEach(award => {
             if (award.name && employeeMap.has(award.name)) {
                 employeeMap.get(award.name).allAwards.push(award);
@@ -1407,14 +1407,14 @@ function _generateEmployeeExternalReport(container, filters) {
         employees = Array.from(employeeMap.values());
     }
     
-    // 입사일순 정렬
+ // 입사일순 정렬
     employees.sort((a, b) => {
         const dateA = a.hireDate ? new Date(a.hireDate) : new Date('9999-12-31');
         const dateB = b.hireDate ? new Date(b.hireDate) : new Date('9999-12-31');
         return dateA - dateB;
     });
     
-    // 연도 컬럼
+ // 연도 컬럼
     const years = [];
     for (let y = filters.yearStart; y <= filters.yearEnd; y++) years.push(y);
     
@@ -1422,8 +1422,8 @@ function _generateEmployeeExternalReport(container, filters) {
         <div class="report-summary">
             <h4>직원 ${employees.length}명 | 포상 ${awards.length}건</h4>
             <div class="report-actions">
-                <button onclick="exportReportToExcel('employee-external')">📥 엑셀</button>
-                <button onclick="printAwardsReport()">🖨️ 인쇄</button>
+                <button onclick="exportReportToExcel('employee-external')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀</button>
+                <button onclick="printAwardsReport()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄</button>
             </div>
         </div>
         <div class="report-legend no-print">
@@ -1478,7 +1478,7 @@ function _generateEmployeeInternalReport(container, filters) {
     const allAwards = awardsManager.getAll().filter(a => a.type === '내부');
     let awards = _applyAwardFilters(allAwards, filters);
     
-    // 직원별 그룹화 (외부와 동일 로직)
+ // 직원별 그룹화 (외부와 동일 로직)
     let employees;
     
     if (filters.dateActive) {
@@ -1486,7 +1486,7 @@ function _generateEmployeeInternalReport(container, filters) {
         const employeeMap = new Map();
         
         allEmps.forEach(emp => {
-            // 이름: personalInfo.name 또는 name
+ // 이름: personalInfo.name 또는 name
             const empName = emp.personalInfo?.name || emp.name;
             if (!empName) return;
             
@@ -1499,7 +1499,7 @@ function _generateEmployeeInternalReport(container, filters) {
             });
         });
         
-        // 포상 매칭 (이름 기준) - 필터된 awards만
+ // 포상 매칭 (이름 기준) - 필터된 awards만
         allAwards.forEach(award => {
             if (award.name && employeeMap.has(award.name)) {
                 employeeMap.get(award.name).allAwards.push(award);
@@ -1551,8 +1551,8 @@ function _generateEmployeeInternalReport(container, filters) {
         <div class="report-summary">
             <h4>직원 ${employees.length}명 | 포상 ${awards.length}건</h4>
             <div class="report-actions">
-                <button onclick="exportReportToExcel('employee-internal')">📥 엑셀</button>
-                <button onclick="printAwardsReport()">🖨️ 인쇄</button>
+                <button onclick="exportReportToExcel('employee-internal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀</button>
+                <button onclick="printAwardsReport()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄</button>
             </div>
         </div>
         <div class="report-result-wrap">
@@ -1605,7 +1605,7 @@ function _generateYearlyAwardsReport(container, filters) {
         return;
     }
     
-    // 연도순 → 수상일순
+ // 연도순 → 수상일순
     awards.sort((a, b) => {
         if (a.year !== b.year) return parseInt(a.year) - parseInt(b.year);
         const dateA = a.status === '선정' ? a.awardDate : '9999-12-31';
@@ -1617,8 +1617,8 @@ function _generateYearlyAwardsReport(container, filters) {
         <div class="report-summary">
             <h4>총 ${awards.length}건</h4>
             <div class="report-actions">
-                <button onclick="exportReportToExcel('yearly-awards')">📥 엑셀</button>
-                <button onclick="printAwardsReport()">🖨️ 인쇄</button>
+                <button onclick="exportReportToExcel('yearly-awards')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀</button>
+                <button onclick="printAwardsReport()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄</button>
             </div>
         </div>
         <div class="report-result-wrap">
@@ -1660,14 +1660,14 @@ function _generateInternalSelectedReport(container, filters) {
     
     awards = _applyAwardFilters(awards, filters);
     
-    // 기준일 재직자 필터
+ // 기준일 재직자 필터
     if (filters.dateActive) {
         const activeEmps = _getEmployeesOnReferenceDate(filters.referenceDate);
-        // 이름: personalInfo.name 또는 name
+ // 이름: personalInfo.name 또는 name
         const activeNames = new Set(activeEmps.map(e => e.personalInfo?.name || e.name));
         
         awards = awards.filter(a => {
-            // 이름 기준으로 매칭
+ // 이름 기준으로 매칭
             if (a.name && activeNames.has(a.name)) return true;
             return false;
         });
@@ -1678,7 +1678,7 @@ function _generateInternalSelectedReport(container, filters) {
         return;
     }
     
-    // 재직자 우선 → 수상일순
+ // 재직자 우선 → 수상일순
     awards.sort((a, b) => {
         if (a.isRetired !== b.isRetired) return a.isRetired ? 1 : -1;
         return (a.awardDate || '').localeCompare(b.awardDate || '');
@@ -1688,8 +1688,8 @@ function _generateInternalSelectedReport(container, filters) {
         <div class="report-summary">
             <h4>${awards.length}건</h4>
             <div class="report-actions">
-                <button onclick="exportReportToExcel('internal-selected')">📥 엑셀</button>
-                <button onclick="printAwardsReport()">🖨️ 인쇄</button>
+                <button onclick="exportReportToExcel('internal-selected')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀</button>
+                <button onclick="printAwardsReport()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄</button>
             </div>
         </div>
         <div class="report-result-wrap">
@@ -1731,14 +1731,14 @@ function _generateExternalSelectedReport(container, filters) {
     
     awards = _applyAwardFilters(awards, filters);
     
-    // 기준일 재직자 필터
+ // 기준일 재직자 필터
     if (filters.dateActive) {
         const activeEmps = _getEmployeesOnReferenceDate(filters.referenceDate);
-        // 이름: personalInfo.name 또는 name
+ // 이름: personalInfo.name 또는 name
         const activeNames = new Set(activeEmps.map(e => e.personalInfo?.name || e.name));
         
         awards = awards.filter(a => {
-            // 이름 기준으로 매칭
+ // 이름 기준으로 매칭
             if (a.name && activeNames.has(a.name)) return true;
             return false;
         });
@@ -1758,8 +1758,8 @@ function _generateExternalSelectedReport(container, filters) {
         <div class="report-summary">
             <h4>${awards.length}건</h4>
             <div class="report-actions">
-                <button onclick="exportReportToExcel('external-selected')">📥 엑셀</button>
-                <button onclick="printAwardsReport()">🖨️ 인쇄</button>
+                <button onclick="exportReportToExcel('external-selected')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀</button>
+                <button onclick="printAwardsReport()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄</button>
             </div>
         </div>
         <div class="report-result-wrap">
@@ -1815,51 +1815,51 @@ async function handleAwardPhotoFolderSelect(files) {
         let folderPath = '';
         
         for (const file of files) {
-            // 이미지 파일만 처리
+ // 이미지 파일만 처리
             if (!file.type.startsWith('image/')) continue;
             
-            // 폴더 경로 저장 (첫 번째 파일에서)
+ // 폴더 경로 저장 (첫 번째 파일에서)
             if (!folderPath && file.webkitRelativePath) {
                 folderPath = file.webkitRelativePath.split('/')[0];
             }
             
-            // 파일명 그대로 저장 (확장자 포함)
+ // 파일명 그대로 저장 (확장자 포함)
             const fileName = file.name;
             
-            // Blob URL 생성
+ // Blob URL 생성
             const blobUrl = URL.createObjectURL(file);
             _awardPhotoMap.set(fileName, blobUrl);
             matchedCount++;
             
-            // 진행 상황 업데이트
+ // 진행 상황 업데이트
             if (statusEl && matchedCount % 10 === 0) {
                 statusEl.innerHTML = `<span style="color:#6b7280;">⏳ ${matchedCount}개 처리 중...</span>`;
             }
         }
         
-        // 폴더 경로 저장 (localStorage)
+ // 폴더 경로 저장 (localStorage)
         if (folderPath) {
             localStorage.setItem('awardPhoto_lastFolder', folderPath);
         }
         
-        // 콘솔에 로드된 파일 수 출력
-        console.log(`✅ 포상사진 폴더 로드 완료: ${matchedCount}개 (${folderPath})`);
+ // 콘솔에 로드된 파일 수 출력
+        console.log(` 포상사진 폴더 로드 완료: ${matchedCount}개 (${folderPath})`);
         
-        // 상태 업데이트
+ // 상태 업데이트
         if (statusEl) {
             if (matchedCount > 0) {
                 statusEl.innerHTML = `<span style="color:#10b981;">✓ ${matchedCount}개 사진 로드됨 (${folderPath || '폴더'})</span>`;
             } else {
-                statusEl.innerHTML = `<span style="color:#f59e0b;">⚠️ 이미지 파일이 없습니다</span>`;
+                statusEl.innerHTML = `<span style="color:#f59e0b;">이미지 파일이 없습니다</span>`;
             }
         }
         
-        console.log(`✅ 포상사진 폴더 로드 완료: ${matchedCount}개 (${folderPath})`);
+        console.log(` 포상사진 폴더 로드 완료: ${matchedCount}개 (${folderPath})`);
         
     } catch (error) {
-        console.error('❌ 사진 폴더 처리 오류:', error);
+        console.error(' 사진 폴더 처리 오류:', error);
         if (statusEl) {
-            statusEl.innerHTML = `<span style="color:#ef4444;">❌ 오류 발생</span>`;
+            statusEl.innerHTML = `<span style="color:#ef4444;">오류 발생</span>`;
         }
     }
 }
@@ -1875,13 +1875,13 @@ function _findAwardPhoto(name, date) {
     
     const formatted = _formatDate(date);
     if (!formatted) {
-        console.log(`⚠️ 날짜 포맷 실패: ${name}, 원본 날짜: "${date}"`);
+        console.log(`️ 날짜 포맷 실패: ${name}, 원본 날짜: "${date}"`);
         return null;
     }
     
     const parts = formatted.split('-');
     if (parts.length !== 3) {
-        console.log(`⚠️ 날짜 파싱 실패: ${name}, 포맷된 날짜: "${formatted}"`);
+        console.log(`️ 날짜 파싱 실패: ${name}, 포맷된 날짜: "${formatted}"`);
         return null;
     }
     
@@ -1891,89 +1891,89 @@ function _findAwardPhoto(name, date) {
     const day = parts[2];             // 0 포함 (예: "07")
     const dayInt = parseInt(day, 10);      // 0 없음 (예: 7)
     
-    // 확장자 목록
+ // 확장자 목록
     const extensions = ['jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG', 'gif', 'webp', 'GIF', 'WEBP'];
     
-    // ===== 1단계: 괄호 형식 - 가장 일반적 =====
-    // 날짜 형식 조합 (점, 하이픈, 슬래시, 언더스코어, 붙여쓰기, 공백)
+ // ===== 1단계: 괄호 형식 - 가장 일반적 =====
+ // 날짜 형식 조합 (점, 하이픈, 슬래시, 언더스코어, 붙여쓰기, 공백)
     const dateFormats = [
-        // 점 구분자
+ // 점 구분자
         `${year}.${monthInt}.${dayInt}`,      // 2025.6.7
         `${year}.${month}.${dayInt}`,         // 2025.06.7
         `${year}.${monthInt}.${day}`,         // 2025.6.07
         `${year}.${month}.${day}`,            // 2025.06.07
-        // 점 + 공백
+ // 점 + 공백
         `${year}. ${monthInt}. ${dayInt}`,    // 2025. 6. 7
         `${year}. ${month}. ${dayInt}`,       // 2025. 06. 7
         `${year}. ${monthInt}. ${day}`,       // 2025. 6. 07
         `${year}. ${month}. ${day}`,          // 2025. 06. 07
         `${year}. ${monthInt}.${dayInt}`,     // 2025. 6.7 (공백 불규칙)
         `${year}.${monthInt}. ${dayInt}`,     // 2025.6. 7 (공백 불규칙)
-        // 하이픈 구분자
+ // 하이픈 구분자
         `${year}-${monthInt}-${dayInt}`,      // 2025-6-7
         `${year}-${month}-${dayInt}`,         // 2025-06-7
         `${year}-${monthInt}-${day}`,         // 2025-6-07
         `${year}-${month}-${day}`,            // 2025-06-07
-        // 슬래시 구분자
+ // 슬래시 구분자
         `${year}/${monthInt}/${dayInt}`,
         `${year}/${month}/${day}`,
-        // 언더스코어 구분자
+ // 언더스코어 구분자
         `${year}_${monthInt}_${dayInt}`,
         `${year}_${month}_${day}`,
-        // 붙여쓰기
+ // 붙여쓰기
         `${year}${month}${day}`,              // 20250607
     ];
     
-    // 괄호 형식으로 모든 조합 시도
+ // 괄호 형식으로 모든 조합 시도
     for (const dateFormat of dateFormats) {
         for (const ext of extensions) {
             const fileName = `${name}(${dateFormat}).${ext}`;
             if (_awardPhotoMap.has(fileName)) {
-                console.log(`✓ 사진 매칭 성공: ${fileName}`);
+                console.log(` 사진 매칭 성공: ${fileName}`);
                 return _awardPhotoMap.get(fileName);
             }
         }
     }
     
-    // ===== 2단계: 괄호 없는 형식 =====
+ // ===== 2단계: 괄호 없는 형식 =====
     const separators = ['_', '-', ' ', ''];
     for (const dateFormat of dateFormats) {
         for (const sep of separators) {
             for (const ext of extensions) {
                 const fileName = `${name}${sep}${dateFormat}.${ext}`;
                 if (_awardPhotoMap.has(fileName)) {
-                    console.log(`✓ 사진 매칭 성공 (대체 형식): ${fileName}`);
+                    console.log(` 사진 매칭 성공 (대체 형식): ${fileName}`);
                     return _awardPhotoMap.get(fileName);
                 }
             }
         }
     }
     
-    // ===== 3단계: 끝에 점이 있는 형식 (예: 2025.6.7.) =====
+ // ===== 3단계: 끝에 점이 있는 형식 (예: 2025.6.7.) =====
     const dateFormatsWithDot = dateFormats.filter(f => f.includes('.')).map(f => f + '.');
     for (const dateFormat of dateFormatsWithDot) {
         for (const ext of extensions) {
             const fileName = `${name}(${dateFormat}).${ext}`;
             if (_awardPhotoMap.has(fileName)) {
-                console.log(`✓ 사진 매칭 성공 (점 포함): ${fileName}`);
+                console.log(` 사진 매칭 성공 (점 포함): ${fileName}`);
                 return _awardPhotoMap.get(fileName);
             }
         }
     }
     
-    // ===== 4단계: 전각 괄호 형식 =====
+ // ===== 4단계: 전각 괄호 형식 =====
     for (const dateFormat of dateFormats) {
         for (const ext of extensions) {
             const fileName = `${name}（${dateFormat}）.${ext}`;  // 전각 괄호
             if (_awardPhotoMap.has(fileName)) {
-                console.log(`✓ 사진 매칭 성공 (전각 괄호): ${fileName}`);
+                console.log(` 사진 매칭 성공 (전각 괄호): ${fileName}`);
                 return _awardPhotoMap.get(fileName);
             }
         }
     }
     
-    // 매칭 실패 시 디버깅 정보 출력
-    console.log(`❌ 사진 매칭 실패: ${name} (${formatted}), 원본 날짜: "${date}"`);
+ // 매칭 실패 시 디버깅 정보 출력
+    console.log(` 사진 매칭 실패: ${name} (${formatted}), 원본 날짜: "${date}"`);
     console.log(`   시도한 파일명 예시: ${name}(${year}.${monthInt}.${dayInt}).jpg, ${name}(${year}.${month}.${day}).jpg ...`);
     
     return null;
@@ -1992,7 +1992,7 @@ function showPhotosList() {
         if (year < startYear || year > endYear) return false;
         if (a.type !== '외부' || a.status !== '선정') return false;
         
-        // 직원 검색 (퇴사자 포함)
+ // 직원 검색 (퇴사자 포함)
         if (employeeSearch && !a.name?.includes(employeeSearch)) return false;
         
         return true;
@@ -2007,10 +2007,10 @@ function showPhotosList() {
         return;
     }
     
-    // 폴더 선택 여부 확인
+ // 폴더 선택 여부 확인
     const folderLoaded = _awardPhotoMap.size > 0;
     
-    // 매칭 통계
+ // 매칭 통계
     let matchedCount = 0;
     const awardsWithStatus = awards.map(a => {
         const photo = _findAwardPhoto(a.name, a.awardDate);
@@ -2018,16 +2018,16 @@ function showPhotosList() {
         return { ...a, hasPhoto: !!photo };
     });
     
-    // 검색 조건 표시
+ // 검색 조건 표시
     const searchInfo = employeeSearch ? ` | 검색: "${employeeSearch}"` : '';
     
     resultArea.innerHTML = `
         <div class="report-summary">
-            <h4>📋 출력 대상 목록 (총 ${awards.length}건 - 선정된 외부 포상${searchInfo})</h4>
+            <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 출력 대상 목록 (총 ${awards.length}건 - 선정된 외부 포상${searchInfo})</h4>
             <div style="font-size:12px; color:#64748b;">
                 ${folderLoaded ? 
                     `<span style="color:#10b981;">✓ 사진 매칭: ${matchedCount}/${awards.length}건</span>` : 
-                    `<span style="color:#f59e0b;">⚠️ 폴더를 선택하면 사진 매칭 여부를 확인할 수 있습니다</span>`
+                    `<span style="color:#f59e0b;">폴더를 선택하면 사진 매칭 여부를 확인할 수 있습니다</span>`
                 }
             </div>
         </div>
@@ -2095,9 +2095,9 @@ function printPhotos() {
     const endYear = parseInt(document.getElementById('photo-end-year')?.value) || new Date().getFullYear();
     const employeeSearch = document.getElementById('photo-employee-search')?.value?.trim() || '';
     
-    // 폴더 선택 확인
+ // 폴더 선택 확인
     if (_awardPhotoMap.size === 0) {
-        alert('⚠️ 먼저 사진 폴더를 선택해주세요.');
+        alert('[주의] 먼저 사진 폴더를 선택해주세요.');
         return;
     }
     
@@ -2106,20 +2106,20 @@ function printPhotos() {
         if (year < startYear || year > endYear) return false;
         if (a.type !== '외부' || a.status !== '선정') return false;
         
-        // 직원 검색 (퇴사자 포함)
+ // 직원 검색 (퇴사자 포함)
         if (employeeSearch && !a.name?.includes(employeeSearch)) return false;
         
         return true;
     });
     
     if (awards.length === 0) {
-        alert('⚠️ 조건에 맞는 선정된 외부 포상이 없습니다.');
+        alert('[주의] 조건에 맞는 선정된 외부 포상이 없습니다.');
         return;
     }
     
     awards.sort((a, b) => new Date(a.awardDate || '9999') - new Date(b.awardDate || '9999'));
     
-    // 새 창에서 출력
+ // 새 창에서 출력
     const printWindow = window.open('', '_blank', 'width=1200,height=800');
     
     let html = `
@@ -2130,7 +2130,7 @@ function printPhotos() {
             <title>포상 사진 출력</title>
             <style>
                 @page { size: A4 portrait; margin: 10mm; }
-                * { margin: 0; padding: 0; box-sizing: border-box; }
+ * { margin: 0; padding: 0; box-sizing: border-box; }
                 body { font-family: 'Malgun Gothic', sans-serif; }
                 .controls {
                     position: fixed; top: 0; left: 0; right: 0;
@@ -2182,13 +2182,13 @@ function printPhotos() {
         </head>
         <body>
             <div class="controls">
-                <button class="btn-primary" onclick="window.print()">🖨️ 인쇄</button>
+                <button class="btn-primary" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄</button>
                 <button class="btn-secondary" onclick="window.close()">닫기</button>
                 <span class="stats" id="photo-stats"></span>
             </div>
     `;
     
-    // 텍스트 길이에 따른 폰트 크기 계산 함수
+ // 텍스트 길이에 따른 폰트 크기 계산 함수
     const getDetailFontSize = (text) => {
         const len = text.length;
         if (len <= 40) return 16;
@@ -2198,7 +2198,7 @@ function printPhotos() {
         return 10;
     };
     
-    // 각 포상별로 페이지 생성
+ // 각 포상별로 페이지 생성
     let photoFoundCount = 0;
     
     awards.forEach(award => {
@@ -2206,7 +2206,7 @@ function printPhotos() {
         const hasPhoto = !!photoUrl;
         if (hasPhoto) photoFoundCount++;
         
-        // 상세 정보 텍스트 생성 및 폰트 크기 계산
+ // 상세 정보 텍스트 생성 및 폰트 크기 계산
         const detailText = [award.awardName, award.honor, award.organization].filter(Boolean).join(' | ');
         const detailFontSize = getDetailFontSize(detailText);
         
@@ -2216,7 +2216,7 @@ function printPhotos() {
                     ${hasPhoto ? 
                         `<img src="${photoUrl}" alt="${award.name} 포상 사진">` :
                         `<div class="photo-not-found">
-                            📷<br><br>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><br><br>
                             이미지를 찾을 수 없습니다<br>
                             <small style="font-size:14px; color:#9ca3af; margin-top:12px; display:block;">
                                 ${_generatePhotoFileName(award.name, award.awardDate)}
@@ -2226,7 +2226,7 @@ function printPhotos() {
                 </div>
                 <div class="photo-info">
                     <div class="photo-name">${award.name}</div>
-                    <div class="photo-date">📅 ${_formatDate(award.awardDate)}</div>
+                    <div class="photo-date"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${_formatDate(award.awardDate)}</div>
                     <div class="photo-detail" style="font-size: ${detailFontSize}px;">${detailText}</div>
                 </div>
             </div>
@@ -2253,14 +2253,14 @@ function printPhotos() {
 function exportReportToExcel(reportType) {
     const table = document.getElementById('report-table');
     if (!table) {
-        alert('⚠️ 보고서를 먼저 생성해주세요.');
+        alert('[주의] 보고서를 먼저 생성해주세요.');
         return;
     }
     
     try {
         const clonedTable = table.cloneNode(true);
         
-        // span 태그 텍스트만 추출
+ // span 태그 텍스트만 추출
         clonedTable.querySelectorAll('span').forEach(span => {
             span.replaceWith(document.createTextNode(span.textContent));
         });
@@ -2270,10 +2270,10 @@ function exportReportToExcel(reportType) {
         const filename = `포상보고서_${reportType}_${today}.xlsx`;
         
         XLSX.writeFile(wb, filename);
-        console.log(`✅ 엑셀 다운로드: ${filename}`);
+        console.log(` 엑셀 다운로드: ${filename}`);
         
     } catch (error) {
-        console.error('❌ 엑셀 다운로드 오류:', error);
+        console.error(' 엑셀 다운로드 오류:', error);
         alert('엑셀 다운로드 중 오류가 발생했습니다.');
     }
 }
@@ -2284,14 +2284,14 @@ function exportReportToExcel(reportType) {
  * 포상 보고서 인쇄 옵션 모달 표시
  */
 function printAwardsReport() {
-    // 현재 결과 테이블 확인
+ // 현재 결과 테이블 확인
     const reportTable = document.getElementById('report-table');
     if (!reportTable) {
         alert('인쇄할 보고서가 없습니다.');
         return;
     }
     
-    // 인쇄 옵션 모달 표시
+ // 인쇄 옵션 모달 표시
     const modal = document.createElement('div');
     modal.id = 'print-options-modal';
     modal.innerHTML = `
@@ -2316,7 +2316,7 @@ function printAwardsReport() {
                 box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             ">
                 <h3 style="margin: 0 0 20px 0; font-size: 18px; color: #1f2937;">
-                    🖨️ 포상 보고서 인쇄 설정
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 포상 보고서 인쇄 설정
                 </h3>
                 
                 <div style="margin-bottom: 16px;">
@@ -2369,7 +2369,7 @@ function printAwardsReport() {
                         <option value="landscape">가로</option>
                     </select>
                     <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">
-                        * 직원별 외부/내부 포상은 가로 방향 권장
+ * 직원별 외부/내부 포상은 가로 방향 권장
                     </div>
                 </div>
                 
@@ -2405,23 +2405,23 @@ function printAwardsReport() {
  */
 function executeAwardsPrint() {
     try {
-        // 옵션 가져오기
+ // 옵션 가져오기
         const showTitle = document.getElementById('print-show-title')?.checked ?? true;
         const showDate = document.getElementById('print-show-date')?.checked ?? true;
         const paperSize = document.getElementById('print-paper')?.value || 'A4';
         const orientationOption = document.getElementById('print-orientation')?.value || 'auto';
         
-        // 모달 닫기
+ // 모달 닫기
         document.getElementById('print-options-modal')?.remove();
         
-        // 현재 결과 테이블
+ // 현재 결과 테이블
         const reportTable = document.getElementById('report-table');
         if (!reportTable) {
             alert('인쇄할 보고서가 없습니다.');
             return;
         }
         
-        // 용지 방향 결정
+ // 용지 방향 결정
         let orientation = orientationOption;
         if (orientation === 'auto') {
             orientation = (currentReportTab === 'employee-external' || 
@@ -2429,11 +2429,11 @@ function executeAwardsPrint() {
                           ? 'landscape' : 'portrait';
         }
         
-        // 테이블 복제
+ // 테이블 복제
         const tableClone = reportTable.cloneNode(true);
         
-        // 제목 생성
-        const tabInfo = REPORT_TABS[currentReportTab] || { name: '포상 현황', icon: '🏆' };
+ // 제목 생성
+        const tabInfo = REPORT_TABS[currentReportTab] || { name: '포상 현황', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>' };
         const titleText = `${tabInfo.icon} ${tabInfo.name}`;
         const today = new Date().toISOString().split('T')[0];
         
@@ -2467,12 +2467,12 @@ function executeAwardsPrint() {
                     td:last-child { white-space: nowrap; }
                     td.text-left { white-space: normal; word-break: break-word; }
                     
-                    /* 선정여부 색상 (미리보기와 동일) */
+ /* 선정여부 색상 (미리보기와 동일) */
                     .status-selected { color: #111 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                     .status-pending { color: #2563eb !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                     .status-not-selected { color: #9ca3af !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                     
-                    /* 연도별 포상 표시 색상 */
+ /* 연도별 포상 표시 색상 */
                     .award-selected { color: #111 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                     .award-pending { color: #2563eb !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                     .award-rejected { color: #9ca3af !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -2483,7 +2483,7 @@ function executeAwardsPrint() {
                 </style>
             </head>
             <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
+                <button class="no-print" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄하기 (Ctrl+P)</button>
                 ${titleHTML}
                 ${dateHTML}
                 ${tableClone.outerHTML}
@@ -2491,7 +2491,7 @@ function executeAwardsPrint() {
             </html>
         `;
         
-        // Electron 환경에서 시스템 브라우저로 열기
+ // Electron 환경에서 시스템 브라우저로 열기
         if (window.electronAPI && window.electronAPI.openInBrowser) {
             window.electronAPI.openInBrowser(htmlContent, 'awards_report_print.html');
         } else {
@@ -2504,13 +2504,13 @@ function executeAwardsPrint() {
             }
         }
         
-        console.log('✅ 포상 보고서 인쇄 완료');
+        console.log(' 포상 보고서 인쇄 완료');
         
     } catch (error) {
-        console.error('❌ 인쇄 오류:', error);
+        console.error(' 인쇄 오류:', error);
         alert('인쇄 중 오류가 발생했습니다.');
     }
 }
 
 // ===== 초기화 =====
-console.log('✅ 포상현황_인사.js 로드 완료 (v2.0 - 7개 보고서 통합)');
+console.log(' 포상현황_인사.js 로드 완료 (v2.0 - 7개 보고서 통합)');

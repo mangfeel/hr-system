@@ -14,36 +14,36 @@
  * 
  * [변경 이력]
  * v6.0.1 (2026-02-05) 인쇄 헤더 안 보임 버그 수정
- *   - 인쇄 시 헤더 행 인라인 스타일 초기화 (color:white 제거)
- *   - 인쇄 CSS에 th { color: #333 !important } 추가
+ * - 인쇄 시 헤더 행 인라인 스타일 초기화 (color:white 제거)
+ * - 인쇄 CSS에 th { color: #333 !important } 추가
  *
- * v6.0.0 (2026-01-22) ⭐ 로컬 계산으로 최적화
- *   - API 호출 제거 → 로컬 계산 (퇴사자는 기준일이 각자 다르므로 배치 불가)
- *   - RankCalculator, TenureCalculator 직접 사용
- *   - API 호출 없이 즉시 계산
+ * v6.0.0 (2026-01-22) 로컬 계산으로 최적화
+ * - API 호출 제거 → 로컬 계산 (퇴사자는 기준일이 각자 다르므로 배치 불가)
+ * - RankCalculator, TenureCalculator 직접 사용
+ * - API 호출 없이 즉시 계산
  * 
  * v5.0.0 (2026-01-22) API 전용 버전
- *   - 직원유틸_인사.getDynamicRankInfo() await 추가
- *   - 모든 계산 로직 서버 API로 이동
+ * - 직원유틸_인사.getDynamicRankInfo() await 추가
+ * - 모든 계산 로직 서버 API로 이동
  * 
  * v4.0.0 (2026-01-22) API 연동 버전
- *   - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
- *   - TenureCalculator.calculate → API_인사.calculateTenure
- *   - buildRetiredEmployeeRowData() async 변경
- *   - forEach → for...of (async/await 지원)
+ * - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
+ * - TenureCalculator.calculate → API_인사.calculateTenure
+ * - buildRetiredEmployeeRowData() async 변경
+ * - forEach → for...of (async/await 지원)
  * 
  * v3.0 - 프로덕션급 리팩토링
- *   - Phase 1 유틸리티 적용 (직원유틸, DOM유틸, 인쇄유틸)
- *   - 인쇄 문제 해결 (사이드바/메뉴 출력 방지)
- *   - ID 기반 인쇄 영역 (retired-employees-print-area)
- *   - 날짜 자동 설정 (올해 1월 1일 ~ 오늘)
- *   - 완벽한 에러 처리
- *   - 체계적 로깅
- *   - JSDoc 주석 추가
- *   - XSS 방지
- *   - 테이블 가운데 정렬
+ * - Phase 1 유틸리티 적용 (직원유틸, DOM유틸, 인쇄유틸)
+ * - 인쇄 문제 해결 (사이드바/메뉴 출력 방지)
+ * - ID 기반 인쇄 영역 (retired-employees-print-area)
+ * - 날짜 자동 설정 (올해 1월 1일 ~ 오늘)
+ * - 완벽한 에러 처리
+ * - 체계적 로깅
+ * - JSDoc 주석 추가
+ * - XSS 방지
+ * - 테이블 가운데 정렬
  * 
- * [인쇄 개선] ⭐ 핵심
+ * [인쇄 개선] 핵심
  * - ID 기반 인쇄 영역: retired-employees-print-area
  * - 인쇄유틸_인사.print() 사용
  * - 사이드바/메뉴 출력 방지
@@ -113,9 +113,9 @@ function showRetiredColumnSelector() {
     로거_인사?.debug('퇴사자 컬럼 선택기 HTML 생성');
     
     try {
-        // 체크박스 HTML 생성
+ // 체크박스 HTML 생성
         const checkboxes = Object.entries(RETIRED_COLUMNS).map(([key, col]) => {
-            // ✅ XSS 방지
+ // XSS 방지
             const safeLabel = typeof DOM유틸_인사 !== 'undefined'
                 ? DOM유틸_인사.escapeHtml(col.label)
                 : col.label;
@@ -137,7 +137,7 @@ function showRetiredColumnSelector() {
         const selectorHTML = `
             <div style="background:#f8f9fe;padding:20px;border-radius:12px;margin-bottom:20px;border:1.5px solid #e8ebed;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h3 style="margin:0;font-size:16px;font-weight:600;color:#667eea;">📋 출력 항목 선택</h3>
+                    <h3 style="margin:0;font-size:16px;font-weight:600;color:#4f46e5;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 출력 항목 선택</h3>
                     <div style="display:flex;gap:8px;">
                         <button class="btn btn-secondary btn-small" onclick="applyRetiredColumnPreset('minimal')">간략</button>
                         <button class="btn btn-secondary btn-small" onclick="applyRetiredColumnPreset('default')">기본</button>
@@ -150,7 +150,7 @@ function showRetiredColumnSelector() {
                     ${checkboxes}
                 </div>
                 <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e8ebed;">
-                    <span style="font-size:13px;color:#6b7280;">💡 항목을 선택한 후 "퇴사자 목록 생성" 버튼을 클릭하세요.</span>
+                    <span style="font-size:13px;color:#6b7280;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> 항목을 선택한 후 "퇴사자 목록 생성" 버튼을 클릭하세요.</span>
                 </div>
             </div>
         `;
@@ -213,7 +213,7 @@ function applyRetiredColumnPreset(preset) {
  * @param {boolean} checked - true: 전체선택, false: 전체해제
  * 
  * @example
- * toggleAllRetiredColumns(true);  // 전체 선택
+ * toggleAllRetiredColumns(true); // 전체 선택
  * toggleAllRetiredColumns(false); // 전체 해제
  */
 function toggleAllRetiredColumns(checked) {
@@ -300,7 +300,7 @@ async function generateRetiredList() {
     try {
         로거_인사?.info('퇴사자 목록 생성 시작');
         
-        // 1. 날짜 필드 확인
+ // 1. 날짜 필드 확인
         const startDateField = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('retiredStartDate')
             : document.getElementById('retiredStartDate');
@@ -315,7 +315,7 @@ async function generateRetiredList() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('날짜 필드를 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 날짜 필드를 찾을 수 없습니다.');
+                alert('[주의] 날짜 필드를 찾을 수 없습니다.');
             }
             return;
         }
@@ -329,21 +329,21 @@ async function generateRetiredList() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('시작일과 종료일을 모두 선택하세요.');
             } else {
-                alert('⚠️ 시작일과 종료일을 모두 선택하세요.');
+                alert('[주의] 시작일과 종료일을 모두 선택하세요.');
             }
             return;
         }
         
         로거_인사?.debug('날짜 확인', { startDate, endDate });
         
-        // 2. 날짜 검증
+ // 2. 날짜 검증
         if (!Validator.isValidDate(startDate) || !Validator.isValidDate(endDate)) {
             로거_인사?.warn('날짜 형식 오류');
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('날짜 형식이 올바르지 않습니다.');
             } else {
-                alert('⚠️ 날짜 형식이 올바르지 않습니다.');
+                alert('[주의] 날짜 형식이 올바르지 않습니다.');
             }
             return;
         }
@@ -354,27 +354,27 @@ async function generateRetiredList() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('시작일이 종료일보다 늦습니다.\n\n날짜를 확인해주세요.');
             } else {
-                alert('⚠️ 시작일이 종료일보다 늦습니다.\n\n날짜를 확인해주세요.');
+                alert('[주의] 시작일이 종료일보다 늦습니다.\n\n날짜를 확인해주세요.');
             }
             return;
         }
         
-        // 3. 퇴사자 필터링
-        // ⚠️ 중요: 퇴사일 = 마지막 근무일
-        // 실제 퇴사 발생일 = 퇴사일 + 1일
-        // 예: 퇴사일 2024-12-31 = 2024-12-31까지 근무, 2025-01-01부터 퇴사
+ // 3. 퇴사자 필터링
+ // 중요: 퇴사일 = 마지막 근무일
+ // 실제 퇴사 발생일 = 퇴사일 + 1일
+ // 예: 퇴사일 2024-12-31 = 2024-12-31까지 근무, 2025-01-01부터 퇴사
         const retiredEmployees = db.getEmployees().filter(emp => {
             const retirementDate = emp.employment?.retirementDate;
             if (!retirementDate) return false; // 재직자 제외
             
-            // ⭐ 핵심: 퇴사일 다음날 = 실제 퇴사 상태 시작일
-            // 퇴사 발생일이 검색 기간 내에 있으면 포함
+ // 핵심: 퇴사일 다음날 = 실제 퇴사 상태 시작일
+ // 퇴사 발생일이 검색 기간 내에 있으면 포함
             try {
                 const retirementDateObj = new Date(retirementDate + 'T00:00:00');
                 retirementDateObj.setDate(retirementDateObj.getDate() + 1);
                 const actualRetirementDate = DateUtils.formatDate(retirementDateObj);
                 
-                // 퇴사 발생일이 검색 기간 내에 있으면 포함
+ // 퇴사 발생일이 검색 기간 내에 있으면 포함
                 return actualRetirementDate >= startDate && actualRetirementDate <= endDate;
                 
             } catch (e) {
@@ -393,7 +393,7 @@ async function generateRetiredList() {
         });
         
         if (retiredEmployees.length === 0) {
-            const message = `📋 ${startDate} ~ ${endDate} 기간 동안 퇴사한 직원이 없습니다.`;
+            const message = `${startDate} ~ ${endDate} 기간 동안 퇴사한 직원이 없습니다.`;
             로거_인사?.info('퇴사자 없음');
             
             if (typeof 에러처리_인사 !== 'undefined') {
@@ -412,7 +412,7 @@ async function generateRetiredList() {
             return;
         }
         
-        // 4. 선택된 컬럼 확인
+ // 4. 선택된 컬럼 확인
         const selectedColumns = getSelectedRetiredColumns();
         if (selectedColumns.length === 0) {
             로거_인사?.warn('컬럼 미선택');
@@ -420,12 +420,12 @@ async function generateRetiredList() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('최소 1개 이상의 항목을 선택하세요.');
             } else {
-                alert('⚠️ 최소 1개 이상의 항목을 선택하세요.');
+                alert('[주의] 최소 1개 이상의 항목을 선택하세요.');
             }
             return;
         }
         
-        // 5. 퇴사일 순 정렬
+ // 5. 퇴사일 순 정렬
         retiredEmployees.sort((a, b) => {
             const dateA = a.employment?.retirementDate || '';
             const dateB = b.employment?.retirementDate || '';
@@ -434,11 +434,11 @@ async function generateRetiredList() {
         
         로거_인사?.debug('퇴사자 정렬 완료');
         
-        // 6. 테이블 헤더 생성
+ // 6. 테이블 헤더 생성
         let headerHTML = '<tr style="background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%);color:white;">';
         selectedColumns.forEach(colKey => {
             const col = RETIRED_COLUMNS[colKey];
-            // ✅ XSS 방지
+ // XSS 방지
             const safeLabel = typeof DOM유틸_인사 !== 'undefined'
                 ? DOM유틸_인사.escapeHtml(col.label)
                 : col.label;
@@ -447,7 +447,7 @@ async function generateRetiredList() {
         });
         headerHTML += '</tr>';
         
-        // 7. 테이블 데이터 생성 (⭐ v4.0.0: async/await 지원)
+ // 7. 테이블 데이터 생성 ( v4.0.0: async/await 지원)
         const rowsArray = [];
         for (let index = 0; index < retiredEmployees.length; index++) {
             const emp = retiredEmployees[index];
@@ -459,7 +459,7 @@ async function generateRetiredList() {
                     const value = rowData[colKey];
                     const style = getRetiredColumnStyle(colKey, rowData);
                     
-                    // ✅ 모든 데이터 가운데 정렬 + 줄바꿈 방지
+ // 모든 데이터 가운데 정렬 + 줄바꿈 방지
                     rowHTML += `<td style="padding:10px;border:1px solid #e8ebed;text-align:center;white-space:nowrap;${style}">${value}</td>`;
                 });
                 rowHTML += '</tr>';
@@ -475,7 +475,7 @@ async function generateRetiredList() {
         }
         const rows = rowsArray.join('');
         
-        // 8. 결과 HTML 생성
+ // 8. 결과 HTML 생성
         const resultHTML = `
             <div class="card">
                 <div class="card-title">퇴사자 목록 (${startDate} ~ ${endDate}) - 총 ${retiredEmployees.length}명</div>
@@ -495,14 +495,14 @@ async function generateRetiredList() {
                     • 호봉이 "-"인 직원은 연봉제입니다.</span>
                 </div>
                 <div class="no-print" style="margin-top:20px;text-align:center;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-                    <button class="btn btn-primary" onclick="printRetiredList('portrait')">🖨 인쇄 (A4 세로)</button>
-                    <button class="btn btn-primary" onclick="printRetiredList('landscape')">🖨 인쇄 (A4 가로)</button>
-                    <button class="btn btn-success" onclick="exportRetiredListToExcel()">📥 엑셀 다운로드</button>
+                    <button class="btn btn-primary" onclick="printRetiredList('portrait')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄 (A4 세로)</button>
+                    <button class="btn btn-primary" onclick="printRetiredList('landscape')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄 (A4 가로)</button>
+                    <button class="btn btn-success" onclick="exportRetiredListToExcel()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀 다운로드</button>
                 </div>
             </div>
         `;
         
-        // 9. 결과 표시
+ // 9. 결과 표시
         const resultContainer = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('retiredListResult')
             : document.getElementById('retiredListResult');
@@ -527,7 +527,7 @@ async function generateRetiredList() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '퇴사자 목록 생성 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 퇴사자 목록 생성 중 오류가 발생했습니다.');
+            alert('[오류] 퇴사자 목록 생성 중 오류가 발생했습니다.');
             console.error('퇴사자 목록 생성 오류:', error);
         }
     }
@@ -551,7 +551,7 @@ async function generateRetiredList() {
  */
 async function buildRetiredRowData(emp, index) {
     try {
-        // ✅ 직원유틸 사용
+ // 직원유틸 사용
         const name = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.getName(emp)
             : (emp.personalInfo?.name || emp.name || '이름없음');
@@ -566,7 +566,7 @@ async function buildRetiredRowData(emp, index) {
         
         const employmentType = emp.employment?.type || '정규직';
         
-        // 부서/직위/직급
+ // 부서/직위/직급
         const dept = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.getDepartment(emp)
             : (emp.currentPosition?.dept || emp.dept || '-');
@@ -581,7 +581,7 @@ async function buildRetiredRowData(emp, index) {
         
         const jobType = emp.currentPosition?.jobType || '-';
         
-        // 호봉 정보
+ // 호봉 정보
         const isRankBased = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.isRankBased(emp)
             : (emp.rank?.isRankBased === true && emp.rank?.firstUpgradeDate);
@@ -591,7 +591,7 @@ async function buildRetiredRowData(emp, index) {
         
         if (isRankBased) {
             try {
-                // ⭐ v6.0.0: 로컬 계산 사용 (퇴사자는 기준일이 각자 다르므로 배치 API 불가)
+ // v6.0.0: 로컬 계산 사용 (퇴사자는 기준일이 각자 다르므로 배치 API 불가)
                 const startRank = emp.rank?.startRank || 1;
                 startRankDisplay = startRank + '호봉';
                 
@@ -614,11 +614,11 @@ async function buildRetiredRowData(emp, index) {
             }
         }
         
-        // 근속기간 (입사일 ~ 퇴사일)
+ // 근속기간 (입사일 ~ 퇴사일)
         let tenure = '-';
         if (entryDate && entryDate !== '-' && retirementDate && retirementDate !== '-') {
             try {
-                // ⭐ v6.0.0: 로컬 계산 사용 (API 호출 제거)
+ // v6.0.0: 로컬 계산 사용 (API 호출 제거)
                 let tenureObj;
                 if (typeof TenureCalculator !== 'undefined') {
                     tenureObj = TenureCalculator.calculate(entryDate, retirementDate);
@@ -632,7 +632,7 @@ async function buildRetiredRowData(emp, index) {
             }
         }
         
-        // ✅ XSS 방지
+ // XSS 방지
         const safeName = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.escapeHtml(name)
             : name;
@@ -671,7 +671,7 @@ async function buildRetiredRowData(emp, index) {
             error: error.message 
         });
         
-        // Fallback
+ // Fallback
         return {
             no: index + 1,
             uniqueCode: emp?.uniqueCode || '-',
@@ -715,7 +715,7 @@ function getRetiredColumnStyle(colKey, rowData) {
     try {
         switch(colKey) {
             case 'retiredRank':
-                // 호봉제: 빨간색 굵게, 연봉제: 회색
+ // 호봉제: 빨간색 굵게, 연봉제: 회색
                 style = `font-weight:600;color:${rowData.isRankBased ? '#ef4444' : '#6b7280'};`;
                 break;
             case 'email':
@@ -739,7 +739,7 @@ function getRetiredColumnStyle(colKey, rowData) {
  * 
  * @description
  * 퇴사자 목록을 A4 용지에 인쇄
- * - 인쇄유틸_인사.print() 사용 ⭐ 핵심
+ * - 인쇄유틸_인사.print() 사용 핵심
  * - ID 기반 인쇄 영역 (retired-employees-print-area)
  * - 사이드바/메뉴 숨김
  * - 테이블만 깔끔하게 인쇄
@@ -747,12 +747,12 @@ function getRetiredColumnStyle(colKey, rowData) {
  * - 테이블 가운데 정렬
  * 
  * @important
- * Before: window.print() → 사이드바, 메뉴 모두 출력됨 ❌
- * After: 인쇄유틸_인사.print() → 테이블만 출력 ✅
+ * Before: window.print() → 사이드바, 메뉴 모두 출력됨 
+ * After: 인쇄유틸_인사.print() → 테이블만 출력 
  * 
  * @example
  * printRetiredList('landscape'); // A4 가로 인쇄
- * printRetiredList('portrait');  // A4 세로 인쇄
+ * printRetiredList('portrait'); // A4 세로 인쇄
  */
 function printRetiredList(orientation = 'landscape') {
     try {
@@ -761,21 +761,21 @@ function printRetiredList(orientation = 'landscape') {
         const table = document.getElementById('retiredListTable');
         
         if (!table) {
-            alert('⚠️ 먼저 퇴사자 목록을 생성하세요.');
+            alert('[주의] 먼저 퇴사자 목록을 생성하세요.');
             return;
         }
         
-        // 제목 추출
+ // 제목 추출
         const cardTitle = document.querySelector('#retiredListResult .card-title');
         const titleText = cardTitle ? cardTitle.textContent : '퇴사자 목록';
         
-        // 테이블 복제 및 스타일 적용
+ // 테이블 복제 및 스타일 적용
         const tableClone = table.cloneNode(true);
         tableClone.querySelectorAll('th, td').forEach(cell => {
             cell.style.textAlign = 'center';
         });
         
-        // ⭐ 헤더 행의 인라인 스타일 초기화 (color:white 제거)
+ // 헤더 행의 인라인 스타일 초기화 (color:white 제거)
         const headerRow = tableClone.querySelector('thead tr');
         if (headerRow) {
             headerRow.style.background = '';
@@ -807,14 +807,14 @@ function printRetiredList(orientation = 'landscape') {
                 </style>
             </head>
             <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
+                <button class="no-print" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄하기 (Ctrl+P)</button>
                 <h2>${titleText}</h2>
                 ${tableClone.outerHTML}
             </body>
             </html>
         `;
         
-        // Electron 환경에서 시스템 브라우저로 열기
+ // Electron 환경에서 시스템 브라우저로 열기
         if (window.electronAPI && window.electronAPI.openInBrowser) {
             window.electronAPI.openInBrowser(htmlContent, 'retired_list_print.html');
         } else {
@@ -829,7 +829,7 @@ function printRetiredList(orientation = 'landscape') {
         
     } catch (error) {
         로거_인사?.error('퇴사자 목록 인쇄 실패', error);
-        alert('❌ 인쇄 중 오류가 발생했습니다.');
+        alert('[오류] 인쇄 중 오류가 발생했습니다.');
     }
 }
 
@@ -851,7 +851,7 @@ function exportRetiredListToExcel() {
     try {
         로거_인사?.info('엑셀 다운로드 시작');
         
-        // 테이블 확인
+ // 테이블 확인
         const table = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('retiredListTable')
             : document.getElementById('retiredListTable');
@@ -862,18 +862,18 @@ function exportRetiredListToExcel() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('먼저 퇴사자 목록을 생성하세요.');
             } else {
-                alert('⚠️ 먼저 퇴사자 목록을 생성하세요.');
+                alert('[주의] 먼저 퇴사자 목록을 생성하세요.');
             }
             return;
         }
         
-        // XLSX 확인
+ // XLSX 확인
         if (typeof XLSX === 'undefined') {
             로거_인사?.error('XLSX 라이브러리 없음');
             throw new Error('엑셀 라이브러리를 불러올 수 없습니다.');
         }
         
-        // 날짜 가져오기
+ // 날짜 가져오기
         const startDateField = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('retiredStartDate')
             : document.getElementById('retiredStartDate');
@@ -885,7 +885,7 @@ function exportRetiredListToExcel() {
         const startDate = startDateField?.value || '시작일';
         const endDate = endDateField?.value || '종료일';
         
-        // 엑셀 생성
+ // 엑셀 생성
         const wb = XLSX.utils.table_to_book(table);
         const filename = `퇴사자목록_${startDate}_${endDate}.xlsx`;
         
@@ -893,7 +893,7 @@ function exportRetiredListToExcel() {
         
         로거_인사?.info('엑셀 다운로드 완료', { filename });
         
-        const message = `✅ 퇴사자 목록이 엑셀로 다운로드되었습니다.\n\n파일명: ${filename}`;
+        const message = `퇴사자 목록이 엑셀로 다운로드되었습니다.\n\n파일명: ${filename}`;
         
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.success(message);
@@ -907,7 +907,7 @@ function exportRetiredListToExcel() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '엑셀 다운로드 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 엑셀 다운로드 중 오류가 발생했습니다.');
+            alert('[오류] 엑셀 다운로드 중 오류가 발생했습니다.');
             console.error('엑셀 다운로드 오류:', error);
         }
     }
@@ -943,19 +943,19 @@ function setDefaultRetiredDates() {
             return;
         }
         
-        // 오늘 날짜
+ // 오늘 날짜
         const today = new Date();
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
         
-        // 시작일: 현재 년도 1월 1일
+ // 시작일: 현재 년도 1월 1일
         const startDate = `${year}-01-01`;
         
-        // 종료일: 오늘
+ // 종료일: 오늘
         const endDate = `${year}-${month}-${day}`;
         
-        // 필드에 설정
+ // 필드에 설정
         startDateField.value = startDate;
         endDateField.value = endDate;
         
@@ -978,7 +978,7 @@ window.addEventListener('DOMContentLoaded', function() {
     try {
         로거_인사?.info('퇴사자목록 모듈 초기화 시작');
         
-        // 컬럼 선택기 추가
+ // 컬럼 선택기 추가
         const retiredModule = document.querySelector('#module-retired-list .card');
         if (retiredModule) {
             const existingContent = retiredModule.innerHTML;
@@ -991,7 +991,7 @@ window.addEventListener('DOMContentLoaded', function() {
             로거_인사?.debug('컬럼 선택기 추가 완료');
         }
         
-        // 날짜 자동 설정 (100ms 후)
+ // 날짜 자동 설정 (100ms 후)
         setTimeout(() => {
             setDefaultRetiredDates();
         }, 100);

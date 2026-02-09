@@ -17,21 +17,21 @@
  * [변경 이력]
  * v1.0.0 - 최초 생성
  * v1.1.0 - 특수부서 기능 추가
- *   - 특수부서 선택 UI (localStorage에 마지막 선택값 저장)
- *   - 근속시작일 컬럼 추가 (입사일과 다를 경우 색상 강조)
- *   - 인쇄 기능 수정 (백지 출력 문제 해결)
- *   - 발령 이력 기반 근속시작일 계산
+ * - 특수부서 선택 UI (localStorage에 마지막 선택값 저장)
+ * - 근속시작일 컬럼 추가 (입사일과 다를 경우 색상 강조)
+ * - 인쇄 기능 수정 (백지 출력 문제 해결)
+ * - 발령 이력 기반 근속시작일 계산
  * v1.1.1 - 정렬 순서 변경
- *   - 근속시작일순 → 이름 가나다순
+ * - 근속시작일순 → 이름 가나다순
  * v1.2.0 - UI/UX 개선
- *   - 테이블 헤더 고정 (스크롤 시에도 헤더 보임)
- *   - 셀 줄바꿈 방지 (white-space: nowrap)
- *   - 셀 너비 최적화
- *   - 인쇄 시 줄바꿈 방지
+ * - 테이블 헤더 고정 (스크롤 시에도 헤더 보임)
+ * - 셀 줄바꿈 방지 (white-space: nowrap)
+ * - 셀 너비 최적화
+ * - 인쇄 시 줄바꿈 방지
  * v1.2.1 - 좌측 컬럼 고정
- *   - 가로 스크롤 시 좌측 7개 컬럼 고정 (No~퇴사일)
- *   - 세로 스크롤 시 헤더 고정
- *   - 고정 영역에 그림자 효과
+ * - 가로 스크롤 시 좌측 7개 컬럼 고정 (No~퇴사일)
+ * - 세로 스크롤 시 헤더 고정
+ * - 고정 영역에 그림자 효과
  * 
  * [의존성]
  * - 데이터베이스_인사.js (db)
@@ -82,29 +82,29 @@ function loadTenureReportModule() {
             return;
         }
         
-        // 현재 연도 기준 기본값 설정
+ // 현재 연도 기준 기본값 설정
         const currentYear = new Date().getFullYear();
         const defaultStartYear = currentYear - 2;
         const defaultEndYear = currentYear;
         
-        // 부서 목록 가져오기
+ // 부서 목록 가져오기
         const departments = _getUniqueDepartments();
         const employmentTypes = _getUniqueEmploymentTypes();
         
-        // 저장된 특수부서 목록 가져오기
+ // 저장된 특수부서 목록 가져오기
         const savedSpecialDepts = _loadSpecialDepts();
         
         const html = `
             <div class="card">
-                <div class="card-title">📊 근속현황표 설정</div>
+                <div class="card-title"><span class="card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> 근속현황표 설정</div>
                 <div class="alert alert-info">
-                    <span>💡</span>
+                    <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
                     <span>복지관 평가용 근속현황표입니다. 분석 기간 동안 각 직원의 월별 근속개월수를 계산합니다.</span>
                 </div>
                 
                 <!-- 분석 기간 설정 -->
                 <div style="background:#f8f9fe;padding:16px;border-radius:8px;margin-bottom:16px;">
-                    <div style="font-weight:600;margin-bottom:12px;color:#667eea;">📅 분석 기간</div>
+                    <div style="font-weight:600;margin-bottom:12px;color:#4f46e5;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 분석 기간</div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>시작 연도 *</label>
@@ -126,7 +126,7 @@ function loadTenureReportModule() {
                 
                 <!-- 부서 선택 (출력 대상) -->
                 <div style="background:#f8f9fe;padding:16px;border-radius:8px;margin-bottom:16px;">
-                    <div style="font-weight:600;margin-bottom:12px;color:#667eea;">🏢 부서 선택 (출력 대상)</div>
+                    <div style="font-weight:600;margin-bottom:12px;color:#4f46e5;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg> 부서 선택 (출력 대상)</div>
                     <div style="margin-bottom:8px;">
                         <button class="btn btn-secondary btn-small" onclick="toggleTenureDeptAll(true)">전체선택</button>
                         <button class="btn btn-secondary btn-small" onclick="toggleTenureDeptAll(false)">전체해제</button>
@@ -138,7 +138,7 @@ function loadTenureReportModule() {
                 
                 <!-- 고용형태 선택 -->
                 <div style="background:#f8f9fe;padding:16px;border-radius:8px;margin-bottom:16px;">
-                    <div style="font-weight:600;margin-bottom:12px;color:#667eea;">👔 고용형태 선택</div>
+                    <div style="font-weight:600;margin-bottom:12px;color:#4f46e5;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 고용형태 선택</div>
                     <div style="margin-bottom:8px;">
                         <button class="btn btn-secondary btn-small" onclick="toggleTenureTypeAll(true)">전체선택</button>
                         <button class="btn btn-secondary btn-small" onclick="toggleTenureTypeAll(false)">전체해제</button>
@@ -150,9 +150,9 @@ function loadTenureReportModule() {
                 
                 <!-- 특수부서 설정 (근속 계산 제외) -->
                 <div style="background:#fef3c7;padding:16px;border-radius:8px;margin-bottom:16px;border:1px solid #f59e0b;">
-                    <div style="font-weight:600;margin-bottom:12px;color:#b45309;">🚫 특수부서 설정 (근속 계산 제외)</div>
+                    <div style="font-weight:600;margin-bottom:12px;color:#b45309;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> 특수부서 설정 (근속 계산 제외)</div>
                     <div class="alert" style="background:#fffbeb;border:1px solid #fcd34d;margin-bottom:12px;">
-                        <span>⚠️</span>
+                        <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
                         <span>
                             <strong>복지관 평가 기준:</strong> 선택한 부서의 근무 기간은 근속에서 제외됩니다.<br>
                             해당 부서에서 다른 부서로 발령된 시점부터 근속이 계산됩니다.<br>
@@ -170,7 +170,7 @@ function loadTenureReportModule() {
                 
                 <!-- 집계 옵션 -->
                 <div style="background:#f8f9fe;padding:16px;border-radius:8px;margin-bottom:16px;">
-                    <div style="font-weight:600;margin-bottom:12px;color:#667eea;">📊 집계 옵션</div>
+                    <div style="font-weight:600;margin-bottom:12px;color:#4f46e5;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 집계 옵션</div>
                     <div style="display:flex;flex-direction:column;gap:8px;">
                         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
                             <input type="checkbox" id="tenureShow30Months" checked style="width:16px;height:16px;">
@@ -185,7 +185,7 @@ function loadTenureReportModule() {
                 
                 <!-- 생성 버튼 -->
                 <button class="btn btn-primary" style="width:100%;" onclick="generateTenureReport()">
-                    📊 근속현황표 생성
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 근속현황표 생성
                 </button>
             </div>
             
@@ -280,7 +280,7 @@ function toggleTenureSpecialDeptAll(checked) {
 function _generateYearOptions(selectedYear) {
     const currentYear = new Date().getFullYear();
     
-    // DB에서 가장 빠른 입사년도 찾기
+ // DB에서 가장 빠른 입사년도 찾기
     let minYear = currentYear - 10; // 기본값
     try {
         const employees = db?.getEmployees?.() || [];
@@ -297,7 +297,7 @@ function _generateYearOptions(selectedYear) {
         console.warn('입사년도 조회 실패, 기본값 사용:', e);
     }
     
-    // 종료연도: 현재년도 + 10년
+ // 종료연도: 현재년도 + 10년
     const maxYear = currentYear + 10;
     
     let html = '';
@@ -363,13 +363,13 @@ function _getUniqueDepartments() {
         const depts = new Set();
         
         employees.forEach(emp => {
-            // 현재 부서
+ // 현재 부서
             const dept = 직원유틸_인사?.getDepartment(emp) || emp.currentPosition?.dept || emp.dept;
             if (dept && dept !== '부서 미지정') {
                 depts.add(dept);
             }
             
-            // 발령 이력에서 부서 추출
+ // 발령 이력에서 부서 추출
             const assignments = emp.assignments || [];
             assignments.forEach(assign => {
                 if (assign.dept && assign.dept !== '부서 미지정') {
@@ -401,7 +401,7 @@ function _getUniqueEmploymentTypes() {
             }
         });
         
-        // 기본 고용형태가 없으면 추가
+ // 기본 고용형태가 없으면 추가
         const defaultTypes = ['정규직', '무기계약직', '계약직', '육아휴직대체'];
         defaultTypes.forEach(t => types.add(t));
         
@@ -441,49 +441,49 @@ function generateTenureReport() {
     try {
         로거_인사?.info('근속현황표 생성 시작');
         
-        // 1. 설정값 가져오기
+ // 1. 설정값 가져오기
         const startYear = parseInt(document.getElementById('tenureStartYear').value);
         const endYear = parseInt(document.getElementById('tenureEndYear').value);
         
-        // 유효성 검사
+ // 유효성 검사
         if (startYear > endYear) {
-            alert('⚠️ 시작 연도는 종료 연도보다 작거나 같아야 합니다.');
+            alert('[주의] 시작 연도는 종료 연도보다 작거나 같아야 합니다.');
             return;
         }
         
         if (endYear - startYear > 2) {
-            alert('⚠️ 분석 기간은 최대 3년(36개월)까지 가능합니다.');
+            alert('[주의] 분석 기간은 최대 3년(36개월)까지 가능합니다.');
             return;
         }
         
-        // 선택된 부서
+ // 선택된 부서
         const selectedDepts = Array.from(document.querySelectorAll('.tenure-dept-checkbox:checked'))
             .map(cb => cb.value);
         
         if (selectedDepts.length === 0) {
-            alert('⚠️ 최소 1개 이상의 부서를 선택하세요.');
+            alert('[주의] 최소 1개 이상의 부서를 선택하세요.');
             return;
         }
         
-        // 선택된 고용형태
+ // 선택된 고용형태
         const selectedTypes = Array.from(document.querySelectorAll('.tenure-type-checkbox:checked'))
             .map(cb => cb.value);
         
         if (selectedTypes.length === 0) {
-            alert('⚠️ 최소 1개 이상의 고용형태를 선택하세요.');
+            alert('[주의] 최소 1개 이상의 고용형태를 선택하세요.');
             return;
         }
         
-        // 선택된 특수부서 (저장)
+ // 선택된 특수부서 (저장)
         const specialDepts = Array.from(document.querySelectorAll('.tenure-special-dept-checkbox:checked'))
             .map(cb => cb.value);
         _saveSpecialDepts(specialDepts);
         
-        // 집계 옵션
+ // 집계 옵션
         const show30Months = document.getElementById('tenureShow30Months').checked;
         const showMonthlyCount = document.getElementById('tenureShowMonthlyCount').checked;
         
-        // 설정 저장
+ // 설정 저장
         _tenureReportSettings = {
             startYear,
             endYear,
@@ -496,35 +496,35 @@ function generateTenureReport() {
         
         로거_인사?.debug('분석 설정', _tenureReportSettings);
         
-        // 2. 직원 데이터 필터링
+ // 2. 직원 데이터 필터링
         const employees = db.getEmployees();
         const periodStartDate = new Date(startYear, 0, 1);
         const periodEndDate = new Date(endYear, 11, 31);
         
-        // 분석 대상 직원 필터링
+ // 분석 대상 직원 필터링
         const filteredEmployees = employees.filter(emp => {
-            // 부서 필터
+ // 부서 필터
             const dept = 직원유틸_인사?.getDepartment(emp) || emp.currentPosition?.dept || emp.dept || '';
             if (!selectedDepts.includes(dept)) return false;
             
-            // 고용형태 필터
+ // 고용형태 필터
             const type = 직원유틸_인사?.getEmploymentType(emp) || emp.employment?.type || emp.employmentType || '';
             if (!selectedTypes.includes(type)) return false;
             
-            // 입사일 확인
+ // 입사일 확인
             const entryDateStr = 직원유틸_인사?.getEntryDate(emp) || emp.employment?.entryDate || emp.entryDate;
             if (!entryDateStr || entryDateStr === '-') return false;
             
             const entryDate = new Date(entryDateStr);
             
-            // 퇴사자인 경우: 퇴사일이 분석 기간 시작일 이전이면 제외
+ // 퇴사자인 경우: 퇴사일이 분석 기간 시작일 이전이면 제외
             const retireDateStr = 직원유틸_인사?.getRetirementDate(emp) || emp.employment?.retirementDate || emp.retirementDate;
             if (retireDateStr) {
                 const retireDate = new Date(retireDateStr);
                 if (retireDate < periodStartDate) return false;
             }
             
-            // 입사일이 분석 기간 종료일 이후면 제외
+ // 입사일이 분석 기간 종료일 이후면 제외
             if (entryDate > periodEndDate) return false;
             
             return true;
@@ -537,23 +537,23 @@ function generateTenureReport() {
         
         로거_인사?.debug('필터링된 직원 수', { count: filteredEmployees.length });
         
-        // 3. 근속 데이터 계산 (특수부서 적용)
+ // 3. 근속 데이터 계산 (특수부서 적용)
         const reportData = _calculateTenureData(filteredEmployees, startYear, endYear, specialDepts);
         _tenureReportData = reportData;
         
-        // 4. 테이블 HTML 생성
+ // 4. 테이블 HTML 생성
         const tableHTML = _generateTenureTableHTML(reportData, startYear, endYear, show30Months, showMonthlyCount);
         
-        // 5. 결과 표시
+ // 5. 결과 표시
         const resultContainer = document.getElementById('tenureReportResult');
         if (resultContainer) {
             const specialDeptInfo = specialDepts.length > 0 
-                ? `<br>🚫 특수부서(근속 제외): ${specialDepts.join(', ')}`
+                ? `<br>제외 부서(근속 제외): ${specialDepts.join(', ')}`
                 : '';
             
             resultContainer.innerHTML = `
                 <div class="card">
-                    <div class="card-title">📊 근속현황표 (${startYear}년~${endYear}년) - 총 ${reportData.employees.length}명</div>
+                    <div class="card-title"><span class="card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> 근속현황표 (${startYear}년~${endYear}년) - 총 ${reportData.employees.length}명</div>
                     <div style="overflow-x:auto;">
                         ${tableHTML}
                     </div>
@@ -562,14 +562,14 @@ function generateTenureReport() {
                         <span>
                             <strong>표시 설명:</strong><br>
                             • 근속개월수는 <strong>근속시작일</strong> 기준, 매월 같은 날짜에 1개월씩 증가합니다.<br>
-                            • <span style="color:#ea580c;font-weight:600;">🔸 주황색 근속시작일</span>: 특수부서 이력이 있어 입사일과 다른 경우<br>
+                            • <span style="color:#ea580c;font-weight:600;">▸ 주황색 근속시작일</span>: 특수부서 이력이 있어 입사일과 다른 경우<br>
                             • "-"는 해당 시점에 퇴사했거나 아직 입사 전임을 의미합니다.<br>
                             • 연말 기준 열은 각 연도 12월 31일 기준 근속개월수입니다.${specialDeptInfo}
                         </span>
                     </div>
                     <div style="margin-top:20px;text-align:center;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-                        <button class="btn btn-primary" onclick="printTenureReport()">🖨 인쇄</button>
-                        <button class="btn btn-success" onclick="exportTenureReportToExcel()">📥 엑셀 다운로드</button>
+                        <button class="btn btn-primary" onclick="printTenureReport()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄</button>
+                        <button class="btn btn-success" onclick="exportTenureReportToExcel()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀 다운로드</button>
                     </div>
                 </div>
             `;
@@ -590,7 +590,7 @@ function generateTenureReport() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '근속현황표 생성 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 근속현황표 생성 중 오류가 발생했습니다.');
+            alert('[오류] 근속현황표 생성 중 오류가 발생했습니다.');
         }
     }
 }
@@ -615,7 +615,7 @@ function _calculateTenureData(employees, startYear, endYear, specialDepts) {
         }
     };
     
-    // 직원별 데이터 계산
+ // 직원별 데이터 계산
     employees.forEach(emp => {
         const empData = _calculateEmployeeTenure(emp, startYear, endYear, specialDepts);
         if (empData) {
@@ -623,9 +623,9 @@ function _calculateTenureData(employees, startYear, endYear, specialDepts) {
         }
     });
     
-    // 정렬: 근속시작일순 → 이름 가나다순
+ // 정렬: 근속시작일순 → 이름 가나다순
     result.employees.sort((a, b) => {
-        // 1. 근속시작일 비교
+ // 1. 근속시작일 비교
         const tenureStartA = new Date(a.tenureStartDate);
         const tenureStartB = new Date(b.tenureStartDate);
         
@@ -633,11 +633,11 @@ function _calculateTenureData(employees, startYear, endYear, specialDepts) {
             return tenureStartA - tenureStartB;
         }
         
-        // 2. 근속시작일이 같으면 이름 가나다순
+ // 2. 근속시작일이 같으면 이름 가나다순
         return a.name.localeCompare(b.name, 'ko');
     });
     
-    // 집계 계산
+ // 집계 계산
     _calculateSummary(result, startYear, endYear);
     
     return result;
@@ -660,11 +660,11 @@ function _calculateEmployeeTenure(emp, startYear, endYear, specialDepts) {
         const entryDate = new Date(entryDateStr);
         const retireDate = retireDateStr ? new Date(retireDateStr) : null;
         
-        // 근속시작일 계산 (특수부서 적용)
+ // 근속시작일 계산 (특수부서 적용)
         const tenureStartDate = _calculateTenureStartDate(emp, entryDate, specialDepts);
         const tenureStartDateStr = tenureStartDate.toISOString().split('T')[0];
         
-        // 입사일과 근속시작일이 다른지 확인
+ // 입사일과 근속시작일이 다른지 확인
         const isDifferentStart = tenureStartDateStr !== entryDateStr;
         
         const empData = {
@@ -681,15 +681,15 @@ function _calculateEmployeeTenure(emp, startYear, endYear, specialDepts) {
             monthlyTenure: {}   // 월별 근속개월수
         };
         
-        // 연말 기준 근속개월수 계산 (각 연도 12월 31일)
+ // 연말 기준 근속개월수 계산 (각 연도 12월 31일)
         for (let year = startYear; year <= endYear; year++) {
             const yearEnd = new Date(year, 11, 31);
             
-            // 퇴사자: 퇴사일 이전인 경우만 계산
+ // 퇴사자: 퇴사일 이전인 경우만 계산
             if (retireDate && retireDate < yearEnd) {
                 empData.yearEndTenure[year] = '-';
             } else if (tenureStartDate > yearEnd) {
-                // 근속시작일이 연말 이후면 아직 근속 시작 전
+ // 근속시작일이 연말 이후면 아직 근속 시작 전
                 empData.yearEndTenure[year] = '';
             } else {
                 const months = _calculateTenureMonths(tenureStartDate, yearEnd);
@@ -697,13 +697,13 @@ function _calculateEmployeeTenure(emp, startYear, endYear, specialDepts) {
             }
         }
         
-        // 월별 근속개월수 계산
+ // 월별 근속개월수 계산
         for (let year = startYear; year <= endYear; year++) {
             for (let month = 0; month < 12; month++) {
                 const monthEnd = new Date(year, month + 1, 0); // 해당 월 마지막 날
                 const key = `${year}-${String(month + 1).padStart(2, '0')}`;
                 
-                // 퇴사자: 퇴사일 이후는 빈칸
+ // 퇴사자: 퇴사일 이후는 빈칸
                 if (retireDate && retireDate < monthEnd) {
                     empData.monthlyTenure[key] = '';
                 } else if (tenureStartDate > monthEnd) {
@@ -732,62 +732,62 @@ function _calculateEmployeeTenure(emp, startYear, endYear, specialDepts) {
  * @returns {Date} 근속시작일
  */
 function _calculateTenureStartDate(emp, entryDate, specialDepts) {
-    // 특수부서가 없으면 입사일 반환
+ // 특수부서가 없으면 입사일 반환
     if (!specialDepts || specialDepts.length === 0) {
         return entryDate;
     }
     
-    // 발령 이력 가져오기
+ // 발령 이력 가져오기
     const assignments = emp.assignments || [];
     
     if (assignments.length === 0) {
-        // 발령 이력이 없으면 현재 부서로 판단
+ // 발령 이력이 없으면 현재 부서로 판단
         const currentDept = 직원유틸_인사?.getDepartment(emp) || emp.currentPosition?.dept || emp.dept || '';
         
-        // 현재 부서가 특수부서면 입사일 반환 (근속 시작 안함)
-        // 현재 부서가 일반부서면 입사일 반환 (입사일부터 근속)
+ // 현재 부서가 특수부서면 입사일 반환 (근속 시작 안함)
+ // 현재 부서가 일반부서면 입사일 반환 (입사일부터 근속)
         return entryDate;
     }
     
-    // 발령 이력을 날짜순으로 정렬
+ // 발령 이력을 날짜순으로 정렬
     const sortedAssignments = [...assignments].sort((a, b) => {
         const dateA = new Date(a.startDate || a.date || '9999-12-31');
         const dateB = new Date(b.startDate || b.date || '9999-12-31');
         return dateA - dateB;
     });
     
-    // 특수부서에서 일반부서로 처음 발령된 날짜 찾기
+ // 특수부서에서 일반부서로 처음 발령된 날짜 찾기
     let wasInSpecialDept = false;
     let tenureStartDate = entryDate;
     
-    // 입사 시 부서가 특수부서인지 확인
+ // 입사 시 부서가 특수부서인지 확인
     const firstAssignment = sortedAssignments[0];
     if (firstAssignment) {
         const firstDept = firstAssignment.dept || '';
         wasInSpecialDept = specialDepts.includes(firstDept);
     }
     
-    // 발령 이력 순회
+ // 발령 이력 순회
     for (const assign of sortedAssignments) {
         const assignDept = assign.dept || '';
         const assignDate = new Date(assign.startDate || assign.date);
         
         if (wasInSpecialDept && !specialDepts.includes(assignDept)) {
-            // 특수부서 → 일반부서로 발령: 이 날짜가 근속시작일
+ // 특수부서 → 일반부서로 발령: 이 날짜가 근속시작일
             tenureStartDate = assignDate;
             wasInSpecialDept = false;
             break;  // 첫 번째 일반부서 발령일이 근속시작일
         } else if (specialDepts.includes(assignDept)) {
-            // 특수부서로 발령
+ // 특수부서로 발령
             wasInSpecialDept = true;
         }
     }
     
-    // 계속 특수부서에만 있었다면 (일반부서 발령이 없었다면)
-    // 마지막 발령일 또는 입사일 반환
+ // 계속 특수부서에만 있었다면 (일반부서 발령이 없었다면)
+ // 마지막 발령일 또는 입사일 반환
     if (wasInSpecialDept) {
-        // 현재도 특수부서에 있으므로 근속 계산 대상 아님
-        // 하지만 표에는 나와야 하므로 입사일 반환 (근속 0)
+ // 현재도 특수부서에 있으므로 근속 계산 대상 아님
+ // 하지만 표에는 나와야 하므로 입사일 반환 (근속 0)
         return new Date('9999-12-31');  // 매우 먼 미래 → 모든 근속이 0 또는 빈칸
     }
     
@@ -810,10 +810,10 @@ function _calculateTenureMonths(startDate, endDate) {
     const endMonth = endDate.getMonth();
     const endDay = endDate.getDate();
     
-    // 년/월 차이 계산
+ // 년/월 차이 계산
     let totalMonths = (endYear - startYear) * 12 + (endMonth - startMonth);
     
-    // 일 비교: 입사일보다 작으면 아직 해당 월 미도달
+ // 일 비교: 입사일보다 작으면 아직 해당 월 미도달
     if (endDay < startDay) {
         totalMonths--;
     }
@@ -826,13 +826,13 @@ function _calculateTenureMonths(startDate, endDate) {
  * @private
  */
 function _calculateSummary(result, startYear, endYear) {
-    // 연도별 집계 초기화
+ // 연도별 집계 초기화
     for (let year = startYear; year <= endYear; year++) {
         result.summary.longTermCount[year] = 0;
         result.summary.yearlyCount[year] = 0;
     }
     
-    // 월별 집계 초기화
+ // 월별 집계 초기화
     for (let year = startYear; year <= endYear; year++) {
         for (let month = 1; month <= 12; month++) {
             const key = `${year}-${String(month).padStart(2, '0')}`;
@@ -840,9 +840,9 @@ function _calculateSummary(result, startYear, endYear) {
         }
     }
     
-    // 직원별로 집계
+ // 직원별로 집계
     result.employees.forEach(emp => {
-        // 연말 기준 집계
+ // 연말 기준 집계
         for (let year = startYear; year <= endYear; year++) {
             const tenure = emp.yearEndTenure[year];
             if (tenure !== '' && tenure !== '-') {
@@ -853,7 +853,7 @@ function _calculateSummary(result, startYear, endYear) {
             }
         }
         
-        // 월별 집계
+ // 월별 집계
         for (let year = startYear; year <= endYear; year++) {
             for (let month = 1; month <= 12; month++) {
                 const key = `${year}-${String(month).padStart(2, '0')}`;
@@ -875,7 +875,7 @@ function _calculateSummary(result, startYear, endYear) {
 function _generateTenureTableHTML(data, startYear, endYear, show30Months, showMonthlyCount) {
     const totalMonths = (endYear - startYear + 1) * 12;
     
-    // 월별 헤더 생성
+ // 월별 헤더 생성
     const monthHeaders = [];
     for (let year = startYear; year <= endYear; year++) {
         for (let month = 1; month <= 12; month++) {
@@ -883,7 +883,7 @@ function _generateTenureTableHTML(data, startYear, endYear, show30Months, showMo
         }
     }
     
-    // 월별 헤더 생성은 위에서 완료
+ // 월별 헤더 생성은 위에서 완료
     
     let html = `
         <style>
@@ -909,7 +909,7 @@ function _generateTenureTableHTML(data, startYear, endYear, show30Months, showMo
                 text-align: center;
                 box-sizing: border-box;
             }
-            /* 헤더 세로 고정 */
+ /* 헤더 세로 고정 */
             .tenure-table thead th {
                 position: -webkit-sticky;
                 position: sticky;
@@ -918,13 +918,13 @@ function _generateTenureTableHTML(data, startYear, endYear, show30Months, showMo
                 color: white;
                 z-index: 10;
             }
-            /* 좌측 컬럼 가로 고정 */
+ /* 좌측 컬럼 가로 고정 */
             .tenure-table .sticky-col {
                 position: -webkit-sticky;
                 position: sticky;
                 z-index: 5;
             }
-            /* 헤더의 좌측 컬럼 (교차점) - 가장 높은 z-index */
+ /* 헤더의 좌측 컬럼 (교차점) - 가장 높은 z-index */
             .tenure-table thead .sticky-col {
                 z-index: 20;
             }
@@ -952,29 +952,29 @@ function _generateTenureTableHTML(data, startYear, endYear, show30Months, showMo
                     <th class="sticky-col sticky-6" style="min-width:85px;">퇴사일</th>
     `;
     
-    // 연말 기준 헤더
+ // 연말 기준 헤더
     for (let year = startYear; year <= endYear; year++) {
         html += `<th class="year-end-header" style="min-width:55px;">${year}년말</th>`;
     }
     
-    // 월별 헤더
+ // 월별 헤더
     monthHeaders.forEach(header => {
         html += `<th style="min-width:60px;">${header}</th>`;
     });
     
     html += `</tr></thead><tbody>`;
     
-    // 직원 데이터 행
+ // 직원 데이터 행
     data.employees.forEach((emp, index) => {
         const safeName = typeof DOM유틸_인사 !== 'undefined' ? DOM유틸_인사.escapeHtml(emp.name) : emp.name;
         const safeDept = typeof DOM유틸_인사 !== 'undefined' ? DOM유틸_인사.escapeHtml(emp.dept) : emp.dept;
         const safeType = typeof DOM유틸_인사 !== 'undefined' ? DOM유틸_인사.escapeHtml(emp.employmentType) : emp.employmentType;
         
-        // 근속시작일 스타일 (입사일과 다르면 주황색)
+ // 근속시작일 스타일 (입사일과 다르면 주황색)
         const tenureStartStyle = emp.isDifferentStart ? 'color:#ea580c;font-weight:600;' : '';
-        const tenureStartPrefix = emp.isDifferentStart ? '🔸' : '';
+        const tenureStartPrefix = emp.isDifferentStart ? '▸' : '';
         
-        // 근속시작일이 9999년이면 특수부서만 근무
+ // 근속시작일이 9999년이면 특수부서만 근무
         const displayTenureStart = emp.tenureStartDate === '9999-12-31' 
             ? '<span style="color:#9ca3af;">-</span>' 
             : `${tenureStartPrefix}${emp.tenureStartDate}`;
@@ -991,14 +991,14 @@ function _generateTenureTableHTML(data, startYear, endYear, show30Months, showMo
             <td class="sticky-col sticky-5" style="background:${rowBg};${tenureStartStyle}">${displayTenureStart}</td>
             <td class="sticky-col sticky-6" style="background:${rowBg};">${emp.retireDate || ''}</td>`;
         
-        // 연말 기준 데이터
+ // 연말 기준 데이터
         for (let year = startYear; year <= endYear; year++) {
             const tenure = emp.yearEndTenure[year];
             const bgColor = tenure >= 30 ? '#dcfce7' : '';
             html += `<td style="${bgColor ? 'background:'+bgColor+';' : ''}font-weight:${tenure >= 30 ? '600' : '400'};">${tenure}</td>`;
         }
         
-        // 월별 데이터
+ // 월별 데이터
         monthHeaders.forEach(key => {
             const tenure = emp.monthlyTenure[key];
             html += `<td>${tenure}</td>`;
@@ -1007,7 +1007,7 @@ function _generateTenureTableHTML(data, startYear, endYear, show30Months, showMo
         html += `</tr>`;
     });
     
-    // 집계 행: 30개월 이상 근속자 수
+ // 집계 행: 30개월 이상 근속자 수
     if (show30Months) {
         const summaryBg1 = '#fef3c7';
         html += `<tr style="font-weight:600;">
@@ -1029,7 +1029,7 @@ function _generateTenureTableHTML(data, startYear, endYear, show30Months, showMo
         html += `</tr>`;
     }
     
-    // 집계 행: 확보 직원 수
+ // 집계 행: 확보 직원 수
     if (showMonthlyCount) {
         const summaryBg2 = '#dbeafe';
         html += `<tr style="font-weight:600;">
@@ -1066,11 +1066,11 @@ function printTenureReport() {
     try {
         const table = document.getElementById('tenureReportTable');
         if (!table) {
-            alert('⚠️ 먼저 근속현황표를 생성하세요.');
+            alert('[주의] 먼저 근속현황표를 생성하세요.');
             return;
         }
         
-        // 인쇄 옵션 모달 표시
+ // 인쇄 옵션 모달 표시
         const modal = document.createElement('div');
         modal.id = 'tenure-print-options-modal';
         modal.innerHTML = `
@@ -1095,7 +1095,7 @@ function printTenureReport() {
                     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
                 ">
                     <h3 style="margin: 0 0 20px 0; font-size: 18px; color: #1f2937;">
-                        🖨️ 근속현황표 인쇄 설정
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 근속현황표 인쇄 설정
                     </h3>
                     
                     <div style="margin-bottom: 16px;">
@@ -1147,7 +1147,7 @@ function printTenureReport() {
                             <option value="portrait">세로</option>
                         </select>
                         <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">
-                            * 근속현황표는 컬럼이 많아 가로 방향 권장
+ * 근속현황표는 컬럼이 많아 가로 방향 권장
                         </div>
                     </div>
                     
@@ -1163,7 +1163,7 @@ function printTenureReport() {
                         <button onclick="executeTenurePrint()" style="
                             padding: 10px 20px;
                             border: none;
-                            background: linear-gradient(135deg, #667eea, #764ba2);
+                            background: linear-gradient(135deg, #4f46e5, #764ba2);
                             color: white;
                             border-radius: 8px;
                             cursor: pointer;
@@ -1179,7 +1179,7 @@ function printTenureReport() {
         
     } catch (error) {
         console.error('[근속현황표] 인쇄 옵션 모달 오류:', error);
-        // 폴백: 기본 인쇄 실행
+ // 폴백: 기본 인쇄 실행
         executeTenurePrint();
     }
 }
@@ -1191,25 +1191,25 @@ function executeTenurePrint() {
     try {
         로거_인사?.info('근속현황표 인쇄 시작');
         
-        // 옵션 가져오기
+ // 옵션 가져오기
         const showTitle = document.getElementById('tenure-print-show-title')?.checked ?? true;
         const showDate = document.getElementById('tenure-print-show-date')?.checked ?? true;
         const paperSize = document.getElementById('tenure-print-paper')?.value || 'A4';
         const orientation = document.getElementById('tenure-print-orientation')?.value || 'landscape';
         
-        // 모달 닫기
+ // 모달 닫기
         document.getElementById('tenure-print-options-modal')?.remove();
         
         const table = document.getElementById('tenureReportTable');
         if (!table) {
-            alert('⚠️ 먼저 근속현황표를 생성하세요.');
+            alert('[주의] 먼저 근속현황표를 생성하세요.');
             return;
         }
         
-        // 테이블 복제
+ // 테이블 복제
         const tableClone = table.cloneNode(true);
         
-        // 제목 생성
+ // 제목 생성
         const settings = _tenureReportSettings;
         const titleText = `근속현황표 (${settings?.startYear || ''}년~${settings?.endYear || ''}년)`;
         const specialDeptInfo = settings?.specialDepts?.length > 0 
@@ -1250,7 +1250,7 @@ function executeTenurePrint() {
                 </style>
             </head>
             <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
+                <button class="no-print" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄하기 (Ctrl+P)</button>
                 ${titleHTML}
                 ${dateHTML}
                 ${tableClone.outerHTML}
@@ -1258,7 +1258,7 @@ function executeTenurePrint() {
             </html>
         `;
         
-        // Electron 환경에서 시스템 브라우저로 열기
+ // Electron 환경에서 시스템 브라우저로 열기
         if (window.electronAPI && window.electronAPI.openInBrowser) {
             window.electronAPI.openInBrowser(htmlContent, 'tenure_report_print.html');
         } else {
@@ -1276,7 +1276,7 @@ function executeTenurePrint() {
     } catch (error) {
         console.error('[근속현황표] 인쇄 오류:', error);
         로거_인사?.error('근속현황표 인쇄 실패', error);
-        alert('❌ 인쇄 중 오류가 발생했습니다.');
+        alert('[오류] 인쇄 중 오류가 발생했습니다.');
     }
 }
 
@@ -1291,25 +1291,25 @@ function exportTenureReportToExcel() {
         
         const table = document.getElementById('tenureReportTable');
         if (!table) {
-            alert('⚠️ 먼저 근속현황표를 생성하세요.');
+            alert('[주의] 먼저 근속현황표를 생성하세요.');
             return;
         }
         
-        // XLSX 라이브러리 확인
+ // XLSX 라이브러리 확인
         if (typeof XLSX === 'undefined') {
-            alert('❌ 엑셀 다운로드 기능을 사용할 수 없습니다.');
+            alert('[오류] 엑셀 다운로드 기능을 사용할 수 없습니다.');
             return;
         }
         
-        // 엑셀 변환
+ // 엑셀 변환
         const wb = XLSX.utils.table_to_book(table);
         
-        // 파일명 생성
+ // 파일명 생성
         const settings = _tenureReportSettings;
         const today = DateUtils ? DateUtils.formatDate(new Date()) : new Date().toISOString().split('T')[0];
         const filename = `근속현황표_${settings?.startYear || ''}-${settings?.endYear || ''}_${today}.xlsx`;
         
-        // 다운로드
+ // 다운로드
         XLSX.writeFile(wb, filename);
         
         로거_인사?.info('근속현황표 엑셀 다운로드 완료', { filename });
@@ -1317,7 +1317,7 @@ function exportTenureReportToExcel() {
     } catch (error) {
         console.error('[근속현황표] 엑셀 다운로드 오류:', error);
         로거_인사?.error('근속현황표 엑셀 다운로드 실패', error);
-        alert('❌ 엑셀 다운로드 중 오류가 발생했습니다.');
+        alert('[오류] 엑셀 다운로드 중 오류가 발생했습니다.');
     }
 }
 
@@ -1327,30 +1327,30 @@ function exportTenureReportToExcel() {
  * 페이지 로드 시 초기화
  */
 window.addEventListener('DOMContentLoaded', function() {
-    // 네비게이션에서 호출될 때 자동 로드되므로 여기서는 별도 처리 없음
+ // 네비게이션에서 호출될 때 자동 로드되므로 여기서는 별도 처리 없음
     로거_인사?.debug('근속현황표 모듈 스크립트 로드 완료');
 });
 
 /**
- * 📊 개발 통계
+ * 개발 통계
  * 
  * v1.1.0 구현 기능:
- * ✅ 분석 기간 설정 (시작년도~종료년도, 최대 3년)
- * ✅ 부서별 필터링 (다중 선택)
- * ✅ 고용형태별 필터링 (다중 선택)
- * ✅ 특수부서 설정 (근속 계산 제외, localStorage 저장)
- * ✅ 근속시작일 컬럼 추가 (입사일과 다를 경우 색상 강조)
- * ✅ 발령 이력 기반 근속시작일 계산
- * ✅ 월별 근속개월수 계산
- * ✅ 연말 기준 근속개월수 표시
- * ✅ 집계 행 (30개월 이상 근속자 수)
- * ✅ 집계 행 (월별 확보 직원 수)
- * ✅ 고용형태 우선순위 정렬
- * ✅ 엑셀 다운로드
- * ✅ 인쇄 기능 (A4 가로) - 백지 문제 수정
- * ✅ XSS 방지
- * ✅ 완벽한 에러 처리
- * ✅ 체계적 로깅
+ * 분석 기간 설정 (시작년도~종료년도, 최대 3년)
+ * 부서별 필터링 (다중 선택)
+ * 고용형태별 필터링 (다중 선택)
+ * 특수부서 설정 (근속 계산 제외, localStorage 저장)
+ * 근속시작일 컬럼 추가 (입사일과 다를 경우 색상 강조)
+ * 발령 이력 기반 근속시작일 계산
+ * 월별 근속개월수 계산
+ * 연말 기준 근속개월수 표시
+ * 집계 행 (30개월 이상 근속자 수)
+ * 집계 행 (월별 확보 직원 수)
+ * 고용형태 우선순위 정렬
+ * 엑셀 다운로드
+ * 인쇄 기능 (A4 가로) - 백지 문제 수정
+ * XSS 방지
+ * 완벽한 에러 처리
+ * 체계적 로깅
  * 
  * 의존성:
  * - 데이터베이스_인사.js

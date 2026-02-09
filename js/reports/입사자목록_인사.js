@@ -15,35 +15,35 @@
  * 
  * [변경 이력]
  * v6.0.1 (2026-02-05) 인쇄 헤더 안 보임 버그 수정
- *   - 인쇄 시 헤더 행 인라인 스타일 초기화 (color:white 제거)
- *   - 인쇄 CSS에 th { color: #333 !important } 추가
+ * - 인쇄 시 헤더 행 인라인 스타일 초기화 (color:white 제거)
+ * - 인쇄 CSS에 th { color: #333 !important } 추가
  *
- * v6.0.0 (2026-01-22) ⭐ 배치 API 적용 - 성능 최적화
- *   - 개별 API 호출 → 배치 API (calculateBatchForEmployees)
- *   - N회 API 호출 → 1회로 감소
- *   - buildNewEmployeeRowData에 batchResults 파라미터 추가
+ * v6.0.0 (2026-01-22) 배치 API 적용 - 성능 최적화
+ * - 개별 API 호출 → 배치 API (calculateBatchForEmployees)
+ * - N회 API 호출 → 1회로 감소
+ * - buildNewEmployeeRowData에 batchResults 파라미터 추가
  * 
  * v5.0.0 (2026-01-22) API 전용 버전
- *   - 직원유틸_인사.getDynamicRankInfo() await 추가
- *   - 모든 계산 로직 서버 API로 이동
+ * - 직원유틸_인사.getDynamicRankInfo() await 추가
+ * - 모든 계산 로직 서버 API로 이동
  * 
  * v4.0.0 (2026-01-22) API 연동 버전
- *   - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
- *   - TenureCalculator.calculate → API_인사.calculateTenure
- *   - _renderNewEmployeesTable() async 변경
- *   - forEach → for...of (async/await 지원)
+ * - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
+ * - TenureCalculator.calculate → API_인사.calculateTenure
+ * - _renderNewEmployeesTable() async 변경
+ * - forEach → for...of (async/await 지원)
  * 
  * v3.0 - 프로덕션급 리팩토링
- *   - Phase 1 유틸리티 적용 (직원유틸, DOM유틸, 인쇄유틸)
- *   - 인쇄 문제 해결 (사이드바/메뉴 출력 방지)
- *   - ID 기반 인쇄 영역 (new-employees-print-area)
- *   - 완벽한 에러 처리
- *   - 체계적 로깅
- *   - JSDoc 주석 추가
- *   - XSS 방지
- *   - 테이블 가운데 정렬
+ * - Phase 1 유틸리티 적용 (직원유틸, DOM유틸, 인쇄유틸)
+ * - 인쇄 문제 해결 (사이드바/메뉴 출력 방지)
+ * - ID 기반 인쇄 영역 (new-employees-print-area)
+ * - 완벽한 에러 처리
+ * - 체계적 로깅
+ * - JSDoc 주석 추가
+ * - XSS 방지
+ * - 테이블 가운데 정렬
  * 
- * [인쇄 개선] ⭐ 핵심
+ * [인쇄 개선] 핵심
  * - ID 기반 인쇄 영역: new-employees-print-area
  * - 인쇄유틸_인사.print() 사용
  * - 사이드바/메뉴 출력 방지
@@ -115,9 +115,9 @@ function showNewEmployeeColumnSelector() {
     로거_인사?.debug('입사자 컬럼 선택기 HTML 생성');
     
     try {
-        // 체크박스 HTML 생성
+ // 체크박스 HTML 생성
         const checkboxes = Object.entries(NEW_EMPLOYEE_COLUMNS).map(([key, col]) => {
-            // ✅ XSS 방지
+ // XSS 방지
             const safeLabel = typeof DOM유틸_인사 !== 'undefined'
                 ? DOM유틸_인사.escapeHtml(col.label)
                 : col.label;
@@ -139,7 +139,7 @@ function showNewEmployeeColumnSelector() {
         const selectorHTML = `
             <div style="background:#f8f9fe;padding:20px;border-radius:12px;margin-bottom:20px;border:1.5px solid #e8ebed;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h3 style="margin:0;font-size:16px;font-weight:600;color:#10b981;">📋 출력 항목 선택</h3>
+                    <h3 style="margin:0;font-size:16px;font-weight:600;color:#10b981;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 출력 항목 선택</h3>
                     <div style="display:flex;gap:8px;">
                         <button class="btn btn-secondary btn-small" onclick="applyNewEmployeeColumnPreset('minimal')">간략</button>
                         <button class="btn btn-secondary btn-small" onclick="applyNewEmployeeColumnPreset('default')">기본</button>
@@ -152,7 +152,7 @@ function showNewEmployeeColumnSelector() {
                     ${checkboxes}
                 </div>
                 <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e8ebed;">
-                    <span style="font-size:13px;color:#6b7280;">💡 항목을 선택한 후 "입사자 목록 생성" 버튼을 클릭하세요.</span>
+                    <span style="font-size:13px;color:#6b7280;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> 항목을 선택한 후 "입사자 목록 생성" 버튼을 클릭하세요.</span>
                 </div>
             </div>
         `;
@@ -197,7 +197,7 @@ function applyNewEmployeeColumnPreset(preset) {
         
         로거_인사?.debug('프리셋 컬럼', { preset, count: selected.length });
         
-        // 모든 체크박스 업데이트
+ // 모든 체크박스 업데이트
         Object.keys(NEW_EMPLOYEE_COLUMNS).forEach(key => {
             const checkbox = typeof DOM유틸_인사 !== 'undefined'
                 ? DOM유틸_인사.getById(`newEmpCol_${key}`)
@@ -225,7 +225,7 @@ function applyNewEmployeeColumnPreset(preset) {
  * @param {boolean} checked - true: 전체선택, false: 전체해제
  * 
  * @example
- * toggleAllNewEmployeeColumns(true);  // 전체 선택
+ * toggleAllNewEmployeeColumns(true); // 전체 선택
  * toggleAllNewEmployeeColumns(false); // 전체 해제
  */
 function toggleAllNewEmployeeColumns(checked) {
@@ -304,7 +304,7 @@ async function generateNewEmployeeList() {
     try {
         로거_인사?.info('입사자 목록 생성 시작');
         
-        // 1. 날짜 필드 확인
+ // 1. 날짜 필드 확인
         const startDateField = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('newEmployeeStartDate')
             : document.getElementById('newEmployeeStartDate');
@@ -319,7 +319,7 @@ async function generateNewEmployeeList() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('날짜 필드를 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 날짜 필드를 찾을 수 없습니다.');
+                alert('[주의] 날짜 필드를 찾을 수 없습니다.');
             }
             return;
         }
@@ -333,21 +333,21 @@ async function generateNewEmployeeList() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('시작일과 종료일을 모두 선택하세요.');
             } else {
-                alert('⚠️ 시작일과 종료일을 모두 선택하세요.');
+                alert('[주의] 시작일과 종료일을 모두 선택하세요.');
             }
             return;
         }
         
         로거_인사?.debug('날짜 확인', { startDate, endDate });
         
-        // 2. 날짜 검증
+ // 2. 날짜 검증
         if (!Validator.isValidDate(startDate) || !Validator.isValidDate(endDate)) {
             로거_인사?.warn('날짜 형식 오류');
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('날짜 형식이 올바르지 않습니다.');
             } else {
-                alert('⚠️ 날짜 형식이 올바르지 않습니다.');
+                alert('[주의] 날짜 형식이 올바르지 않습니다.');
             }
             return;
         }
@@ -358,17 +358,17 @@ async function generateNewEmployeeList() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('시작일이 종료일보다 늦습니다.\n\n날짜를 확인해주세요.');
             } else {
-                alert('⚠️ 시작일이 종료일보다 늦습니다.\n\n날짜를 확인해주세요.');
+                alert('[주의] 시작일이 종료일보다 늦습니다.\n\n날짜를 확인해주세요.');
             }
             return;
         }
         
-        // 3. 입사자 필터링
+ // 3. 입사자 필터링
         const newEmployees = db.getEmployees().filter(emp => {
             const entryDate = emp.employment?.entryDate;
             if (!entryDate) return false;
             
-            // 입사일이 시작일 이상, 종료일 이하
+ // 입사일이 시작일 이상, 종료일 이하
             return entryDate >= startDate && entryDate <= endDate;
         });
         
@@ -378,7 +378,7 @@ async function generateNewEmployeeList() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn(`${startDate} ~ ${endDate} 기간 동안 입사한 직원이 없습니다.`);
             } else {
-                alert(`📋 ${startDate} ~ ${endDate} 기간 동안 입사한 직원이 없습니다.`);
+                alert(`${startDate} ~ ${endDate} 기간 동안 입사한 직원이 없습니다.`);
             }
             
             const resultContainer = typeof DOM유틸_인사 !== 'undefined'
@@ -393,7 +393,7 @@ async function generateNewEmployeeList() {
         
         로거_인사?.info('입사자 조회 완료', { count: newEmployees.length });
         
-        // ⭐ v6.0.0: 배치 API로 전체 직원 한 번에 계산 (성능 최적화)
+ // v6.0.0: 배치 API로 전체 직원 한 번에 계산 (성능 최적화)
         let batchResults = new Map();
         if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
             try {
@@ -405,7 +405,7 @@ async function generateNewEmployeeList() {
             }
         }
         
-        // 4. 선택된 컬럼 확인
+ // 4. 선택된 컬럼 확인
         const selectedColumns = getSelectedNewEmployeeColumns();
         
         if (selectedColumns.length === 0) {
@@ -414,21 +414,21 @@ async function generateNewEmployeeList() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('최소 1개 이상의 항목을 선택하세요.');
             } else {
-                alert('⚠️ 최소 1개 이상의 항목을 선택하세요.');
+                alert('[주의] 최소 1개 이상의 항목을 선택하세요.');
             }
             return;
         }
         
         로거_인사?.debug('선택된 컬럼', { count: selectedColumns.length });
         
-        // 5. 입사일 순 정렬
+ // 5. 입사일 순 정렬
         newEmployees.sort((a, b) => {
             const dateA = a.employment?.entryDate || '';
             const dateB = b.employment?.entryDate || '';
             return dateA.localeCompare(dateB);
         });
         
-        // 6. 테이블 헤더 생성
+ // 6. 테이블 헤더 생성
         let headerHTML = '<tr style="background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:white;">';
         selectedColumns.forEach(colKey => {
             const col = NEW_EMPLOYEE_COLUMNS[colKey];
@@ -436,12 +436,12 @@ async function generateNewEmployeeList() {
                 ? DOM유틸_인사.escapeHtml(col.label)
                 : col.label;
             
-            // ⭐ 헤더 가운데 정렬
+ // 헤더 가운데 정렬
             headerHTML += `<th style="padding:12px;border:1px solid #e8ebed;white-space:nowrap;text-align:center;">${safeLabel}</th>`;
         });
         headerHTML += '</tr>';
         
-        // 7. 테이블 데이터 생성 (⭐ v6.0.0: 배치 API 결과 전달)
+ // 7. 테이블 데이터 생성 ( v6.0.0: 배치 API 결과 전달)
         const rowsArray = [];
         for (let index = 0; index < newEmployees.length; index++) {
             const emp = newEmployees[index];
@@ -451,7 +451,7 @@ async function generateNewEmployeeList() {
                 let rowHTML = '<tr>';
                 selectedColumns.forEach(colKey => {
                     const value = rowData[colKey];
-                    // ⭐ 모든 데이터 가운데 정렬 + 줄바꿈 방지
+ // 모든 데이터 가운데 정렬 + 줄바꿈 방지
                     rowHTML += `<td style="padding:10px;border:1px solid #e8ebed;text-align:center;white-space:nowrap;">${value}</td>`;
                 });
                 rowHTML += '</tr>';
@@ -469,7 +469,7 @@ async function generateNewEmployeeList() {
         
         로거_인사?.debug('테이블 생성 완료', { rowsCount: newEmployees.length });
         
-        // 8. 결과 HTML 생성
+ // 8. 결과 HTML 생성
         const resultHTML = `
             <div class="card">
                 <div class="card-title">입사자 목록 (${startDate} ~ ${endDate}) - 총 ${newEmployees.length}명</div>
@@ -488,14 +488,14 @@ async function generateNewEmployeeList() {
                     • 호봉이 "-"인 직원은 연봉제입니다.</span>
                 </div>
                 <div class="no-print" style="margin-top:20px;text-align:center;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-                    <button class="btn btn-primary" onclick="printNewEmployeeList('portrait')">🖨 인쇄 (A4 세로)</button>
-                    <button class="btn btn-primary" onclick="printNewEmployeeList('landscape')">🖨 인쇄 (A4 가로)</button>
-                    <button class="btn btn-success" onclick="exportNewEmployeeListToExcel()">📥 엑셀 다운로드</button>
+                    <button class="btn btn-primary" onclick="printNewEmployeeList('portrait')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄 (A4 세로)</button>
+                    <button class="btn btn-primary" onclick="printNewEmployeeList('landscape')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄 (A4 가로)</button>
+                    <button class="btn btn-success" onclick="exportNewEmployeeListToExcel()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀 다운로드</button>
                 </div>
             </div>
         `;
         
-        // 9. 결과 표시
+ // 9. 결과 표시
         const resultContainer = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('newEmployeeListResult')
             : document.getElementById('newEmployeeListResult');
@@ -520,7 +520,7 @@ async function generateNewEmployeeList() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '입사자 목록 생성 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 입사자 목록 생성 중 오류가 발생했습니다.');
+            alert('[오류] 입사자 목록 생성 중 오류가 발생했습니다.');
             console.error('입사자 목록 생성 오류:', error);
         }
     }
@@ -547,7 +547,7 @@ async function generateNewEmployeeList() {
  */
 async function buildNewEmployeeRowData(emp, index, periodEndDate, batchResults = new Map()) {
     try {
-        // ✅ 직원유틸 사용
+ // 직원유틸 사용
         const name = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.getName(emp)
             : (emp.personalInfo?.name || emp.name || '이름없음');
@@ -562,18 +562,18 @@ async function buildNewEmployeeRowData(emp, index, periodEndDate, batchResults =
         
         const employmentType = emp.employment?.type || '정규직';
         
-        // ⭐ 핵심: 검색 기간 종료일 기준으로 재직/퇴사 판단
-        // 퇴사일 = 마지막 근무일이므로, 실제 퇴사는 퇴사일 다음날부터
-        // 따라서 퇴사일 <= 검색 종료일이면 해당 종료일 기준으로는 재직 중
+ // 핵심: 검색 기간 종료일 기준으로 재직/퇴사 판단
+ // 퇴사일 = 마지막 근무일이므로, 실제 퇴사는 퇴사일 다음날부터
+ // 따라서 퇴사일 <= 검색 종료일이면 해당 종료일 기준으로는 재직 중
         let isRetiredAtPeriodEnd = false;
         
         if (retirementDate && retirementDate !== '-') {
-            // 퇴사일이 검색 종료일보다 이전이면 → 검색 종료일 기준으로 퇴사
-            // 퇴사일 = 검색 종료일이면 → 검색 종료일까지 근무 중 = 재직
+ // 퇴사일이 검색 종료일보다 이전이면 → 검색 종료일 기준으로 퇴사
+ // 퇴사일 = 검색 종료일이면 → 검색 종료일까지 근무 중 = 재직
             isRetiredAtPeriodEnd = retirementDate < periodEndDate;
         }
         
-        // 부서/직위/직급
+ // 부서/직위/직급
         const dept = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.getDepartment(emp)
             : (emp.currentPosition?.dept || emp.dept || '-');
@@ -588,10 +588,10 @@ async function buildNewEmployeeRowData(emp, index, periodEndDate, batchResults =
         
         const jobType = emp.currentPosition?.jobType || '-';
         
-        // 기준일 결정: 검색 종료일 기준 퇴사자는 퇴사일, 재직자는 기간 종료일
+ // 기준일 결정: 검색 종료일 기준 퇴사자는 퇴사일, 재직자는 기간 종료일
         const baseDate = isRetiredAtPeriodEnd ? retirementDate : periodEndDate;
         
-        // 호봉 정보
+ // 호봉 정보
         const isRankBased = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.isRankBased(emp)
             : (emp.rank?.isRankBased === true && emp.rank?.firstUpgradeDate);
@@ -601,14 +601,14 @@ async function buildNewEmployeeRowData(emp, index, periodEndDate, batchResults =
         
         if (isRankBased) {
             try {
-                // ⭐ v6.0.0: 배치 결과에서 호봉 가져오기 (개별 API 호출 제거)
+ // v6.0.0: 배치 결과에서 호봉 가져오기 (개별 API 호출 제거)
                 const batchResult = batchResults.get(emp.id);
                 if (batchResult && batchResult.currentRank !== undefined) {
                     const startRank = emp.rank?.startRank || 1;
                     startRankDisplay = startRank + '호봉';
                     currentRankDisplay = batchResult.currentRank + '호봉';
                 } else {
-                    // 배치에 없으면 로컬 계산 (fallback)
+ // 배치에 없으면 로컬 계산 (fallback)
                     const startRank = emp.rank?.startRank || 1;
                     startRankDisplay = startRank + '호봉';
                     
@@ -632,18 +632,18 @@ async function buildNewEmployeeRowData(emp, index, periodEndDate, batchResults =
             }
         }
         
-        // 근속기간 (입사일 ~ 기준일)
+ // 근속기간 (입사일 ~ 기준일)
         let tenure = '-';
         if (entryDate && entryDate !== '-' && baseDate && baseDate !== '-') {
             try {
-                // ⭐ v6.0.0: 배치 결과에서 근속기간 가져오기
+ // v6.0.0: 배치 결과에서 근속기간 가져오기
                 const batchResult = batchResults.get(emp.id);
                 let tenureObj;
                 
                 if (batchResult && batchResult.tenure) {
                     tenureObj = batchResult.tenure;
                 } else if (typeof TenureCalculator !== 'undefined') {
-                    // 배치에 없으면 로컬 계산 (fallback)
+ // 배치에 없으면 로컬 계산 (fallback)
                     tenureObj = TenureCalculator.calculate(entryDate, baseDate);
                 }
                 
@@ -658,12 +658,12 @@ async function buildNewEmployeeRowData(emp, index, periodEndDate, batchResults =
             }
         }
         
-        // 상태 표시 (검색 기간 종료일 기준)
+ // 상태 표시 (검색 기간 종료일 기준)
         const statusDisplay = isRetiredAtPeriodEnd 
             ? '<span style="color:#ef4444;font-weight:600;">퇴사</span>' 
             : '<span style="color:#10b981;font-weight:600;">재직</span>';
         
-        // ✅ XSS 방지
+ // XSS 방지
         const safeName = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.escapeHtml(name)
             : name;
@@ -705,7 +705,7 @@ async function buildNewEmployeeRowData(emp, index, periodEndDate, batchResults =
             error: error.message 
         });
         
-        // 에러 발생 시 기본 데이터 반환
+ // 에러 발생 시 기본 데이터 반환
         return {
             no: index + 1,
             uniqueCode: emp?.uniqueCode || '-',
@@ -740,7 +740,7 @@ async function buildNewEmployeeRowData(emp, index, periodEndDate, batchResults =
  * @returns {string} CSS 스타일 문자열
  */
 function getNewEmployeeColumnStyle(colKey, rowData) {
-    // 모든 컬럼 가운데 정렬로 통일
+ // 모든 컬럼 가운데 정렬로 통일
     return 'text-align:center;';
 }
 
@@ -752,7 +752,7 @@ function getNewEmployeeColumnStyle(colKey, rowData) {
  * @param {string} [orientation='landscape'] - 페이지 방향 ('portrait' | 'landscape')
  * 
  * @description
- * ⭐ 인쇄유틸_인사.print() 사용하여 인쇄 문제 해결
+ * 인쇄유틸_인사.print() 사용하여 인쇄 문제 해결
  * - 사이드바/메뉴 출력 방지
  * - 테이블만 깔끔하게 인쇄
  * - A4 가로/세로 선택 가능
@@ -762,7 +762,7 @@ function getNewEmployeeColumnStyle(colKey, rowData) {
  * 
  * @example
  * printNewEmployeeList('landscape'); // A4 가로 인쇄
- * printNewEmployeeList('portrait');  // A4 세로 인쇄
+ * printNewEmployeeList('portrait'); // A4 세로 인쇄
  */
 function printNewEmployeeList(orientation = 'landscape') {
     로거_인사?.info('입사자 목록 인쇄 시작', { orientation });
@@ -771,21 +771,21 @@ function printNewEmployeeList(orientation = 'landscape') {
         const table = document.getElementById('newEmployeeListTable');
         
         if (!table) {
-            alert('⚠️ 먼저 입사자 목록을 생성하세요.');
+            alert('[주의] 먼저 입사자 목록을 생성하세요.');
             return;
         }
         
-        // 제목 정보 추출
+ // 제목 정보 추출
         const cardTitle = document.querySelector('#newEmployeeListResult .card-title');
         const titleText = cardTitle ? cardTitle.textContent : '입사자 목록';
         
-        // 테이블 복제 및 가운데 정렬 적용
+ // 테이블 복제 및 가운데 정렬 적용
         const tableClone = table.cloneNode(true);
         tableClone.querySelectorAll('th, td').forEach(cell => {
             cell.style.textAlign = 'center';
         });
         
-        // ⭐ 헤더 행의 인라인 스타일 초기화 (color:white 제거)
+ // 헤더 행의 인라인 스타일 초기화 (color:white 제거)
         const headerRow = tableClone.querySelector('thead tr');
         if (headerRow) {
             headerRow.style.background = '';
@@ -817,14 +817,14 @@ function printNewEmployeeList(orientation = 'landscape') {
                 </style>
             </head>
             <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
+                <button class="no-print" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄하기 (Ctrl+P)</button>
                 <h2>${titleText}</h2>
                 ${tableClone.outerHTML}
             </body>
             </html>
         `;
         
-        // Electron 환경에서 시스템 브라우저로 열기
+ // Electron 환경에서 시스템 브라우저로 열기
         if (window.electronAPI && window.electronAPI.openInBrowser) {
             window.electronAPI.openInBrowser(htmlContent, 'new_employee_print.html');
         } else {
@@ -839,7 +839,7 @@ function printNewEmployeeList(orientation = 'landscape') {
         
     } catch (error) {
         로거_인사?.error('입사자 목록 인쇄 실패', error);
-        alert('❌ 인쇄 중 오류가 발생했습니다.');
+        alert('[오류] 인쇄 중 오류가 발생했습니다.');
     }
 }
 
@@ -859,7 +859,7 @@ function exportNewEmployeeListToExcel() {
     로거_인사?.info('엑셀 다운로드 시작');
     
     try {
-        // 테이블 확인
+ // 테이블 확인
         const table = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('newEmployeeListTable')
             : document.getElementById('newEmployeeListTable');
@@ -870,12 +870,12 @@ function exportNewEmployeeListToExcel() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('먼저 입사자 목록을 생성하세요.');
             } else {
-                alert('⚠️ 먼저 입사자 목록을 생성하세요.');
+                alert('[주의] 먼저 입사자 목록을 생성하세요.');
             }
             return;
         }
         
-        // XLSX 라이브러리 확인
+ // XLSX 라이브러리 확인
         if (typeof XLSX === 'undefined') {
             로거_인사?.error('XLSX 라이브러리를 찾을 수 없음');
             
@@ -885,12 +885,12 @@ function exportNewEmployeeListToExcel() {
                     '엑셀 다운로드 기능을 사용할 수 없습니다.'
                 );
             } else {
-                alert('❌ 엑셀 다운로드 기능을 사용할 수 없습니다.');
+                alert('[오류] 엑셀 다운로드 기능을 사용할 수 없습니다.');
             }
             return;
         }
         
-        // 날짜 정보 가져오기
+ // 날짜 정보 가져오기
         const startDateField = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('newEmployeeStartDate')
             : document.getElementById('newEmployeeStartDate');
@@ -902,11 +902,11 @@ function exportNewEmployeeListToExcel() {
         const startDate = startDateField ? startDateField.value : '';
         const endDate = endDateField ? endDateField.value : '';
         
-        // 엑셀 변환
+ // 엑셀 변환
         const wb = XLSX.utils.table_to_book(table);
         const filename = `입사자목록_${startDate}_${endDate}.xlsx`;
         
-        // 다운로드
+ // 다운로드
         XLSX.writeFile(wb, filename);
         
         로거_인사?.info('엑셀 다운로드 완료', { filename });
@@ -914,7 +914,7 @@ function exportNewEmployeeListToExcel() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.success(`입사자 목록이 엑셀로 다운로드되었습니다.\n\n파일명: ${filename}`);
         } else {
-            alert(`✅ 입사자 목록이 엑셀로 다운로드되었습니다.\n\n파일명: ${filename}`);
+            alert(`입사자 목록이 엑셀로 다운로드되었습니다.\n\n파일명: ${filename}`);
         }
         
     } catch (error) {
@@ -923,7 +923,7 @@ function exportNewEmployeeListToExcel() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '엑셀 다운로드 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 엑셀 다운로드 중 오류가 발생했습니다.');
+            alert('[오류] 엑셀 다운로드 중 오류가 발생했습니다.');
             console.error('엑셀 다운로드 오류:', error);
         }
     }
@@ -945,21 +945,21 @@ function setDefaultDates() {
     try {
         로거_인사?.debug('기본 날짜 설정 시작');
         
-        // 오늘 날짜
+ // 오늘 날짜
         const today = new Date();
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
         
-        // 시작일: 현재 년도 1월 1일
+ // 시작일: 현재 년도 1월 1일
         const startDate = `${year}-01-01`;
         
-        // 종료일: 오늘
+ // 종료일: 오늘
         const endDate = `${year}-${month}-${day}`;
         
         로거_인사?.debug('계산된 날짜', { startDate, endDate });
         
-        // 날짜 필드 설정
+ // 날짜 필드 설정
         const startDateField = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('newEmployeeStartDate')
             : document.getElementById('newEmployeeStartDate');
@@ -996,7 +996,7 @@ window.addEventListener('DOMContentLoaded', function() {
     try {
         로거_인사?.debug('입사자 목록 모듈 초기화');
         
-        // 입사자 목록 모듈에 컬럼 선택기 추가
+ // 입사자 목록 모듈에 컬럼 선택기 추가
         const newEmployeeModule = document.querySelector('#module-new-employee-list .card');
         
         if (newEmployeeModule) {
@@ -1009,7 +1009,7 @@ window.addEventListener('DOMContentLoaded', function() {
             
             로거_인사?.info('컬럼 선택기 추가 완료');
             
-            // ⭐ 기본 날짜 설정 (현재 년도 1월 1일 ~ 오늘)
+ // 기본 날짜 설정 (현재 년도 1월 1일 ~ 오늘)
             setTimeout(() => {
                 setDefaultDates();
             }, 100);
@@ -1023,45 +1023,45 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * 📊 리팩토링 통계
+ * 리팩토링 통계
  * 
  * Before (원본):
  * - 총 줄 수: 403줄
  * - 중복 코드: 약 50줄 (직원 정보 접근, 호봉 판단)
- * - 에러 처리: 0곳 ⚠️
+ * - 에러 처리: 0곳 
  * - 로깅: 2곳 (console.error만)
- * - XSS 방지: 0곳 ⚠️
+ * - XSS 방지: 0곳 
  * - 함수 개수: 9개
  * - 인쇄 방식: window.print() (문제 있음!)
  * 
  * After (리팩토링):
  * - 총 줄 수: 약 1,090줄 (주석 포함)
  * - 실제 코드: 약 730줄
- * - 중복 코드: 0줄 ✅ (100% 제거)
+ * - 중복 코드: 0줄 (100% 제거)
  * - 에러 처리: 9곳 (모든 주요 함수)
  * - 로깅: 40곳 (debug 22, info 11, warn 5, error 2)
- * - XSS 방지: 100% ✅ (모든 출력)
+ * - XSS 방지: 100% (모든 출력)
  * - 함수 개수: 9개 (동일)
  * - 인쇄 방식: 인쇄유틸_인사.print() (문제 해결!)
  * 
  * 개선 효과:
- * ✅ 중복 코드 50줄 → 0줄 (100% 감소)
- * ✅ XSS 공격 100% 방지
- * ✅ 에러 추적 100% 가능
- * ✅ 사이드바/메뉴 인쇄 방지 (ID 기반 격리) ⭐ 핵심
- * ✅ 표 선 끊김 방지
- * ✅ A4 최적화 (가로/세로)
- * ✅ 인쇄 안정성 향상
- * ✅ 제목 포함 인쇄
- * ✅ 모든 테이블 가운데 정렬
+ * 중복 코드 50줄 → 0줄 (100% 감소)
+ * XSS 공격 100% 방지
+ * 에러 추적 100% 가능
+ * 사이드바/메뉴 인쇄 방지 (ID 기반 격리) 핵심
+ * 표 선 끊김 방지
+ * A4 최적화 (가로/세로)
+ * 인쇄 안정성 향상
+ * 제목 포함 인쇄
+ * 모든 테이블 가운데 정렬
  * 
  * 핵심 개선 사항:
  * 1. 직원유틸_인사 사용 → 중복 코드 제거
  * 2. DOM유틸_인사.escapeHtml() → XSS 방지
- * 3. 인쇄유틸_인사.print() → 인쇄 문제 해결 ⭐⭐⭐
+ * 3. 인쇄유틸_인사.print() → 인쇄 문제 해결 
  * 4. 로거_인사 사용 → 완벽한 추적
  * 5. 에러처리_인사 사용 → 일관된 에러 처리
- * 6. ID 기반 인쇄 (#new-employees-print-area) → 격리 ⭐
+ * 6. ID 기반 인쇄 (#new-employees-print-area) → 격리 
  * 7. Fallback 로직 → 하위 호환성 유지
  * 8. JSDoc 주석 완비 → 유지보수성
  * 9. 제목 포함 인쇄 → 사용자 편의성

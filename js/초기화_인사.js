@@ -10,45 +10,45 @@
  * @since 2024-11-05
  * 
  * [변경 이력]
- * v3.4.0 (2026-02-06) ⭐ Electron 포커스 문제 해결
- *   - 페이지 초기화 완료 후 윈도우 포커스 복원
- *   - 복원/전체삭제 후 입력란에 커서가 안 들어가는 문제 수정
+ * v3.4.0 (2026-02-06) Electron 포커스 문제 해결
+ * - 페이지 초기화 완료 후 윈도우 포커스 복원
+ * - 복원/전체삭제 후 입력란에 커서가 안 들어가는 문제 수정
  *
- * v3.3.0 (2026-02-06) ⭐ 날짜 입력 필드 개선
- *   - 연도 4자리 제한 (5자리 이상 입력 방지)
- *   - date input에 min/max 속성 자동 설정 (1900-01-01 ~ 2099-12-31)
- *   - event delegation으로 동적 생성 요소에도 자동 적용
- *   - 입사일, 과거경력 시작일/종료일 모두 적용
+ * v3.3.0 (2026-02-06) 날짜 입력 필드 개선
+ * - 연도 4자리 제한 (5자리 이상 입력 방지)
+ * - date input에 min/max 속성 자동 설정 (1900-01-01 ~ 2099-12-31)
+ * - event delegation으로 동적 생성 요소에도 자동 적용
+ * - 입사일, 과거경력 시작일/종료일 모두 적용
  *
- * v3.2.0 (2026-01-30) ⭐ async/await 적용
- *   - showDeptEmployees: async로 변경 (getCurrentRank await)
- *   - showMonthlyUpgrades: async로 변경 (getCurrentRank await)
- *   - _updateDashboardAlerts: async로 변경 (getNextUpgradeDate, getCurrentRank await)
- *   - [object Promise] 표시 버그 수정
+ * v3.2.0 (2026-01-30) async/await 적용
+ * - showDeptEmployees: async로 변경 (getCurrentRank await)
+ * - showMonthlyUpgrades: async로 변경 (getCurrentRank await)
+ * - _updateDashboardAlerts: async로 변경 (getNextUpgradeDate, getCurrentRank await)
+ * - [object Promise] 표시 버그 수정
  * 
- * v3.1.0 (2025-12-04) ⭐ 대시보드 UI 전면 개편
- *   - 실무 중심 대시보드 레이아웃
- *   - 인사말 헤더 (조직명, 오늘 날짜)
- *   - 5개 통계 카드 (전체/재직/휴직/퇴사/평균호봉)
- *   - 빠른 실행 버튼 (직원등록, 인사발령, 육아휴직, 호봉획정표)
- *   - 이번 달 현황 (입사/퇴사/발령/승급예정)
- *   - 알림/예정 (승급예정, 휴직복귀, 계약만료 등)
- *   - 부서별 현황
- *   - 최근 활동
+ * v3.1.0 (2025-12-04) 대시보드 UI 전면 개편
+ * - 실무 중심 대시보드 레이아웃
+ * - 인사말 헤더 (조직명, 오늘 날짜)
+ * - 5개 통계 카드 (전체/재직/휴직/퇴사/평균호봉)
+ * - 빠른 실행 버튼 (직원등록, 인사발령, 육아휴직, 호봉획정표)
+ * - 이번 달 현황 (입사/퇴사/발령/승급예정)
+ * - 알림/예정 (승급예정, 휴직복귀, 계약만료 등)
+ * - 부서별 현황
+ * - 최근 활동
  * 
  * v3.0.1 - 대시보드 평균 호봉 NaN 버그 수정 (2025-11-12)
- *   - 연봉제 직원의 startRank가 "-" 문자열인 경우 필터링
- *   - 숫자 타입 검증 추가 (typeof === 'number' && !isNaN)
- *   - 영향: 손상희, 임성현, 노경희, 문민영 등 연봉제 직원 제외
+ * - 연봉제 직원의 startRank가 "-" 문자열인 경우 필터링
+ * - 숫자 타입 검증 추가 (typeof === 'number' && !isNaN)
+ * - 영향: 손상희, 임성현, 노경희, 문민영 등 연봉제 직원 제외
  * 
  * v3.0 - 프로덕션급 리팩토링
- *   - Phase 1 유틸리티 적용 (로거, 에러처리, 직원유틸, DOM유틸)
- *   - 완벽한 에러 처리
- *   - 체계적 로깅
- *   - 코드 정리 및 주석 추가
- *   - 함수 분리 (가독성 향상)
- *   - 대시보드 성능 최적화
- *   - 통계 계산 개선
+ * - Phase 1 유틸리티 적용 (로거, 에러처리, 직원유틸, DOM유틸)
+ * - 완벽한 에러 처리
+ * - 체계적 로깅
+ * - 코드 정리 및 주석 추가
+ * - 함수 분리 (가독성 향상)
+ * - 대시보드 성능 최적화
+ * - 통계 계산 개선
  * 
  * [하위 호환성]
  * - 모든 기존 함수명 유지
@@ -84,23 +84,23 @@ function updateDashboard() {
     try {
         로거_인사?.debug('대시보드 업데이트 시작');
         
-        // DB 확인
+ // DB 확인
         if (typeof db === 'undefined' || !db) {
             로거_인사?.error('DB를 찾을 수 없습니다');
             console.error('대시보드 업데이트 오류: DB 없음');
             return;
         }
         
-        // 직원 데이터 가져오기
+ // 직원 데이터 가져오기
         const employees = db.getEmployees();
         const active = db.getActiveEmployees();
         const retired = employees.filter(e => e.employment?.status === '퇴사');
         const onLeave = employees.filter(e => e.maternityLeave?.isOnLeave === true && e.employment?.status !== '퇴사');
         
-        // 통계 계산
+ // 통계 계산
         const stats = _calculateDashboardStats(employees, active);
         
-        // UI 업데이트 (v3.1.0 새 대시보드)
+ // UI 업데이트 (v3.1.0 새 대시보드)
         _updateDashboardUINew(employees, active, retired, onLeave, stats);
         
         로거_인사?.info('대시보드 업데이트 완료', {
@@ -121,25 +121,25 @@ function updateDashboard() {
  */
 function _updateDashboardUINew(employees, active, retired, onLeave, stats) {
     try {
-        // 1. 오늘 날짜 및 조직명
+ // 1. 오늘 날짜 및 조직명
         _updateGreeting();
         
-        // 2. 통계 카드 업데이트
+ // 2. 통계 카드 업데이트
         _updateDashboardStatCards(employees, active, retired, onLeave, stats);
         
-        // 3. 이번 달 현황
+ // 3. 이번 달 현황
         _updateMonthlyStats(employees);
         
-        // 4. 알림/예정
+ // 4. 알림/예정
         _updateDashboardAlerts(employees, active);
         
-        // 5. 부서별 현황
+ // 5. 부서별 현황
         _updateDeptStats(active);
         
-        // 6. 최근 활동
+ // 6. 최근 활동
         _updateRecentActivity(employees);
         
-        // 7. 시스템 정보
+ // 7. 시스템 정보
         _updateSystemInfo();
         
         로거_인사?.debug('대시보드 UI 업데이트 완료 (v3.1.0)');
@@ -154,7 +154,7 @@ function _updateDashboardUINew(employees, active, retired, onLeave, stats) {
  */
 function _updateGreeting() {
     try {
-        // 오늘 날짜
+ // 오늘 날짜
         const today = new Date();
         const days = ['일', '월', '화', '수', '목', '금', '토'];
         const dateStr = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 (${days[today.getDay()]})`;
@@ -164,7 +164,7 @@ function _updateGreeting() {
             dateElement.textContent = dateStr;
         }
         
-        // 조직명
+ // 조직명
         const orgName = db.data?.settings?.organizationName || '인사관리시스템';
         const orgElement = document.getElementById('dashboard-org-name');
         if (orgElement) {
@@ -212,19 +212,19 @@ function _updateMonthlyStats(employees) {
         let upgradeCount = 0;
         
         employees.forEach(emp => {
-            // 이번 달 입사
+ // 이번 달 입사
             const entryDate = emp.employment?.entryDate || '';
             if (entryDate.startsWith(thisMonth)) {
                 hiredCount++;
             }
             
-            // 이번 달 퇴사
+ // 이번 달 퇴사
             const retireDate = emp.employment?.retirementDate || '';
             if (retireDate.startsWith(thisMonth)) {
                 retiredCount++;
             }
             
-            // 이번 달 발령
+ // 이번 달 발령
             (emp.assignments || []).forEach(assign => {
                 const assignDate = assign.startDate || assign.date || '';
                 if (assignDate.startsWith(thisMonth)) {
@@ -232,19 +232,19 @@ function _updateMonthlyStats(employees) {
                 }
             });
             
-            // 이번달 승급 인원 (매월 1일 기준)
-            // firstUpgradeDate의 월-일이 현재월-01인 호봉제 재직자
+ // 이번달 승급 인원 (매월 1일 기준)
+ // firstUpgradeDate의 월-일이 현재월-01인 호봉제 재직자
             const isRetired = emp.employment?.status === '퇴사';
             if (!isRetired && typeof 직원유틸_인사 !== 'undefined' && 직원유틸_인사.isRankBased(emp)) {
                 const firstUpgrade = emp.rank?.firstUpgradeDate;
-                // firstUpgradeDate: "YYYY-MM-01" 형식에서 MM-01 부분 비교
+ // firstUpgradeDate: "YYYY-MM-01" 형식에서 MM-01 부분 비교
                 if (firstUpgrade && firstUpgrade.substring(5) === thisMonthDay) {
                     upgradeCount++;
                 }
             }
         });
         
-        // DOM 업데이트 + 클릭 이벤트
+ // DOM 업데이트 + 클릭 이벤트
         const monthlyContainer = document.querySelector('.monthly-stats');
         if (monthlyContainer) {
             monthlyContainer.innerHTML = `
@@ -284,7 +284,7 @@ async function _updateDashboardAlerts(employees, active) {
         const todayStr = DateUtils.formatDate(today);
         const alerts = [];
         
-        // 30일 이내 승급 예정자 (async 처리를 위해 for...of 사용)
+ // 30일 이내 승급 예정자 (async 처리를 위해 for...of 사용)
         for (const emp of active) {
             if (typeof 직원유틸_인사 !== 'undefined' && 직원유틸_인사.isRankBased(emp)) {
                 const nextUpgrade = await 직원유틸_인사.getNextUpgradeDate(emp, todayStr);
@@ -299,7 +299,7 @@ async function _updateDashboardAlerts(employees, active) {
                         
                         alerts.push({
                             type: 'info',
-                            icon: '⏰',
+                            icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
                             text: `${name} 승급 D-${diffDays} (${currentRank}→${nextRank}호봉, ${nextUpgrade})`
                         });
                     }
@@ -307,7 +307,7 @@ async function _updateDashboardAlerts(employees, active) {
             }
         }
         
-        // 육아휴직 복귀 예정자 (30일 이내)
+ // 육아휴직 복귀 예정자 (30일 이내)
         for (const emp of active) {
             if (emp.maternityLeave?.isOnLeave) {
                 const endDate = emp.maternityLeave.endDate;
@@ -321,7 +321,7 @@ async function _updateDashboardAlerts(employees, active) {
                             : (emp.personalInfo?.name || '');
                         alerts.push({
                             type: 'success',
-                            icon: '🤱',
+                            icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg>',
                             text: `${name} 휴직 복귀 예정 D-${diffDays} (${endDate})`
                         });
                     }
@@ -329,13 +329,13 @@ async function _updateDashboardAlerts(employees, active) {
             }
         }
         
-        // 알림이 없으면
+ // 알림이 없으면
         if (alerts.length === 0) {
             alertsContainer.innerHTML = '<div class="dashboard-empty">예정된 알림이 없습니다.</div>';
             return;
         }
         
-        // 최대 5개만 표시
+ // 최대 5개만 표시
         const displayAlerts = alerts.slice(0, 5);
         
         const alertsHTML = displayAlerts.map(alert => `
@@ -360,14 +360,14 @@ function _updateDeptStats(active) {
         const container = document.getElementById('dashboard-dept-stats');
         if (!container) return;
         
-        // 부서별 카운트
+ // 부서별 카운트
         const deptCounts = {};
         active.forEach(emp => {
             const dept = emp.currentPosition?.dept || emp.dept || '미지정';
             deptCounts[dept] = (deptCounts[dept] || 0) + 1;
         });
         
-        // 정렬 (인원 많은 순) - 전체 표시
+ // 정렬 (인원 많은 순) - 전체 표시
         const sortedDepts = Object.entries(deptCounts)
             .sort((a, b) => b[1] - a[1]);
         
@@ -400,7 +400,7 @@ function _updateRecentActivity(employees) {
         
         const activities = [];
         
-        // 최근 입사자
+ // 최근 입사자
         employees.forEach(emp => {
             const entryDate = emp.employment?.entryDate;
             if (entryDate) {
@@ -409,12 +409,12 @@ function _updateRecentActivity(employees) {
                     : (emp.personalInfo?.name || '');
                 activities.push({
                     date: entryDate,
-                    icon: '📥',
+                    icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>',
                     text: `${name} 입사`
                 });
             }
             
-            // 최근 퇴사자
+ // 최근 퇴사자
             const retireDate = emp.employment?.retirementDate;
             if (retireDate) {
                 const name = (typeof 직원유틸_인사 !== 'undefined') 
@@ -422,12 +422,12 @@ function _updateRecentActivity(employees) {
                     : (emp.personalInfo?.name || '');
                 activities.push({
                     date: retireDate,
-                    icon: '🚪',
+                    icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
                     text: `${name} 퇴사`
                 });
             }
             
-            // 최근 발령
+ // 최근 발령
             (emp.assignments || []).forEach(assign => {
                 const assignDate = assign.startDate || assign.date;
                 if (assignDate) {
@@ -437,17 +437,17 @@ function _updateRecentActivity(employees) {
                     const dept = assign.dept || '';
                     activities.push({
                         date: assignDate,
-                        icon: '📋',
+                        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>',
                         text: `${name} 인사발령 (${dept})`
                     });
                 }
             });
         });
         
-        // 날짜순 정렬 (최신순)
+ // 날짜순 정렬 (최신순)
         activities.sort((a, b) => b.date.localeCompare(a.date));
         
-        // 최근 5개만
+ // 최근 5개만
         const recentActivities = activities.slice(0, 5);
         
         if (recentActivities.length === 0) {
@@ -475,7 +475,7 @@ function _updateRecentActivity(employees) {
  */
 function _updateSystemInfo() {
     try {
-        // 저장 용량
+ // 저장 용량
         const size = new Blob([JSON.stringify(db.data)]).size;
         const sizeKB = (size / 1024).toFixed(2);
         
@@ -484,7 +484,7 @@ function _updateSystemInfo() {
             sizeElement.textContent = sizeKB + ' KB';
         }
         
-        // 다음 고유번호
+ // 다음 고유번호
         const nextCode = db.getNextUniqueCode();
         const codeElement = document.getElementById('dash-next-code');
         if (codeElement) {
@@ -542,7 +542,7 @@ async function showDeptEmployees(deptName) {
         
         const today = DateUtils.formatDate(new Date());
         
-        // async 처리를 위해 for...of 사용
+ // async 처리를 위해 for...of 사용
         const contentItems = [];
         for (const emp of deptEmployees) {
             const name = (typeof 직원유틸_인사 !== 'undefined') ? 직원유틸_인사.getName(emp) : (emp.personalInfo?.name || '');
@@ -721,18 +721,18 @@ async function showMonthlyUpgrades() {
                 if (firstUpgrade && firstUpgrade.substring(5) === thisMonthDay) {
                     const name = 직원유틸_인사.getName(emp);
                     
-                    // RankCalculator 직접 호출로 현재 호봉 계산
+ // RankCalculator 직접 호출로 현재 호봉 계산
                     let currentRank = 0;
                     const startRank = emp.rank?.startRank;
                     
                     if (typeof RankCalculator !== 'undefined' && startRank && firstUpgrade) {
                         currentRank = RankCalculator.calculateCurrentRank(startRank, firstUpgrade, todayStr);
                     } else {
-                        // 폴백: 직원유틸 사용 (async)
+ // 폴백: 직원유틸 사용 (async)
                         currentRank = parseInt(await 직원유틸_인사.getCurrentRank(emp, todayStr)) || startRank || 1;
                     }
                     
-                    // 이번 달 승급이므로 이전 호봉 = 현재 호봉 - 1
+ // 이번 달 승급이므로 이전 호봉 = 현재 호봉 - 1
                     const prevRank = currentRank - 1;
                     
                     upgrades.push({
@@ -780,15 +780,15 @@ async function showMonthlyUpgrades() {
  */
 function _calculateDashboardStats(employees, active) {
     try {
-        // 호봉제 직원 필터링
+ // 호봉제 직원 필터링
         const rankBasedEmployees = active.filter(emp => {
             try {
-                // 직원유틸 사용 (있으면)
+ // 직원유틸 사용 (있으면)
                 if (typeof 직원유틸_인사 !== 'undefined') {
                     return 직원유틸_인사.isRankBased(emp);
                 }
                 
-                // 수동 확인
+ // 수동 확인
                 const hasValidFirstUpgradeDate = 
                     emp.rank?.firstUpgradeDate && 
                     emp.rank.firstUpgradeDate !== '' && 
@@ -805,8 +805,8 @@ function _calculateDashboardStats(employees, active) {
             }
         });
         
-        // 평균 입사 호봉 계산 (v3.0.1: 타입 검증 추가)
-        // 연봉제 직원의 경우 startRank가 "-" 문자열일 수 있음
+ // 평균 입사 호봉 계산 (v3.0.1: 타입 검증 추가)
+ // 연봉제 직원의 경우 startRank가 "-" 문자열일 수 있음
         const validRankEmployees = rankBasedEmployees.filter(emp => {
             const rank = emp.rank?.startRank;
             return typeof rank === 'number' && !isNaN(rank);
@@ -852,19 +852,19 @@ function _calculateDashboardStats(employees, active) {
  */
 function _updateDashboardUI(employees, active, retired, stats) {
     try {
-        // 1. 통계 숫자 업데이트
+ // 1. 통계 숫자 업데이트
         _updateStatNumbers(employees, active, retired, stats);
         
-        // 2. 저장 공간 크기 업데이트
+ // 2. 저장 공간 크기 업데이트
         _updateStorageSize();
         
-        // 3. 최근 등록 직원 업데이트
+ // 3. 최근 등록 직원 업데이트
         _updateRecentEmployees(employees);
         
-        // 4. 조직명 업데이트
+ // 4. 조직명 업데이트
         _updateOrganizationName();
         
-        // 5. 단축근로 현황 업데이트 ⭐ NEW
+ // 5. 단축근로 현황 업데이트 NEW
         _updateReducedWorkSummary(employees);
         
         로거_인사?.debug('대시보드 UI 업데이트 완료');
@@ -885,7 +885,7 @@ function _updateDashboardUI(employees, active, retired, stats) {
  */
 function _updateStatNumbers(employees, active, retired, stats) {
     try {
-        // DOM 직접 업데이트 (DOM유틸 의존성 제거)
+ // DOM 직접 업데이트 (DOM유틸 의존성 제거)
         const updateElement = (id, value) => {
             const element = document.getElementById(id);
             if (element) {
@@ -956,7 +956,7 @@ function _updateRecentEmployees(employees) {
             return;
         }
         
-        // 최근 5명 (역순)
+ // 최근 5명 (역순)
         const recent = employees.slice(-5).reverse();
         
         if (recent.length === 0) {
@@ -964,10 +964,10 @@ function _updateRecentEmployees(employees) {
             return;
         }
         
-        // HTML 생성
+ // HTML 생성
         const recentHTML = recent.map(emp => {
             try {
-                // 직원 정보 추출
+ // 직원 정보 추출
                 const name = (typeof 직원유틸_인사 !== 'undefined')
                     ? 직원유틸_인사.getName(emp)
                     : (emp.personalInfo?.name || emp.name || '이름 없음');
@@ -976,7 +976,7 @@ function _updateRecentEmployees(employees) {
                     ? 직원유틸_인사.getDepartment(emp)
                     : (emp.currentPosition?.dept || emp.dept || '부서 미지정');
                 
-                // XSS 방지
+ // XSS 방지
                 const safeName = (typeof DOM유틸_인사 !== 'undefined')
                     ? DOM유틸_인사.escapeHtml(name)
                     : name.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -1023,7 +1023,7 @@ function _updateReducedWorkSummary(employees) {
         
         const today = new Date();
         
-        // 현재 진행 중인 단축근로 직원 수집
+ // 현재 진행 중인 단축근로 직원 수집
         const activePregnancy = [];
         const activeChildcare = [];
         const activeFlexTime = [];
@@ -1035,7 +1035,7 @@ function _updateReducedWorkSummary(employees) {
                 ? 직원유틸_인사.getName(emp)
                 : (emp.personalInfo?.name || emp.name || '이름 없음');
             
-            // 임신기 단축근로
+ // 임신기 단축근로
             (emp.reducedWork.pregnancy || []).forEach(r => {
                 const start = new Date(r.startDate);
                 const end = new Date(r.endDate);
@@ -1044,7 +1044,7 @@ function _updateReducedWorkSummary(employees) {
                 }
             });
             
-            // 육아기 단축근로
+ // 육아기 단축근로
             (emp.reducedWork.childcare || []).forEach(r => {
                 const start = new Date(r.startDate);
                 const end = new Date(r.endDate);
@@ -1053,7 +1053,7 @@ function _updateReducedWorkSummary(employees) {
                 }
             });
             
-            // 10시 출근제
+ // 10시 출근제
             (emp.reducedWork.flexTime || []).forEach(r => {
                 const start = new Date(r.startDate);
                 const end = new Date(r.endDate);
@@ -1070,27 +1070,27 @@ function _updateReducedWorkSummary(employees) {
             return;
         }
         
-        // HTML 생성 - 요약 통계
+ // HTML 생성 - 요약 통계
         let html = `
             <div style="display: flex; justify-content: space-around; text-align: center; padding: 12px 0; margin-bottom: 16px; background: #f8f9fe; border-radius: 8px;">
                 <div>
                     <div style="font-size: 22px; font-weight: 700; color: #db2777;">${activePregnancy.length}</div>
-                    <div style="font-size: 11px; color: #6b7280;">🤰 임신기</div>
+                    <div style="font-size: 11px; color: #6b7280;">임신기</div>
                 </div>
                 <div style="border-left: 1px solid #e5e7eb;"></div>
                 <div>
                     <div style="font-size: 22px; font-weight: 700; color: #2563eb;">${activeChildcare.length}</div>
-                    <div style="font-size: 11px; color: #6b7280;">👶 육아기</div>
+                    <div style="font-size: 11px; color: #6b7280;">육아기</div>
                 </div>
                 <div style="border-left: 1px solid #e5e7eb;"></div>
                 <div>
                     <div style="font-size: 22px; font-weight: 700; color: #d97706;">${activeFlexTime.length}</div>
-                    <div style="font-size: 11px; color: #6b7280;">🕙 10시출근</div>
+                    <div style="font-size: 11px; color: #6b7280;">10시출근</div>
                 </div>
             </div>
         `;
         
-        // 상세 목록 - 테이블 형식
+ // 상세 목록 - 테이블 형식
         const allActive = [
             ...activePregnancy.map(a => ({ ...a, type: 'pregnancy', color: '#db2777' })),
             ...activeChildcare.map(a => ({ ...a, type: 'childcare', color: '#2563eb' })),
@@ -1113,44 +1113,44 @@ function _updateReducedWorkSummary(employees) {
             `;
             
             allActive.forEach((item, idx) => {
-                // XSS 방지
+ // XSS 방지
                 const safeName = (typeof DOM유틸_인사 !== 'undefined')
                     ? DOM유틸_인사.escapeHtml(item.name)
                     : item.name.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
                 
-                // 남은 일수 계산
+ // 남은 일수 계산
                 const endDate = new Date(item.record.endDate);
                 const daysLeft = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
                 const daysLeftText = daysLeft > 0 ? `${daysLeft}일` : '오늘';
                 const daysLeftColor = daysLeft <= 7 ? '#dc2626' : (daysLeft <= 30 ? '#d97706' : '#059669');
                 
-                // 유형별 정보
+ // 유형별 정보
                 let typeLabel = '';
                 let workTimeInfo = '';
                 
                 if (item.type === 'pregnancy') {
                     const pregnancyTypes = { 'early': '12주 이내', 'late': '32주 이후', 'high_risk': '고위험' };
-                    typeLabel = `🤰 임신기 (${pregnancyTypes[item.record.type] || ''})`;
+                    typeLabel = `임신기 (${pregnancyTypes[item.record.type] || ''})`;
                     workTimeInfo = `${item.record.workStart || '11:00'}~${item.record.workEnd || '18:00'}`;
                 } else if (item.type === 'childcare') {
                     const ratio = Math.round((item.record.weeklyHours / item.record.originalWeeklyHours) * 100);
-                    typeLabel = `👶 육아기 (${ratio}%)`;
+                    typeLabel = `육아기 (${ratio}%)`;
                     
-                    // 새 구조: 균등 또는 요일별
+ // 새 구조: 균등 또는 요일별
                     if (item.record.uniformSchedule) {
                         workTimeInfo = `${item.record.uniformSchedule.workStart}~${item.record.uniformSchedule.workEnd}`;
                     } else if (item.record.uniformHours) {
-                        // 레거시
+ // 레거시
                         workTimeInfo = `1일 ${item.record.uniformHours}h`;
                     } else {
                         workTimeInfo = `주 ${item.record.weeklyHours}시간`;
                     }
                 } else {
-                    typeLabel = `🕙 ${item.record.flexType === 'late_start' ? '10시 출근' : '조기 퇴근'}`;
+                    typeLabel = `${item.record.flexType === 'late_start' ? '10시 출근' : '조기 퇴근'}`;
                     workTimeInfo = `${item.record.workStart}~${item.record.workEnd}`;
                 }
                 
-                // 기간 표시
+ // 기간 표시
                 const startStr = item.record.startDate.substring(2).replace(/-/g, '.');
                 const endStr = item.record.endDate.substring(2).replace(/-/g, '.');
                 
@@ -1233,16 +1233,16 @@ function loadSettings() {
     try {
         로거_인사?.debug('조직 설정 로드 시작');
         
-        // DB 확인
+ // DB 확인
         if (typeof db === 'undefined' || !db) {
             로거_인사?.error('DB를 찾을 수 없습니다');
             return;
         }
         
-        // 조직 설정 전체 가져오기
+ // 조직 설정 전체 가져오기
         const orgSettings = db.getOrganizationSettings();
         
-        // 입력 필드에 설정
+ // 입력 필드에 설정
         const nameEl = document.getElementById('organizationName');
         const addressEl = document.getElementById('organizationAddress');
         const phoneEl = document.getElementById('organizationPhone');
@@ -1280,14 +1280,14 @@ function saveOrganizationSettings() {
     try {
         로거_인사?.debug('조직 설정 저장 시작');
         
-        // DB 확인
+ // DB 확인
         if (typeof db === 'undefined' || !db) {
             로거_인사?.error('DB를 찾을 수 없습니다');
             에러처리_인사?.warn('데이터베이스를 찾을 수 없습니다.');
             return;
         }
         
-        // 입력값 가져오기
+ // 입력값 가져오기
         const nameEl = document.getElementById('organizationName');
         const addressEl = document.getElementById('organizationAddress');
         const phoneEl = document.getElementById('organizationPhone');
@@ -1302,14 +1302,14 @@ function saveOrganizationSettings() {
         
         const orgName = nameEl.value.trim();
         
-        // 빈 값 검증 (조직명만 필수)
+ // 빈 값 검증 (조직명만 필수)
         if (!orgName) {
             로거_인사?.warn('조직명이 비어있습니다');
-            에러처리_인사?.warn('⚠️ 조직명을 입력하세요.');
+            에러처리_인사?.warn('조직명을 입력하세요.');
             return;
         }
         
-        // 조직 설정 전체 저장
+ // 조직 설정 전체 저장
         const settings = {
             name: orgName,
             address: addressEl?.value?.trim() || '',
@@ -1324,7 +1324,7 @@ function saveOrganizationSettings() {
             return;
         }
         
-        // 사이드바 업데이트
+ // 사이드바 업데이트
         const displayElement = document.getElementById('orgNameDisplay');
         if (displayElement) {
             displayElement.textContent = orgName;
@@ -1333,12 +1333,12 @@ function saveOrganizationSettings() {
         로거_인사?.info('조직 설정 저장 완료', settings);
         
         에러처리_인사?.success(
-            `✅ 조직 설정이 저장되었습니다.\n\n` +
+            `조직 설정이 저장되었습니다.\n\n` +
             `조직명: ${settings.name}\n` +
             `주소: ${settings.address || '(미입력)'}\n` +
             `연락처: ${settings.phone || '(미입력)'}\n` +
             `퇴직연금: ${settings.pensionBank} ${settings.pensionType}형\n\n` +
-            `💡 근로계약서 등의 문서에 자동으로 표시됩니다.`
+            `[안내] 근로계약서 등의 문서에 자동으로 표시됩니다.`
         );
         
     } catch (error) {
@@ -1355,23 +1355,23 @@ function saveOrganizationSettings() {
  * @example
  * const manager = getTopManagerInfo();
  * if (manager) {
- *     console.log(`${manager.position}: ${manager.name}`);
+ * console.log(`${manager.position}: ${manager.name}`);
  * }
  */
 function getTopManagerInfo() {
     try {
-        // 조직도 설정 로드
+ // 조직도 설정 로드
         const orgChartSettings = localStorage.getItem('hr_org_chart_settings');
         if (!orgChartSettings) return null;
         
         const settings = JSON.parse(orgChartSettings);
         const positionSettings = settings.positionSettings || [];
         
-        // 기관장 역할 직위 찾기
+ // 기관장 역할 직위 찾기
         const directorPosition = positionSettings.find(p => p.role === 'director');
         if (!directorPosition) return null;
         
-        // 해당 직위 재직자 찾기
+ // 해당 직위 재직자 찾기
         const employees = db.getEmployees();
         const today = new Date().toISOString().split('T')[0];
         
@@ -1412,47 +1412,47 @@ function getTopManagerInfo() {
  */
 window.addEventListener('DOMContentLoaded', function() {
     try {
-        console.log('🚀 인사관리 시스템 v3.0 시작');
+        console.log(' 인사관리 시스템 v3.0 시작');
         로거_인사?.info('시스템 초기화 시작');
         
-        // 1. 대시보드 업데이트
+ // 1. 대시보드 업데이트
         if (typeof updateDashboard === 'function') {
             updateDashboard();
         }
         
-        // 2. 오늘 날짜로 초기화
+ // 2. 오늘 날짜로 초기화
         _initializeDateFields();
         
-        // 3. 고유번호 필드 업데이트
+ // 3. 고유번호 필드 업데이트
         if (typeof updateUniqueCodeField === 'function') {
             updateUniqueCodeField();
         }
         
-        // 4. 첫 경력 추가
+ // 4. 첫 경력 추가
         if (typeof addCareer === 'function') {
             addCareer();
         }
         
-        // 5. electron-store 동기화 (시간외근무 앱 등 외부 앱이 급여 데이터를 읽을 수 있도록)
+ // 5. electron-store 동기화 (시간외근무 앱 등 외부 앱이 급여 데이터를 읽을 수 있도록)
         _syncSettingsToElectronStore();
         
-        // 6. ⭐ v3.3.0: 날짜 입력 필드 개선 (연도 4자리 제한, 자동 이동)
+ // 6. v3.3.0: 날짜 입력 필드 개선 (연도 4자리 제한, 자동 이동)
         _initializeDateInputEnhancements();
         
-        // 7. ⭐ v3.4.0: 윈도우 포커스 복원 (복원/전체삭제 후 포커스 문제 해결)
+ // 7. v3.4.0: 윈도우 포커스 복원 (복원/전체삭제 후 포커스 문제 해결)
         if (window.electronAPI?.focusWindow) {
             setTimeout(async () => {
                 await window.electronAPI.focusWindow();
             }, 500);
         }
         
-        console.log('✅ 초기화 완료');
+        console.log(' 초기화 완료');
         로거_인사?.info('시스템 초기화 완료');
         
     } catch (error) {
-        console.error('❌ 초기화 오류:', error);
+        console.error(' 초기화 오류:', error);
         로거_인사?.error('시스템 초기화 오류', error);
-        // 초기화 실패해도 페이지는 표시됨
+ // 초기화 실패해도 페이지는 표시됨
     }
 });
 
@@ -1473,19 +1473,19 @@ function _initializeDateInputEnhancements() {
     try {
         로거_인사?.debug('날짜 입력 필드 개선 초기화 시작');
         
-        // 1. 기존 date input에 max 속성 설정 (연도 제한)
+ // 1. 기존 date input에 max 속성 설정 (연도 제한)
         document.querySelectorAll('input[type="date"]').forEach(input => {
             _applyDateInputEnhancements(input);
         });
         
-        // 2. Event Delegation: 동적 생성 date input에도 자동 적용
+ // 2. Event Delegation: 동적 생성 date input에도 자동 적용
         document.addEventListener('focusin', function(e) {
             if (e.target && e.target.type === 'date' && !e.target.dataset.dateEnhanced) {
                 _applyDateInputEnhancements(e.target);
             }
         });
         
-        // 3. 키보드 입력 감지 (연도 4자리 입력 시 자동 이동)
+ // 3. 키보드 입력 감지 (연도 4자리 입력 시 자동 이동)
         document.addEventListener('keydown', _handleDateInputKeydown, true);
         
         로거_인사?.info('날짜 입력 필드 개선 초기화 완료');
@@ -1503,20 +1503,20 @@ function _initializeDateInputEnhancements() {
 function _applyDateInputEnhancements(input) {
     if (!input || input.dataset.dateEnhanced) return;
     
-    // max 속성 설정 (2099-12-31)
+ // max 속성 설정 (2099-12-31)
     if (!input.max) {
         input.max = '2099-12-31';
     }
     
-    // min 속성 설정 (1900-01-01)
+ // min 속성 설정 (1900-01-01)
     if (!input.min) {
         input.min = '1900-01-01';
     }
     
-    // input 이벤트에서 연도 검증
+ // input 이벤트에서 연도 검증
     input.addEventListener('input', _validateDateInputYear);
     
-    // 마킹 (중복 적용 방지)
+ // 마킹 (중복 적용 방지)
     input.dataset.dateEnhanced = 'true';
 }
 
@@ -1531,10 +1531,10 @@ function _validateDateInputYear(e) {
     
     if (!value) return;
     
-    // YYYY-MM-DD 형식에서 연도 추출
+ // YYYY-MM-DD 형식에서 연도 추출
     const yearMatch = value.match(/^(\d+)-/);
     if (yearMatch && yearMatch[1].length > 4) {
-        // 연도가 4자리 초과면 4자리로 자르기
+ // 연도가 4자리 초과면 4자리로 자르기
         const correctedYear = yearMatch[1].substring(0, 4);
         const rest = value.substring(yearMatch[1].length);
         input.value = correctedYear + rest;
@@ -1558,32 +1558,32 @@ function _validateDateInputYear(e) {
 function _handleDateInputKeydown(e) {
     const input = e.target;
     
-    // date input이 아니면 무시
+ // date input이 아니면 무시
     if (!input || input.type !== 'date') return;
     
-    // 숫자 키만 처리 (0-9)
+ // 숫자 키만 처리 (0-9)
     if (!/^[0-9]$/.test(e.key)) return;
     
-    // 현재 선택 영역 확인 (연도 필드인지)
-    // Chrome에서 date input의 selectionStart/selectionEnd는 null
-    // 대신 입력 후 값 변화로 판단
+ // 현재 선택 영역 확인 (연도 필드인지)
+ // Chrome에서 date input의 selectionStart/selectionEnd는 null
+ // 대신 입력 후 값 변화로 판단
     
     const beforeValue = input.value;
     
-    // 약간의 지연 후 값 확인 (입력이 반영된 후)
+ // 약간의 지연 후 값 확인 (입력이 반영된 후)
     setTimeout(() => {
         const afterValue = input.value;
         
-        // 값이 변경되었고, 유효한 날짜가 입력된 경우
+ // 값이 변경되었고, 유효한 날짜가 입력된 경우
         if (afterValue && afterValue !== beforeValue) {
             const yearMatch = afterValue.match(/^(\d{4})-/);
             
-            // 연도 4자리가 완성된 경우 (1900-2099 범위)
+ // 연도 4자리가 완성된 경우 (1900-2099 범위)
             if (yearMatch) {
                 const year = parseInt(yearMatch[1]);
                 if (year >= 1900 && year <= 2099) {
-                    // 월 필드로 이동 시도 (Tab 키 시뮬레이션은 브라우저마다 다름)
-                    // 대신 시각적 피드백 제공
+ // 월 필드로 이동 시도 (Tab 키 시뮬레이션은 브라우저마다 다름)
+ // 대신 시각적 피드백 제공
                     로거_인사?.debug('연도 4자리 입력 완료', { year });
                 }
             }
@@ -1608,12 +1608,12 @@ function _handleDateInputKeydown(e) {
  */
 function _syncSettingsToElectronStore() {
     try {
-        // Electron 환경이 아니면 스킵
+ // Electron 환경이 아니면 스킵
         if (typeof window.electronStore === 'undefined') {
             return;
         }
         
-        // 동기화 대상 localStorage 키 목록
+ // 동기화 대상 localStorage 키 목록
         const SYNC_KEYS = [
             'hr_salary_grades',            // 직급 관리
             'hr_salary_tables',            // 급여표
@@ -1628,7 +1628,7 @@ function _syncSettingsToElectronStore() {
             'hr_awards_data'              // 포상 데이터
         ];
         
-        // 1) 현재 localStorage → electron-store 일괄 동기화
+ // 1) 현재 localStorage → electron-store 일괄 동기화
         let syncCount = 0;
         SYNC_KEYS.forEach(key => {
             try {
@@ -1647,26 +1647,26 @@ function _syncSettingsToElectronStore() {
             console.log(`[동기화] localStorage → electron-store: ${syncCount}개 키 동기화 완료`);
         }
         
-        // 2) localStorage.setItem 패치 — 변경 시 자동 동기화
+ // 2) localStorage.setItem 패치 — 변경 시 자동 동기화
         const syncKeySet = new Set(SYNC_KEYS);
         const _originalSetItem = localStorage.setItem.bind(localStorage);
         
         localStorage.setItem = function(key, value) {
-            // 원래 동작 수행
+ // 원래 동작 수행
             _originalSetItem(key, value);
             
-            // 동기화 대상 키면 electron-store에도 저장
+ // 동기화 대상 키면 electron-store에도 저장
             if (syncKeySet.has(key) && typeof window.electronStore !== 'undefined') {
                 try {
                     const data = JSON.parse(value);
                     window.electronStore.set(key, data);
                 } catch (e) {
-                    // JSON 파싱 실패 시 무시 (문자열 그대로 저장)
+ // JSON 파싱 실패 시 무시 (문자열 그대로 저장)
                 }
             }
         };
         
-        // 3) localStorage.removeItem 패치 — 삭제 시 electron-store에서도 삭제
+ // 3) localStorage.removeItem 패치 — 삭제 시 electron-store에서도 삭제
         const _originalRemoveItem = localStorage.removeItem.bind(localStorage);
         
         localStorage.removeItem = function(key) {
@@ -1676,7 +1676,7 @@ function _syncSettingsToElectronStore() {
                 try {
                     window.electronStore.delete(key);
                 } catch (e) {
-                    // 삭제 실패 무시
+ // 삭제 실패 무시
                 }
             }
         };
@@ -1685,7 +1685,7 @@ function _syncSettingsToElectronStore() {
         
     } catch (error) {
         console.warn('[동기화] electron-store 동기화 실패 (무시):', error);
-        // 동기화 실패해도 앱 동작에는 영향 없음
+ // 동기화 실패해도 앱 동작에는 영향 없음
     }
 }
 
@@ -1699,23 +1699,23 @@ function _syncSettingsToElectronStore() {
  */
 function _initializeDateFields() {
     try {
-        // DateUtils 확인
+ // DateUtils 확인
         if (typeof DateUtils === 'undefined' || !DateUtils.formatDate) {
             로거_인사?.warn('DateUtils를 찾을 수 없습니다');
             return;
         }
         
-        // 오늘 날짜
+ // 오늘 날짜
         const today = new Date();
         const todayStr = DateUtils.formatDate(today);
         
-        // 기준일 필드
+ // 기준일 필드
         const baseDateElement = document.getElementById('registerBaseDate');
         if (baseDateElement) {
             baseDateElement.value = todayStr;
         }
         
-        // 입사일 필드
+ // 입사일 필드
         const entryDateElement = document.getElementById('entryDate');
         if (entryDateElement) {
             entryDateElement.value = todayStr;
@@ -1729,14 +1729,14 @@ function _initializeDateFields() {
 }
 
 /**
- * 📊 리팩토링 통계
+ * 리팩토링 통계
  * 
  * Before (원본):
  * - 총 줄 수: 95줄
  * - 함수 개수: 3개
  * - 에러 처리: 0곳
  * - 로깅: 2곳 (console.log만)
- * - XSS 방지: 0곳 ⚠️
+ * - XSS 방지: 0곳 
  * - 중복 코드: 약 15줄
  * - 최장 함수: 47줄 (updateDashboard)
  * 
@@ -1746,17 +1746,17 @@ function _initializeDateFields() {
  * - 함수 개수: 13개 (10개 private 헬퍼)
  * - 에러 처리: 13곳 (모든 함수)
  * - 로깅: 35곳 (debug 20, info 7, warn 6, error 2)
- * - XSS 방지: 100% ✅ (최근 직원 표시)
- * - 중복 코드: 0줄 ✅ (100% 제거)
+ * - XSS 방지: 100% (최근 직원 표시)
+ * - 중복 코드: 0줄 (100% 제거)
  * - 최장 함수: 약 60줄
  * 
  * 개선 효과:
- * ✅ 중복 코드 15줄 → 0줄 (100% 감소)
- * ✅ 함수 개수 3개 → 13개 (4배 향상)
- * ✅ XSS 공격 100% 방지
- * ✅ 에러 추적 100% 가능
- * ✅ 대시보드 성능 최적화
- * ✅ 유지보수성 5배 향상
+ * 중복 코드 15줄 → 0줄 (100% 감소)
+ * 함수 개수 3개 → 13개 (4배 향상)
+ * XSS 공격 100% 방지
+ * 에러 추적 100% 가능
+ * 대시보드 성능 최적화
+ * 유지보수성 5배 향상
  * 
  * 핵심 개선 사항:
  * 1. 직원유틸_인사 사용 → 중복 코드 제거

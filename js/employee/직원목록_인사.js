@@ -12,34 +12,34 @@
  * @since 2024-11-04
  * 
  * [변경 이력]
- * v6.2.0 (2026-02-06) ⭐ Electron 포커스 문제 해결
- *   - 직원 삭제 완료 후 window.focus() 호출
- *   - 삭제 후 입력란에 바로 커서가 들어가지 않는 문제 수정
+ * v6.2.0 (2026-02-06) Electron 포커스 문제 해결
+ * - 직원 삭제 완료 후 window.focus() 호출
+ * - 삭제 후 입력란에 바로 커서가 들어가지 않는 문제 수정
  *
- * v6.1.0 (2026-01-27) ⭐ Electron 호환 모달로 통일
- *   - deleteEmployee()에서 prompt()/confirm() → 체크박스 모달
- *   - 웹/Electron 분기 제거, 통일된 UX 제공
- *   - showDeleteConfirmModal() 함수 추가
+ * v6.1.0 (2026-01-27) Electron 호환 모달로 통일
+ * - deleteEmployee()에서 prompt()/confirm() → 체크박스 모달
+ * - 웹/Electron 분기 제거, 통일된 UX 제공
+ * - showDeleteConfirmModal() 함수 추가
  *
- * v6.0.1 (2026-01-23) ⭐ Electron 호환성 수정
- *   - deleteEmployee()에서 prompt() 대신 confirm() 사용 (Electron)
- *   - Electron에서 prompt() 미지원 문제 해결
+ * v6.0.1 (2026-01-23) Electron 호환성 수정
+ * - deleteEmployee()에서 prompt() 대신 confirm() 사용 (Electron)
+ * - Electron에서 prompt() 미지원 문제 해결
  *
- * v6.0.0 (2026-01-22) ⭐ 배치 API 적용 - 성능 최적화
- *   - loadEmployeeList() async 변경
- *   - 배치 API로 전체 직원 호봉 한 번에 계산
- *   - _getRankFromCache() 헬퍼 함수 추가
- *   - [object Promise] 버그 수정
+ * v6.0.0 (2026-01-22) 배치 API 적용 - 성능 최적화
+ * - loadEmployeeList() async 변경
+ * - 배치 API로 전체 직원 호봉 한 번에 계산
+ * - _getRankFromCache() 헬퍼 함수 추가
+ * - [object Promise] 버그 수정
  *
  * v3.1.0 (2025-12-04) UI 개선: 통계 헤더 + 필터 + 뷰 전환
- *   - 상단 통계 카드 (전체/재직/퇴사/휴직 인원)
- *   - 부서 필터, 정렬 옵션 드롭다운
- *   - 카드 뷰 ↔ 테이블 뷰 전환
- *   - 상태별 필터링 (클릭으로 전환)
+ * - 상단 통계 카드 (전체/재직/퇴사/휴직 인원)
+ * - 부서 필터, 정렬 옵션 드롭다운
+ * - 카드 뷰 ↔ 테이블 뷰 전환
+ * - 상태별 필터링 (클릭으로 전환)
  * 
  * v3.0.1 (2025-11-11) - Phase 3-4: 급여방식 배지 추가
- *   - 호봉제(파란색) / 연봉제(주황색) 배지 표시
- *   - 직원 이름 옆에 호봉 배지와 함께 표시
+ * - 호봉제(파란색) / 연봉제(주황색) 배지 표시
+ * - 직원 이름 옆에 호봉 배지와 함께 표시
  * v3.0 - 프로덕션급 리팩토링: 유틸리티 함수 사용, 에러 핸들링, 성능 최적화
  * 
  * [하위 호환성]
@@ -94,7 +94,7 @@ function showDeleteConfirmModal(title, message) {
                     background: white; border-radius: 12px; padding: 24px;
                     min-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
                 ">
-                    <h3 style="margin: 0 0 16px 0; color: #dc3545; font-size: 18px;">⚠️ ${title}</h3>
+                    <h3 style="margin: 0 0 16px 0; color: #dc3545; font-size: 18px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> ${title}</h3>
                     <p style="margin: 0 0 20px 0; color: #333; font-size: 14px; line-height: 1.6; white-space: pre-line;">${message}</p>
                     <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; cursor: pointer;">
                         <input type="checkbox" id="deleteConfirmCheck" style="width: 18px; height: 18px; cursor: pointer;" />
@@ -143,7 +143,7 @@ function showDeleteConfirmModal(title, message) {
             resolve(false);
         };
         
-        // ESC로 닫기
+ // ESC로 닫기
         const escHandler = (e) => {
             if (e.key === 'Escape') {
                 modal.remove();
@@ -170,12 +170,12 @@ async function loadEmployeeList() {
     try {
         로거_인사?.debug('직원 목록 로드 시작');
         
-        // 데이터 가져오기
+ // 데이터 가져오기
         const employees = db.getEmployees();
         const list = DOM유틸_인사.getById('employeeList');
         const emptyState = DOM유틸_인사.getById('emptyEmployeeState');
         
-        // 요소 확인
+ // 요소 확인
         if (!list || !emptyState) {
             로거_인사?.warn('필수 DOM 요소를 찾을 수 없습니다', {
                 list: !!list,
@@ -184,10 +184,10 @@ async function loadEmployeeList() {
             return;
         }
         
-        // 전역 상태에 저장
+ // 전역 상태에 저장
         _employeeListState.employees = employees;
         
-        // 데이터 없음 처리
+ // 데이터 없음 처리
         if (employees.length === 0) {
             DOM유틸_인사.empty(list);
             DOM유틸_인사.show(emptyState, 'block');
@@ -196,7 +196,7 @@ async function loadEmployeeList() {
             return;
         }
         
-        // ⭐ v6.0.0: 배치 API로 전체 직원 호봉 한 번에 계산
+ // v6.0.0: 배치 API로 전체 직원 호봉 한 번에 계산
         const today = DateUtils.formatDate(new Date());
         if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
             try {
@@ -214,16 +214,16 @@ async function loadEmployeeList() {
             }
         }
         
-        // 데이터 있음
+ // 데이터 있음
         DOM유틸_인사.hide(emptyState);
         
-        // 통계 업데이트
+ // 통계 업데이트
         updateEmployeeStats(employees);
         
-        // 부서 필터 옵션 생성
+ // 부서 필터 옵션 생성
         populateDeptFilter(employees);
         
-        // 필터 적용 및 렌더링
+ // 필터 적용 및 렌더링
         applyFilters();
         
         로거_인사?.info('직원 목록 로드 완료', { count: employees.length });
@@ -260,7 +260,7 @@ function updateEmployeeStats(employees) {
             }
         });
         
-        // DOM 업데이트 (emplist- 접두사 사용)
+ // DOM 업데이트 (emplist- 접두사 사용)
         const statTotal = DOM유틸_인사.getById('emplist-stat-total');
         const statActive = DOM유틸_인사.getById('emplist-stat-active');
         const statRetired = DOM유틸_인사.getById('emplist-stat-retired');
@@ -287,7 +287,7 @@ function populateDeptFilter(employees) {
         const filterDept = DOM유틸_인사.getById('filterDept');
         if (!filterDept) return;
         
-        // 부서 목록 추출 (중복 제거)
+ // 부서 목록 추출 (중복 제거)
         const depts = new Set();
         employees.forEach(emp => {
             const dept = emp.currentPosition?.dept || emp.dept;
@@ -296,10 +296,10 @@ function populateDeptFilter(employees) {
             }
         });
         
-        // 정렬
+ // 정렬
         const sortedDepts = Array.from(depts).sort((a, b) => a.localeCompare(b, 'ko-KR'));
         
-        // 옵션 생성
+ // 옵션 생성
         filterDept.innerHTML = '<option value="">전체 부서</option>';
         sortedDepts.forEach(dept => {
             const option = document.createElement('option');
@@ -321,10 +321,10 @@ function populateDeptFilter(employees) {
  */
 function filterByStatus(status) {
     try {
-        // 현재 필터 저장
+ // 현재 필터 저장
         _employeeListState.currentStatusFilter = status;
         
-        // 통계 카드 활성화 상태 업데이트
+ // 통계 카드 활성화 상태 업데이트
         document.querySelectorAll('.emp-stat-card').forEach(card => {
             card.classList.remove('active');
             if (card.dataset.filter === status) {
@@ -332,7 +332,7 @@ function filterByStatus(status) {
             }
         });
         
-        // 필터 적용
+ // 필터 적용
         applyFilters();
         
         로거_인사?.debug('상태 필터 변경', { status });
@@ -353,9 +353,9 @@ function applyFilters() {
         const sortOption = DOM유틸_인사.getById('filterSort')?.value || 'name';
         const searchTerm = DOM유틸_인사.getById('searchEmployee')?.value?.toLowerCase().trim() || '';
         
-        // 필터링
+ // 필터링
         let filtered = employees.filter(emp => {
-            // 상태 필터
+ // 상태 필터
             const retireDate = emp.employment?.retirementDate;
             const isRetired = retireDate && retireDate !== '' && retireDate !== null && retireDate !== 'null';
             const isOnLeave = emp.maternityLeave?.isOnLeave === true;
@@ -364,13 +364,13 @@ function applyFilters() {
             if (statusFilter === 'retired' && !isRetired) return false;
             if (statusFilter === 'leave' && (!isOnLeave || isRetired)) return false;
             
-            // 부서 필터
+ // 부서 필터
             if (deptFilter) {
                 const dept = emp.currentPosition?.dept || emp.dept || '';
                 if (dept !== deptFilter) return false;
             }
             
-            // 검색어 필터
+ // 검색어 필터
             if (searchTerm) {
                 const name = (emp.personalInfo?.name || emp.name || '').toLowerCase();
                 const dept = (emp.currentPosition?.dept || emp.dept || '').toLowerCase();
@@ -384,16 +384,16 @@ function applyFilters() {
             return true;
         });
         
-        // 정렬
+ // 정렬
         const today = DateUtils.formatDate(new Date());
         filtered = sortEmployees(filtered, sortOption, today);
         
-        // 상태 저장
+ // 상태 저장
         _employeeListState.filteredEmployees = filtered;
         _employeeListState.currentDeptFilter = deptFilter;
         _employeeListState.currentSort = sortOption;
         
-        // 현재 뷰에 맞게 렌더링
+ // 현재 뷰에 맞게 렌더링
         if (_employeeListState.currentView === 'card') {
             renderCardView(filtered, today);
         } else {
@@ -435,13 +435,13 @@ function sortEmployees(employees, sortOption, today) {
                 return aEntry2.localeCompare(bEntry2);
                 
             case 'rank-desc':
-                // ⭐ v6.0.0: 캐시에서 호봉 가져오기
+ // v6.0.0: 캐시에서 호봉 가져오기
                 const aRank1 = 직원유틸_인사.isRankBased(a) ? _getRankFromCache(a, today) : 0;
                 const bRank1 = 직원유틸_인사.isRankBased(b) ? _getRankFromCache(b, today) : 0;
                 return bRank1 - aRank1;
                 
             case 'rank-asc':
-                // ⭐ v6.0.0: 캐시에서 호봉 가져오기
+ // v6.0.0: 캐시에서 호봉 가져오기
                 const aRank2 = 직원유틸_인사.isRankBased(a) ? _getRankFromCache(a, today) : 0;
                 const bRank2 = 직원유틸_인사.isRankBased(b) ? _getRankFromCache(b, today) : 0;
                 return aRank2 - bRank2;
@@ -454,7 +454,7 @@ function sortEmployees(employees, sortOption, today) {
 
 /**
  * 호봉 캐시에서 현재 호봉 가져오기 (Private)
- * ⭐ v6.0.0: 배치 API 결과 사용
+ * v6.0.0: 배치 API 결과 사용
  * 
  * @private
  * @param {Object} emp - 직원 객체
@@ -462,13 +462,13 @@ function sortEmployees(employees, sortOption, today) {
  * @returns {number} 현재 호봉
  */
 function _getRankFromCache(emp, today) {
-    // 1. 배치 API 캐시에서 조회
+ // 1. 배치 API 캐시에서 조회
     const cached = _employeeListState.rankCache.get(emp.id);
     if (cached && cached.currentRank !== undefined) {
         return cached.currentRank;
     }
     
-    // 2. 캐시에 없으면 로컬 계산 (fallback)
+ // 2. 캐시에 없으면 로컬 계산 (fallback)
     if (emp.rank?.startRank && emp.rank?.firstUpgradeDate) {
         try {
             if (typeof RankCalculator !== 'undefined') {
@@ -479,7 +479,7 @@ function _getRankFromCache(emp, today) {
                 );
             }
         } catch (e) {
-            // 계산 실패 시 startRank 반환
+ // 계산 실패 시 startRank 반환
         }
     }
     
@@ -497,7 +497,7 @@ function switchView(view) {
         const cardView = DOM유틸_인사.getById('employeeList');
         const tableView = DOM유틸_인사.getById('employeeTableView');
         
-        // 버튼 활성화 상태 업데이트
+ // 버튼 활성화 상태 업데이트
         document.querySelectorAll('.emp-view-btn').forEach(btn => {
             btn.classList.remove('active');
             if (btn.dataset.view === view) {
@@ -505,7 +505,7 @@ function switchView(view) {
             }
         });
         
-        // 뷰 전환
+ // 뷰 전환
         if (view === 'card') {
             if (cardView) cardView.style.display = 'grid';
             if (tableView) tableView.style.display = 'none';
@@ -514,7 +514,7 @@ function switchView(view) {
             if (tableView) tableView.style.display = 'block';
         }
         
-        // 현재 필터로 다시 렌더링
+ // 현재 필터로 다시 렌더링
         applyFilters();
         
         로거_인사?.debug('뷰 전환', { view });
@@ -541,7 +541,7 @@ function renderCardView(employees, today) {
     
     if (emptyState) DOM유틸_인사.hide(emptyState);
     
-    // DocumentFragment로 성능 최적화
+ // DocumentFragment로 성능 최적화
     const fragment = document.createDocumentFragment();
     
     employees.forEach(emp => {
@@ -576,7 +576,7 @@ function renderTableView(employees, today) {
     
     if (emptyState) DOM유틸_인사.hide(emptyState);
     
-    // 테이블 행 생성
+ // 테이블 행 생성
     const rows = employees.map(emp => _createEmployeeTableRowHTML(emp, today)).join('');
     tableBody.innerHTML = rows;
 }
@@ -593,21 +593,21 @@ function _createEmployeeTableRowHTML(emp, today) {
     const status = 직원유틸_인사.getEmploymentStatus(emp);
     const isOnLeave = 직원유틸_인사.isOnMaternityLeave(emp);
     
-    // XSS 방지
+ // XSS 방지
     const safeName = DOM유틸_인사.escapeHtml(name);
     const safeDept = DOM유틸_인사.escapeHtml(dept);
     const safePosition = DOM유틸_인사.escapeHtml(position);
     const safeEntryDate = DOM유틸_인사.escapeHtml(entryDate);
     
-    // 호봉
-    // ⭐ v6.0.0: 캐시에서 호봉 가져오기
+ // 호봉
+ // v6.0.0: 캐시에서 호봉 가져오기
     let rankDisplay = '-';
     if (status !== '퇴사' && isRankBased) {
         const currentRank = _getRankFromCache(emp, today);
         rankDisplay = `${currentRank}호봉`;
     }
     
-    // 상태 배지
+ // 상태 배지
     let statusBadge = '';
     if (status === '퇴사') {
         statusBadge = '<span class="badge badge-retired">퇴사</span>';
@@ -646,46 +646,46 @@ function _createEmployeeTableRowHTML(emp, today) {
  * After: 직원유틸_인사 사용으로 단 3줄!
  */
 function _createEmployeeItemHTML(emp, today) {
-    // ✅ Before: 중복 코드 (4줄)
-    // const name = emp.personalInfo?.name || emp.name;
-    // const dept = emp.currentPosition?.dept || emp.dept;
-    // const position = emp.currentPosition?.position || emp.position;
-    // const entryDate = emp.employment?.entryDate || emp.entryDate;
+ // Before: 중복 코드 (4줄)
+ // const name = emp.personalInfo?.name || emp.name;
+ // const dept = emp.currentPosition?.dept || emp.dept;
+ // const position = emp.currentPosition?.position || emp.position;
+ // const entryDate = emp.employment?.entryDate || emp.entryDate;
     
-    // ✅ After: 직원유틸_인사 사용 (단 3줄!)
+ // After: 직원유틸_인사 사용 (단 3줄!)
     const name = 직원유틸_인사.getName(emp);
     const dept = 직원유틸_인사.getDepartment(emp);
     const position = 직원유틸_인사.getPosition(emp);
     const entryDate = 직원유틸_인사.getEntryDate(emp);
     
-    // ✅ Before: 호봉제 판단 중복 코드 (8줄)
-    // const hasValidFirstUpgradeDate = emp.rank?.firstUpgradeDate && 
-    //     emp.rank.firstUpgradeDate !== '' && 
-    //     emp.rank.firstUpgradeDate !== null && 
-    //     emp.rank.firstUpgradeDate !== 'null' && 
-    //     emp.rank.firstUpgradeDate !== '-' && 
-    //     emp.rank.firstUpgradeDate !== undefined;
-    // const isRankBased = emp.rank?.isRankBased !== false && hasValidFirstUpgradeDate;
+ // Before: 호봉제 판단 중복 코드 (8줄)
+ // const hasValidFirstUpgradeDate = emp.rank?.firstUpgradeDate && 
+ // emp.rank.firstUpgradeDate !== '' && 
+ // emp.rank.firstUpgradeDate !== null && 
+ // emp.rank.firstUpgradeDate !== 'null' && 
+ // emp.rank.firstUpgradeDate !== '-' && 
+ // emp.rank.firstUpgradeDate !== undefined;
+ // const isRankBased = emp.rank?.isRankBased !== false && hasValidFirstUpgradeDate;
     
-    // ✅ After: 직원유틸_인사 사용 (단 1줄!)
+ // After: 직원유틸_인사 사용 (단 1줄!)
     const isRankBased = 직원유틸_인사.isRankBased(emp);
     const isMaternity = 직원유틸_인사.isOnMaternityLeave(emp);
     const status = 직원유틸_인사.getEmploymentStatus(emp);
     
-    // ✅ XSS 방지: HTML 이스케이프
+ // XSS 방지: HTML 이스케이프
     const safeName = DOM유틸_인사.escapeHtml(name);
     const safeDept = DOM유틸_인사.escapeHtml(dept);
     const safePosition = DOM유틸_인사.escapeHtml(position);
     const safeEntryDate = DOM유틸_인사.escapeHtml(entryDate);
     
-    // 배지 생성
+ // 배지 생성
     let badgeHTML = '';
     let paymentBadgeHTML = ''; // ⭐ Phase 3-4: 급여방식 배지
     
     if (status === '퇴사') {
         badgeHTML = '<span class="badge badge-retired">퇴사</span>';
     } else if (isRankBased) {
-        // ⭐ v6.0.0: 캐시에서 호봉 가져오기
+ // v6.0.0: 캐시에서 호봉 가져오기
         const currentRank = _getRankFromCache(emp, today);
         badgeHTML = `<span class="badge badge-rank">${currentRank}호봉</span>`;
         paymentBadgeHTML = '<span class="badge-payment badge-payment-rank">호봉제</span>'; // ⭐ CSS 클래스 사용
@@ -694,15 +694,15 @@ function _createEmployeeItemHTML(emp, today) {
         paymentBadgeHTML = '<span class="badge-payment badge-payment-salary">연봉제</span>'; // ⭐ CSS 클래스 사용
     }
     
-    // 육아휴직 배지
+ // 육아휴직 배지
     const maternityBadge = isMaternity 
         ? '<span class="badge badge-maternity">육아휴직</span>' 
         : '';
     
-    // 단축근로 배지 ⭐ NEW
+ // 단축근로 배지 NEW
     const reducedWorkBadge = _getReducedWorkBadge(emp);
     
-    // HTML 생성 (XSS 안전)
+ // HTML 생성 (XSS 안전)
     return `
         <div class="employee-item" 
              data-name="${safeName}" 
@@ -747,7 +747,7 @@ function _createEmployeeItemHTML(emp, today) {
  */
 function searchEmployees() {
     try {
-        // 필터 적용 (검색어 포함)
+ // 필터 적용 (검색어 포함)
         applyFilters();
         
     } catch (error) {
@@ -773,7 +773,7 @@ async function deleteEmployee(id) {
     try {
         로거_인사?.debug('직원 삭제 시도', { id });
         
-        // 직원 정보 확인
+ // 직원 정보 확인
         const emp = db.findEmployee(id);
         if (!emp) {
             로거_인사?.warn('직원을 찾을 수 없습니다', { id });
@@ -781,13 +781,13 @@ async function deleteEmployee(id) {
             return;
         }
         
-        // 직원 정보 추출
+ // 직원 정보 추출
         const name = 직원유틸_인사?.getName(emp) || emp.personalInfo?.name || emp.name;
         const uniqueCode = emp.uniqueCode;
         const dept = 직원유틸_인사?.getDepartment(emp) || emp.currentPosition?.dept || '';
         const position = 직원유틸_인사?.getPosition(emp) || emp.currentPosition?.position || '';
         
-        // ===== 삭제 확인 모달 (v6.1.0 - Electron 호환) =====
+ // ===== 삭제 확인 모달 (v6.1.0 - Electron 호환) =====
         const confirmed = await showDeleteConfirmModal(
             `${name} 님 삭제`,
             `고유번호: ${uniqueCode}\n부서: ${dept}\n직위: ${position}\n\n이 직원의 모든 데이터가 삭제됩니다.\n이 작업은 되돌릴 수 없습니다.`
@@ -799,26 +799,26 @@ async function deleteEmployee(id) {
             return;
         }
         
-        // ===== 삭제 실행 =====
+ // ===== 삭제 실행 =====
         db.deleteEmployee(id);
         
         로거_인사?.info('직원 삭제 완료', { id, uniqueCode, name });
         
-        // 모달 닫기 (함수가 있는 경우)
+ // 모달 닫기 (함수가 있는 경우)
         if (typeof closeDetailModal === 'function') {
             closeDetailModal();
         }
         
-        // 목록 갱신
+ // 목록 갱신
         loadEmployeeList();
         
-        // 대시보드 갱신 (함수가 있는 경우)
+ // 대시보드 갱신 (함수가 있는 경우)
         if (typeof updateDashboard === 'function') {
             updateDashboard();
         }
         
-        // 성공 메시지
-        const successMsg = `✅ ${name} 님의 데이터가 삭제되었습니다.`;
+ // 성공 메시지
+        const successMsg = `${name} 님의 데이터가 삭제되었습니다.`;
         
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.success(successMsg);
@@ -826,8 +826,8 @@ async function deleteEmployee(id) {
             alert(successMsg);
         }
         
-        // ⭐ v6.2.0: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
-        // blur/focus 트릭으로 포커스 복원
+ // v6.2.0: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
+ // blur/focus 트릭으로 포커스 복원
         const restoreFocus = async () => {
             if (window.electronAPI?.focusWindow) {
                 await window.electronAPI.focusWindow();
@@ -842,7 +842,7 @@ async function deleteEmployee(id) {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '삭제 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 삭제 중 오류가 발생했습니다.');
+            alert('[오류] 삭제 중 오류가 발생했습니다.');
         }
     }
 }
@@ -869,7 +869,7 @@ function _getReducedWorkBadge(emp) {
         const today = new Date();
         const badges = [];
         
-        // 임신기 단축근로 확인
+ // 임신기 단축근로 확인
         const activePregnancy = (emp.reducedWork.pregnancy || []).find(r => {
             const start = new Date(r.startDate);
             const end = new Date(r.endDate);
@@ -880,7 +880,7 @@ function _getReducedWorkBadge(emp) {
             badges.push('<span class="badge-reduced-pregnancy">임신기단축</span>');
         }
         
-        // 육아기 단축근로 확인
+ // 육아기 단축근로 확인
         const activeChildcare = (emp.reducedWork.childcare || []).find(r => {
             const start = new Date(r.startDate);
             const end = new Date(r.endDate);
@@ -892,7 +892,7 @@ function _getReducedWorkBadge(emp) {
             badges.push(`<span class="badge-reduced-childcare">육아기단축 ${ratio}%</span>`);
         }
         
-        // 10시 출근제 확인
+ // 10시 출근제 확인
         const activeFlexTime = (emp.reducedWork.flexTime || []).find(r => {
             const start = new Date(r.startDate);
             const end = new Date(r.endDate);
@@ -913,7 +913,7 @@ function _getReducedWorkBadge(emp) {
 }
 
 /**
- * 📊 리팩토링 통계
+ * 리팩토링 통계
  * 
  * Before (원본):
  * - 총 줄 수: 94줄
@@ -933,11 +933,11 @@ function _getReducedWorkBadge(emp) {
  * - 성능 최적화: DocumentFragment 사용
  * 
  * 개선 효과:
- * ✅ 중복 코드 30줄 → 0줄 (100% 감소)
- * ✅ 유지보수성 3배 향상
- * ✅ XSS 공격 100% 방지
- * ✅ 목록 로드 55% 빠름
- * ✅ 에러 추적 100% 가능
+ * 중복 코드 30줄 → 0줄 (100% 감소)
+ * 유지보수성 3배 향상
+ * XSS 공격 100% 방지
+ * 목록 로드 55% 빠름
+ * 에러 추적 100% 가능
  * 
  * 핵심 개선 사항:
  * 1. 직원유틸_인사 사용 → 중복 코드 제거

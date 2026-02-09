@@ -11,7 +11,7 @@
  * 
  * [변경 이력]
  * v1.0.2 - 2026-02-03: 등록 현황 테이블 담당 직원 이름 표시 버그 수정
- *   - employee.name → employee.personalInfo?.name 으로 수정
+ * - employee.name → employee.personalInfo?.name 으로 수정
  * v1.0.1 - 2026-01-05: 겸직관리_인사 네임스페이스 추가 (급여계산기 연동)
  * v1.0.0 - 2025-11-27: 최초 작성
  * 
@@ -36,8 +36,8 @@ const CONCURRENT_POSITION_KEY = 'hr_concurrent_positions';
  * @constant {Object}
  */
 const POSITION_TYPES = {
-    concurrent: { id: 'concurrent', label: '겸직', icon: '👥', color: '#3b82f6' },
-    acting: { id: 'acting', label: '직무대리', icon: '🔄', color: '#f59e0b' }
+    concurrent: { id: 'concurrent', label: '겸직', icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>', color: '#3b82f6' },
+    acting: { id: 'acting', label: '직무대리', icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>', color: '#f59e0b' }
 };
 
 // ===== 데이터 관리 =====
@@ -88,12 +88,12 @@ function getActiveConcurrentPositions(baseDate) {
         const positions = loadConcurrentPositions();
         
         return positions.filter(pos => {
-            // 시작일 체크
+ // 시작일 체크
             if (pos.startDate && pos.startDate > baseDate) {
                 return false;
             }
             
-            // 종료일 체크 (null이면 계속 유효)
+ // 종료일 체크 (null이면 계속 유효)
             if (pos.endDate && pos.endDate < baseDate) {
                 return false;
             }
@@ -116,13 +116,13 @@ function getActiveConcurrentPositions(baseDate) {
  */
 function getEmployeeConcurrentPositions(employeeId, baseDate) {
     try {
-        // baseDate가 없으면 전체 목록에서 필터
+ // baseDate가 없으면 전체 목록에서 필터
         if (!baseDate) {
             const allPositions = loadConcurrentPositions();
             return allPositions.filter(pos => pos.employeeId === employeeId);
         }
         
-        // baseDate가 있으면 유효한 목록에서 필터
+ // baseDate가 있으면 유효한 목록에서 필터
         const activePositions = getActiveConcurrentPositions(baseDate);
         return activePositions.filter(pos => pos.employeeId === employeeId);
     } catch (error) {
@@ -153,16 +153,16 @@ function addConcurrentPositionRecord(position) {
     try {
         const positions = loadConcurrentPositions();
         
-        // ID 생성
+ // ID 생성
         position.id = 'CP' + Date.now();
         position.createdAt = new Date().toISOString();
         
-        // 검증
+ // 검증
         if (!position.employeeId || !position.targetDept || !position.type) {
             throw new Error('필수 항목이 누락되었습니다.');
         }
         
-        // 중복 확인 (같은 부서에 같은 기간 다른 담당자)
+ // 중복 확인 (같은 부서에 같은 기간 다른 담당자)
         const conflict = positions.find(p => 
             p.targetDept === position.targetDept &&
             p.id !== position.id &&
@@ -200,7 +200,7 @@ function updateConcurrentPositionRecord(id, updates) {
             throw new Error('해당 레코드를 찾을 수 없습니다.');
         }
         
-        // 중복 확인 (수정 후 다른 레코드와 충돌 여부)
+ // 중복 확인 (수정 후 다른 레코드와 충돌 여부)
         const updatedPosition = { ...positions[index], ...updates };
         
         const conflict = positions.find(p => 
@@ -260,16 +260,16 @@ function deleteConcurrentPositionRecord(id) {
  * @returns {boolean} 중복 여부
  */
 function isDateRangeOverlap(start1, end1, start2, end2) {
-    // 시작일이 없으면 아주 오래 전부터
+ // 시작일이 없으면 아주 오래 전부터
     const s1 = start1 || '1900-01-01';
     const s2 = start2 || '1900-01-01';
     
-    // 종료일이 없으면 아주 먼 미래까지
+ // 종료일이 없으면 아주 먼 미래까지
     const e1 = end1 || '2999-12-31';
     const e2 = end2 || '2999-12-31';
     
-    // 기간1의 종료일이 기간2의 시작일보다 이전이면 중복 없음
-    // 기간1의 시작일이 기간2의 종료일보다 이후이면 중복 없음
+ // 기간1의 종료일이 기간2의 시작일보다 이전이면 중복 없음
+ // 기간1의 시작일이 기간2의 종료일보다 이후이면 중복 없음
     return !(e1 < s2 || s1 > e2);
 }
 
@@ -295,17 +295,17 @@ function extractDepartmentsForConcurrent() {
         const deptSet = new Set();
         
         employees.forEach(emp => {
-            // 현재 부서 (currentPosition.dept)
+ // 현재 부서 (currentPosition.dept)
             if (emp.currentPosition?.dept) {
                 deptSet.add(emp.currentPosition.dept);
             }
             
-            // 레거시: emp.department (하위 호환)
+ // 레거시: emp.department (하위 호환)
             if (emp.department) {
                 deptSet.add(emp.department);
             }
             
-            // 발령 이력의 부서
+ // 발령 이력의 부서
             if (emp.assignments && Array.isArray(emp.assignments)) {
                 emp.assignments.forEach(assign => {
                     if (assign.dept) {
@@ -336,7 +336,7 @@ function getActiveEmployeesForConcurrent() {
         const employees = db.getEmployees();
         
         return employees.filter(emp => {
-            // 퇴사일이 없거나 미래인 경우만
+ // 퇴사일이 없거나 미래인 경우만
             if (emp.retireDate) return false;
             if (emp.employment?.retirementDate) return false;
             return true;
@@ -363,7 +363,7 @@ function loadConcurrentPositionModule() {
             return;
         }
         
-        // 데이터 로드
+ // 데이터 로드
         const positions = loadConcurrentPositions();
         const employees = getActiveEmployeesForConcurrent();
         const departments = extractDepartmentsForConcurrent();
@@ -374,7 +374,7 @@ function loadConcurrentPositionModule() {
             deptCount: departments.length 
         });
         
-        // HTML 생성
+ // HTML 생성
         container.innerHTML = generateConcurrentPositionHTML(positions, employees, departments);
         
         로거_인사?.info('겸직/직무대리 관리 화면 로드 완료');
@@ -400,7 +400,7 @@ function generateConcurrentPositionHTML(positions, employees, departments) {
     
     const today = DateUtils ? DateUtils.formatDate(new Date()) : new Date().toISOString().split('T')[0];
     
-    // 직원 옵션 (이미 필터링된 재직자 목록)
+ // 직원 옵션 (이미 필터링된 재직자 목록)
     const empOptionsHTML = employees
         .sort((a, b) => (a.name || a.personalInfo?.name || '').localeCompare(b.name || b.personalInfo?.name || '', 'ko'))
         .map(emp => {
@@ -410,19 +410,19 @@ function generateConcurrentPositionHTML(positions, employees, departments) {
             return `<option value="${escapeHtml(emp.id)}">${escapeHtml(name)} (${escapeHtml(position)} - ${escapeHtml(dept)})</option>`;
         }).join('');
     
-    // 부서 옵션
+ // 부서 옵션
     const deptOptionsHTML = departments.map(dept => 
         `<option value="${escapeHtml(dept)}">${escapeHtml(dept)}</option>`
     ).join('');
     
-    // 목록 테이블 행 생성
+ // 목록 테이블 행 생성
     const tableRowsHTML = positions.length > 0 
         ? positions.map(pos => {
             const employee = getEmployeeById(pos.employeeId);
             const empName = employee ? (employee.personalInfo?.name || employee.name || '(이름없음)') : '(삭제된 직원)';
             const typeInfo = POSITION_TYPES[pos.type] || POSITION_TYPES.concurrent;
             
-            // 현재 유효 여부 체크
+ // 현재 유효 여부 체크
             const isActive = (!pos.startDate || pos.startDate <= today) && 
                             (!pos.endDate || pos.endDate >= today);
             
@@ -447,11 +447,11 @@ function generateConcurrentPositionHTML(positions, employees, departments) {
                     <td style="padding:12px;border-bottom:1px solid #e5e7eb;text-align:center;">
                         <button type="button" onclick="editConcurrentPosition('${escapeHtml(pos.id)}')" 
                                 style="padding:4px 8px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;margin-right:4px;">
-                            ✏️
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
                         <button type="button" onclick="confirmDeleteConcurrentPosition('${escapeHtml(pos.id)}')" 
                                 style="padding:4px 8px;background:#fef2f2;border:1px solid #fecaca;border-radius:4px;cursor:pointer;color:#dc2626;">
-                            🗑️
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                         </button>
                     </td>
                 </tr>
@@ -468,28 +468,28 @@ function generateConcurrentPositionHTML(positions, employees, departments) {
     
     return `
         <div class="card">
-            <div class="card-title">👥 겸직/직무대리 관리</div>
+            <div class="card-title"><span class="card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> 겸직/직무대리 관리</div>
             
             <!-- 안내 -->
             <div style="background:#eff6ff;padding:16px;border-radius:8px;margin-bottom:24px;">
                 <p style="color:#1d4ed8;font-size:14px;margin:0;">
-                    💡 <strong>겸직</strong>: 다른 부서의 부서장 역할을 겸임<br>
-                    💡 <strong>직무대리</strong>: 부서장 부재(육아휴직 등) 시 대리 역할 수행<br>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> <strong>겸직</strong>: 다른 부서의 부서장 역할을 겸임<br>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> <strong>직무대리</strong>: 부서장 부재(육아휴직 등) 시 대리 역할 수행<br>
                     <span style="font-size:13px;color:#3b82f6;">조직도 생성 시 기준일에 따라 자동으로 반영됩니다.</span>
                 </p>
             </div>
             
             <!-- 등록 폼 -->
             <div style="background:#f9fafb;padding:20px;border-radius:8px;margin-bottom:24px;">
-                <h3 style="font-size:15px;font-weight:600;margin-bottom:16px;">➕ 새 겸직/직무대리 등록</h3>
+                <h3 style="font-size:15px;font-weight:600;margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> 새 겸직/직무대리 등록</h3>
                 
                 <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:16px;">
                     <!-- 유형 -->
                     <div>
                         <label style="display:block;font-weight:500;margin-bottom:6px;font-size:14px;">유형 *</label>
                         <select id="cp-type" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;">
-                            <option value="acting">🔄 직무대리</option>
-                            <option value="concurrent">👥 겸직</option>
+                            <option value="acting">직무대리</option>
+                            <option value="concurrent">겸직</option>
                         </select>
                     </div>
                     
@@ -542,14 +542,14 @@ function generateConcurrentPositionHTML(positions, employees, departments) {
                 
                 <div style="margin-top:16px;display:flex;justify-content:flex-end;">
                     <button type="button" onclick="submitConcurrentPosition()" class="btn btn-primary">
-                        ➕ 등록
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> 등록
                     </button>
                 </div>
             </div>
             
             <!-- 목록 -->
             <div style="margin-bottom:24px;">
-                <h3 style="font-size:15px;font-weight:600;margin-bottom:16px;">📋 등록 현황</h3>
+                <h3 style="font-size:15px;font-weight:600;margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 등록 현황</h3>
                 
                 <div style="overflow-x:auto;">
                     <table style="width:100%;border-collapse:collapse;min-width:900px;">
@@ -577,7 +577,7 @@ function generateConcurrentPositionHTML(positions, employees, departments) {
         <!-- 수정 모달 -->
         <div id="cp-edit-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;">
             <div style="background:white;padding:24px;border-radius:12px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;">
-                <h3 style="font-size:18px;font-weight:600;margin-bottom:20px;">✏️ 겸직/직무대리 수정</h3>
+                <h3 style="font-size:18px;font-weight:600;margin-bottom:20px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 겸직/직무대리 수정</h3>
                 
                 <input type="hidden" id="cp-edit-id">
                 
@@ -585,8 +585,8 @@ function generateConcurrentPositionHTML(positions, employees, departments) {
                     <div>
                         <label style="display:block;font-weight:500;margin-bottom:6px;">유형</label>
                         <select id="cp-edit-type" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;">
-                            <option value="acting">🔄 직무대리</option>
-                            <option value="concurrent">👥 겸직</option>
+                            <option value="acting">직무대리</option>
+                            <option value="concurrent">겸직</option>
                         </select>
                     </div>
                     
@@ -635,7 +635,7 @@ function generateConcurrentPositionHTML(positions, employees, departments) {
                         취소
                     </button>
                     <button type="button" onclick="saveCPEdit()" class="btn btn-primary">
-                        💾 저장
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> 저장
                     </button>
                 </div>
             </div>
@@ -658,7 +658,7 @@ function submitConcurrentPosition() {
         const endDate = document.getElementById('cp-end-date').value || null;
         const reason = document.getElementById('cp-reason').value;
         
-        // 검증
+ // 검증
         if (!employeeId) {
             alert('담당 직원을 선택해주세요.');
             return;
@@ -690,7 +690,7 @@ function submitConcurrentPosition() {
         };
         
         if (addConcurrentPositionRecord(position)) {
-            에러처리_인사?.success('✅ 겸직/직무대리가 등록되었습니다.');
+            에러처리_인사?.success('겸직/직무대리가 등록되었습니다.');
             loadConcurrentPositionModule(); // 화면 새로고침
         }
         
@@ -715,7 +715,7 @@ function editConcurrentPosition(id) {
             return;
         }
         
-        // 모달에 값 설정
+ // 모달에 값 설정
         document.getElementById('cp-edit-id').value = position.id;
         document.getElementById('cp-edit-type').value = position.type;
         document.getElementById('cp-edit-employee').value = position.employeeId;
@@ -725,7 +725,7 @@ function editConcurrentPosition(id) {
         document.getElementById('cp-edit-end-date').value = position.endDate || '';
         document.getElementById('cp-edit-reason').value = position.reason || '';
         
-        // 모달 표시
+ // 모달 표시
         document.getElementById('cp-edit-modal').style.display = 'flex';
         
     } catch (error) {
@@ -757,14 +757,14 @@ function saveCPEdit() {
             reason: document.getElementById('cp-edit-reason').value
         };
         
-        // 검증
+ // 검증
         if (updates.endDate && updates.endDate < updates.startDate) {
             alert('종료일은 시작일보다 이후여야 합니다.');
             return;
         }
         
         if (updateConcurrentPositionRecord(id, updates)) {
-            에러처리_인사?.success('✅ 수정되었습니다.');
+            에러처리_인사?.success('수정되었습니다.');
             closeCPEditModal();
             loadConcurrentPositionModule(); // 화면 새로고침
         }
@@ -782,7 +782,7 @@ function saveCPEdit() {
 function confirmDeleteConcurrentPosition(id) {
     if (confirm('이 겸직/직무대리를 삭제하시겠습니까?')) {
         if (deleteConcurrentPositionRecord(id)) {
-            에러처리_인사?.success('✅ 삭제되었습니다.');
+            에러처리_인사?.success('삭제되었습니다.');
             loadConcurrentPositionModule(); // 화면 새로고침
         }
     }
@@ -797,21 +797,21 @@ function confirmDeleteConcurrentPosition(id) {
  * @namespace 겸직관리_인사
  */
 const 겸직관리_인사 = {
-    // 데이터 조회
+ // 데이터 조회
     loadConcurrentPositions,
     getActiveConcurrentPositions,
     getEmployeeConcurrentPositions,
     getDepartmentConcurrentHead,
     
-    // 데이터 관리
+ // 데이터 관리
     addConcurrentPositionRecord,
     updateConcurrentPositionRecord,
     deleteConcurrentPositionRecord,
     
-    // UI
+ // UI
     loadConcurrentPositionModule
 };
 
 // ===== 초기화 =====
 
-console.log('✅ 겸직관리_인사.js 로드 완료');
+console.log(' 겸직관리_인사.js 로드 완료');

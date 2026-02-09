@@ -14,27 +14,27 @@
  * 
  * [변경 이력]
  * v6.0.2 (2026-02-04) ⭐ 브라우저 인쇄 방식 적용
- *   - Electron 팝업 → 시스템 브라우저 인쇄
- *   - 인쇄 버튼 추가 (Ctrl+P)
- *   - 임시 파일 자동 삭제 (앱 종료 시)
+ * - Electron 팝업 → 시스템 브라우저 인쇄
+ * - 인쇄 버튼 추가 (Ctrl+P)
+ * - 임시 파일 자동 삭제 (앱 종료 시)
  *
  * v6.0.1 (2026-01-22) ⭐ 계층형 탭 버그 수정
- *   - 탭 확인 로직 버그 수정 (계층형이 항상 표 형식으로 인식되던 문제)
- *   - isHierarchyTab 직접 확인 방식으로 변경
+ * - 탭 확인 로직 버그 수정 (계층형이 항상 표 형식으로 인식되던 문제)
+ * - isHierarchyTab 직접 확인 방식으로 변경
  *
  * v6.0.0 (2026-01-22) 배치 API 적용 - 성능 최적화
- *   - 개별 API 호출 → 배치 API (calculateBatchForEmployees)
- *   - N회 API 호출 → 1회로 감소
- *   - 로딩 시간 대폭 단축
+ * - 개별 API 호출 → 배치 API (calculateBatchForEmployees)
+ * - N회 API 호출 → 1회로 감소
+ * - 로딩 시간 대폭 단축
  * 
  * v5.0.0 (2026-01-22) API 전용 버전
- *   - 직원유틸_인사.getDynamicRankInfo() await 추가
- *   - 모든 계산 로직 서버 API로 이동
+ * - 직원유틸_인사.getDynamicRankInfo() await 추가
+ * - 모든 계산 로직 서버 API로 이동
  * 
  * v4.0.0 (2026-01-22) API 연동 버전
- *   - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
- *   - getEmployeesAtDate() async 변경
- *   - forEach → for...of (async/await 지원)
+ * - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
+ * - getEmployeesAtDate() async 변경
+ * - forEach → for...of (async/await 지원)
  * 
  * [의존성]
  * - 데이터베이스_인사.js (db)
@@ -76,25 +76,25 @@ function loadOrgChartModule() {
             return;
         }
         
-        // 오늘 날짜
+ // 오늘 날짜
         const today = DateUtils ? DateUtils.formatDate(new Date()) : new Date().toISOString().split('T')[0];
         
-        // 부서 목록 추출 (겸직 지정용)
+ // 부서 목록 추출 (겸직 지정용)
         const departments = extractDepartmentsFromAssignments();
         
-        // 재직자 목록 추출 (겸직 지정용)
+ // 재직자 목록 추출 (겸직 지정용)
         const employees = db.getActiveEmployees();
         
         container.innerHTML = generateOrgChartHTML(today, departments, employees);
         
-        // 겸직 목록 초기화
+ // 겸직 목록 초기화
         currentConcurrentPositions = [];
         
-        // 기준일 변경 이벤트 리스너 추가
+ // 기준일 변경 이벤트 리스너 추가
         const baseDateInput = document.getElementById('org-chart-base-date');
         if (baseDateInput) {
             baseDateInput.addEventListener('change', updateAutoConcurrentList);
-            // 초기 로드 시 자동 겸직 현황 표시
+ // 초기 로드 시 자동 겸직 현황 표시
             updateAutoConcurrentList();
         }
         
@@ -117,7 +117,7 @@ function updateAutoConcurrentList() {
         
         if (!listContainer || !baseDateStr) return;
         
-        // 겸직관리 모듈에서 해당 기준일에 유효한 목록 가져오기
+ // 겸직관리 모듈에서 해당 기준일에 유효한 목록 가져오기
         let activePositions = [];
         if (typeof getActiveConcurrentPositions === 'function') {
             activePositions = getActiveConcurrentPositions(baseDateStr);
@@ -139,7 +139,7 @@ function updateAutoConcurrentList() {
         let html = '<div style="display:flex;flex-direction:column;gap:8px;">';
         
         activePositions.forEach(pos => {
-            // 직원 정보 가져오기
+ // 직원 정보 가져오기
             let empName = '(알 수 없음)';
             const employees = db.getEmployees();
             const employee = employees.find(e => e.id === pos.employeeId);
@@ -148,7 +148,7 @@ function updateAutoConcurrentList() {
             }
             
             const typeLabel = pos.type === 'acting' ? '직무대리' : '겸직';
-            const typeIcon = pos.type === 'acting' ? '🔄' : '👥';
+            const typeIcon = pos.type === 'acting' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
             const typeBgColor = pos.type === 'acting' ? '#fef3c7' : '#dbeafe';
             const typeColor = pos.type === 'acting' ? '#d97706' : '#2563eb';
             
@@ -186,12 +186,12 @@ function generateOrgChartHTML(today, departments, employees) {
         ? DOM유틸_인사.escapeHtml 
         : (str) => String(str);
     
-    // 부서 옵션
+ // 부서 옵션
     const deptOptionsHTML = departments.map(dept => 
         `<option value="${escapeHtml(dept)}">${escapeHtml(dept)}</option>`
     ).join('');
     
-    // 직원 옵션 (겸직 지정용)
+ // 직원 옵션 (겸직 지정용)
     const empOptionsHTML = employees.map(emp => {
         const name = emp.name || emp.personalInfo?.name || '';
         const position = emp.position || emp.currentPosition?.position || '';
@@ -201,19 +201,19 @@ function generateOrgChartHTML(today, departments, employees) {
     
     return `
         <div class="card">
-            <div class="card-title">📊 조직도</div>
+            <div class="card-title"><span class="card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> 조직도</div>
             
             <!-- 탭 메뉴 -->
             <div style="display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid #e5e7eb;">
                 <button type="button" id="tab-table" onclick="switchOrgChartTab('table')" 
                         class="org-chart-tab active"
                         style="padding:12px 24px;border:none;background:transparent;cursor:pointer;font-weight:500;border-bottom:2px solid #4f46e5;margin-bottom:-2px;color:#4f46e5;">
-                    📋 표 형식
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg> 표 형식
                 </button>
                 <button type="button" id="tab-hierarchy" onclick="switchOrgChartTab('hierarchy')" 
                         class="org-chart-tab"
                         style="padding:12px 24px;border:none;background:transparent;cursor:pointer;font-weight:500;color:#6b7280;">
-                    🏛️ 계층형
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><rect x="2" y="18" width="8" height="4" rx="1"/><rect x="14" y="18" width="8" height="4" rx="1"/><line x1="12" y1="6" x2="12" y2="14"/><line x1="6" y1="14" x2="18" y2="14"/><line x1="6" y1="14" x2="6" y2="18"/><line x1="18" y1="14" x2="18" y2="18"/></svg> 계층형
                 </button>
             </div>
             
@@ -222,14 +222,14 @@ function generateOrgChartHTML(today, departments, employees) {
                 <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;margin-bottom:16px;">
                     <!-- 기준일 -->
                     <div>
-                        <label style="display:block;font-weight:500;margin-bottom:6px;">📅 기준일</label>
+                        <label style="display:block;font-weight:500;margin-bottom:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 기준일</label>
                         <input type="date" id="org-chart-base-date" value="${today}" 
                                style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;">
                     </div>
                     
                     <!-- 육아휴직자 포함 -->
                     <div>
-                        <label style="display:block;font-weight:500;margin-bottom:6px;">🤱 육아휴직자</label>
+                        <label style="display:block;font-weight:500;margin-bottom:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg> 육아휴직자</label>
                         <div style="display:flex;gap:16px;padding-top:8px;">
                             <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
                                 <input type="radio" name="org-chart-maternity" value="include" checked>
@@ -245,7 +245,7 @@ function generateOrgChartHTML(today, departments, employees) {
                 
                 <!-- 겸직/직무대리 현황 -->
                 <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
-                    <label style="display:block;font-weight:500;margin-bottom:8px;">👥 겸직/직무대리 현황</label>
+                    <label style="display:block;font-weight:500;margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> 겸직/직무대리 현황</label>
                     <p style="color:#6b7280;font-size:13px;margin-bottom:12px;">
                         <a href="javascript:navigateToModule('concurrent-position')" style="color:#4f46e5;text-decoration:underline;">
                             시스템 > 겸직/직무대리 관리
@@ -261,7 +261,7 @@ function generateOrgChartHTML(today, departments, employees) {
                 <!-- 생성 버튼 -->
                 <div style="margin-top:20px;display:flex;justify-content:center;">
                     <button type="button" onclick="generateOrgChart()" class="btn btn-primary" style="padding:12px 32px;font-size:15px;">
-                        📊 조직도 생성
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 조직도 생성
                     </button>
                 </div>
             </div>
@@ -277,10 +277,10 @@ function generateOrgChartHTML(today, departments, employees) {
                 <!-- 출력 버튼 -->
                 <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;padding-top:16px;border-top:1px solid #e5e7eb;">
                     <button type="button" onclick="showPrintOptions()" class="btn btn-secondary">
-                        🖨️ 인쇄
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄
                     </button>
                     <button type="button" onclick="downloadOrgChartExcel()" class="btn btn-success">
-                        📥 엑셀 다운로드
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀 다운로드
                     </button>
                 </div>
             </div>
@@ -289,7 +289,7 @@ function generateOrgChartHTML(today, departments, employees) {
         <!-- 인쇄 옵션 모달 -->
         <div id="print-options-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center;">
             <div style="background:white;padding:24px;border-radius:12px;min-width:320px;max-width:400px;">
-                <h3 style="margin:0 0 20px 0;font-size:18px;">🖨️ 인쇄 옵션</h3>
+                <h3 style="margin:0 0 20px 0;font-size:18px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄 옵션</h3>
                 
                 <!-- 페이지 방향 -->
                 <div style="margin-bottom:20px;">
@@ -343,11 +343,11 @@ function generateOrgChartHTML(today, departments, employees) {
  * @param {string} tabName - 탭 이름 ('table' 또는 'hierarchy')
  */
 function switchOrgChartTab(tabName) {
-    // 탭 버튼 스타일 변경
+ // 탭 버튼 스타일 변경
     const tableTab = document.getElementById('tab-table');
     const hierarchyTab = document.getElementById('tab-hierarchy');
     
-    // 모든 탭 비활성화
+ // 모든 탭 비활성화
     [tableTab, hierarchyTab].forEach(tab => {
         if (tab) {
             tab.style.borderBottom = '2px solid transparent';
@@ -356,7 +356,7 @@ function switchOrgChartTab(tabName) {
         }
     });
     
-    // 선택한 탭 활성화
+ // 선택한 탭 활성화
     const activeTab = document.getElementById(`tab-${tabName}`);
     if (activeTab) {
         activeTab.style.borderBottom = '2px solid #4f46e5';
@@ -366,7 +366,7 @@ function switchOrgChartTab(tabName) {
     
     console.log('[조직도] 탭 전환:', tabName);
     
-    // 이미 생성된 결과가 있으면 다시 생성
+ // 이미 생성된 결과가 있으면 다시 생성
     if (currentOrgChartData && currentOrgChartData.hierarchy) {
         const contentDiv = document.getElementById('org-chart-content');
         const showRole = currentOrgChartData.showRoleInRemark !== false;
@@ -481,7 +481,7 @@ function collectConcurrentPositions(baseDateStr) {
     
     console.log('[조직도] 겸직 수집 시작, 기준일:', baseDateStr);
     
-    // 겸직관리 모듈에서 자동 로드 (기준일에 유효한 것만)
+ // 겸직관리 모듈에서 자동 로드 (기준일에 유효한 것만)
     if (typeof getActiveConcurrentPositions === 'function') {
         const autoLoaded = getActiveConcurrentPositions(baseDateStr);
         console.log('[조직도] 자동 로드된 겸직:', autoLoaded);
@@ -513,7 +513,7 @@ async function generateOrgChart() {
     try {
         로거_인사?.debug('조직도 생성 시작');
         
-        // 설정 수집
+ // 설정 수집
         const baseDateStr = document.getElementById('org-chart-base-date')?.value;
         const maternityRadio = document.querySelector('input[name="org-chart-maternity"]:checked');
         const includeMaternity = maternityRadio?.value === 'include';
@@ -529,23 +529,23 @@ async function generateOrgChart() {
             return;
         }
         
-        // 겸직/직무대리 수집 (자동 + 수동)
+ // 겸직/직무대리 수집 (자동 + 수동)
         const concurrentPositions = collectConcurrentPositions(baseDateStr);
         
         const baseDate = new Date(baseDateStr);
         
-        // 조직도 설정 로드
+ // 조직도 설정 로드
         const orgChartSettings = loadOrgChartSettings();
         if (!orgChartSettings.positionSettings || orgChartSettings.positionSettings.length === 0) {
             alert('직위 순서 설정이 필요합니다.\n\n시스템 > 조직도 설정에서 직위 순서를 먼저 설정해주세요.');
             return;
         }
         
-        // 기준일 재직자 추출
+ // 기준일 재직자 추출
         let employees = await getEmployeesAtDate(baseDate);
         console.log('[조직도] 필터링 전 직원 수:', employees.length);
         
-        // 육아휴직자 필터링
+ // 육아휴직자 필터링
         if (!includeMaternity) {
             const beforeCount = employees.length;
             employees = employees.filter(emp => {
@@ -565,47 +565,47 @@ async function generateOrgChart() {
             return;
         }
         
-        // 부서 통합 적용
+ // 부서 통합 적용
         employees = applyDepartmentMerge(employees, orgChartSettings.departmentMerge);
         
-        // 계층 구조로 분류
+ // 계층 구조로 분류
         const hierarchy = categorizeEmployees(employees, orgChartSettings, concurrentPositions, baseDate);
         
-        // 현재 탭 확인 (기본값: 표 형식)
-        // ⭐ v6.0.1: 탭 확인 로직 수정 - 계층형 탭이 활성화되었는지 직접 확인
+ // 현재 탭 확인 (기본값: 표 형식)
+ // ⭐ v6.0.1: 탭 확인 로직 수정 - 계층형 탭이 활성화되었는지 직접 확인
         const tableTab = document.getElementById('tab-table');
         const hierarchyTab = document.getElementById('tab-hierarchy');
         
-        // 계층형 탭이 활성화되어 있는지 확인
+ // 계층형 탭이 활성화되어 있는지 확인
         const isHierarchyTab = hierarchyTab?.classList.contains('active') || 
                               (hierarchyTab?.style.borderBottom && hierarchyTab.style.borderBottom.includes('4f46e5'));
         const isTableTab = !isHierarchyTab;
         
         console.log('[조직도] 현재 탭:', isTableTab ? '표 형식' : '계층형');
         
-        // 결과 표시
+ // 결과 표시
         const contentDiv = document.getElementById('org-chart-content');
         const statsDiv = document.getElementById('org-chart-stats');
         const resultDiv = document.getElementById('org-chart-result');
         
-        // 역할 표시 설정
+ // 역할 표시 설정
         const showRoleInRemark = orgChartSettings.showRoleInRemark !== false;
         
         if (isTableTab) {
-            // 표 형식
+ // 표 형식
             contentDiv.innerHTML = generateTableOrgChart(hierarchy, baseDateStr, includeMaternity, showRoleInRemark);
         } else {
-            // 계층형
+ // 계층형
             contentDiv.innerHTML = generateHierarchyOrgChart(hierarchy, baseDateStr, includeMaternity, showRoleInRemark);
         }
         
-        // 인원 현황표 (직위 순서 설정 포함)
+ // 인원 현황표 (직위 순서 설정 포함)
         statsDiv.innerHTML = generatePersonnelStats(employees, orgChartSettings);
         
-        // 결과 표시
+ // 결과 표시
         resultDiv.style.display = 'block';
         
-        // 현재 데이터 저장 (인쇄/다운로드용)
+ // 현재 데이터 저장 (인쇄/다운로드용)
         currentOrgChartData = {
             hierarchy,
             employees,
@@ -634,15 +634,15 @@ async function generateOrgChart() {
  * @returns {Promise<Array<Object>>} 재직자 목록
  */
 async function getEmployeesAtDate(baseDate) {
-    // ⭐ v1.0.1: db.getEmployeesAtDate() 사용 (코드 중복 제거)
+ // ⭐ v1.0.1: db.getEmployeesAtDate() 사용 (코드 중복 제거)
     const baseDateStr = DateUtils.formatDate(baseDate);
     const employees = db.getEmployeesAtDate(baseDateStr);
     
-    // ⭐ v6.0.0: 배치 API로 전체 직원 한 번에 계산 (성능 최적화)
+ // ⭐ v6.0.0: 배치 API로 전체 직원 한 번에 계산 (성능 최적화)
     let batchResults = new Map();
     if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
         try {
-            // 호봉제 직원만 필터링 (배치 계산 대상)
+ // 호봉제 직원만 필터링 (배치 계산 대상)
             const rankBasedEmployees = employees.filter(emp => 
                 emp.rank?.isRankBased !== false && emp.rank?.startRank && emp.rank?.firstUpgradeDate
             );
@@ -660,18 +660,18 @@ async function getEmployeesAtDate(baseDate) {
     const result = [];
     
     for (const emp of employees) {
-        // 기준일 기준 발령 정보 가져오기
+ // 기준일 기준 발령 정보 가져오기
         const assignmentInfo = getAssignmentAtDate(emp, baseDate);
         
-        // ⭐ v6.0.0: 배치 결과에서 호봉 가져오기 (개별 API 호출 제거)
+ // ⭐ v6.0.0: 배치 결과에서 호봉 가져오기 (개별 API 호출 제거)
         let currentRank = null;
         if (emp.rank?.isRankBased !== false && emp.rank?.startRank) {
-            // 1. 배치 결과에서 조회
+ // 1. 배치 결과에서 조회
             const batchResult = batchResults.get(emp.id);
             if (batchResult && batchResult.currentRank !== undefined) {
                 currentRank = batchResult.currentRank;
             } else if (emp.rank?.firstUpgradeDate) {
-                // 2. 배치에 없으면 로컬 계산 (fallback)
+ // 2. 배치에 없으면 로컬 계산 (fallback)
                 try {
                     if (typeof RankCalculator !== 'undefined' && RankCalculator.calculateCurrentRank) {
                         currentRank = RankCalculator.calculateCurrentRank(
@@ -680,24 +680,24 @@ async function getEmployeesAtDate(baseDate) {
                             baseDateStr
                         );
                     } else {
-                        // RankCalculator도 없으면 저장된 startRank 사용
+ // RankCalculator도 없으면 저장된 startRank 사용
                         currentRank = emp.rank.startRank;
                     }
                 } catch (e) {
-                    // 호봉 계산 실패 시 startRank 사용
+ // 호봉 계산 실패 시 startRank 사용
                     console.warn('[조직도] 호봉 계산 실패, startRank 사용:', emp.id, e);
                     currentRank = emp.rank.startRank;
                 }
             } else {
-                // firstUpgradeDate 없으면 startRank 사용
+ // firstUpgradeDate 없으면 startRank 사용
                 currentRank = emp.rank.startRank;
             }
         }
         
-        // 이름 가져오기 (personalInfo.name 또는 name)
+ // 이름 가져오기 (personalInfo.name 또는 name)
         const empName = emp.name || emp.personalInfo?.name || '';
         
-        // 현재 직위 정보 (currentPosition에서 가져오기)
+ // 현재 직위 정보 (currentPosition에서 가져오기)
         const currentDept = emp.currentPosition?.dept || emp.department || '';
         const currentPosition = emp.currentPosition?.position || emp.position || '';
         const currentGrade = emp.currentPosition?.grade || emp.grade || '';
@@ -728,7 +728,7 @@ async function getEmployeesAtDate(baseDate) {
  * @returns {Object} 발령 정보
  */
 function getAssignmentAtDate(emp, baseDate) {
-    // 현재 직위 정보 (기본값)
+ // 현재 직위 정보 (기본값)
     const currentDept = emp.currentPosition?.dept || emp.department || '';
     const currentPosition = emp.currentPosition?.position || emp.position || '';
     const currentGrade = emp.currentPosition?.grade || emp.grade || '';
@@ -741,7 +741,7 @@ function getAssignmentAtDate(emp, baseDate) {
         };
     }
     
-    // 기준일 이전의 발령 중 가장 최근 것
+ // 기준일 이전의 발령 중 가장 최근 것
     const validAssignments = emp.assignments
         .filter(a => a.date && new Date(a.date) <= baseDate)
         .sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -779,18 +779,18 @@ function isOnMaternityLeave(emp, baseDate) {
     const baseDateStr = DateUtils ? DateUtils.formatDate(baseDate) : baseDate.toISOString().split('T')[0];
     const ml = originalEmp.maternityLeave;
     
-    // 새로운 구조: { isOnLeave, startDate, endDate, history }
+ // 새로운 구조: { isOnLeave, startDate, endDate, history }
     if (typeof ml === 'object' && !Array.isArray(ml)) {
-        // isOnLeave 플래그 확인
+ // isOnLeave 플래그 확인
         if (ml.isOnLeave === true) {
-            // 기간 확인
+ // 기간 확인
             if (ml.startDate && ml.endDate) {
                 return ml.startDate <= baseDateStr && ml.endDate >= baseDateStr;
             }
             return true; // 기간 없이 isOnLeave만 있으면 휴직 중으로 판단
         }
         
-        // history 배열 확인
+ // history 배열 확인
         if (ml.history && Array.isArray(ml.history)) {
             return ml.history.some(leave => {
                 if (!leave.startDate || !leave.endDate) return false;
@@ -801,7 +801,7 @@ function isOnMaternityLeave(emp, baseDate) {
         return false;
     }
     
-    // 레거시 구조: 배열 형태
+ // 레거시 구조: 배열 형태
     if (Array.isArray(ml)) {
         return ml.some(leave => {
             if (!leave.startDate || !leave.endDate) return false;
@@ -855,12 +855,12 @@ function categorizeEmployees(employees, settings, concurrentPositions, baseDate)
         departments: {}
     };
     
-    // 직위별 역할 맵
+ // 직위별 역할 맵
     const positionRoleMap = new Map(
         settings.positionSettings.map(p => [p.name, { role: p.role, order: p.order }])
     );
     
-    // 직원 분류
+ // 직원 분류
     employees.forEach(emp => {
         const positionInfo = positionRoleMap.get(emp.position) || { role: 'staff', order: 999 };
         
@@ -869,7 +869,7 @@ function categorizeEmployees(employees, settings, concurrentPositions, baseDate)
         } else if (positionInfo.role === 'viceDirector') {
             hierarchy.viceDirector = emp;
         } else {
-            // 부서별 그룹화
+ // 부서별 그룹화
             if (!hierarchy.departments[emp.department]) {
                 hierarchy.departments[emp.department] = {
                     name: emp.department,
@@ -886,7 +886,7 @@ function categorizeEmployees(employees, settings, concurrentPositions, baseDate)
         }
     });
     
-    // 겸직/직무대리 적용
+ // 겸직/직무대리 적용
     console.log('[조직도] 겸직 적용 시작, 겸직 수:', concurrentPositions.length);
     console.log('[조직도] 부서 목록:', Object.keys(hierarchy.departments));
     
@@ -912,32 +912,32 @@ function categorizeEmployees(employees, settings, concurrentPositions, baseDate)
         }
     });
     
-    // 부서 내 팀원 정렬 (원래 부서 → 통합된 부서, 그 다음 직위 순서 → 호봉 → 입사일)
+ // 부서 내 팀원 정렬 (원래 부서 → 통합된 부서, 그 다음 직위 순서 → 호봉 → 입사일)
     Object.values(hierarchy.departments).forEach(dept => {
         dept.members.sort((a, b) => {
-            // 0차: 통합된 부서 팀원은 맨 아래 (originalDepartment가 있으면 통합된 팀원)
+ // 0차: 통합된 부서 팀원은 맨 아래 (originalDepartment가 있으면 통합된 팀원)
             const isMergedA = a.originalDepartment ? 1 : 0;
             const isMergedB = b.originalDepartment ? 1 : 0;
             if (isMergedA !== isMergedB) return isMergedA - isMergedB;
             
-            // 1차: 직위 순서
+ // 1차: 직위 순서
             const orderA = positionRoleMap.get(a.position)?.order || 999;
             const orderB = positionRoleMap.get(b.position)?.order || 999;
             if (orderA !== orderB) return orderA - orderB;
             
-            // 2차: 급여 유형 (호봉제 → 연봉제)
+ // 2차: 급여 유형 (호봉제 → 연봉제)
             if (a.isRankBased !== b.isRankBased) {
                 return a.isRankBased ? -1 : 1;
             }
             
-            // 3차: 호봉 (높은 순)
+ // 3차: 호봉 (높은 순)
             if (a.isRankBased && b.isRankBased && a.currentRank && b.currentRank) {
                 if (a.currentRank !== b.currentRank) {
                     return b.currentRank - a.currentRank;
                 }
             }
             
-            // 4차: 입사일 (빠른 순)
+ // 4차: 입사일 (빠른 순)
             if (a.entryDate && b.entryDate) {
                 return new Date(a.entryDate) - new Date(b.entryDate);
             }
@@ -946,7 +946,7 @@ function categorizeEmployees(employees, settings, concurrentPositions, baseDate)
         });
     });
     
-    // 부서 순서 정렬 (가나다순)
+ // 부서 순서 정렬 (가나다순)
     const sortedDeptNames = Object.keys(hierarchy.departments).sort((a, b) => a.localeCompare(b, 'ko'));
     const sortedDepartments = {};
     sortedDeptNames.forEach(name => {
@@ -994,7 +994,7 @@ function generateTableOrgChart(hierarchy, baseDateStr, includeMaternity, showRol
                 <tbody>
     `;
     
-    // 기관장
+ // 기관장
     if (hierarchy.director) {
         const emp = hierarchy.director;
         const remark = showRoleInRemark ? '기관장' : '';
@@ -1010,7 +1010,7 @@ function generateTableOrgChart(hierarchy, baseDateStr, includeMaternity, showRol
         `;
     }
     
-    // 부기관장
+ // 부기관장
     if (hierarchy.viceDirector) {
         const emp = hierarchy.viceDirector;
         const remark = showRoleInRemark ? '부기관장' : '';
@@ -1026,28 +1026,28 @@ function generateTableOrgChart(hierarchy, baseDateStr, includeMaternity, showRol
         `;
     }
     
-    // 부서별
+ // 부서별
     Object.values(hierarchy.departments).forEach(dept => {
         const allMembers = [];
         
-        // 부서장
+ // 부서장
         if (dept.head) {
             allMembers.push({ ...dept.head, isDeptHead: true });
         }
         
-        // 겸직/직무대리 부서장 (부서장과 별도로 추가)
+ // 겸직/직무대리 부서장 (부서장과 별도로 추가)
         if (dept.concurrentHead) {
-            // concurrentHead에 이미 isConcurrent, isActing 등의 속성이 있음
+ // concurrentHead에 이미 isConcurrent, isActing 등의 속성이 있음
             allMembers.push({ ...dept.concurrentHead, isDeptHead: true });
         }
         
-        // 팀원
+ // 팀원
         allMembers.push(...dept.members);
         
             allMembers.forEach((emp, index) => {
             const bgColor = emp.isDeptHead ? '#D9EAD3' : '#ffffff';
             
-            // 비고 표시
+ // 비고 표시
             let remark = '';
             if (emp.isActing) {
                 remark = '직무대리';
@@ -1111,21 +1111,21 @@ function generateHierarchyOrgChart(hierarchy, baseDateStr, includeMaternity, sho
             <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
     `;
     
-    // 기관장
+ // 기관장
     if (hierarchy.director) {
         const remark = showRoleInRemark ? '기관장' : '';
         html += generateOrgChartCard(hierarchy.director, '#FFF2CC', remark);
         html += `<div style="width:2px;height:20px;background:#999;"></div>`;
     }
     
-    // 부기관장
+ // 부기관장
     if (hierarchy.viceDirector) {
         const remark = showRoleInRemark ? '부기관장' : '';
         html += generateOrgChartCard(hierarchy.viceDirector, '#FFE6CC', remark);
         html += `<div style="width:2px;height:20px;background:#999;"></div>`;
     }
     
-    // 부서들 (가로 배치)
+ // 부서들 (가로 배치)
     if (deptCount > 0) {
         html += `
             <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;width:100%;">
@@ -1141,7 +1141,7 @@ function generateHierarchyOrgChart(hierarchy, baseDateStr, includeMaternity, sho
                     <div style="width:2px;height:12px;background:#999;"></div>
             `;
             
-            // 부서장 (비고 없이 표시, 육아휴직만 표시)
+ // 부서장 (비고 없이 표시, 육아휴직만 표시)
             if (dept.head) {
                 const maternityMark = isOnMaternityLeave(dept.head, new Date(baseDateStr)) ? '(육아휴직)' : '';
                 html += generateOrgChartCard(dept.head, '#D9EAD3', maternityMark);
@@ -1151,7 +1151,7 @@ function generateHierarchyOrgChart(hierarchy, baseDateStr, includeMaternity, sho
                 }
             }
             
-            // 겸직/직무대리 (부서장과 별도로 표시)
+ // 겸직/직무대리 (부서장과 별도로 표시)
             if (dept.concurrentHead) {
                 let concurrentRemark = '';
                 if (dept.concurrentHead.isActing) {
@@ -1166,7 +1166,7 @@ function generateHierarchyOrgChart(hierarchy, baseDateStr, includeMaternity, sho
                 }
             }
             
-            // 팀원들
+ // 팀원들
             dept.members.forEach((member, idx) => {
                 const maternityMark = isOnMaternityLeave(member, new Date(baseDateStr)) ? '(육아휴직)' : '';
                 html += generateOrgChartCard(member, '#D0E0E3', maternityMark);
@@ -1226,7 +1226,7 @@ function generatePersonnelStats(employees, settings) {
         ? DOM유틸_인사.escapeHtml 
         : (str) => String(str);
     
-    // 직종별 집계
+ // 직종별 집계
     const jobTypeCounts = { '계': employees.length };
     employees.forEach(emp => {
         if (emp.jobType) {
@@ -1234,7 +1234,7 @@ function generatePersonnelStats(employees, settings) {
         }
     });
     
-    // 직위별 집계
+ // 직위별 집계
     const positionCounts = { '계': employees.length };
     employees.forEach(emp => {
         if (emp.position) {
@@ -1242,7 +1242,7 @@ function generatePersonnelStats(employees, settings) {
         }
     });
     
-    // 직종별 정렬: 인원수 많은 순 → 동일하면 가나다순
+ // 직종별 정렬: 인원수 많은 순 → 동일하면 가나다순
     const jobTypes = Object.keys(jobTypeCounts)
         .filter(k => k !== '계')
         .sort((a, b) => {
@@ -1251,7 +1251,7 @@ function generatePersonnelStats(employees, settings) {
             return a.localeCompare(b, 'ko');
         });
     
-    // 직위별 정렬: 조직도 우선순위 → 동일하면 인원수 많은 순 → 동일하면 가나다순
+ // 직위별 정렬: 조직도 우선순위 → 동일하면 인원수 많은 순 → 동일하면 가나다순
     const positionOrderMap = new Map();
     if (settings && settings.positionSettings) {
         settings.positionSettings.forEach(p => {
@@ -1262,22 +1262,22 @@ function generatePersonnelStats(employees, settings) {
     const positions = Object.keys(positionCounts)
         .filter(k => k !== '계')
         .sort((a, b) => {
-            // 1차: 조직도 우선순위 (낮은 순서가 먼저)
+ // 1차: 조직도 우선순위 (낮은 순서가 먼저)
             const orderA = positionOrderMap.get(a) ?? 999;
             const orderB = positionOrderMap.get(b) ?? 999;
             if (orderA !== orderB) return orderA - orderB;
             
-            // 2차: 인원수 많은 순
+ // 2차: 인원수 많은 순
             const countDiff = (positionCounts[b] || 0) - (positionCounts[a] || 0);
             if (countDiff !== 0) return countDiff;
             
-            // 3차: 가나다순
+ // 3차: 가나다순
             return a.localeCompare(b, 'ko');
         });
     
     let html = `
         <div style="margin-top:32px;">
-            <h4 style="font-size:15px;font-weight:600;margin-bottom:12px;">📊 인원 현황</h4>
+            <h4 style="font-size:15px;font-weight:600;margin-bottom:12px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 인원 현황</h4>
             
             <!-- 직종별 -->
             <div style="margin-bottom:20px;">
@@ -1377,7 +1377,7 @@ function printOrgChart(orientation, includeStats = true) {
             ? '@page { size: landscape; margin: 10mm; }' 
             : '@page { size: portrait; margin: 10mm; }';
         
-        // 인원현황표 HTML (옵션에 따라 포함)
+ // 인원현황표 HTML (옵션에 따라 포함)
         const statsHTML = (includeStats && statsArea) ? statsArea.innerHTML : '';
         
         const htmlContent = `
@@ -1415,7 +1415,7 @@ function printOrgChart(orientation, includeStats = true) {
                     p { color: #666; }
                     .stats-section { margin-top: 40px; }
                     
-                    /* 인쇄 버튼 */
+ /* 인쇄 버튼 */
                     .no-print { 
                         position: fixed; top: 20px; right: 20px; 
                         background: #2196F3; color: white; 
@@ -1435,7 +1435,7 @@ function printOrgChart(orientation, includeStats = true) {
                 </style>
             </head>
             <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
+                <button class="no-print" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄하기 (Ctrl+P)</button>
                 ${printArea.innerHTML}
                 
                 ${statsHTML ? `<div class="stats-section">${statsHTML}</div>` : ''}
@@ -1443,11 +1443,11 @@ function printOrgChart(orientation, includeStats = true) {
             </html>
         `;
         
-        // Electron 환경에서 시스템 브라우저로 열기
+ // Electron 환경에서 시스템 브라우저로 열기
         if (window.electronAPI && window.electronAPI.openInBrowser) {
             window.electronAPI.openInBrowser(htmlContent, 'orgchart_print.html');
         } else {
-            // 웹 환경 폴백: 새 창에서 열기
+ // 웹 환경 폴백: 새 창에서 열기
             const printWindow = window.open('', '_blank', 'width=800,height=600');
             if (printWindow) {
                 printWindow.document.write(htmlContent);
@@ -1480,7 +1480,7 @@ function downloadOrgChartExcel() {
         
         const { hierarchy, employees, baseDate } = currentOrgChartData;
         
-        // 데이터 배열 생성
+ // 데이터 배열 생성
         const data = [
             ['조직도'],
             [`기준일: ${baseDate}`],
@@ -1488,7 +1488,7 @@ function downloadOrgChartExcel() {
             ['부서', '직위', '성명', '직급', '호봉', '비고']
         ];
         
-        // 기관장
+ // 기관장
         if (hierarchy.director) {
             const emp = hierarchy.director;
             data.push([
@@ -1501,7 +1501,7 @@ function downloadOrgChartExcel() {
             ]);
         }
         
-        // 부기관장
+ // 부기관장
         if (hierarchy.viceDirector) {
             const emp = hierarchy.viceDirector;
             data.push([
@@ -1514,7 +1514,7 @@ function downloadOrgChartExcel() {
             ]);
         }
         
-        // 부서별
+ // 부서별
         Object.values(hierarchy.departments).forEach(dept => {
             const allMembers = [];
             
@@ -1539,11 +1539,11 @@ function downloadOrgChartExcel() {
             });
         });
         
-        // 빈 행 추가
+ // 빈 행 추가
         data.push([]);
         data.push([]);
         
-        // 인원 현황 (직종별)
+ // 인원 현황 (직종별)
         const jobTypeCounts = { '계': employees.length };
         employees.forEach(emp => {
             if (emp.jobType) {
@@ -1556,10 +1556,10 @@ function downloadOrgChartExcel() {
         data.push(['구분', '계', ...jobTypes]);
         data.push(['인원', jobTypeCounts['계'], ...jobTypes.map(jt => jobTypeCounts[jt] || 0)]);
         
-        // 빈 행
+ // 빈 행
         data.push([]);
         
-        // 인원 현황 (직위별)
+ // 인원 현황 (직위별)
         const positionCounts = { '계': employees.length };
         employees.forEach(emp => {
             if (emp.position) {
@@ -1572,12 +1572,12 @@ function downloadOrgChartExcel() {
         data.push(['구분', '계', ...positions]);
         data.push(['인원', positionCounts['계'], ...positions.map(pos => positionCounts[pos] || 0)]);
         
-        // 워크시트 생성
+ // 워크시트 생성
         const ws = XLSX.utils.aoa_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, '조직도');
         
-        // 다운로드
+ // 다운로드
         const fileName = `조직도_${baseDate}.xlsx`;
         XLSX.writeFile(wb, fileName);
         
@@ -1592,4 +1592,4 @@ function downloadOrgChartExcel() {
 
 // ===== 초기화 =====
 
-console.log('✅ 조직도_인사.js 로드 완료 (v6.0.2 - 브라우저 인쇄)');
+console.log(' 조직도_인사.js 로드 완료 (v6.0.2 - 브라우저 인쇄)');

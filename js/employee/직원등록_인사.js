@@ -6,73 +6,73 @@
  * - 과거 경력 관리 (추가/삭제)
  * - 호봉 자동 계산 (인정률 + 근무시간 비율)
  * - 첫승급일/차기승급일 계산
- * - 주 소정근로시간 관리 ⭐ v3.2.0 추가
- * - 사원번호 자동생성 ⭐ v3.3.0 추가
- * - 경력 없음 토글 ⭐ v3.4.1 추가
- * - 발령 데이터 구조 통일 ⭐ v3.4.2 추가
+ * - 주 소정근로시간 관리 v3.2.0 추가
+ * - 사원번호 자동생성 v3.3.0 추가
+ * - 경력 없음 토글 v3.4.1 추가
+ * - 발령 데이터 구조 통일 v3.4.2 추가
  * - 검증 및 저장
  * 
  * @version 4.2.0
  * @since 2024-11-04
  * 
  * [변경 이력]
- * v4.2.0 (2026-02-06) ⭐ Electron 포커스 문제 해결
- *   - 직원 등록 완료 후 window.focus() 호출
- *   - 등록 후 입력란에 바로 커서가 들어가지 않는 문제 수정
+ * v4.2.0 (2026-02-06) Electron 포커스 문제 해결
+ * - 직원 등록 완료 후 window.focus() 호출
+ * - 등록 후 입력란에 바로 커서가 들어가지 않는 문제 수정
  *
- * v4.1.0 (2026-01-22) ⭐ 검증 API 연동
- *   - Validator.validateEmployeeRegistration → API_인사.validateRegistration
- *   - 서버 API로 검증 로직 보호
+ * v4.1.0 (2026-01-22) 검증 API 연동
+ * - Validator.validateEmployeeRegistration → API_인사.validateRegistration
+ * - 서버 API로 검증 로직 보호
  * 
- * v4.0.0 (2026-01-21) ⭐ API 연동 버전
- *   - calculateAndSave() async 변경
- *   - 호봉 계산 API 우선 사용 (API_인사)
- *   - 서버 API로 계산 로직 보호
+ * v4.0.0 (2026-01-21) API 연동 버전
+ * - calculateAndSave() async 변경
+ * - 호봉 계산 API 우선 사용 (API_인사)
+ * - 서버 API로 계산 로직 보호
  * 
- * v3.4.2 (2025-12-10) ⭐ 신규 발령 데이터 구조 개선
- *   - 발령 ID: 숫자(1) → 문자열(assign-timestamp) 변경
- *   - 발령 코드: '신규임용' → '고유번호-01' 패턴 (예: H105-01)
- *   - startDate 필드 추가 (인사발령 모듈과 동일)
- *   - paymentMethod, isRankBased, status 필드 추가
- *   - 기존 date, type 필드는 하위 호환용으로 유지
+ * v3.4.2 (2025-12-10) 신규 발령 데이터 구조 개선
+ * - 발령 ID: 숫자(1) → 문자열(assign-timestamp) 변경
+ * - 발령 코드: '신규임용' → '고유번호-01' 패턴 (예: H105-01)
+ * - startDate 필드 추가 (인사발령 모듈과 동일)
+ * - paymentMethod, isRankBased, status 필드 추가
+ * - 기존 date, type 필드는 하위 호환용으로 유지
  * 
- * v3.4.1 (2025-12-05) ⭐ UI 개선 - 카드 통합 및 경력 없음 토글
- *   - 6개 카드 → 3개 카드로 통합 (HTML 수정)
- *   - toggleCareerSection() 함수 추가
- *   - "경력 없음" 체크 시 경력 입력 폼 숨김
- *   - resetRegisterForm()에 체크박스 초기화 추가
+ * v3.4.1 (2025-12-05) UI 개선 - 카드 통합 및 경력 없음 토글
+ * - 6개 카드 → 3개 카드로 통합 (HTML 수정)
+ * - toggleCareerSection() 함수 추가
+ * - "경력 없음" 체크 시 경력 입력 폼 숨김
+ * - resetRegisterForm()에 체크박스 초기화 추가
  * 
- * v3.4.0 (2025-12-05) ⭐ 월소정근로시간 계산 공통화
- *   - calculateMonthlyWorkingHours()가 SalaryCalculator.getMonthlyWorkingHours() 호출
- *   - 급여설정의 소수점 처리 방식(올림/반올림/버림) 설정 반영
- *   - fallback: SalaryCalculator 없을 시 반올림 처리
+ * v3.4.0 (2025-12-05) 월소정근로시간 계산 공통화
+ * - calculateMonthlyWorkingHours()가 SalaryCalculator.getMonthlyWorkingHours() 호출
+ * - 급여설정의 소수점 처리 방식(올림/반올림/버림) 설정 반영
+ * - fallback: SalaryCalculator 없을 시 반올림 처리
  * 
- * v3.3.0 (2025-12-04) ⭐ 사원번호 자동생성 기능 추가
- *   - updateEmployeeNumberField() 함수 추가
- *   - 입사일 변경 시 사원번호 자동 업데이트
- *   - 형식: YYYY-NNNN (입사 연도 기준)
- *   - 빈 번호 재사용, 수동 입력 허용
+ * v3.3.0 (2025-12-04) 사원번호 자동생성 기능 추가
+ * - updateEmployeeNumberField() 함수 추가
+ * - 입사일 변경 시 사원번호 자동 업데이트
+ * - 형식: YYYY-NNNN (입사 연도 기준)
+ * - 빈 번호 재사용, 수동 입력 허용
  * 
- * v3.2.0 (2025-12-01) ⭐ 주 소정근로시간 필드 추가 (급여 관리 대비)
- *   - 직원 등록 시 "주 소정근로시간" 입력 필드 추가 (기본값 40시간)
- *   - 월 소정근로시간 자동 계산 및 표시
- *   - employment.weeklyWorkingHours에 저장
- *   - 첫 번째 발령에 workingHours 저장
- *   - calculateMonthlyWorkingHours() 함수 추가
- *   - updateMonthlyHoursDisplay() 함수 추가
+ * v3.2.0 (2025-12-01) 주 소정근로시간 필드 추가 (급여 관리 대비)
+ * - 직원 등록 시 "주 소정근로시간" 입력 필드 추가 (기본값 40시간)
+ * - 월 소정근로시간 자동 계산 및 표시
+ * - employment.weeklyWorkingHours에 저장
+ * - 첫 번째 발령에 workingHours 저장
+ * - calculateMonthlyWorkingHours() 함수 추가
+ * - updateMonthlyHoursDisplay() 함수 추가
  * 
- * v3.1.0 (2025-11-26) ⭐ 주당근무시간 비율 적용
- *   - 경력 입력 폼에 "주당근무시간" 필드 추가 (1~40시간)
- *   - 경력 계산 시 근무시간 비율 적용
- *   - careerDetails에 workingHours 저장
- *   - 환산공식: 실제기간 × (인정률/100) × (근무시간/40)
+ * v3.1.0 (2025-11-26) 주당근무시간 비율 적용
+ * - 경력 입력 폼에 "주당근무시간" 필드 추가 (1~40시간)
+ * - 경력 계산 시 근무시간 비율 적용
+ * - careerDetails에 workingHours 저장
+ * - 환산공식: 실제기간 × (인정률/100) × (근무시간/40)
  * 
  * v3.0 - 프로덕션급 리팩토링
- *   - Phase 1 유틸리티 적용 (DOM유틸, 직원유틸)
- *   - 완벽한 에러 처리
- *   - 체계적 로깅
- *   - JSDoc 주석 추가
- *   - XSS 방지
+ * - Phase 1 유틸리티 적용 (DOM유틸, 직원유틸)
+ * - 완벽한 에러 처리
+ * - 체계적 로깅
+ * - JSDoc 주석 추가
+ * - XSS 방지
  * 
  * [하위 호환성]
  * - 모든 기존 함수명 유지
@@ -169,24 +169,24 @@ function updateEmployeeNumberField() {
             return;
         }
         
-        // 입사일이 없으면 처리 안 함
+ // 입사일이 없으면 처리 안 함
         const entryDate = entryDateField.value;
         if (!entryDate) {
             로거_인사?.debug('입사일 없음, 사원번호 업데이트 건너뜀');
             return;
         }
         
-        // 자동생성 모드가 아니고 이미 값이 있으면 건너뜀
+ // 자동생성 모드가 아니고 이미 값이 있으면 건너뜀
         const currentValue = employeeNumberField.value.trim();
         if (!_isEmployeeNumberAutoGenerated && currentValue) {
             로거_인사?.debug('수동 입력 모드, 사원번호 업데이트 건너뜀');
             return;
         }
         
-        // 입사 연도 추출
+ // 입사 연도 추출
         const entryYear = entryDate.substring(0, 4);
         
-        // 사원번호 생성
+ // 사원번호 생성
         const newEmployeeNumber = db.generateEmployeeNumber(entryYear);
         
         employeeNumberField.value = newEmployeeNumber;
@@ -229,7 +229,7 @@ function generateEmployeeNumberManual() {
         const entryDateField = document.getElementById('entryDate');
         
         if (!entryDateField || !entryDateField.value) {
-            const msg = '⚠️ 먼저 입사일을 선택하세요.';
+            const msg = '[주의] 먼저 입사일을 선택하세요.';
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn(msg);
             } else {
@@ -238,7 +238,7 @@ function generateEmployeeNumberManual() {
             return;
         }
         
-        // 자동생성 모드로 전환 후 업데이트
+ // 자동생성 모드로 전환 후 업데이트
         _isEmployeeNumberAutoGenerated = true;
         updateEmployeeNumberField();
         
@@ -273,10 +273,10 @@ function addCareer() {
             throw new Error('경력 목록을 찾을 수 없습니다.');
         }
         
-        // 경력 폼 HTML 생성 (개선된 UI)
+ // 경력 폼 HTML 생성 (개선된 UI)
         const careerHTML = `
             <div class="career-header">
-                <div class="career-title">📌 경력 ${careerCount}</div>
+                <div class="career-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24z"/></svg> 경력 ${careerCount}</div>
                 <button class="btn btn-danger btn-small" onclick="removeCareer(${careerCount})" type="button">✕ 삭제</button>
             </div>
             <div class="form-group">
@@ -310,7 +310,7 @@ function addCareer() {
             </div>
         `;
         
-        // DOM 생성
+ // DOM 생성
         const careerDiv = document.createElement('div');
         careerDiv.className = 'career-section';
         careerDiv.id = `career-${careerCount}`;
@@ -326,7 +326,7 @@ function addCareer() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '경력 추가 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 경력 추가 중 오류가 발생했습니다.');
+            alert('[오류] 경력 추가 중 오류가 발생했습니다.');
         }
     }
 }
@@ -380,7 +380,7 @@ async function calculateAndSave() {
     try {
         로거_인사?.info('직원 등록 시작');
         
-        // ===== 입력값 수집 =====
+ // ===== 입력값 수집 =====
         const getValue = (id) => {
             const elem = typeof DOM유틸_인사 !== 'undefined'
                 ? DOM유틸_인사.getById(id)
@@ -397,7 +397,7 @@ async function calculateAndSave() {
         const entryDate = getValue('entryDate');
         const employmentType = getValue('employmentType');
         
-        // ⭐ v3.2.0: 주 소정근로시간 추가
+ // v3.2.0: 주 소정근로시간 추가
         const weeklyWorkingHoursValue = getValue('weeklyWorkingHours');
         const weeklyWorkingHours = parseInt(weeklyWorkingHoursValue) || 40;
         
@@ -413,13 +413,13 @@ async function calculateAndSave() {
             isRankBased
         });
         
-        // ===== 검증 1: 필수 항목 검증 (API) =====
+ // ===== 검증 1: 필수 항목 검증 (API) =====
         let validation;
         
-        // API 검증 우선, fallback으로 로컬 검증
+ // API 검증 우선, fallback으로 로컬 검증
         if (typeof API_인사 !== 'undefined') {
             try {
-                // 중복 검증을 위한 기존 코드 목록 수집
+ // 중복 검증을 위한 기존 코드 목록 수집
                 const employees = db.data?.employees || [];
                 const existingNumbers = employees
                     .filter(e => e.employeeNumber)
@@ -433,13 +433,13 @@ async function calculateAndSave() {
                 로거_인사?.debug('API 검증 완료', validation);
             } catch (apiError) {
                 로거_인사?.warn('API 검증 실패, 로컬 검증 사용', apiError);
-                // fallback: 로컬 검증
+ // fallback: 로컬 검증
                 validation = Validator.validateEmployeeRegistration({
                     name, dept, position, grade, jobType, entryDate
                 });
             }
         } else {
-            // API_인사 없으면 로컬 검증
+ // API_인사 없으면 로컬 검증
             validation = Validator.validateEmployeeRegistration({
                 name, dept, position, grade, jobType, entryDate
             });
@@ -448,7 +448,7 @@ async function calculateAndSave() {
         if (!validation.valid) {
             로거_인사?.warn('필수 항목 검증 실패', { errors: validation.errors });
             
-            const errorMsg = '⚠️ 필수 항목을 입력하세요.\n\n' + validation.errors.join('\n');
+            const errorMsg = '[주의] 필수 항목을 입력하세요.\n\n' + validation.errors.join('\n');
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn(errorMsg);
@@ -458,11 +458,11 @@ async function calculateAndSave() {
             return;
         }
         
-        // ===== 검증 2: 사원번호 중복 검증 =====
+ // ===== 검증 2: 사원번호 중복 검증 =====
         if (employeeNumber && db.isEmployeeNumberDuplicate(employeeNumber)) {
             로거_인사?.warn('사원번호 중복', { employeeNumber });
             
-            const errorMsg = `⚠️ 이미 사용 중인 사원번호입니다: ${employeeNumber}`;
+            const errorMsg = `[주의] 이미 사용 중인 사원번호입니다: ${employeeNumber}`;
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn(errorMsg);
@@ -472,7 +472,7 @@ async function calculateAndSave() {
             return;
         }
         
-        // ===== 경력 수집 =====
+ // ===== 경력 수집 =====
         const careers = [];
         
         for (let i = 1; i <= careerCount; i++) {
@@ -485,13 +485,13 @@ async function calculateAndSave() {
             const careerRate = parseInt(getValue(`careerRate-${i}`)) || 100;
             const careerWorkingHours = parseInt(getValue(`careerWorkingHours-${i}`)) || 40;
             
-            // 경력 내용이 있는 경우만 추가
+ // 경력 내용이 있는 경우만 추가
             if (careerName && careerStartDate && careerEndDate) {
-                // 검증 3: 경력 날짜 검증
+ // 검증 3: 경력 날짜 검증
                 if (careerEndDate < careerStartDate) {
                     로거_인사?.warn('경력 날짜 오류', { careerName, careerStartDate, careerEndDate });
                     
-                    const errorMsg = `⚠️ 경력 "${careerName}"의 종료일이 시작일보다 빠릅니다.`;
+                    const errorMsg = `[주의] 경력 "${careerName}"의 종료일이 시작일보다 빠릅니다.`;
                     
                     if (typeof 에러처리_인사 !== 'undefined') {
                         에러처리_인사.warn(errorMsg);
@@ -513,10 +513,10 @@ async function calculateAndSave() {
         
         로거_인사?.debug('경력 수집 완료', { careerCount: careers.length });
         
-        // ===== 호봉 계산 =====
+ // ===== 호봉 계산 =====
         로거_인사?.debug('호봉 계산 시작');
         
-        // 경력 계산
+ // 경력 계산
         const careerResult = CareerCalculator.calculateTotalCareer(careers);
         const totalYears = careerResult.totalYears || 0;
         const totalMonths = careerResult.totalMonths || 0;
@@ -524,7 +524,7 @@ async function calculateAndSave() {
         
         로거_인사?.debug('경력 계산 완료', { totalYears, totalMonths, totalDays });
         
-        // ✅ v4.0.0: 입사 호봉 계산 - API 우선 사용
+ // v4.0.0: 입사 호봉 계산 - API 우선 사용
         let currentGrade;
         if (typeof API_인사 !== 'undefined') {
             currentGrade = await API_인사.calculateInitialRank(totalYears, totalMonths);
@@ -534,14 +534,14 @@ async function calculateAndSave() {
         
         로거_인사?.debug('입사 호봉 계산 완료', { currentGrade });
         
-        // 검증 4: 호봉 범위 검증
+ // 검증 4: 호봉 범위 검증
         const minRank = typeof CONFIG !== 'undefined' ? CONFIG.RANK.MIN : 1;
         const maxRank = typeof CONFIG !== 'undefined' ? CONFIG.RANK.MAX : 99;
         
         if (currentGrade < minRank || currentGrade > maxRank) {
             로거_인사?.warn('호봉 범위 초과', { currentGrade, minRank, maxRank });
             
-            const errorMsg = `⚠️ 계산된 호봉(${currentGrade})이 허용 범위(${minRank}~${maxRank})를 벗어났습니다.`;
+            const errorMsg = `[주의] 계산된 호봉(${currentGrade})이 허용 범위(${minRank}~${maxRank})를 벗어났습니다.`;
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn(errorMsg);
@@ -551,7 +551,7 @@ async function calculateAndSave() {
             return;
         }
         
-        // ✅ v4.0.0: 첫승급일 계산 - API 우선 사용
+ // v4.0.0: 첫승급일 계산 - API 우선 사용
         let firstUpgradeDate;
         if (typeof API_인사 !== 'undefined') {
             firstUpgradeDate = await API_인사.calculateFirstUpgradeDate(
@@ -565,8 +565,8 @@ async function calculateAndSave() {
         
         로거_인사?.debug('첫승급일 계산 완료', { firstUpgradeDate });
         
-        // ✅ v4.0.0: 차기승급일 계산 - API 우선 사용
-        // 기준일은 오늘 날짜 사용
+ // v4.0.0: 차기승급일 계산 - API 우선 사용
+ // 기준일은 오늘 날짜 사용
         const today = new Date().toISOString().split('T')[0];
         let nextUpgradeDate;
         if (typeof API_인사 !== 'undefined') {
@@ -577,11 +577,11 @@ async function calculateAndSave() {
         
         로거_인사?.debug('차기승급일 계산 완료', { nextUpgradeDate });
         
-        // 검증 5: 계산된 날짜 검증
+ // 검증 5: 계산된 날짜 검증
         if (isRankBased && (!firstUpgradeDate || !nextUpgradeDate)) {
             로거_인사?.warn('승급일 계산 실패');
             
-            const errorMsg = '⚠️ 승급일 계산에 실패했습니다.\n입력값을 확인하세요.';
+            const errorMsg = '[주의] 승급일 계산에 실패했습니다.\n입력값을 확인하세요.';
             
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn(errorMsg);
@@ -591,7 +591,7 @@ async function calculateAndSave() {
             return;
         }
         
-        // ===== 직원 데이터 생성 =====
+ // ===== 직원 데이터 생성 =====
         const uniqueCode = db.generateUniqueCode();
         
         const employee = {
@@ -634,7 +634,7 @@ async function calculateAndSave() {
                 endDate: d.endDate,
                 rate: d.rate,
                 workingHours: d.workingHours,
-                // ⭐ 연명부 호환용 문자열 필드 추가
+ // 연명부 호환용 문자열 필드 추가
                 period: d.originalPeriod 
                     ? `${d.originalPeriod.years}년 ${d.originalPeriod.months}개월 ${d.originalPeriod.days}일` 
                     : '',
@@ -643,7 +643,7 @@ async function calculateAndSave() {
                     : ''
             })),
             
-            // 첫 번째 발령 기록 생성 - ⭐ v3.4.2: 인사발령 모듈과 일관된 구조
+ // 첫 번째 발령 기록 생성 - v3.4.2: 인사발령 모듈과 일관된 구조
             assignments: [{
                 id: `assign-${Date.now()}`,  // ⭐ 문자열 ID로 통일
                 code: `${uniqueCode}-01`,    // ⭐ 발령 코드 패턴: 고유번호-순번
@@ -675,7 +675,7 @@ async function calculateAndSave() {
             currentGrade
         });
         
-        // ===== 저장 =====
+ // ===== 저장 =====
         db.saveEmployee(employee);
         
         로거_인사?.info('직원 등록 완료', {
@@ -687,8 +687,8 @@ async function calculateAndSave() {
             currentGrade
         });
         
-        // 성공 메시지
-        const successMsg = `✅ ${name}님이 등록되었습니다.\n\n` +
+ // 성공 메시지
+        const successMsg = `${name}님이 등록되었습니다.\n\n` +
             `고유번호: ${uniqueCode}\n` +
             (employeeNumber ? `사원번호: ${employeeNumber}\n` : '') +
             `입사일: ${entryDate}\n` +
@@ -700,28 +700,28 @@ async function calculateAndSave() {
             alert(successMsg);
         }
         
-        // 결과 표시
+ // 결과 표시
         displayCalculationResult(
             name, totalYears, totalMonths, totalDays,
             currentGrade, firstUpgradeDate, nextUpgradeDate,
             careerResult.details || [], isRankBased
         );
         
-        // 대시보드 업데이트
+ // 대시보드 업데이트
         if (typeof updateDashboard === 'function') {
             updateDashboard();
         }
         updateUniqueCodeField();
         
-        // 폼 초기화
+ // 폼 초기화
         resetRegisterForm();
         
-        // ⭐ v4.2.0: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
-        // blur/focus 트릭 후 입력란에 포커스
+ // v4.2.0: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
+ // blur/focus 트릭 후 입력란에 포커스
         const focusInput = async () => {
             if (window.electronAPI?.focusWindow) {
                 await window.electronAPI.focusWindow();
-                // blur/focus 완료 후 입력란에 포커스
+ // blur/focus 완료 후 입력란에 포커스
                 setTimeout(() => {
                     const nameInput = document.getElementById('employeeName');
                     if (nameInput) nameInput.focus();
@@ -737,7 +737,7 @@ async function calculateAndSave() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '직원 등록 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 직원 등록 중 오류가 발생했습니다.\n\n' + error.message);
+            alert('[오류] 직원 등록 중 오류가 발생했습니다.\n\n' + error.message);
         }
     }
 }
@@ -776,15 +776,15 @@ function resetRegisterForm() {
         setValue('employeeJobType', '');
         setValue('entryDate', DateUtils.formatDate(new Date()));
         
-        // ⭐ v3.2.0: 주 소정근로시간 초기화
+ // v3.2.0: 주 소정근로시간 초기화
         setValue('weeklyWorkingHours', '40');
         setValue('monthlyWorkingHoursDisplay', '209시간');
         
-        // ⭐ v3.3.0: 사원번호 자동생성 모드 리셋 및 업데이트
+ // v3.3.0: 사원번호 자동생성 모드 리셋 및 업데이트
         _isEmployeeNumberAutoGenerated = true;
         updateEmployeeNumberField();
         
-        // ⭐ v3.4.1: 경력 없음 체크박스 초기화
+ // v3.4.1: 경력 없음 체크박스 초기화
         const noCareerCheckbox = document.getElementById('noCareerCheckbox');
         const careerSection = document.getElementById('careerSection');
         if (noCareerCheckbox) {
@@ -794,7 +794,7 @@ function resetRegisterForm() {
             careerSection.classList.remove('hidden');
         }
         
-        // 경력 목록 초기화
+ // 경력 목록 초기화
         const careerList = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('careerList')
             : document.getElementById('careerList');
@@ -833,7 +833,7 @@ function displayCalculationResult(name, years, months, days, currentGrade, first
     try {
         로거_인사?.debug('계산 결과 표시 시작', { name, currentGrade });
         
-        // ⭐ 호봉획정표 출력용 데이터 저장
+ // 호봉획정표 출력용 데이터 저장
         window.lastCalculationData = {
             name: name,
             dept: document.getElementById('employeeDept')?.value || '-',
@@ -853,7 +853,7 @@ function displayCalculationResult(name, years, months, days, currentGrade, first
                 endDate: d.endDate || '',
                 rate: d.rate || 100,
                 workingHours: d.workingHours || 40,
-                // 원본 기간과 환산 기간 정보 추가
+ // 원본 기간과 환산 기간 정보 추가
                 originalPeriod: d.originalPeriod || null,
                 convertedPeriod: d.convertedPeriod || null
             }))
@@ -869,16 +869,16 @@ function displayCalculationResult(name, years, months, days, currentGrade, first
             return;
         }
         
-        // 경력 상세 HTML 생성
+ // 경력 상세 HTML 생성
         let detailsHTML = '';
         if (details.length > 0) {
             details.forEach(d => {
-                // XSS 방지
+ // XSS 방지
                 const safeName = typeof DOM유틸_인사 !== 'undefined'
                     ? DOM유틸_인사.escapeHtml(d.name)
                     : d.name;
                 
-                // 기간 표시 형식 처리
+ // 기간 표시 형식 처리
                 const periodStr = d.originalPeriod 
                     ? `${d.originalPeriod.years}년 ${d.originalPeriod.months}개월 ${d.originalPeriod.days}일`
                     : (d.period || '-');
@@ -891,22 +891,22 @@ function displayCalculationResult(name, years, months, days, currentGrade, first
                         <div style="font-weight: 600; margin-bottom: 8px; color: #1a1d1f; font-size: 15px;">${safeName}</div>
                         <div style="font-size: 13px; color: #6b7280; line-height: 1.6;">
                             실제 근무기간: ${periodStr}
-                            <br>→ 인정률 ${d.rate || 100}% 적용: <span style="color: #667eea; font-weight: 600;">${convertedStr}</span>
+                            <br>→ 인정률 ${d.rate || 100}% 적용: <span style="color: #4f46e5; font-weight: 600;">${convertedStr}</span>
                         </div>
                     </div>
                 `;
             });
         }
         
-        // XSS 방지
+ // XSS 방지
         const safeName = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.escapeHtml(name)
             : name;
         
-        // 결과 HTML 생성
+ // 결과 HTML 생성
         const resultHTML = `
             <div class="result-box">
-                <h2 style="margin-bottom: 8px; font-size: 22px; font-weight: 600; color: #1a1d1f;">📋 호봉 계산 결과</h2>
+                <h2 style="margin-bottom: 8px; font-size: 22px; font-weight: 600; color: #1a1d1f;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 호봉 계산 결과</h2>
                 <p style="color: #6b7280; margin-bottom: 24px; font-size: 14px;">${safeName}</p>
                 
                 ${detailsHTML}
@@ -932,7 +932,7 @@ function displayCalculationResult(name, years, months, days, currentGrade, first
                     ` : ''}
                 </div>
                 <div style="margin-top: 24px; text-align: center;">
-                    <button class="btn btn-primary" onclick="showCertificateFromResult()">📄 호봉획정표 출력</button>
+                    <button class="btn btn-primary" onclick="showCertificateFromResult()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> 호봉획정표 출력</button>
                 </div>
             </div>
         `;
@@ -979,18 +979,18 @@ function displayCalculationResult(name, years, months, days, currentGrade, first
  * - 소수점 처리: 급여설정에서 지정 (올림/반올림/버림)
  * 
  * @example
- * calculateMonthlyWorkingHours(40);  // 반올림 → 209
- * calculateMonthlyWorkingHours(25);  // 반올림 → 130
- * calculateMonthlyWorkingHours(35);  // 반올림 → 183
+ * calculateMonthlyWorkingHours(40); // 반올림 → 209
+ * calculateMonthlyWorkingHours(25); // 반올림 → 130
+ * calculateMonthlyWorkingHours(35); // 반올림 → 183
  */
 function calculateMonthlyWorkingHours(weeklyHours, year = null) {
     try {
-        // SalaryCalculator가 로드되어 있으면 공통 함수 사용
+ // SalaryCalculator가 로드되어 있으면 공통 함수 사용
         if (typeof SalaryCalculator !== 'undefined' && SalaryCalculator.getMonthlyWorkingHours) {
             return SalaryCalculator.getMonthlyWorkingHours(weeklyHours, year);
         }
         
-        // fallback: SalaryCalculator가 없는 경우 직접 계산 (반올림)
+ // fallback: SalaryCalculator가 없는 경우 직접 계산 (반올림)
         const hours = parseInt(weeklyHours) || 40;
         const weeksPerMonth = 365 / 7 / 12;  // 4.345238...
         

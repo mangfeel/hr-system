@@ -12,59 +12,59 @@
  * 
  * [변경 이력]
  * v6.0.0 (2026-01-22) ⭐ 배치 API 적용 - 성능 최적화
- *   - 근속구간 그룹핑 시 배치 API 사용 (calculateBatchForEmployees)
- *   - N회 API 호출 → 1회로 감소
- *   - _getTenureGroupFromYears() 헬퍼 함수 추가
+ * - 근속구간 그룹핑 시 배치 API 사용 (calculateBatchForEmployees)
+ * - N회 API 호출 → 1회로 감소
+ * - _getTenureGroupFromYears() 헬퍼 함수 추가
  *
  * v5.0.0 (2026-01-22) API 전용 버전
- *   - 직원유틸_인사.getDynamicRankInfo() await 추가
- *   - 호봉 계산 forEach → for...of (async/await 지원)
- *   - 모든 계산 로직 서버 API로 이동
+ * - 직원유틸_인사.getDynamicRankInfo() await 추가
+ * - 호봉 계산 forEach → for...of (async/await 지원)
+ * - 모든 계산 로직 서버 API로 이동
  *
  * v4.0.0 (2026-01-22) API 연동 버전
- *   - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
- *   - TenureCalculator.calculate → API_인사.calculateTenure
- *   - _calculateStatValue() async 변경
- *   - forEach → for...of (async/await 지원)
+ * - RankCalculator.calculateCurrentRank → API_인사.calculateCurrentRank
+ * - TenureCalculator.calculate → API_인사.calculateTenure
+ * - _calculateStatValue() async 변경
+ * - forEach → for...of (async/await 지원)
  *
  * v1.2.1 - 육아휴직 상태 직원 통계 누락 버그 수정 (2026-01-21)
- *   ⭐ 버그 수정: 육아휴직 상태 직원이 통계에서 제외되던 문제
- *   - _isOnMaternityLeaveAtDate() 함수 신규 추가
- *   - 기준일이 실제 휴직 기간(startDate ~ endDate) 내에 있는지 판단
- *   - 미래 휴직 예정자도 기준일 기준으로 정확히 판단
- *   - _getActiveEmployeesAtDate() 함수 수정
- *   - status === '재직' 조건에 status === '육아휴직' 추가
- *   - "육아휴직자 포함" 옵션도 기준일 기반으로 동작
- *   - 예: 2026-01-01~12-31 휴직 예정자 → 2025-12-31 기준 통계에 포함됨
+ * ⭐ 버그 수정: 육아휴직 상태 직원이 통계에서 제외되던 문제
+ * - _isOnMaternityLeaveAtDate() 함수 신규 추가
+ * - 기준일이 실제 휴직 기간(startDate ~ endDate) 내에 있는지 판단
+ * - 미래 휴직 예정자도 기준일 기준으로 정확히 판단
+ * - _getActiveEmployeesAtDate() 함수 수정
+ * - status === '재직' 조건에 status === '육아휴직' 추가
+ * - "육아휴직자 포함" 옵션도 기준일 기반으로 동작
+ * - 예: 2026-01-01~12-31 휴직 예정자 → 2025-12-31 기준 통계에 포함됨
  *
  * v1.2.0 - UI/UX 전면 개편 (2025-12-04)
- *   ⭐ 목적 기반 UI로 재설계
- *   - "빠른 분석": 원클릭으로 자주 쓰는 통계 즉시 생성
- *     · 부서별 인원현황
- *     · 직위별 인원현황
- *     · 연령대별 분포
- *     · 근속별 분포
- *     · 직종별 현황
- *     · 부서×직위 교차분석
- *   - "상세 설정": 접어두고 필요시 펼침
- *   - 행 기준: 라디오 버튼 → 드롭다운 셀렉트
- *   - 분석 항목: 프리셋 버튼 (기본/상세/전체/초기화)
- *   - 사용자 친화적 용어 사용 (기술 용어 숨김)
- *   - 기존 기능 100% 하위 호환
+ * ⭐ 목적 기반 UI로 재설계
+ * - "빠른 분석": 원클릭으로 자주 쓰는 통계 즉시 생성
+ * · 부서별 인원현황
+ * · 직위별 인원현황
+ * · 연령대별 분포
+ * · 근속별 분포
+ * · 직종별 현황
+ * · 부서×직위 교차분석
+ * - "상세 설정": 접어두고 필요시 펼침
+ * - 행 기준: 라디오 버튼 → 드롭다운 셀렉트
+ * - 분석 항목: 프리셋 버튼 (기본/상세/전체/초기화)
+ * - 사용자 친화적 용어 사용 (기술 용어 숨김)
+ * - 기존 기능 100% 하위 호환
  * 
  * v1.1.0 - 비고(상세내역) 표시/숨김 기능 추가 (2025-11-12)
- *   ⭐ 신규 기능: 비고(상세내역) 선택적 표시
- *   - "비고(상세내역) 표시" 체크박스 추가
- *   - 체크 ON: 비고 컬럼 표시 (내부 보고용)
- *   - 체크 OFF: 비고 컬럼 숨김 (외부 제출용)
- *   - 화면 표시, 엑셀 다운로드, 인쇄 모두 동일하게 적용
- *   - 1차원/2차원 분석 모두 지원
- *   - 법인, 시청, 도청, 국회 등 외부 제출 시 유용
+ * ⭐ 신규 기능: 비고(상세내역) 선택적 표시
+ * - "비고(상세내역) 표시" 체크박스 추가
+ * - 체크 ON: 비고 컬럼 표시 (내부 보고용)
+ * - 체크 OFF: 비고 컬럼 숨김 (외부 제출용)
+ * - 화면 표시, 엑셀 다운로드, 인쇄 모두 동일하게 적용
+ * - 1차원/2차원 분석 모두 지원
+ * - 법인, 시청, 도청, 국회 등 외부 제출 시 유용
  * 
  * v1.0.0 - 초기 버전 (2025-11-10)
- *   - 교차 통계 분석 기능
- *   - 1차원/2차원 분석 지원
- *   - 589,869가지 조합 가능
+ * - 교차 통계 분석 기능
+ * - 1차원/2차원 분석 지원
+ * - 589,869가지 조합 가능
  * 
  * [주요 기능]
  * 1. 빠른 분석: 원클릭으로 자주 쓰는 통계 즉시 생성 ⭐ NEW
@@ -141,7 +141,7 @@ const COLUMN_OPTIONS = [
 const QUICK_PRESETS = [
     {
         id: 'dept',
-        icon: '🏢',
+        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><line x1="8" y1="6" x2="10" y2="6"/><line x1="14" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/></svg>',
         title: '부서별',
         subtitle: '인원현황',
         desc: '부서별 인원, 성별, 근속',
@@ -151,7 +151,7 @@ const QUICK_PRESETS = [
     },
     {
         id: 'position',
-        icon: '👔',
+        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
         title: '직위별',
         subtitle: '인원현황',
         desc: '직위별 인원, 성별, 호봉',
@@ -161,7 +161,7 @@ const QUICK_PRESETS = [
     },
     {
         id: 'age',
-        icon: '🎂',
+        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg>',
         title: '연령대별',
         subtitle: '분포',
         desc: '연령대별 인원, 성별',
@@ -171,7 +171,7 @@ const QUICK_PRESETS = [
     },
     {
         id: 'tenure',
-        icon: '📅',
+        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
         title: '근속별',
         subtitle: '분포',
         desc: '근속구간별 인원, 호봉',
@@ -181,7 +181,7 @@ const QUICK_PRESETS = [
     },
     {
         id: 'jobType',
-        icon: '💼',
+        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
         title: '직종별',
         subtitle: '현황',
         desc: '직종별 인원, 호봉, 근속',
@@ -191,7 +191,7 @@ const QUICK_PRESETS = [
     },
     {
         id: 'deptPosition',
-        icon: '📊',
+        icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
         title: '부서×직위',
         subtitle: '교차분석',
         desc: '부서와 직위 2차원 분석',
@@ -228,16 +228,16 @@ function loadStatisticsTab() {
             throw new Error('통계 분석 화면을 표시할 수 없습니다.');
         }
         
-        // HTML 생성
+ // HTML 생성
         const html = _generateStatisticsHTML();
         statsDiv.innerHTML = html;
         
-        // 오늘 날짜 설정 - 안전한 방식
+ // 오늘 날짜 설정 - 안전한 방식
         let today;
         if (typeof DateUtils !== 'undefined' && DateUtils.formatDate) {
             today = DateUtils.formatDate(new Date());
         } else {
-            // DateUtils가 없으면 직접 포맷
+ // DateUtils가 없으면 직접 포맷
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -250,7 +250,7 @@ function loadStatisticsTab() {
             baseDateInput.value = today;
         }
         
-        // ⭐ v1.2.0: 상세 설정 select 변경 시 숨김 필드 동기화
+ // ⭐ v1.2.0: 상세 설정 select 변경 시 숨김 필드 동기화
         const row1Select = document.getElementById('stats-row1-select');
         const row2Select = document.getElementById('stats-row2-select');
         const targetSelect = document.getElementById('stats-target-select');
@@ -265,12 +265,12 @@ function loadStatisticsTab() {
             targetSelect.addEventListener('change', syncAdvancedSettings);
         }
         
-        // 분석 항목 체크박스 동기화
+ // 분석 항목 체크박스 동기화
         COLUMN_OPTIONS.forEach(opt => {
             const checkbox = document.getElementById(`col-${opt.id}`);
             if (checkbox) {
                 checkbox.addEventListener('change', function() {
-                    // 하위 호환용 숨김 필드도 동기화
+ // 하위 호환용 숨김 필드도 동기화
                     const compatCheckbox = document.querySelector(`.column-options input[value="${opt.id}"]`);
                     if (compatCheckbox) {
                         compatCheckbox.checked = this.checked;
@@ -288,7 +288,7 @@ function loadStatisticsTab() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '통계 분석 화면을 불러오는 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 통계 분석 화면을 불러오는 중 오류가 발생했습니다.');
+            alert('[오류] 통계 분석 화면을 불러오는 중 오류가 발생했습니다.');
         }
     }
 }
@@ -306,7 +306,7 @@ function loadStatisticsTab() {
  * - 사용자 친화적 용어 사용
  */
 function _generateStatisticsHTML() {
-    // 빠른 분석 카드 생성
+ // 빠른 분석 카드 생성
     const quickCardsHTML = QUICK_PRESETS.map(preset => `
         <div class="stats-quick-card" onclick="runQuickAnalysis('${preset.id}')" title="${preset.desc}">
             <div class="stats-quick-icon">${preset.icon}</div>
@@ -319,7 +319,7 @@ function _generateStatisticsHTML() {
         <div class="statistics-container">
             <!-- 헤더 -->
             <div class="statistics-header">
-                <h2>📊 교차 통계 분석</h2>
+                <h2><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 교차 통계 분석</h2>
                 <p class="text-muted">기준일 기준 재직자에 대한 다양한 통계를 확인할 수 있습니다.</p>
             </div>
             
@@ -328,11 +328,11 @@ function _generateStatisticsHTML() {
                 <div class="card-body">
                     <div class="stats-conditions-row">
                         <div class="stats-condition-item">
-                            <label for="stats-base-date">📅 기준일</label>
+                            <label for="stats-base-date"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 기준일</label>
                             <input type="date" class="form-control" id="stats-base-date">
                         </div>
                         <div class="stats-condition-item">
-                            <label for="stats-target-select">👥 분석 대상</label>
+                            <label for="stats-target-select"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> 분석 대상</label>
                             <select class="form-control" id="stats-target-select">
                                 <option value="all" selected>전체 직원</option>
                                 <option value="rank">호봉제만</option>
@@ -356,7 +356,7 @@ function _generateStatisticsHTML() {
             <!-- ========== 빠른 분석 ========== -->
             <div class="stats-quick-section">
                 <div class="stats-section-title">
-                    <span>🚀 빠른 분석</span>
+                    <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> 빠른 분석</span>
                     <span class="stats-section-hint">클릭 한 번으로 자주 쓰는 통계를 바로 확인하세요</span>
                 </div>
                 <div class="stats-quick-cards">
@@ -367,13 +367,13 @@ function _generateStatisticsHTML() {
             <!-- ========== 상세 설정 (접힘) ========== -->
             <div class="stats-advanced-section">
                 <div class="stats-advanced-header" onclick="toggleAdvancedSettings()">
-                    <span>⚙️ 상세 설정 (직접 조합하기)</span>
+                    <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> 상세 설정 (직접 조합하기)</span>
                     <span class="stats-advanced-toggle" id="stats-advanced-toggle">펼치기 ▼</span>
                 </div>
                 <div class="stats-advanced-body" id="stats-advanced-body" style="display: none;">
                     <!-- 그룹화 기준 -->
                     <div class="stats-setting-group">
-                        <div class="stats-setting-title">📍 그룹화 기준</div>
+                        <div class="stats-setting-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 그룹화 기준</div>
                         <div class="stats-setting-content">
                             <div class="stats-row-selects">
                                 <div class="stats-select-group">
@@ -396,14 +396,14 @@ function _generateStatisticsHTML() {
                                 </div>
                             </div>
                             <div class="stats-example-hint">
-                                💡 예: "부서 × 직위" 선택 시 부서별-직위별 교차 분석
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> 예: "부서 × 직위" 선택 시 부서별-직위별 교차 분석
                             </div>
                         </div>
                     </div>
                     
                     <!-- 분석 항목 -->
                     <div class="stats-setting-group">
-                        <div class="stats-setting-title">📊 분석 항목</div>
+                        <div class="stats-setting-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 분석 항목</div>
                         <div class="stats-setting-content">
                             <div class="stats-column-presets">
                                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setColumnPreset('basic')">기본</button>
@@ -425,7 +425,7 @@ function _generateStatisticsHTML() {
                     <!-- 생성 버튼 -->
                     <div class="stats-generate-area">
                         <button type="button" class="btn btn-primary btn-lg" onclick="generateStatistics()">
-                            🔄 통계 생성
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> 통계 생성
                         </button>
                     </div>
                 </div>
@@ -437,13 +437,13 @@ function _generateStatisticsHTML() {
                     <span class="stats-result-title" id="stats-result-title">분석 결과</span>
                     <div class="stats-result-actions">
                         <button type="button" class="btn btn-sm btn-success" onclick="exportStatisticsToExcel()" id="stats-export-btn">
-                            📥 엑셀
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀
                         </button>
                         <button type="button" class="btn btn-sm btn-info" onclick="printStatistics('portrait')" id="stats-print-portrait-btn">
-                            🖨️ 세로인쇄
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 세로인쇄
                         </button>
                         <button type="button" class="btn btn-sm btn-info" onclick="printStatistics('landscape')" id="stats-print-landscape-btn">
-                            🖨️ 가로인쇄
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 가로인쇄
                         </button>
                     </div>
                 </div>
@@ -504,21 +504,21 @@ function runQuickAnalysis(presetId) {
             return;
         }
         
-        // 1. 기준일 확인
+ // 1. 기준일 확인
         const baseDate = document.getElementById('stats-base-date')?.value;
         if (!baseDate) {
-            alert('⚠️ 기준일을 선택해주세요.');
+            alert('[주의] 기준일을 선택해주세요.');
             return;
         }
         
-        // 2. 숨김 필드에 값 설정 (하위 호환)
-        // 1차 행 기준
+ // 2. 숨김 필드에 값 설정 (하위 호환)
+ // 1차 행 기준
         ROW_OPTIONS.forEach(opt => {
             const radio = document.getElementById(`row1-${opt.id}`);
             if (radio) radio.checked = (opt.id === preset.row1);
         });
         
-        // 2차 행 기준
+ // 2차 행 기준
         const enableRow2 = document.getElementById('enable-row2');
         if (enableRow2) {
             enableRow2.checked = !!preset.row2;
@@ -534,7 +534,7 @@ function runQuickAnalysis(presetId) {
             });
         }
         
-        // 열 기준 (분석 항목)
+ // 열 기준 (분석 항목)
         COLUMN_OPTIONS.forEach(opt => {
             const checkbox = document.getElementById(`col-${opt.id}`);
             if (checkbox) {
@@ -542,12 +542,12 @@ function runQuickAnalysis(presetId) {
             }
         });
         
-        // 대상 타입 (새 UI에서 가져옴)
+ // 대상 타입 (새 UI에서 가져옴)
         const targetSelect = document.getElementById('stats-target-select');
         const targetValue = targetSelect?.value || 'all';
         document.getElementById(`stats-target-${targetValue}`).checked = true;
         
-        // 3. 결과 타이틀 설정
+ // 3. 결과 타이틀 설정
         const resultTitle = document.getElementById('stats-result-title');
         if (resultTitle) {
             if (preset.row2) {
@@ -557,7 +557,7 @@ function runQuickAnalysis(presetId) {
             }
         }
         
-        // 4. 통계 생성
+ // 4. 통계 생성
         generateStatistics();
         
         로거_인사?.info('빠른 분석 완료', { presetId, preset: preset.title });
@@ -565,7 +565,7 @@ function runQuickAnalysis(presetId) {
     } catch (error) {
         console.error('[통계분석] runQuickAnalysis 에러:', error);
         로거_인사?.error('빠른 분석 실패', error);
-        alert('❌ 통계 분석 중 오류가 발생했습니다.');
+        alert('[오류] 통계 분석 중 오류가 발생했습니다.');
     }
 }
 
@@ -629,7 +629,7 @@ function setColumnPreset(preset) {
  * 새 UI의 select 값을 기존 숨김 radio 필드에 동기화
  */
 function syncAdvancedSettings() {
-    // 1차 행 기준 동기화
+ // 1차 행 기준 동기화
     const row1Select = document.getElementById('stats-row1-select');
     if (row1Select) {
         ROW_OPTIONS.forEach(opt => {
@@ -638,7 +638,7 @@ function syncAdvancedSettings() {
         });
     }
     
-    // 2차 행 기준 동기화
+ // 2차 행 기준 동기화
     const row2Select = document.getElementById('stats-row2-select');
     const enableRow2 = document.getElementById('enable-row2');
     
@@ -657,7 +657,7 @@ function syncAdvancedSettings() {
         }
     }
     
-    // 대상 타입 동기화
+ // 대상 타입 동기화
     const targetSelect = document.getElementById('stats-target-select');
     if (targetSelect) {
         const targetValue = targetSelect.value;
@@ -682,27 +682,27 @@ async function generateStatistics() {
     try {
         로거_인사?.debug('통계 생성 시작');
         
-        // 1. 옵션 가져오기
+ // 1. 옵션 가져오기
         const baseDate = document.getElementById('stats-base-date')?.value;
         if (!baseDate) {
-            alert('⚠️ 기준일을 선택해주세요.');
+            alert('[주의] 기준일을 선택해주세요.');
             return;
         }
         
-        // 1차 행 기준
+ // 1차 행 기준
         const rowOption1 = document.querySelector('input[name="rowOption1"]:checked')?.value;
         if (!rowOption1) {
-            alert('⚠️ 1차 행 기준을 선택해주세요.');
+            alert('[주의] 1차 행 기준을 선택해주세요.');
             return;
         }
         
-        // 2차 행 기준 (선택)
+ // 2차 행 기준 (선택)
         const enableRow2 = document.getElementById('enable-row2')?.checked;
         const rowOption2 = enableRow2 ? document.querySelector('input[name="rowOption2"]:checked')?.value : null;
         
-        // 2차원 분석 시 1차와 2차가 같으면 안됨
+ // 2차원 분석 시 1차와 2차가 같으면 안됨
         if (enableRow2 && rowOption1 === rowOption2) {
-            alert('⚠️ 1차 기준과 2차 기준은 달라야 합니다.');
+            alert('[주의] 1차 기준과 2차 기준은 달라야 합니다.');
             return;
         }
         
@@ -710,7 +710,7 @@ async function generateStatistics() {
             .map(cb => cb.value);
         
         if (columnOptions.length === 0) {
-            alert('⚠️ 최소 하나의 분석 항목을 선택해주세요.');
+            alert('[주의] 최소 하나의 분석 항목을 선택해주세요.');
             return;
         }
         
@@ -722,16 +722,16 @@ async function generateStatistics() {
             columnOptions 
         });
         
-        // ⭐ Phase 2-2: 육아휴직자 포함 옵션
+ // ⭐ Phase 2-2: 육아휴직자 포함 옵션
         const includeMaternity = document.getElementById('stats-include-maternity')?.checked ?? true;
         
-        // ⭐ Phase 2-1: 대상 직원 범위 옵션
+ // ⭐ Phase 2-1: 대상 직원 범위 옵션
         const targetType = document.querySelector('input[name="statsTarget"]:checked')?.value || 'all';
         
         로거_인사?.debug('육아휴직자 포함 옵션', { includeMaternity });
         로거_인사?.debug('대상 직원 범위', { targetType });
         
-        // 2. 기준일 기준 재직자 가져오기
+ // 2. 기준일 기준 재직자 가져오기
         const employees = _getActiveEmployeesAtDate(baseDate, includeMaternity, targetType);
         
         if (employees.length === 0) {
@@ -741,20 +741,20 @@ async function generateStatistics() {
         
         로거_인사?.debug('재직자 조회 완료', { count: employees.length });
         
-        // 3. 통계 데이터 생성 (1차원 or 2차원)
+ // 3. 통계 데이터 생성 (1차원 or 2차원)
         let statsData, html;
         
         if (rowOption2) {
-            // 2차원 분석
+ // 2차원 분석
             statsData = await _generate2DStatisticsData(employees, baseDate, rowOption1, rowOption2, columnOptions);
             html = _generate2DStatisticsTableHTML(statsData, rowOption1, rowOption2, columnOptions);
         } else {
-            // 1차원 분석 (기존)
+ // 1차원 분석 (기존)
             statsData = await _generateStatisticsData(employees, baseDate, rowOption1, columnOptions);
             html = _generateStatisticsTableHTML(statsData, rowOption1, columnOptions);
         }
         
-        // 4. HTML 생성 및 표시
+ // 4. HTML 생성 및 표시
         const resultDiv = document.getElementById('stats-result');
         const contentDiv = document.getElementById('stats-content');
         
@@ -762,13 +762,13 @@ async function generateStatistics() {
             contentDiv.innerHTML = html;
             resultDiv.style.display = 'block';
             
-            // 엑셀 다운로드 버튼 활성화
+ // 엑셀 다운로드 버튼 활성화
             const exportBtn = document.getElementById('stats-export-btn');
             if (exportBtn) {
                 exportBtn.disabled = false;
             }
             
-            // ⭐ Phase 2-4: 인쇄 버튼 활성화
+ // ⭐ Phase 2-4: 인쇄 버튼 활성화
             const printPortraitBtn = document.getElementById('stats-print-portrait-btn');
             const printLandscapeBtn = document.getElementById('stats-print-landscape-btn');
             if (printPortraitBtn) {
@@ -785,7 +785,7 @@ async function generateStatistics() {
         });
         
     } catch (error) {
-        // 디버깅: 에러 상세 출력
+ // 디버깅: 에러 상세 출력
         console.error('=== 통계 생성 에러 ===');
         console.error('에러 메시지:', error.message);
         console.error('에러 스택:', error.stack);
@@ -796,7 +796,7 @@ async function generateStatistics() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '통계를 생성하는 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 통계를 생성하는 중 오류가 발생했습니다.\n' + error.message);
+            alert('[오류] 통계를 생성하는 중 오류가 발생했습니다.\n' + error.message);
         }
     }
 }
@@ -823,34 +823,34 @@ async function generateStatistics() {
  * // 2022년 12월 31일 이전 가장 최근 발령의 급여방식 반환
  */
 function _getPaymentMethodAtDate(emp, targetDate) {
-    // 1. 발령 이력이 없는 경우 → 현재 급여방식 사용
+ // 1. 발령 이력이 없는 경우 → 현재 급여방식 사용
     if (!emp.assignments || !Array.isArray(emp.assignments) || emp.assignments.length === 0) {
         return emp.salaryInfo?.isRankBased ?? 
                emp.rank?.isRankBased ?? 
                true;
     }
     
-    // 2. targetDate 이전 발령 찾기 (시작일 기준)
+ // 2. targetDate 이전 발령 찾기 (시작일 기준)
     const validAssignments = emp.assignments
         .filter(a => a.startDate && a.startDate <= targetDate)
         .sort((a, b) => b.startDate.localeCompare(a.startDate)); // 최신순 정렬
     
-    // 3. 해당 기간의 발령이 없는 경우 → 현재 급여방식 사용
+ // 3. 해당 기간의 발령이 없는 경우 → 현재 급여방식 사용
     if (validAssignments.length === 0) {
         return emp.salaryInfo?.isRankBased ?? 
                emp.rank?.isRankBased ?? 
                true;
     }
     
-    // 4. 가장 최근 발령의 급여방식 사용
+ // 4. 가장 최근 발령의 급여방식 사용
     const latestAssignment = validAssignments[0];
     
-    // 4-1. 발령에 급여방식이 있는 경우 (Phase 3-1, 3-2 이후)
+ // 4-1. 발령에 급여방식이 있는 경우 (Phase 3-1, 3-2 이후)
     if (latestAssignment.hasOwnProperty('isRankBased')) {
         return latestAssignment.isRankBased;
     }
     
-    // 4-2. 발령에 급여방식이 없는 경우 (Phase 3-1 이전 데이터) → 현재 급여방식 사용
+ // 4-2. 발령에 급여방식이 없는 경우 (Phase 3-1 이전 데이터) → 현재 급여방식 사용
     return emp.salaryInfo?.isRankBased ?? 
            emp.rank?.isRankBased ?? 
            true;
@@ -876,12 +876,12 @@ function _isOnMaternityLeaveAtDate(emp, baseDate) {
         return false;
     }
     
-    // 1. 현재 진행 중인 육아휴직 확인 (isOnLeave가 true인 경우)
+ // 1. 현재 진행 중인 육아휴직 확인 (isOnLeave가 true인 경우)
     if (emp.maternityLeave.isOnLeave) {
         const startDate = emp.maternityLeave.startDate;
         const endDate = emp.maternityLeave.endDate;
         
-        // 기준일이 휴직 시작일 이후이고 종료일 이전인 경우
+ // 기준일이 휴직 시작일 이후이고 종료일 이전인 경우
         if (startDate && baseDate >= startDate) {
             if (!endDate || baseDate <= endDate) {
                 return true;
@@ -889,19 +889,19 @@ function _isOnMaternityLeaveAtDate(emp, baseDate) {
         }
     }
     
-    // 2. 과거 육아휴직 이력 확인 (이미 복직한 경우도 포함)
+ // 2. 과거 육아휴직 이력 확인 (이미 복직한 경우도 포함)
     if (emp.maternityLeave.history && emp.maternityLeave.history.length > 0) {
         for (const leave of emp.maternityLeave.history) {
             const startDate = leave.startDate;
-            // 실제 종료일(복직일)이 있으면 사용, 없으면 예정 종료일 사용
+ // 실제 종료일(복직일)이 있으면 사용, 없으면 예정 종료일 사용
             const endDate = leave.actualEndDate || leave.endDate;
             
-            // 기준일이 휴직 기간 내에 있는지 확인
+ // 기준일이 휴직 기간 내에 있는지 확인
             if (startDate && baseDate >= startDate) {
                 if (endDate && baseDate <= endDate) {
                     return true;
                 }
-                // endDate가 없으면 아직 복직 안 한 상태 (현재 휴직 중)
+ // endDate가 없으면 아직 복직 안 한 상태 (현재 휴직 중)
                 if (!endDate) {
                     return true;
                 }
@@ -933,24 +933,24 @@ function _getActiveEmployeesAtDate(baseDate, includeMaternity = true, targetType
         const retireDate = emp.employment?.retireDate;
         const status = emp.employment?.status;
         
-        // 입사일이 기준일 이전이어야 함
+ // 입사일이 기준일 이전이어야 함
         if (!entryDate || entryDate > baseDate) {
             return false;
         }
         
-        // 재직자이거나 육아휴직자인 경우 (육아휴직 상태도 재직 중으로 간주)
+ // 재직자이거나 육아휴직자인 경우 (육아휴직 상태도 재직 중으로 간주)
         if (status === '재직' || status === '육아휴직') {
-            // ⭐ v1.2.1: 기준일 시점의 육아휴직 여부 판단
+ // ⭐ v1.2.1: 기준일 시점의 육아휴직 여부 판단
             const isOnLeaveAtDate = _isOnMaternityLeaveAtDate(emp, baseDate);
             
-            // ⭐ Phase 2-2: 육아휴직자 필터링 (기준일 기반)
+ // ⭐ Phase 2-2: 육아휴직자 필터링 (기준일 기반)
             if (!includeMaternity && isOnLeaveAtDate) {
                 return false;
             }
             
-            // ⭐ Phase 2-1 & Phase 3-5: 호봉제/연봉제 필터링 (시점별)
+ // ⭐ Phase 2-1 & Phase 3-5: 호봉제/연봉제 필터링 (시점별)
             if (targetType !== 'all') {
-                // Phase 3-5: 기준일 시점의 급여방식 판단
+ // Phase 3-5: 기준일 시점의 급여방식 판단
                 const isRankBased = _getPaymentMethodAtDate(emp, baseDate);
                 
                 if (targetType === 'rank' && !isRankBased) {
@@ -984,10 +984,10 @@ function _getActiveEmployeesAtDate(baseDate, includeMaternity = true, targetType
  * @returns {Promise<Array<Object>>} 통계 데이터 배열
  */
 async function _generateStatisticsData(employees, baseDate, rowOption, columnOptions) {
-    // 1. 행 기준에 따라 그룹화
+ // 1. 행 기준에 따라 그룹화
     const groups = await _groupEmployeesByRow(employees, rowOption, baseDate);
     
-    // 2. 각 그룹별로 통계 계산
+ // 2. 각 그룹별로 통계 계산
     const statsData = [];
     
     for (const [groupName, groupEmployees] of Object.entries(groups)) {
@@ -996,7 +996,7 @@ async function _generateStatisticsData(employees, baseDate, rowOption, columnOpt
             _employees: groupEmployees  // ⭐ 원본 직원 데이터 보관 (소계 재계산용)
         };
         
-        // ⭐ v5.0.0: 저장된 호봉 값 사용 (동기 처리)
+ // ⭐ v5.0.0: 저장된 호봉 값 사용 (동기 처리)
         for (const colOption of columnOptions) {
             rowData[colOption] = _calculateColumnValue(groupEmployees, colOption, baseDate);
         }
@@ -1004,12 +1004,12 @@ async function _generateStatisticsData(employees, baseDate, rowOption, columnOpt
         statsData.push(rowData);
     }
     
-    // 3. 그룹명으로 정렬 (체계적 정렬)
+ // 3. 그룹명으로 정렬 (체계적 정렬)
     statsData.sort((a, b) => {
         return _compareGroupNames(a.groupName, b.groupName, rowOption);
     });
     
-    // ⭐ 합계 계산용 전체 직원 목록 추가
+ // ⭐ 합계 계산용 전체 직원 목록 추가
     statsData._allEmployees = employees;
     
     return statsData;
@@ -1034,21 +1034,21 @@ async function _generateStatisticsData(employees, baseDate, rowOption, columnOpt
  * const data = _generate2DStatisticsData(employees, '2025-11-10', 'dept', 'position', ['count', 'genderDist']);
  * // 결과:
  * // {
- * //   row1Groups: ['사회복지과', '요양보호과', '사무국'],
- * //   row2Groups: ['시설장', '부장', '과장', '대리', '사원'],
- * //   data: {
- * //     '사회복지과': {
- * //       '시설장': { count: '1명', genderDist: '남1/여0' },
- * //       '부장': { count: '2명', genderDist: '남1/여1' },
- * //       ...
- * //     },
- * //     ...
- * //   }
+ * // row1Groups: ['사회복지과', '요양보호과', '사무국'],
+ * // row2Groups: ['시설장', '부장', '과장', '대리', '사원'],
+ * // data: {
+ * // '사회복지과': {
+ * // '시설장': { count: '1명', genderDist: '남1/여0' },
+ * // '부장': { count: '2명', genderDist: '남1/여1' },
+ * // ...
+ * // },
+ * // ...
+ * // }
  * // }
  */
 function _generate2DStatisticsData(employees, baseDate, rowOption1, rowOption2, columnOptions) {
-    // 1. 1차 행 기준으로 그룹화 (⭐ v4.0.0: 동기 호출 불가, Promise 반환)
-    // 이 함수는 내부적으로 비동기 래퍼를 사용합니다
+ // 1. 1차 행 기준으로 그룹화 (⭐ v4.0.0: 동기 호출 불가, Promise 반환)
+ // 이 함수는 내부적으로 비동기 래퍼를 사용합니다
     return _generate2DStatisticsDataAsync(employees, baseDate, rowOption1, rowOption2, columnOptions);
 }
 
@@ -1056,25 +1056,25 @@ function _generate2DStatisticsData(employees, baseDate, rowOption1, rowOption2, 
  * 2D 통계 데이터 생성 (async wrapper)
  */
 async function _generate2DStatisticsDataAsync(employees, baseDate, rowOption1, rowOption2, columnOptions) {
-    // 1. 1차 행 기준으로 그룹화
+ // 1. 1차 행 기준으로 그룹화
     const row1Groups = await _groupEmployeesByRow(employees, rowOption1, baseDate);
     
-    // 2. 2차원 데이터 구조 생성
+ // 2. 2차원 데이터 구조 생성
     const data = {};
     const row1GroupNames = [];
     const row2GroupNames = new Set();
     
-    // ⭐ 원본 직원 데이터 보관 추가
+ // ⭐ 원본 직원 데이터 보관 추가
     const group1Employees = {};
     
-    // 3. 각 1차 그룹에 대해 2차 그룹화 및 통계 계산
+ // 3. 각 1차 그룹에 대해 2차 그룹화 및 통계 계산
     for (const [group1Name, group1Emps] of Object.entries(row1Groups)) {
         row1GroupNames.push(group1Name);
         
-        // ⭐ 1차 그룹의 원본 직원 저장 (소계 계산용)
+ // ⭐ 1차 그룹의 원본 직원 저장 (소계 계산용)
         group1Employees[group1Name] = group1Emps;
         
-        // 2차 행 기준으로 그룹화 (⭐ v4.0.0: await 추가)
+ // 2차 행 기준으로 그룹화 (⭐ v4.0.0: await 추가)
         const row2Groups = await _groupEmployeesByRow(group1Emps, rowOption2, baseDate);
         
         data[group1Name] = {};
@@ -1082,7 +1082,7 @@ async function _generate2DStatisticsDataAsync(employees, baseDate, rowOption1, r
         for (const [group2Name, group2Employees] of Object.entries(row2Groups)) {
             row2GroupNames.add(group2Name);
             
-            // ⭐ v5.0.0: 저장된 호봉 값 사용 (동기 처리)
+ // ⭐ v5.0.0: 저장된 호봉 값 사용 (동기 처리)
             const cellData = {};
             for (const colOption of columnOptions) {
                 cellData[colOption] = _calculateColumnValue(group2Employees, colOption, baseDate);
@@ -1092,7 +1092,7 @@ async function _generate2DStatisticsDataAsync(employees, baseDate, rowOption1, r
         }
     }
     
-    // 4. 그룹명 정렬
+ // 4. 그룹명 정렬
     row1GroupNames.sort((a, b) => _compareGroupNames(a, b, rowOption1));
     const sortedRow2Groups = Array.from(row2GroupNames).sort((a, b) => _compareGroupNames(a, b, rowOption2));
     
@@ -1101,7 +1101,7 @@ async function _generate2DStatisticsDataAsync(employees, baseDate, rowOption1, r
         row2Groups: sortedRow2Groups,
         data: data,
         
-        // ⭐ 소계/합계 계산용 원본 데이터
+ // ⭐ 소계/합계 계산용 원본 데이터
         group1Employees: group1Employees,  // 소계용
         allEmployees: employees             // 합계용
     };
@@ -1124,12 +1124,12 @@ async function _generate2DStatisticsDataAsync(employees, baseDate, rowOption1, r
  * - 기타: 한글 가나다순
  */
 function _compareGroupNames(a, b, rowOption) {
-    // 미지정은 항상 마지막
+ // 미지정은 항상 마지막
     if (a === '미지정' && b !== '미지정') return 1;
     if (a !== '미지정' && b === '미지정') return -1;
     if (a === '미지정' && b === '미지정') return 0;
     
-    // 연령대 정렬
+ // 연령대 정렬
     if (rowOption === 'ageGroup') {
         const ageOrder = ['20대', '30대', '40대', '50대', '60대 이상'];
         const aIndex = ageOrder.indexOf(a);
@@ -1140,7 +1140,7 @@ function _compareGroupNames(a, b, rowOption) {
         }
     }
     
-    // 근속구간 정렬
+ // 근속구간 정렬
     if (rowOption === 'tenureGroup') {
         const tenureOrder = ['1년 미만', '1-3년', '3-5년', '5-10년', '10년 이상'];
         const aIndex = tenureOrder.indexOf(a);
@@ -1151,7 +1151,7 @@ function _compareGroupNames(a, b, rowOption) {
         }
     }
     
-    // 입사년도 정렬 (오름차순: 2020년 → 2021년 → 2022년...)
+ // 입사년도 정렬 (오름차순: 2020년 → 2021년 → 2022년...)
     if (rowOption === 'entryYear') {
         const aYear = parseInt(a.replace('년', ''));
         const bYear = parseInt(b.replace('년', ''));
@@ -1161,13 +1161,13 @@ function _compareGroupNames(a, b, rowOption) {
         }
     }
     
-    // 성별 정렬 (남 → 여)
+ // 성별 정렬 (남 → 여)
     if (rowOption === 'gender') {
         if (a === '남' && b === '여') return -1;
         if (a === '여' && b === '남') return 1;
     }
     
-    // 기본: 한글 가나다순
+ // 기본: 한글 가나다순
     return a.localeCompare(b, 'ko');
 }
 
@@ -1183,7 +1183,7 @@ function _compareGroupNames(a, b, rowOption) {
 async function _groupEmployeesByRow(employees, rowOption, baseDate) {
     const groups = {};
     
-    // ⭐ v6.0.0: 근속구간 그룹핑 시 배치 API 사용 (성능 최적화)
+ // ⭐ v6.0.0: 근속구간 그룹핑 시 배치 API 사용 (성능 최적화)
     let tenureMap = new Map();
     if (rowOption === 'tenureGroup' && typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
         try {
@@ -1195,7 +1195,7 @@ async function _groupEmployeesByRow(employees, rowOption, baseDate) {
         }
     }
     
-    // ⭐ v4.0.0: forEach → for...of (async/await 지원)
+ // ⭐ v4.0.0: forEach → for...of (async/await 지원)
     for (const emp of employees) {
         let groupName;
         
@@ -1222,14 +1222,14 @@ async function _groupEmployeesByRow(employees, rowOption, baseDate) {
                 groupName = _getAgeGroup(emp.personalInfo?.birthDate, baseDate);
                 break;
             case 'tenureGroup':
-                // ⭐ v6.0.0: 배치 결과에서 근속기간 가져오기
+ // ⭐ v6.0.0: 배치 결과에서 근속기간 가져오기
                 {
                     const batchResult = tenureMap.get(emp.id);
                     if (batchResult && batchResult.tenure) {
                         const years = batchResult.tenure.years || 0;
                         groupName = _getTenureGroupFromYears(years);
                     } else {
-                        // 배치에 없으면 개별 계산 (fallback)
+ // 배치에 없으면 개별 계산 (fallback)
                         groupName = await _getTenureGroup(emp.employment?.entryDate, baseDate);
                     }
                 }
@@ -1281,7 +1281,7 @@ function _getAgeGroup(birthDate, baseDate) {
     const base = new Date(baseDate);
     let age = base.getFullYear() - birth.getFullYear();
     
-    // 생일이 지나지 않았으면 -1
+ // 생일이 지나지 않았으면 -1
     if (base.getMonth() < birth.getMonth() || 
         (base.getMonth() === birth.getMonth() && base.getDate() < birth.getDate())) {
         age--;
@@ -1306,7 +1306,7 @@ function _getAgeGroup(birthDate, baseDate) {
 async function _getTenureGroup(entryDate, baseDate) {
     if (!entryDate) return '미지정';
     
-    // ⭐ v6.0.0: 로컬 계산 우선 사용 (API 호출 최소화)
+ // ⭐ v6.0.0: 로컬 계산 우선 사용 (API 호출 최소화)
     let tenureData;
     try {
         if (typeof TenureCalculator !== 'undefined' && TenureCalculator.calculate) {
@@ -1314,7 +1314,7 @@ async function _getTenureGroup(entryDate, baseDate) {
         } else if (typeof API_인사 !== 'undefined') {
             tenureData = await API_인사.calculateTenure(entryDate, baseDate);
         } else {
-            // 둘 다 없으면 직접 계산
+ // 둘 다 없으면 직접 계산
             const start = new Date(entryDate);
             const end = new Date(baseDate);
             const years = Math.floor((end - start) / (365.25 * 24 * 60 * 60 * 1000));
@@ -1363,7 +1363,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
     
     switch (columnOption) {
         case 'count': {
-            // 비고: 직원 이름 목록 (가나다순)
+ // 비고: 직원 이름 목록 (가나다순)
             const names = employees
                 .map(e => e.personalInfo?.name || e.name || '이름없음')
                 .sort((a, b) => a.localeCompare(b, 'ko'));
@@ -1378,7 +1378,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
             const male = employees.filter(e => e.personalInfo?.gender === '남').length;
             const female = employees.filter(e => e.personalInfo?.gender === '여').length;
             
-            // 비고: 남성/여성 이름 목록
+ // 비고: 남성/여성 이름 목록
             const maleNames = employees
                 .filter(e => e.personalInfo?.gender === '남')
                 .map(e => e.personalInfo?.name || e.name || '이름없음')
@@ -1414,7 +1414,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                         e.rank.firstUpgradeDate !== '-';
                     const isRankBased = e.rank?.isRankBased !== false && hasValidFirstUpgradeDate;
                     
-                    // 디버깅
+ // 디버깅
                     if (!isRankBased && e.rank?.firstUpgradeDate) {
                         console.log('호봉제 제외됨:', {
                             name: e.personalInfo?.name || e.name,
@@ -1439,25 +1439,25 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                 let validCount = 0;
                 const rankDetails = []; // ⭐ 비고용 상세 정보
                 
-                // ⭐ v5.0.0: 기준일 기준 로컬 호봉 계산
+ // ⭐ v5.0.0: 기준일 기준 로컬 호봉 계산
                 for (const e of rankBased) {
                     try {
                         const name = e.personalInfo?.name || e.name;
                         const startRank = e.rank?.startRank || 1;
                         const firstUpgradeDate = e.rank?.firstUpgradeDate;
                         
-                        // 기준일 기준 현재 호봉 로컬 계산
+ // 기준일 기준 현재 호봉 로컬 계산
                         let currentRank = startRank;
                         
                         if (firstUpgradeDate && baseDate >= firstUpgradeDate) {
-                            // 최초 승급 이후: startRank + 1 + 경과년수
+ // 최초 승급 이후: startRank + 1 + 경과년수
                             const firstUpgrade = new Date(firstUpgradeDate);
                             const base = new Date(baseDate);
                             
-                            // 경과 년수 계산 (승급일 기준)
+ // 경과 년수 계산 (승급일 기준)
                             let yearsAfterFirst = base.getFullYear() - firstUpgrade.getFullYear();
                             
-                            // 승급월일이 아직 안 지났으면 -1
+ // 승급월일이 아직 안 지났으면 -1
                             const upgradeMonth = firstUpgrade.getMonth();
                             const upgradeDay = firstUpgrade.getDate();
                             const baseMonth = base.getMonth();
@@ -1476,9 +1476,9 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                             totalRank += currentRank;
                             validCount++;
                             rankDetails.push({ name, rank: currentRank });
-                            console.log('✅ 호봉 추가:', name, '현재호봉:', currentRank);
+                            console.log(' 호봉 추가:', name, '현재호봉:', currentRank);
                         } else {
-                            console.warn('⚠️ 호봉 값 없음 - 제외:', name, currentRank);
+                            console.warn('️ 호봉 값 없음 - 제외:', name, currentRank);
                         }
                     } catch (err) {
                         console.error('호봉 계산 실패:', e.uniqueCode, err);
@@ -1494,7 +1494,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                 
                 const avg = Math.round(totalRank / validCount * 10) / 10;
                 
-                // ⭐ 비고: 이름(호봉) 형식으로 정렬
+ // ⭐ 비고: 이름(호봉) 형식으로 정렬
                 const remark = rankDetails
                     .sort((a, b) => a.name.localeCompare(b.name, 'ko'))
                     .map(d => `${d.name}(${d.rank}호)`)
@@ -1516,12 +1516,12 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
         case 'avgTenure': {
             const tenureDetails = [];
             
-            // ⭐ v5.0.0: 로컬에서 직접 근속기간 계산 (async 문제 회피)
+ // ⭐ v5.0.0: 로컬에서 직접 근속기간 계산 (async 문제 회피)
             const totalMonths = employees.reduce((sum, e) => {
                 const entryDate = e.employment?.entryDate;
                 if (!entryDate) return sum;
                 
-                // 로컬 계산
+ // 로컬 계산
                 const entry = new Date(entryDate);
                 const base = new Date(baseDate);
                 
@@ -1533,7 +1533,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                     months += 12;
                 }
                 
-                // 일자 보정
+ // 일자 보정
                 if (base.getDate() < entry.getDate()) {
                     months--;
                     if (months < 0) {
@@ -1544,7 +1544,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                 
                 const totalMonthsForEmp = years * 12 + months;
                 
-                // ⭐ 비고용 상세 정보
+ // ⭐ 비고용 상세 정보
                 const name = e.personalInfo?.name || e.name || '이름없음';
                 tenureDetails.push({
                     name,
@@ -1559,7 +1559,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
             const years = Math.floor(avgMonths / 12);
             const months = Math.round(avgMonths % 12);
             
-            // ⭐ 비고: 이름(근속연수) 형식
+ // ⭐ 비고: 이름(근속연수) 형식
             const remark = tenureDetails
                 .sort((a, b) => a.name.localeCompare(b.name, 'ko'))
                 .map(d => `${d.name}(${d.years}년 ${d.months}개월)`)
@@ -1586,7 +1586,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                     age--;
                 }
                 
-                // ⭐ 비고용 상세 정보
+ // ⭐ 비고용 상세 정보
                 const name = e.personalInfo?.name || e.name || '이름없음';
                 ageDetails.push({ name, age });
                 
@@ -1595,7 +1595,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
             
             const avg = Math.round(totalAge / count);
             
-            // ⭐ 비고: 이름(나이) 형식
+ // ⭐ 비고: 이름(나이) 형식
             const remark = ageDetails
                 .sort((a, b) => a.name.localeCompare(b.name, 'ko'))
                 .map(d => `${d.name}(${d.age}세)`)
@@ -1608,7 +1608,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
         }
         
         case 'cert1': {
-            // 자격증1 목록 및 인원수 계산
+ // 자격증1 목록 및 인원수 계산
             const certCount = {};
             const certHolders = {}; // ⭐ 자격증별 보유자 이름
             
@@ -1618,7 +1618,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                 if (cert && cert !== '-' && cert !== '') {
                     certCount[cert] = (certCount[cert] || 0) + 1;
                     
-                    // ⭐ 보유자 이름 수집
+ // ⭐ 보유자 이름 수집
                     if (!certHolders[cert]) certHolders[cert] = [];
                     const name = e.personalInfo?.name || e.name || '이름없음';
                     certHolders[cert].push(name);
@@ -1632,12 +1632,12 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                 };
             }
             
-            // 자격증명 가나다순 정렬 후 "자격증명: N명" 형식으로 변환
+ // 자격증명 가나다순 정렬 후 "자격증명: N명" 형식으로 변환
             const certList = Object.keys(certCount)
                 .sort((a, b) => a.localeCompare(b, 'ko'))
                 .map(cert => `${cert}: ${certCount[cert]}명`);
             
-            // ⭐ 비고: 자격증별 보유자 목록
+ // ⭐ 비고: 자격증별 보유자 목록
             const remarkLines = Object.keys(certCount)
                 .sort((a, b) => a.localeCompare(b, 'ko'))
                 .map(cert => {
@@ -1667,7 +1667,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                     }
                 });
                 
-                // ⭐ 비고: 호봉제 직원 이름 목록
+ // ⭐ 비고: 호봉제 직원 이름 목록
                 const names = rankBasedEmps
                     .map(e => e.personalInfo?.name || e.name || '이름없음')
                     .sort((a, b) => a.localeCompare(b, 'ko'));
@@ -1686,7 +1686,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
         }
         
         case 'cert2': {
-            // 자격증2 목록 및 인원수 계산
+ // 자격증2 목록 및 인원수 계산
             const certCount = {};
             const certHolders = {}; // ⭐ 자격증별 보유자 이름
             
@@ -1696,7 +1696,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                 if (cert && cert !== '-' && cert !== '') {
                     certCount[cert] = (certCount[cert] || 0) + 1;
                     
-                    // ⭐ 보유자 이름 수집
+ // ⭐ 보유자 이름 수집
                     if (!certHolders[cert]) certHolders[cert] = [];
                     const name = e.personalInfo?.name || e.name || '이름없음';
                     certHolders[cert].push(name);
@@ -1710,12 +1710,12 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                 };
             }
             
-            // 자격증명 가나다순 정렬 후 "자격증명: N명" 형식으로 변환
+ // 자격증명 가나다순 정렬 후 "자격증명: N명" 형식으로 변환
             const certList = Object.keys(certCount)
                 .sort((a, b) => a.localeCompare(b, 'ko'))
                 .map(cert => `${cert}: ${certCount[cert]}명`);
             
-            // ⭐ 비고: 자격증별 보유자 목록
+ // ⭐ 비고: 자격증별 보유자 목록
             const remarkLines = Object.keys(certCount)
                 .sort((a, b) => a.localeCompare(b, 'ko'))
                 .map(cert => {
@@ -1732,18 +1732,18 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
         }
         
         case 'salaryBasedCount': {
-            // 연봉제인원 계산
+ // 연봉제인원 계산
             try {
                 const salaryBasedEmps = employees.filter(e => {
                     const hasValidFirstUpgradeDate = 
                         e.rank?.firstUpgradeDate && 
                         e.rank?.firstUpgradeDate !== '' && 
                         e.rank?.firstUpgradeDate !== '-';
-                    // 호봉제가 아닌 경우
+ // 호봉제가 아닌 경우
                     return e.rank?.isRankBased === false || !hasValidFirstUpgradeDate;
                 });
                 
-                // ⭐ 비고: 연봉제 직원 이름 목록
+ // ⭐ 비고: 연봉제 직원 이름 목록
                 const names = salaryBasedEmps
                     .map(e => e.personalInfo?.name || e.name || '이름없음')
                     .sort((a, b) => a.localeCompare(b, 'ko'));
@@ -1762,7 +1762,7 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
         }
         
         case 'avgConvertedCareer': {
-            // 평균 환산경력 계산
+ // 평균 환산경력 계산
             try {
                 const employeesWithCareer = employees.filter(e => 
                     e.pastCareers && Array.isArray(e.pastCareers) && e.pastCareers.length > 0
@@ -1791,28 +1791,28 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                             );
                             const rate = career.rate || 100;
                             
-                            // 환산 적용
+ // 환산 적용
                             const convertedMonths = (period.years * 12 + period.months + period.days / 30) * (rate / 100);
                             totalMonths += convertedMonths;
                             empTotalMonths += convertedMonths;
                         } catch (err) {
-                            // 개별 경력 계산 실패는 무시
+ // 개별 경력 계산 실패는 무시
                         }
                     });
                     
-                    // ⭐ 직원별 환산경력 저장
+ // ⭐ 직원별 환산경력 저장
                     const name = e.personalInfo?.name || e.name || '이름없음';
                     const years = Math.floor(empTotalMonths / 12);
                     const months = Math.round(empTotalMonths % 12);
                     careerDetails.push({ name, years, months });
                 });
                 
-                // 평균 계산
+ // 평균 계산
                 const avgMonths = totalMonths / employeesWithCareer.length;
                 const avgYears = Math.floor(avgMonths / 12);
                 const avgRemainingMonths = Math.round(avgMonths % 12);
                 
-                // ⭐ 비고: 이름(환산경력) 형식
+ // ⭐ 비고: 이름(환산경력) 형식
                 const remark = careerDetails
                     .sort((a, b) => a.name.localeCompare(b, 'ko'))
                     .map(d => `${d.name}(${d.years}년 ${d.months}개월)`)
@@ -1832,13 +1832,13 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
         }
         
         case 'careerHolderCount': {
-            // 과거경력 보유 인원
+ // 과거경력 보유 인원
             try {
                 const careerHolders = employees.filter(e => 
                     e.pastCareers && Array.isArray(e.pastCareers) && e.pastCareers.length > 0
                 );
                 
-                // ⭐ 비고: 과거경력 보유자 이름 목록
+ // ⭐ 비고: 과거경력 보유자 이름 목록
                 const names = careerHolders
                     .map(e => e.personalInfo?.name || e.name || '이름없음')
                     .sort((a, b) => a.localeCompare(b, 'ko'));
@@ -1857,12 +1857,12 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
         }
         
         case 'currentMaternityCount': {
-            // 현재 육아휴직 중인 인원 (기준일 기준)
+ // 현재 육아휴직 중인 인원 (기준일 기준)
             try {
                 const onMaternity = employees.filter(e => {
                     if (!e.maternityLeave) return false;
                     
-                    // 배열 형식 (여러 번 가능)
+ // 배열 형식 (여러 번 가능)
                     if (Array.isArray(e.maternityLeave)) {
                         return e.maternityLeave.some(leave => {
                             const start = leave.startDate;
@@ -1871,13 +1871,13 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
                         });
                     }
                     
-                    // 객체 형식 (1번만)
+ // 객체 형식 (1번만)
                     const start = e.maternityLeave.startDate;
                     const end = e.maternityLeave.endDate;
                     return start && end && start <= baseDate && baseDate <= end;
                 });
                 
-                // ⭐ 비고: 육아휴직 중인 직원 이름 목록
+ // ⭐ 비고: 육아휴직 중인 직원 이름 목록
                 const names = onMaternity
                     .map(e => e.personalInfo?.name || e.name || '이름없음')
                     .sort((a, b) => a.localeCompare(b, 'ko'));
@@ -1896,39 +1896,39 @@ function _calculateColumnValue(employees, columnOption, baseDate) {
         }
         
         case 'maternityHistoryCount': {
-            // 육아휴직 사용 이력이 있는 인원
+ // 육아휴직 사용 이력이 있는 인원
             try {
                 const withHistory = employees.filter(e => {
                     if (!e.maternityLeave) return false;
                     
-                    // 배열 형식
+ // 배열 형식
                     if (Array.isArray(e.maternityLeave)) {
                         return e.maternityLeave.length > 0;
                     }
                     
-                    // 객체 형식
+ // 객체 형식
                     return e.maternityLeave.startDate && e.maternityLeave.endDate;
                 });
                 
-                // ⭐ 비고: 육아휴직 이력이 있는 직원 이름 + 기간 정보
+ // ⭐ 비고: 육아휴직 이력이 있는 직원 이름 + 기간 정보
                 const detailedInfo = withHistory
                     .map(e => {
                         const name = e.personalInfo?.name || e.name || '이름없음';
                         let periods = [];
                         
-                        // 배열 형식: 모든 육아휴직 기간
+ // 배열 형식: 모든 육아휴직 기간
                         if (Array.isArray(e.maternityLeave)) {
                             periods = e.maternityLeave
                                 .filter(leave => leave.startDate && leave.endDate)
                                 .map(leave => `${leave.startDate}~${leave.endDate}`);
                         } 
-                        // 객체 형식: 단일 육아휴직 기간
+ // 객체 형식: 단일 육아휴직 기간
                         else if (e.maternityLeave.startDate && e.maternityLeave.endDate) {
                             periods = [`${e.maternityLeave.startDate}~${e.maternityLeave.endDate}`];
                         }
                         
-                        // 형식: "홍길동(2025-10-01~2026-12-31)"
-                        // 여러 기간이 있으면: "홍길동(2024-01-01~2024-12-31, 2025-10-01~2026-12-31)"
+ // 형식: "홍길동(2025-10-01~2026-12-31)"
+ // 여러 기간이 있으면: "홍길동(2024-01-01~2024-12-31, 2025-10-01~2026-12-31)"
                         return periods.length > 0 
                             ? `${name}(${periods.join(', ')})` 
                             : name;
@@ -1972,7 +1972,7 @@ function _generateStatisticsTableHTML(statsData, rowOption, columnOptions) {
         COLUMN_OPTIONS.find(opt => opt.id === colId)?.label || colId
     );
     
-    // ⭐ 비고 표시 여부 확인
+ // ⭐ 비고 표시 여부 확인
     const showRemarks = document.getElementById('stats-show-remarks')?.checked ?? true;
     
     let html = `
@@ -1987,17 +1987,17 @@ function _generateStatisticsTableHTML(statsData, rowOption, columnOptions) {
                 <tbody>
     `;
     
-    // ⭐ 기준일 추출 (합계 재계산용)
+ // ⭐ 기준일 추출 (합계 재계산용)
     const baseDate = document.getElementById('stats-base-date')?.value;
     
-    // 데이터 행
+ // 데이터 행
     statsData.forEach(row => {
         html += '<tr>';
         html += `<td style="border: 1px solid #dee2e6;"><strong>${row.groupName}</strong></td>`;
         
         columnOptions.forEach(colId => {
             const cellData = row[colId] || { value: '-', remark: '-' };
-            // ⭐ value와 remark 분리 표시 (비고 표시 여부에 따라)
+ // ⭐ value와 remark 분리 표시 (비고 표시 여부에 따라)
             html += `<td style="border: 1px solid #dee2e6; text-align: center;">${cellData.value || '-'}</td>`;
             if (showRemarks) {
                 html += `<td style="border: 1px solid #dee2e6; font-size: 0.9em; white-space: pre-line;">${cellData.remark || '-'}</td>`;
@@ -2007,10 +2007,10 @@ function _generateStatisticsTableHTML(statsData, rowOption, columnOptions) {
         html += '</tr>';
     });
     
-    // ⭐⭐⭐ 합계 행 수정 ⭐⭐⭐
+ // ⭐⭐⭐ 합계 행 수정 ⭐⭐⭐
     html += '<tr class="table-secondary"><td style="border: 1px solid #dee2e6;"><strong>전체</strong></td>';
     columnOptions.forEach(colId => {
-        // ✅ 원본 데이터로 재계산
+ // 원본 데이터로 재계산
         const total = _calculateColumnValue(
             statsData._allEmployees,
             colId,
@@ -2049,19 +2049,19 @@ function _generateStatisticsTableHTML(statsData, rowOption, columnOptions) {
  * @example
  * // 테이블 구조:
  * // ┌──────────┬─────────┬──────────┬──────────┐
- * // │  부서    │  직위   │  인원수  │ 성별분포 │
+ * // │ 부서 │ 직위 │ 인원수 │ 성별분포 │
  * // ├──────────┼─────────┼──────────┼──────────┤
- * // │사회복지과│ 시설장  │   1명    │  남1/여0 │
- * // │          ├─────────┼──────────┼──────────┤
- * // │          │  부장   │   2명    │  남1/여1 │
- * // │          ├─────────┼──────────┼──────────┤
- * // │          │  소계   │   3명    │  남2/여1 │
+ * // │사회복지과│ 시설장 │ 1명 │ 남1/여0 │
+ * // │ ├─────────┼──────────┼──────────┤
+ * // │ │ 부장 │ 2명 │ 남1/여1 │
+ * // │ ├─────────┼──────────┼──────────┤
+ * // │ │ 소계 │ 3명 │ 남2/여1 │
  * // ├──────────┼─────────┼──────────┼──────────┤
- * // │요양보호과│  과장   │   5명    │  남1/여4 │
- * // │          ├─────────┼──────────┼──────────┤
- * // │          │  소계   │   5명    │  남1/여4 │
+ * // │요양보호과│ 과장 │ 5명 │ 남1/여4 │
+ * // │ ├─────────┼──────────┼──────────┤
+ * // │ │ 소계 │ 5명 │ 남1/여4 │
  * // ├──────────┼─────────┼──────────┼──────────┤
- * // │  합계    │         │   8명    │  남3/여5 │
+ * // │ 합계 │ │ 8명 │ 남3/여5 │
  * // └──────────┴─────────┴──────────┴──────────┘
  */
 function _generate2DStatisticsTableHTML(statsData, rowOption1, rowOption2, columnOptions) {
@@ -2072,7 +2072,7 @@ function _generate2DStatisticsTableHTML(statsData, rowOption1, rowOption2, colum
         COLUMN_OPTIONS.find(opt => opt.id === colId)?.label || colId
     );
     
-    // ⭐ 비고 표시 여부 확인
+ // ⭐ 비고 표시 여부 확인
     const showRemarks = document.getElementById('stats-show-remarks')?.checked ?? true;
     
     let html = `
@@ -2088,24 +2088,24 @@ function _generate2DStatisticsTableHTML(statsData, rowOption1, rowOption2, colum
                 <tbody>
     `;
     
-    // ⭐ 기준일 추출 (소계/합계 재계산용)
+ // ⭐ 기준일 추출 (소계/합계 재계산용)
     const baseDate = document.getElementById('stats-base-date')?.value;
     
-    // 전체 합계 계산용 데이터 수집
+ // 전체 합계 계산용 데이터 수집
     const allCellsData = [];
     
-    // 각 1차 그룹별 처리
+ // 각 1차 그룹별 처리
     statsData.row1Groups.forEach(group1Name => {
         const group1Data = statsData.data[group1Name];
         
         if (!group1Data) return;
         
-        // 해당 1차 그룹에 속하는 2차 그룹들
+ // 해당 1차 그룹에 속하는 2차 그룹들
         const presentRow2Groups = statsData.row2Groups.filter(g2 => group1Data[g2]);
         
         if (presentRow2Groups.length === 0) return;
         
-        // 첫 번째 2차 그룹 (rowspan 시작)
+ // 첫 번째 2차 그룹 (rowspan 시작)
         let isFirstRow = true;
         const subtotalData = {}; // 소계 데이터
         
@@ -2114,10 +2114,10 @@ function _generate2DStatisticsTableHTML(statsData, rowOption1, rowOption2, colum
             
             if (!cellData) return;
             
-            // 전체 합계용 데이터 수집
+ // 전체 합계용 데이터 수집
             allCellsData.push(cellData);
             
-            // 소계 데이터 수집
+ // 소계 데이터 수집
             columnOptions.forEach(colId => {
                 if (!subtotalData[colId]) subtotalData[colId] = [];
                 subtotalData[colId].push(cellData[colId]);
@@ -2125,16 +2125,16 @@ function _generate2DStatisticsTableHTML(statsData, rowOption1, rowOption2, colum
             
             html += '<tr>';
             
-            // 1차 그룹명 (rowspan)
+ // 1차 그룹명 (rowspan)
             if (isFirstRow) {
                 html += `<td rowspan="${presentRow2Groups.length + 1}" style="border: 1px solid #dee2e6;"><strong>${group1Name}</strong></td>`;
                 isFirstRow = false;
             }
             
-            // 2차 그룹명
+ // 2차 그룹명
             html += `<td style="border: 1px solid #dee2e6;">${group2Name}</td>`;
             
-            // ⭐ 각 열 데이터 + 비고 (비고 표시 여부에 따라)
+ // ⭐ 각 열 데이터 + 비고 (비고 표시 여부에 따라)
             columnOptions.forEach(colId => {
                 const data = cellData[colId] || { value: '-', remark: '-' };
                 html += `<td style="border: 1px solid #dee2e6; text-align: center;">${data.value || '-'}</td>`;
@@ -2146,12 +2146,12 @@ function _generate2DStatisticsTableHTML(statsData, rowOption1, rowOption2, colum
             html += '</tr>';
         });
         
-        // ⭐⭐⭐ 소계 행 수정 ⭐⭐⭐
+ // ⭐⭐⭐ 소계 행 수정 ⭐⭐⭐
         html += '<tr class="table-light">';
         html += `<td style="border: 1px solid #dee2e6;"><strong>소계</strong></td>`;
         
         columnOptions.forEach(colId => {
-            // ✅ 원본 데이터로 재계산
+ // 원본 데이터로 재계산
             const subtotal = _calculateColumnValue(
                 statsData.group1Employees[group1Name],
                 colId,
@@ -2166,12 +2166,12 @@ function _generate2DStatisticsTableHTML(statsData, rowOption1, rowOption2, colum
         html += '</tr>';
     });
     
-    // ⭐⭐⭐ 전체 합계 행 수정 ⭐⭐⭐
+ // ⭐⭐⭐ 전체 합계 행 수정 ⭐⭐⭐
     html += '<tr class="table-secondary">';
     html += `<td colspan="2" style="border: 1px solid #dee2e6;"><strong>전체 합계</strong></td>`;
     
     columnOptions.forEach(colId => {
-        // ✅ 원본 데이터로 재계산
+ // 원본 데이터로 재계산
         const total = _calculateColumnValue(
             statsData.allEmployees,
             colId,
@@ -2260,7 +2260,7 @@ function _calculate2DSubtotal(values, columnOption) {
                 if (!val || val === '-') return;
                 
                 if (columnOption === 'avgTenure') {
-                    // "N년 N개월" 형식 파싱
+ // "N년 N개월" 형식 파싱
                     const match = val.match(/(\d+)년\s*(\d+)개월/);
                     if (match) {
                         const years = parseInt(match[1]);
@@ -2269,7 +2269,7 @@ function _calculate2DSubtotal(values, columnOption) {
                         validCount++;
                     }
                 } else {
-                    // avgAge: "N세" 또는 "N.N년" 형식
+ // avgAge: "N세" 또는 "N.N년" 형식
                     const match = val.match(/([\d.]+)/);
                     if (match) {
                         total += parseFloat(match[1]);
@@ -2281,13 +2281,13 @@ function _calculate2DSubtotal(values, columnOption) {
             if (validCount === 0) return '-';
             
             if (columnOption === 'avgTenure') {
-                // 평균 월 수를 년/개월로 변환
+ // 평균 월 수를 년/개월로 변환
                 const avgMonths = total / validCount;
                 const avgYears = Math.floor(avgMonths / 12);
                 const avgRemainingMonths = Math.round(avgMonths % 12);
                 return `${avgYears}년 ${avgRemainingMonths}개월`;
             } else {
-                // avgAge
+ // avgAge
                 const avg = (total / validCount).toFixed(1);
                 return `${avg}세`;
             }
@@ -2307,13 +2307,13 @@ function _calculate2DSubtotal(values, columnOption) {
         
         case 'cert1':
         case 'cert2': {
-            // 자격증은 전체 통합 집계
+ // 자격증은 전체 통합 집계
             const allCerts = {};
             
             values.forEach(val => {
                 if (!val || val === '-') return;
                 
-                // "자격증명: N명, 자격증명: N명" 파싱
+ // "자격증명: N명, 자격증명: N명" 파싱
                 const matches = val.matchAll(/([^:]+):\s*(\d+)명/g);
                 for (const match of matches) {
                     const certName = match[1].trim();
@@ -2394,7 +2394,7 @@ function _calculateTotalValue(statsData, columnOption) {
         }
         
         case 'avgRank': {
-            // 평균호봉의 평균 계산
+ // 평균호봉의 평균 계산
             let totalRank = 0;
             let validCount = 0;
             
@@ -2413,13 +2413,13 @@ function _calculateTotalValue(statsData, columnOption) {
         
         case 'avgTenure':
         case 'avgAge': {
-            // 평균의 평균 계산
+ // 평균의 평균 계산
             let total = 0;
             let validCount = 0;
             
             statsData.forEach(row => {
                 if (columnOption === 'avgTenure') {
-                    // "N년 N개월" 형식 파싱
+ // "N년 N개월" 형식 파싱
                     const match = row[columnOption].match(/(\d+)년\s*(\d+)개월/);
                     if (match) {
                         const years = parseInt(match[1]);
@@ -2428,7 +2428,7 @@ function _calculateTotalValue(statsData, columnOption) {
                         validCount++;
                     }
                 } else {
-                    // avgAge: "N세" 또는 "N.N년" 형식
+ // avgAge: "N세" 또는 "N.N년" 형식
                     const match = row[columnOption].match(/([\d.]+)/);
                     if (match) {
                         total += parseFloat(match[1]);
@@ -2440,13 +2440,13 @@ function _calculateTotalValue(statsData, columnOption) {
             if (validCount === 0) return '-';
             
             if (columnOption === 'avgTenure') {
-                // 평균 월 수를 년/개월로 변환
+ // 평균 월 수를 년/개월로 변환
                 const avgMonths = total / validCount;
                 const avgYears = Math.floor(avgMonths / 12);
                 const avgRemainingMonths = Math.round(avgMonths % 12);
                 return `${avgYears}년 ${avgRemainingMonths}개월`;
             } else {
-                // avgAge
+ // avgAge
                 const avg = (total / validCount).toFixed(1);
                 return `${avg}세`;
             }
@@ -2457,7 +2457,7 @@ function _calculateTotalValue(statsData, columnOption) {
         case 'careerHolderCount':
         case 'currentMaternityCount':
         case 'maternityHistoryCount': {
-            // 인원수 합계
+ // 인원수 합계
             const total = statsData.reduce((sum, row) => {
                 const count = parseInt(row[columnOption]) || 0;
                 return sum + count;
@@ -2467,13 +2467,13 @@ function _calculateTotalValue(statsData, columnOption) {
         
         case 'cert1':
         case 'cert2': {
-            // 자격증은 전체 통합 집계
+ // 자격증은 전체 통합 집계
             const allCerts = {};
             
             statsData.forEach(row => {
                 const value = row[columnOption];
                 if (value && value !== '-') {
-                    // "자격증명: N명, 자격증명: N명" 파싱
+ // "자격증명: N명, 자격증명: N명" 파싱
                     const matches = value.matchAll(/([^:]+):\s*(\d+)명/g);
                     for (const match of matches) {
                         const certName = match[1].trim();
@@ -2493,7 +2493,7 @@ function _calculateTotalValue(statsData, columnOption) {
         }
         
         case 'avgConvertedCareer': {
-            // 평균환산경력의 평균
+ // 평균환산경력의 평균
             let totalMonths = 0;
             let validCount = 0;
             
@@ -2539,50 +2539,50 @@ function exportStatisticsToExcel() {
         
         const table = document.getElementById('stats-table');
         if (!table) {
-            alert('⚠️ 먼저 통계를 생성해주세요.');
+            alert('[주의] 먼저 통계를 생성해주세요.');
             return;
         }
         
-        // SheetJS 확인
+ // SheetJS 확인
         if (typeof XLSX === 'undefined') {
-            alert('❌ 엑셀 라이브러리를 불러올 수 없습니다.');
+            alert('[오류] 엑셀 라이브러리를 불러올 수 없습니다.');
             로거_인사?.error('XLSX 라이브러리 없음');
             return;
         }
         
-        // ⭐ 비고 표시 여부 확인
+ // ⭐ 비고 표시 여부 확인
         const showRemarks = document.getElementById('stats-show-remarks')?.checked ?? true;
         
-        // ⭐ 테이블 데이터를 2차원 배열로 추출 (rowspan 해결)
+ // ⭐ 테이블 데이터를 2차원 배열로 추출 (rowspan 해결)
         const data = _extractTableDataAsArray(table, showRemarks);
         
-        // 워크시트 생성
+ // 워크시트 생성
         const ws = XLSX.utils.aoa_to_sheet(data);
         
-        // 워크북 생성
+ // 워크북 생성
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, '교차통계');
         
-        // 파일명 생성 (1차원 or 2차원 대응)
+ // 파일명 생성 (1차원 or 2차원 대응)
         const baseDate = document.getElementById('stats-base-date')?.value || '';
         const enableRow2 = document.getElementById('enable-row2')?.checked;
         
         let filename;
         if (enableRow2) {
-            // 2차원 분석
+ // 2차원 분석
             const rowOption1 = document.querySelector('input[name="rowOption1"]:checked')?.value || '';
             const rowOption2 = document.querySelector('input[name="rowOption2"]:checked')?.value || '';
             const rowLabel1 = ROW_OPTIONS.find(opt => opt.id === rowOption1)?.label || '통계1';
             const rowLabel2 = ROW_OPTIONS.find(opt => opt.id === rowOption2)?.label || '통계2';
             filename = `교차통계_${rowLabel1}×${rowLabel2}_${baseDate}.xlsx`;
         } else {
-            // 1차원 분석
+ // 1차원 분석
             const rowOption = document.querySelector('input[name="rowOption1"]:checked')?.value || '';
             const rowLabel = ROW_OPTIONS.find(opt => opt.id === rowOption)?.label || '통계';
             filename = `교차통계_${rowLabel}_${baseDate}.xlsx`;
         }
         
-        // 다운로드
+ // 다운로드
         XLSX.writeFile(wb, filename);
         
         로거_인사?.info('통계 엑셀 다운로드 완료', { filename });
@@ -2594,7 +2594,7 @@ function exportStatisticsToExcel() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '엑셀 다운로드 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 엑셀 다운로드 중 오류가 발생했습니다.');
+            alert('[오류] 엑셀 다운로드 중 오류가 발생했습니다.');
         }
     }
 }
@@ -2612,8 +2612,8 @@ function exportStatisticsToExcel() {
 function _expandRowspans(table) {
     const rows = Array.from(table.querySelectorAll('tr'));
     
-    // 각 행의 실제 셀 위치를 추적하기 위한 맵
-    // rowSpanTracker[rowIndex][colIndex] = { value, remaining }
+ // 각 행의 실제 셀 위치를 추적하기 위한 맵
+ // rowSpanTracker[rowIndex][colIndex] = { value, remaining }
     const rowSpanTracker = [];
     
     rows.forEach((row, rowIndex) => {
@@ -2624,23 +2624,23 @@ function _expandRowspans(table) {
         let cellIndex = 0;
         
         while (cellIndex < cells.length || rowSpanTracker[rowIndex][colIndex]) {
-            // 이전 행에서 rowspan으로 인해 이 위치에 셀이 있어야 하는 경우
+ // 이전 행에서 rowspan으로 인해 이 위치에 셀이 있어야 하는 경우
             if (rowSpanTracker[rowIndex][colIndex]) {
                 const tracker = rowSpanTracker[rowIndex][colIndex];
                 
-                // 새 셀 생성하여 삽입
+ // 새 셀 생성하여 삽입
                 const newCell = document.createElement(tracker.isHeader ? 'th' : 'td');
                 newCell.innerHTML = tracker.value;
                 newCell.setAttribute('style', tracker.style || '');
                 
-                // 현재 위치에 삽입
+ // 현재 위치에 삽입
                 if (cellIndex < cells.length) {
                     row.insertBefore(newCell, cells[cellIndex]);
                 } else {
                     row.appendChild(newCell);
                 }
                 
-                // 다음 행에도 계속 적용해야 하는 경우
+ // 다음 행에도 계속 적용해야 하는 경우
                 if (tracker.remaining > 1) {
                     rowSpanTracker[rowIndex + 1] = rowSpanTracker[rowIndex + 1] || {};
                     rowSpanTracker[rowIndex + 1][colIndex] = {
@@ -2661,10 +2661,10 @@ function _expandRowspans(table) {
             const rowspan = parseInt(cell.getAttribute('rowspan')) || 1;
             
             if (rowspan > 1) {
-                // rowspan 제거
+ // rowspan 제거
                 cell.removeAttribute('rowspan');
                 
-                // 아래 행들에 같은 값 삽입 예약
+ // 아래 행들에 같은 값 삽입 예약
                 for (let i = 1; i < rowspan; i++) {
                     rowSpanTracker[rowIndex + i] = rowSpanTracker[rowIndex + i] || {};
                     rowSpanTracker[rowIndex + i][colIndex] = {
@@ -2696,7 +2696,7 @@ function _expandRowspans(table) {
 function _extractTableData(table, showRemarks = true) {
     const rows = Array.from(table.querySelectorAll('tr'));
     
-    // 2차원 배열로 테이블 데이터 저장 (rowspan 해결)
+ // 2차원 배열로 테이블 데이터 저장 (rowspan 해결)
     const grid = [];
     const rowSpanTracker = {}; // rowSpanTracker[colIndex] = { value, html, remaining, isHeader }
     
@@ -2707,7 +2707,7 @@ function _extractTableData(table, showRemarks = true) {
         let cellIndex = 0;
         
         while (cellIndex < cells.length || rowSpanTracker[colIndex]) {
-            // 이전 행의 rowspan으로 인해 채워야 하는 셀
+ // 이전 행의 rowspan으로 인해 채워야 하는 셀
             while (rowSpanTracker[colIndex] && rowSpanTracker[colIndex].remaining > 0) {
                 grid[rowIndex][colIndex] = {
                     html: rowSpanTracker[colIndex].html,
@@ -2730,7 +2730,7 @@ function _extractTableData(table, showRemarks = true) {
             const colspan = parseInt(cell.getAttribute('colspan')) || 1;
             const isHeader = cell.tagName === 'TH';
             
-            // 현재 셀 저장
+ // 현재 셀 저장
             grid[rowIndex][colIndex] = {
                 html: cell.innerHTML,
                 text: cell.textContent.trim(),
@@ -2738,7 +2738,7 @@ function _extractTableData(table, showRemarks = true) {
                 colspan: colspan
             };
             
-            // rowspan 추적
+ // rowspan 추적
             if (rowspan > 1) {
                 rowSpanTracker[colIndex] = {
                     html: cell.innerHTML,
@@ -2748,7 +2748,7 @@ function _extractTableData(table, showRemarks = true) {
                 };
             }
             
-            // colspan 처리
+ // colspan 처리
             for (let c = 1; c < colspan; c++) {
                 colIndex++;
                 grid[rowIndex][colIndex] = {
@@ -2763,7 +2763,7 @@ function _extractTableData(table, showRemarks = true) {
             cellIndex++;
         }
         
-        // 남은 rowspan 처리
+ // 남은 rowspan 처리
         while (rowSpanTracker[colIndex] && rowSpanTracker[colIndex].remaining > 0) {
             grid[rowIndex][colIndex] = {
                 html: rowSpanTracker[colIndex].html,
@@ -2780,7 +2780,7 @@ function _extractTableData(table, showRemarks = true) {
         }
     });
     
-    // 비고 컬럼 인덱스 찾기 (헤더에서 "비고" 텍스트 검색)
+ // 비고 컬럼 인덱스 찾기 (헤더에서 "비고" 텍스트 검색)
     const remarkColIndices = new Set();
     if (!showRemarks && grid.length > 0) {
         grid[0].forEach((cell, colIndex) => {
@@ -2790,11 +2790,11 @@ function _extractTableData(table, showRemarks = true) {
         });
     }
     
-    // 새 HTML 생성
+ // 새 HTML 생성
     let html = '<table style="border-collapse: collapse; width: 100%;">';
     
     grid.forEach((row, rowIndex) => {
-        // 행 클래스 확인 (원본 테이블에서)
+ // 행 클래스 확인 (원본 테이블에서)
         const originalRow = rows[rowIndex];
         const rowClass = originalRow?.className || '';
         const isSecondary = rowClass.includes('table-secondary');
@@ -2824,7 +2824,7 @@ function _extractTableData(table, showRemarks = true) {
                 style += ' background: #f8f9fa;';
             }
             
-            // colspan 속성 추가
+ // colspan 속성 추가
             const colspanAttr = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : '';
             
             html += `<${tag} style="${style}"${colspanAttr}>${cell.html}</${tag}>`;
@@ -2848,7 +2848,7 @@ function _extractTableData(table, showRemarks = true) {
 function _extractTableDataAsArray(table, showRemarks = true) {
     const rows = Array.from(table.querySelectorAll('tr'));
     
-    // 2차원 배열로 테이블 데이터 저장 (rowspan 해결)
+ // 2차원 배열로 테이블 데이터 저장 (rowspan 해결)
     const grid = [];
     const rowSpanTracker = {};
     
@@ -2859,7 +2859,7 @@ function _extractTableDataAsArray(table, showRemarks = true) {
         let cellIndex = 0;
         
         while (cellIndex < cells.length || rowSpanTracker[colIndex]) {
-            // 이전 행의 rowspan으로 인해 채워야 하는 셀
+ // 이전 행의 rowspan으로 인해 채워야 하는 셀
             while (rowSpanTracker[colIndex] && rowSpanTracker[colIndex].remaining > 0) {
                 grid[rowIndex][colIndex] = {
                     text: rowSpanTracker[colIndex].text,
@@ -2881,14 +2881,14 @@ function _extractTableDataAsArray(table, showRemarks = true) {
             const text = cell.textContent.trim();
             const isRemarkCol = text === '비고' || (cell.style && cell.style.whiteSpace === 'pre-line');
             
-            // 현재 셀 저장
+ // 현재 셀 저장
             grid[rowIndex][colIndex] = {
                 text: text,
                 colspan: colspan,
                 isRemarkCol: isRemarkCol
             };
             
-            // rowspan 추적
+ // rowspan 추적
             if (rowspan > 1) {
                 rowSpanTracker[colIndex] = {
                     text: text,
@@ -2897,7 +2897,7 @@ function _extractTableDataAsArray(table, showRemarks = true) {
                 };
             }
             
-            // colspan 처리
+ // colspan 처리
             for (let c = 1; c < colspan; c++) {
                 colIndex++;
                 grid[rowIndex][colIndex] = {
@@ -2910,7 +2910,7 @@ function _extractTableDataAsArray(table, showRemarks = true) {
             cellIndex++;
         }
         
-        // 남은 rowspan 처리
+ // 남은 rowspan 처리
         while (rowSpanTracker[colIndex] && rowSpanTracker[colIndex].remaining > 0) {
             grid[rowIndex][colIndex] = {
                 text: rowSpanTracker[colIndex].text,
@@ -2925,7 +2925,7 @@ function _extractTableDataAsArray(table, showRemarks = true) {
         }
     });
     
-    // 비고 컬럼 인덱스 찾기
+ // 비고 컬럼 인덱스 찾기
     const remarkColIndices = new Set();
     if (!showRemarks && grid.length > 0) {
         grid[0].forEach((cell, colIndex) => {
@@ -2935,7 +2935,7 @@ function _extractTableDataAsArray(table, showRemarks = true) {
         });
     }
     
-    // 2차원 문자열 배열로 변환 (비고 컬럼 제외)
+ // 2차원 문자열 배열로 변환 (비고 컬럼 제외)
     const result = [];
     grid.forEach(row => {
         const rowData = [];
@@ -2964,27 +2964,27 @@ function _extractTableDataAsArray(table, showRemarks = true) {
  * - 인쇄유틸_인사.js 사용
  * 
  * @example
- * printStatistics('portrait');  // A4 세로
+ * printStatistics('portrait'); // A4 세로
  * printStatistics('landscape'); // A4 가로
  */
 function printStatistics(orientation = 'portrait') {
     try {
         로거_인사?.debug('통계 인쇄 시작', { orientation });
         
-        // 테이블 확인
+ // 테이블 확인
         const statsTable = document.getElementById('stats-table');
         if (!statsTable) {
-            alert('⚠️ 먼저 통계를 생성하세요.');
+            alert('[주의] 먼저 통계를 생성하세요.');
             return;
         }
         
-        // 비고 표시 여부 확인
+ // 비고 표시 여부 확인
         const showRemarks = document.getElementById('stats-show-remarks')?.checked ?? true;
         
-        // ⭐ 테이블 데이터 직접 추출 (rowspan 문제 해결)
+ // ⭐ 테이블 데이터 직접 추출 (rowspan 문제 해결)
         const tableHTML = _extractTableData(statsTable, showRemarks);
         
-        // 분석 정보 생성
+ // 분석 정보 생성
         const baseDate = document.getElementById('stats-base-date')?.value || '';
         const includeMaternity = document.getElementById('stats-include-maternity')?.checked ?? true;
         const targetType = document.querySelector('input[name="statsTarget"]:checked')?.value || 'all';
@@ -3037,7 +3037,7 @@ function printStatistics(orientation = 'portrait') {
                         -webkit-print-color-adjust: exact; 
                         print-color-adjust: exact; 
                     }
-                    /* Bootstrap 클래스 대체 스타일 */
+ /* Bootstrap 클래스 대체 스타일 */
                     .table-secondary td, tr.table-secondary td { 
                         background: #e9ecef !important; 
                         -webkit-print-color-adjust: exact; 
@@ -3051,7 +3051,7 @@ function printStatistics(orientation = 'portrait') {
                     thead { display: table-header-group; }
                     tr { page-break-inside: avoid; }
                     td strong, th strong { color: #000 !important; }
-                    /* 비고 컬럼 스타일 */
+ /* 비고 컬럼 스타일 */
                     td[style*="pre-line"] { 
                         font-size: 9px !important; 
                         text-align: left !important; 
@@ -3063,15 +3063,15 @@ function printStatistics(orientation = 'portrait') {
                 </style>
             </head>
             <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
-                <h2>📊 교차 통계 분석</h2>
+                <button class="no-print" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄하기 (Ctrl+P)</button>
+                <h2><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 교차 통계 분석</h2>
                 ${analysisInfo}
                 ${tableHTML}
             </body>
             </html>
         `;
         
-        // Electron 환경에서 시스템 브라우저로 열기
+ // Electron 환경에서 시스템 브라우저로 열기
         if (window.electronAPI && window.electronAPI.openInBrowser) {
             window.electronAPI.openInBrowser(htmlContent, 'statistics_print.html');
         } else {
@@ -3089,6 +3089,6 @@ function printStatistics(orientation = 'portrait') {
     } catch (error) {
         console.error('[통계분석] printStatistics 에러:', error);
         로거_인사?.error('통계 인쇄 실패', error);
-        alert('❌ 인쇄 중 오류가 발생했습니다.');
+        alert('[오류] 인쇄 중 오류가 발생했습니다.');
     }
 }

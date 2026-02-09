@@ -51,17 +51,17 @@ function extractPositionsFromAssignments() {
         const positionSet = new Set();
         
         employees.forEach(emp => {
-            // 현재 직위 (currentPosition.position)
+ // 현재 직위 (currentPosition.position)
             if (emp.currentPosition?.position) {
                 positionSet.add(emp.currentPosition.position);
             }
             
-            // 레거시: emp.position (하위 호환)
+ // 레거시: emp.position (하위 호환)
             if (emp.position) {
                 positionSet.add(emp.position);
             }
             
-            // 발령 이력의 직위
+ // 발령 이력의 직위
             if (emp.assignments && Array.isArray(emp.assignments)) {
                 emp.assignments.forEach(assign => {
                     if (assign.position) {
@@ -99,20 +99,20 @@ function extractDepartmentsFromAssignments() {
         const deptSet = new Set();
         
         employees.forEach(emp => {
-            // 현재 부서 (currentPosition.dept)
+ // 현재 부서 (currentPosition.dept)
             if (emp.currentPosition?.dept) {
                 deptSet.add(emp.currentPosition.dept);
             }
             
-            // 레거시: emp.department (하위 호환)
+ // 레거시: emp.department (하위 호환)
             if (emp.department) {
                 deptSet.add(emp.department);
             }
             
-            // 발령 이력의 부서
+ // 발령 이력의 부서
             if (emp.assignments && Array.isArray(emp.assignments)) {
                 emp.assignments.forEach(assign => {
-                    // assign.dept 또는 assign.department
+ // assign.dept 또는 assign.department
                     if (assign.dept) {
                         deptSet.add(assign.dept);
                     }
@@ -148,14 +148,14 @@ function loadOrgChartSettings() {
         const saved = localStorage.getItem(ORG_CHART_SETTINGS_KEY);
         if (saved) {
             const settings = JSON.parse(saved);
-            // 기본값 보장
+ // 기본값 보장
             if (settings.showRoleInRemark === undefined) {
                 settings.showRoleInRemark = true;  // 기본값: 표시
             }
             return settings;
         }
         
-        // 기본값 반환
+ // 기본값 반환
         return {
             positionSettings: [],   // 직위 순서 설정
             departmentMerge: [],    // 부서 통합 설정
@@ -231,7 +231,7 @@ function loadOrgChartSettingsModule() {
             return;
         }
         
-        // 데이터 추출
+ // 데이터 추출
         const positions = extractPositionsFromAssignments();
         const departments = extractDepartmentsFromAssignments();
         const settings = loadOrgChartSettings();
@@ -243,10 +243,10 @@ function loadOrgChartSettingsModule() {
             departmentCount: departments.length
         });
         
-        // 직위 설정 병합 (기존 설정 + 새로 추출된 직위)
+ // 직위 설정 병합 (기존 설정 + 새로 추출된 직위)
         const mergedPositionSettings = mergePositionSettings(positions, settings.positionSettings);
         
-        // HTML 생성 (settings 전체 전달)
+ // HTML 생성 (settings 전체 전달)
         container.innerHTML = generateOrgChartSettingsHTML(mergedPositionSettings, departments, settings);
         
         로거_인사?.info('조직도 설정 화면 로드 완료');
@@ -273,7 +273,7 @@ function mergePositionSettings(positions, savedSettings) {
         if (savedMap.has(pos)) {
             result.push(savedMap.get(pos));
         } else {
-            // 새 직위 - 기본값으로 추가
+ // 새 직위 - 기본값으로 추가
             result.push({
                 name: pos,
                 order: index + 1,
@@ -282,7 +282,7 @@ function mergePositionSettings(positions, savedSettings) {
         }
     });
     
-    // 순서대로 정렬
+ // 순서대로 정렬
     result.sort((a, b) => a.order - b.order);
     
     return result;
@@ -301,16 +301,16 @@ function generateOrgChartSettingsHTML(positionSettings, departments, settings) {
         ? DOM유틸_인사.escapeHtml 
         : (str) => str;
     
-    // 설정값 추출
+ // 설정값 추출
     const departmentMerge = settings.departmentMerge || [];
     const showRoleInRemark = settings.showRoleInRemark !== false;  // 기본값 true
     
-    // 역할 옵션 HTML
+ // 역할 옵션 HTML
     const roleOptionsHTML = ORG_CHART_ROLES.map(role => 
         `<option value="${role.id}">${role.label}</option>`
     ).join('');
     
-    // 직위 설정 행 HTML
+ // 직위 설정 행 HTML
     const positionRowsHTML = positionSettings.map((pos, index) => {
         const roleOptions = ORG_CHART_ROLES.map(role => 
             `<option value="${role.id}" ${pos.role === role.id ? 'selected' : ''}>${role.label}</option>`
@@ -336,12 +336,12 @@ function generateOrgChartSettingsHTML(positionSettings, departments, settings) {
         `;
     }).join('');
     
-    // 부서 옵션 HTML
+ // 부서 옵션 HTML
     const deptOptionsHTML = departments.map(dept => 
         `<option value="${escapeHtml(dept)}">${escapeHtml(dept)}</option>`
     ).join('');
     
-    // 부서 통합 행 HTML
+ // 부서 통합 행 HTML
     const mergeRowsHTML = departmentMerge.map((merge, index) => `
         <div class="merge-row" data-index="${index}" style="display:flex;gap:12px;align-items:center;margin-bottom:12px;padding:12px;background:#f9fafb;border-radius:8px;">
             <select class="merge-source" style="flex:1;padding:8px;border:1px solid #d1d5db;border-radius:4px;">
@@ -365,16 +365,16 @@ function generateOrgChartSettingsHTML(positionSettings, departments, settings) {
     
     return `
         <div class="card">
-            <div class="card-title">⚙️ 조직도 설정</div>
+            <div class="card-title"><span class="card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> 조직도 설정</div>
             
             <div class="alert alert-info" style="margin-bottom:24px;">
-                <span>💡</span>
+                <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
                 <span>이 설정은 조직도 생성 시 사용됩니다. 한 번 설정하면 계속 사용되며, 언제든 수정할 수 있습니다.</span>
             </div>
             
             <!-- 직위 순서 설정 -->
             <div style="margin-bottom:32px;">
-                <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;">📋 직위 순서</h3>
+                <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 직위 순서</h3>
                 <p style="color:#6b7280;font-size:13px;margin-bottom:16px;">
                     조직도에서 직위가 표시되는 순서를 설정합니다. 순서 숫자가 작을수록 위에 표시됩니다.
                 </p>
@@ -396,7 +396,7 @@ function generateOrgChartSettingsHTML(positionSettings, departments, settings) {
                     </div>
                 ` : `
                     <div class="alert alert-warning">
-                        <span>⚠️</span>
+                        <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
                         <span>등록된 직원 또는 발령 데이터가 없습니다. 직원을 먼저 등록해주세요.</span>
                     </div>
                 `}
@@ -404,7 +404,7 @@ function generateOrgChartSettingsHTML(positionSettings, departments, settings) {
             
             <!-- 부서 통합 표시 설정 -->
             <div style="margin-bottom:32px;">
-                <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;">🔗 부서 통합 표시</h3>
+                <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> 부서 통합 표시</h3>
                 <p style="color:#6b7280;font-size:13px;margin-bottom:16px;">
                     일부 부서를 조직도에서 다른 부서에 포함하여 표시합니다. (예: 장애인활동지원사업 → 지역연계팀)
                 </p>
@@ -416,11 +416,11 @@ function generateOrgChartSettingsHTML(positionSettings, departments, settings) {
                 ${departments.length >= 2 ? `
                     <button type="button" onclick="addDeptMerge()" 
                             style="margin-top:12px;padding:8px 16px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;font-size:14px;">
-                        ➕ 통합 추가
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> 통합 추가
                     </button>
                 ` : `
                     <div class="alert alert-warning" style="margin-top:12px;">
-                        <span>⚠️</span>
+                        <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
                         <span>부서가 2개 이상 있어야 통합 설정을 할 수 있습니다.</span>
                     </div>
                 `}
@@ -428,7 +428,7 @@ function generateOrgChartSettingsHTML(positionSettings, departments, settings) {
             
             <!-- 표시 옵션 설정 -->
             <div style="margin-bottom:32px;">
-                <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;">🏷️ 표시 옵션</h3>
+                <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> 표시 옵션</h3>
                 <p style="color:#6b7280;font-size:13px;margin-bottom:16px;">
                     조직도에 표시되는 항목을 설정합니다.
                 </p>
@@ -450,7 +450,7 @@ function generateOrgChartSettingsHTML(positionSettings, departments, settings) {
             <!-- 저장 버튼 -->
             <div style="display:flex;gap:12px;justify-content:flex-end;padding-top:16px;border-top:1px solid #e5e7eb;">
                 <button type="button" onclick="saveOrgChartSettingsFromUI()" class="btn btn-primary">
-                    💾 저장
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> 저장
                 </button>
             </div>
         </div>
@@ -542,7 +542,7 @@ function saveOrgChartSettingsFromUI() {
     try {
         로거_인사?.debug('조직도 설정 저장 시작');
         
-        // 직위 설정 수집
+ // 직위 설정 수집
         const positionSettings = [];
         const positionRows = document.querySelectorAll('#position-settings-body tr');
         
@@ -554,10 +554,10 @@ function saveOrgChartSettingsFromUI() {
             positionSettings.push({ name, order, role });
         });
         
-        // 순서대로 정렬
+ // 순서대로 정렬
         positionSettings.sort((a, b) => a.order - b.order);
         
-        // 부서 통합 설정 수집
+ // 부서 통합 설정 수집
         const departmentMerge = [];
         const mergeRows = document.querySelectorAll('#dept-merge-container .merge-row');
         
@@ -570,7 +570,7 @@ function saveOrgChartSettingsFromUI() {
             }
         });
         
-        // 중복 확인 (같은 source가 여러 개 있으면 안 됨)
+ // 중복 확인 (같은 source가 여러 개 있으면 안 됨)
         const sourceSet = new Set();
         for (const merge of departmentMerge) {
             if (sourceSet.has(merge.source)) {
@@ -580,10 +580,10 @@ function saveOrgChartSettingsFromUI() {
             sourceSet.add(merge.source);
         }
         
-        // 표시 옵션 수집
+ // 표시 옵션 수집
         const showRoleInRemark = document.getElementById('show-role-in-remark')?.checked ?? true;
         
-        // 저장
+ // 저장
         const settings = {
             positionSettings,
             departmentMerge,
@@ -592,7 +592,7 @@ function saveOrgChartSettingsFromUI() {
         };
         
         if (saveOrgChartSettings(settings)) {
-            에러처리_인사?.success('✅ 조직도 설정이 저장되었습니다.');
+            에러처리_인사?.success('조직도 설정이 저장되었습니다.');
             로거_인사?.info('조직도 설정 저장 완료', {
                 positionCount: positionSettings.length,
                 mergeCount: departmentMerge.length,
@@ -663,4 +663,4 @@ function getAllDepartmentMerges() {
 // ===== 초기화 =====
 
 // 모듈 로드 시 로그
-console.log('✅ 조직도설정_인사.js 로드 완료');
+console.log(' 조직도설정_인사.js 로드 완료');

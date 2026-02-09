@@ -8,65 +8,65 @@
  * - 호봉 자동 계산
  * - 인쇄 (A4 세로/가로)
  * - 엑셀 다운로드
- * - 연속근무자 최초 입사일 적용 ⭐ v3.1.2
+ * - 연속근무자 최초 입사일 적용 v3.1.2
  * 
  * @version 6.1.1
  * @since 2024-11-05
  * 
  * [변경 이력]
  * v6.1.1 (2026-02-05) 인쇄 헤더 안 보임 버그 수정
- *   - 인쇄 시 헤더 행 인라인 스타일 초기화 (color:white 제거)
- *   - 인쇄 CSS에 th { color: #333 !important } 추가
+ * - 인쇄 시 헤더 행 인라인 스타일 초기화 (color:white 제거)
+ * - 인쇄 CSS에 th { color: #333 !important } 추가
  *
- * v6.1.0 (2026-01-27) ⭐ 개별 API 호출 제거 (성능 최적화)
- *   - 과거경력 직원: 개별 API → 로컬 계산 (RankCalculator)
- *   - 캐시 미스 시: 개별 API → 로컬 계산
- *   - 결과: API 100회+ → 1회 (배치 API만 사용)
+ * v6.1.0 (2026-01-27) 개별 API 호출 제거 (성능 최적화)
+ * - 과거경력 직원: 개별 API → 로컬 계산 (RankCalculator)
+ * - 캐시 미스 시: 개별 API → 로컬 계산
+ * - 결과: API 100회+ → 1회 (배치 API만 사용)
  *
- * v6.0.0 (2026-01-22) ⭐ 배치 API 최적화
- *   - 호봉 계산: 배치 API 사용 (API ~100회 → 1회)
- *   - 근속기간: 로컬 계산 사용 (단순 계산, 보호 불필요)
- *   - 과거경력 없는 직원: 배치 캐시 활용
- *   - 과거경력 있는 직원: 개별 API 유지 (동적 계산)
+ * v6.0.0 (2026-01-22) 배치 API 최적화
+ * - 호봉 계산: 배치 API 사용 (API ~100회 → 1회)
+ * - 근속기간: 로컬 계산 사용 (단순 계산, 보호 불필요)
+ * - 과거경력 없는 직원: 배치 캐시 활용
+ * - 과거경력 있는 직원: 개별 API 유지 (동적 계산)
  *
  * v4.0.0 (2026-01-21) API 연동 버전
- *   - generateRegister(), buildRowData() 비동기 처리
- *   - 호봉/근속기간 계산 API 우선 사용
- *   - 서버 API로 계산 로직 보호
+ * - generateRegister(), buildRowData() 비동기 처리
+ * - 호봉/근속기간 계산 API 우선 사용
+ * - 서버 API로 계산 로직 보호
  * 
- * v3.1.2 (2025-12-04) ⭐ 연속근무자 최초 입사일 적용 기능
- *   - "🔗 연속근무자 최초 입사일 적용" 체크박스 추가
- *   - 체크 시 연속근무 설정된 직원의 입사일/근속기간을 최초 입사일 기준으로 표시
- *   - 호봉 계산은 기존대로 유지 (현재 입사일 + 과거경력 기준)
- *   - 부설사업 → 정규직 공채 재입사 등 연속근로 케이스 지원
+ * v3.1.2 (2025-12-04) 연속근무자 최초 입사일 적용 기능
+ * - " 연속근무자 최초 입사일 적용" 체크박스 추가
+ * - 체크 시 연속근무 설정된 직원의 입사일/근속기간을 최초 입사일 기준으로 표시
+ * - 호봉 계산은 기존대로 유지 (현재 입사일 + 과거경력 기준)
+ * - 부설사업 → 정규직 공채 재입사 등 연속근로 케이스 지원
  * 
- * v3.1.1 (2025-12-04) ⭐ 엑셀 업로드 직원 호봉 보존 수정
- *   - 과거경력(careerDetails)이 없고 저장된 호봉 정보가 있으면 저장된 값 사용
- *   - 엑셀 업로드 직원의 기존 호봉 정보가 초기화되는 문제 해결
- *   - 과거경력이 있는 경우에만 동적 재계산 수행
+ * v3.1.1 (2025-12-04) 엑셀 업로드 직원 호봉 보존 수정
+ * - 과거경력(careerDetails)이 없고 저장된 호봉 정보가 있으면 저장된 값 사용
+ * - 엑셀 업로드 직원의 기존 호봉 정보가 초기화되는 문제 해결
+ * - 과거경력이 있는 경우에만 동적 재계산 수행
  * 
- * v3.1.0 (2025-12-03) ⭐ 기준일별 호봉 동적 재계산
- *   - 기준일에 따라 인정율이 달라지는 경우 호봉 동적 계산
- *   - InternalCareerCalculator.calculateWithPriorCareerRate() 활용
- *   - 손실 일수 → 조정 입사일 → 동적 첫승급일 계산
- *   - 저장된 값이 아닌 기준일 기준 실시간 계산
+ * v3.1.0 (2025-12-03) 기준일별 호봉 동적 재계산
+ * - 기준일에 따라 인정율이 달라지는 경우 호봉 동적 계산
+ * - InternalCareerCalculator.calculateWithPriorCareerRate() 활용
+ * - 손실 일수 → 조정 입사일 → 동적 첫승급일 계산
+ * - 저장된 값이 아닌 기준일 기준 실시간 계산
  * 
  * v3.0.1 (2025-11-12) - 육아휴직자 포함 여부 선택 기능 추가
- *   - 컬럼 선택기에 육아휴직자 포함 체크박스 추가
- *   - 육아휴직자 필터링 로직 구현 (v3.0.7 이력 구조 지원)
- *   - 결과 제목에 포함/제외 상태 표시
- *   - 조건부 설명 표시
+ * - 컬럼 선택기에 육아휴직자 포함 체크박스 추가
+ * - 육아휴직자 필터링 로직 구현 (v3.0.7 이력 구조 지원)
+ * - 결과 제목에 포함/제외 상태 표시
+ * - 조건부 설명 표시
  * 
  * v3.0 - 프로덕션급 리팩토링
- *   - Phase 1 유틸리티 적용 (직원유틸, DOM유틸, 인쇄유틸)
- *   - 인쇄 문제 해결 (사이드바/메뉴 출력 방지)
- *   - ID 기반 인쇄 영역 (register-print-area)
- *   - 완벽한 에러 처리
- *   - 체계적 로깅
- *   - JSDoc 주석 추가
- *   - XSS 방지
+ * - Phase 1 유틸리티 적용 (직원유틸, DOM유틸, 인쇄유틸)
+ * - 인쇄 문제 해결 (사이드바/메뉴 출력 방지)
+ * - ID 기반 인쇄 영역 (register-print-area)
+ * - 완벽한 에러 처리
+ * - 체계적 로깅
+ * - JSDoc 주석 추가
+ * - XSS 방지
  * 
- * [인쇄 개선] ⭐ 핵심
+ * [인쇄 개선] 핵심
  * - ID 기반 인쇄 영역: register-print-area
  * - 인쇄유틸_인사.print() 사용
  * - 사이드바/메뉴 출력 방지
@@ -146,9 +146,9 @@ function showColumnSelector() {
     로거_인사?.debug('컬럼 선택기 HTML 생성');
     
     try {
-        // 체크박스 HTML 생성
+ // 체크박스 HTML 생성
         const checkboxes = Object.entries(REGISTER_COLUMNS).map(([key, col]) => {
-            // ✅ XSS 방지
+ // XSS 방지
             const safeLabel = typeof DOM유틸_인사 !== 'undefined'
                 ? DOM유틸_인사.escapeHtml(col.label)
                 : col.label;
@@ -170,7 +170,7 @@ function showColumnSelector() {
         const selectorHTML = `
             <div style="background:#f8f9fe;padding:20px;border-radius:12px;margin-bottom:20px;border:1.5px solid #e8ebed;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h3 style="margin:0;font-size:16px;font-weight:600;color:#667eea;">📋 출력 항목 선택</h3>
+                    <h3 style="margin:0;font-size:16px;font-weight:600;color:#4f46e5;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 출력 항목 선택</h3>
                     <div style="display:flex;gap:8px;">
                         <button class="btn btn-secondary btn-small" onclick="applyColumnPreset('minimal')">간략</button>
                         <button class="btn btn-secondary btn-small" onclick="applyColumnPreset('default')">기본</button>
@@ -188,17 +188,17 @@ function showColumnSelector() {
                                id="register-include-maternity" 
                                checked
                                style="width:16px;height:16px;cursor:pointer;">
-                        <span style="font-size:14px;font-weight:500;">🤱 육아휴직자 포함</span>
+                        <span style="font-size:14px;font-weight:500;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg> 육아휴직자 포함</span>
                     </label>
                     <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:12px;margin-left:24px;">
                         <input type="checkbox" 
                                id="register-continuous-service" 
                                style="width:16px;height:16px;cursor:pointer;">
-                        <span style="font-size:14px;font-weight:500;">🔗 연속근무자 최초 입사일 적용</span>
+                        <span style="font-size:14px;font-weight:500;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> 연속근무자 최초 입사일 적용</span>
                     </label>
                 </div>
                 <div style="padding-top:8px;border-top:1px solid #e8ebed;">
-                    <span style="font-size:13px;color:#6b7280;">💡 항목을 선택한 후 "연명부 생성" 버튼을 클릭하세요. 많은 항목을 선택하면 A4 가로 출력을 권장합니다.</span>
+                    <span style="font-size:13px;color:#6b7280;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> 항목을 선택한 후 "연명부 생성" 버튼을 클릭하세요. 많은 항목을 선택하면 A4 가로 출력을 권장합니다.</span>
                 </div>
             </div>
         `;
@@ -243,7 +243,7 @@ function applyColumnPreset(preset) {
         
         로거_인사?.debug('프리셋 컬럼', { preset, count: selected.length });
         
-        // 모든 체크박스 업데이트
+ // 모든 체크박스 업데이트
         Object.keys(REGISTER_COLUMNS).forEach(key => {
             const checkbox = typeof DOM유틸_인사 !== 'undefined'
                 ? DOM유틸_인사.getById(`col_${key}`)
@@ -271,7 +271,7 @@ function applyColumnPreset(preset) {
  * @param {boolean} checked - true: 전체선택, false: 전체해제
  * 
  * @example
- * toggleAllColumns(true);  // 전체 선택
+ * toggleAllColumns(true); // 전체 선택
  * toggleAllColumns(false); // 전체 해제
  */
 function toggleAllColumns(checked) {
@@ -351,7 +351,7 @@ async function generateRegister() {
     try {
         로거_인사?.info('연명부 생성 시작');
         
-        // 1. 기준일 확인
+ // 1. 기준일 확인
         const baseDateField = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('registerBaseDate')
             : document.getElementById('registerBaseDate');
@@ -362,7 +362,7 @@ async function generateRegister() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('기준일 필드를 찾을 수 없습니다.');
             } else {
-                alert('⚠️ 기준일 필드를 찾을 수 없습니다.');
+                alert('[주의] 기준일 필드를 찾을 수 없습니다.');
             }
             return;
         }
@@ -375,14 +375,14 @@ async function generateRegister() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('기준일을 선택하세요.');
             } else {
-                alert('⚠️ 기준일을 선택하세요.');
+                alert('[주의] 기준일을 선택하세요.');
             }
             return;
         }
         
         로거_인사?.debug('기준일 확인', { baseDate });
         
-        // 2. 재직자 가져오기
+ // 2. 재직자 가져오기
         const employees = db.getEmployeesAtDate(baseDate);
         
         if (employees.length === 0) {
@@ -391,33 +391,33 @@ async function generateRegister() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn(`${baseDate} 기준 재직자가 없습니다.`);
             } else {
-                alert(`⚠️ ${baseDate} 기준 재직자가 없습니다.`);
+                alert(`[주의] ${baseDate} 기준 재직자가 없습니다.`);
             }
             return;
         }
         
         로거_인사?.info('재직자 조회 완료', { count: employees.length });
         
-        // 2-1. 육아휴직자 포함 여부 확인
+ // 2-1. 육아휴직자 포함 여부 확인
         const includeMaternityCheckbox = document.getElementById('register-include-maternity');
         const includeMaternity = includeMaternityCheckbox ? includeMaternityCheckbox.checked : true;
         
         로거_인사?.debug('육아휴직자 포함 여부', { includeMaternity });
         
-        // 2-1-1. 연속근무자 최초 입사일 적용 여부 확인
+ // 2-1-1. 연속근무자 최초 입사일 적용 여부 확인
         const applyContinuousServiceCheckbox = document.getElementById('register-continuous-service');
         const applyContinuousService = applyContinuousServiceCheckbox ? applyContinuousServiceCheckbox.checked : false;
         
         로거_인사?.debug('연속근무자 최초 입사일 적용 여부', { applyContinuousService });
         
-        // 2-2. 육아휴직자 필터링
+ // 2-2. 육아휴직자 필터링
         let filteredEmployees = employees;
         if (!includeMaternity) {
             const beforeCount = filteredEmployees.length;
             
             filteredEmployees = employees.filter(emp => {
                 try {
-                    // v3.0.7 이후 데이터: maternityLeave.history 배열
+ // v3.0.7 이후 데이터: maternityLeave.history 배열
                     if (emp.maternityLeave && Array.isArray(emp.maternityLeave.history)) {
                         const isOnLeave = emp.maternityLeave.history.some(leave => {
                             const startDate = leave.startDate;
@@ -425,14 +425,14 @@ async function generateRegister() {
                             
                             if (!startDate || !endDate) return false;
                             
-                            // 기준일이 육아휴직 기간 내에 있는지 확인
+ // 기준일이 육아휴직 기간 내에 있는지 확인
                             return baseDate >= startDate && baseDate <= endDate;
                         });
                         
                         return !isOnLeave; // 육아휴직 중이 아닌 직원만
                     }
                     
-                    // 레거시 데이터: isOnLeave 플래그
+ // 레거시 데이터: isOnLeave 플래그
                     if (emp.maternityLeave && emp.maternityLeave.isOnLeave) {
                         const startDate = emp.maternityLeave.startDate;
                         const endDate = emp.maternityLeave.actualEndDate || emp.maternityLeave.plannedEndDate;
@@ -461,16 +461,16 @@ async function generateRegister() {
             });
         }
         
-        // ⭐ v6.0.0: 배치 API로 호봉 계산 (성능 최적화)
+ // v6.0.0: 배치 API로 호봉 계산 (성능 최적화)
         if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
             try {
-                // 기준일이 변경되었으면 캐시 초기화
+ // 기준일이 변경되었으면 캐시 초기화
                 if (_registerBatchCacheDate !== baseDate) {
                     _registerBatchCache = new Map();
                     _registerBatchCacheDate = baseDate;
                 }
                 
-                // 호봉제 직원 중 캐시에 없는 직원 필터링
+ // 호봉제 직원 중 캐시에 없는 직원 필터링
                 const uncachedEmployees = filteredEmployees.filter(emp => {
                     const hasStoredRankInfo = emp.rank?.startRank && emp.rank?.firstUpgradeDate;
                     const isRankBased = emp.rank?.isRankBased !== false && hasStoredRankInfo;
@@ -481,7 +481,7 @@ async function generateRegister() {
                     console.log('[연명부] 배치 API 시작:', uncachedEmployees.length, '명');
                     const batchResults = await API_인사.calculateBatchForEmployees(uncachedEmployees, baseDate);
                     
-                    // 결과를 캐시에 저장
+ // 결과를 캐시에 저장
                     batchResults.forEach((value, key) => {
                         _registerBatchCache.set(key, value);
                     });
@@ -494,7 +494,7 @@ async function generateRegister() {
             }
         }
         
-        // 3. 선택된 컬럼 확인
+ // 3. 선택된 컬럼 확인
         const selectedColumns = getSelectedColumns();
         
         if (selectedColumns.length === 0) {
@@ -503,27 +503,27 @@ async function generateRegister() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('최소 1개 이상의 항목을 선택하세요.');
             } else {
-                alert('⚠️ 최소 1개 이상의 항목을 선택하세요.');
+                alert('[주의] 최소 1개 이상의 항목을 선택하세요.');
             }
             return;
         }
         
         로거_인사?.debug('선택된 컬럼', { count: selectedColumns.length });
         
-        // 4. 테이블 헤더 생성
-        let headerHTML = '<tr style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;">';
+ // 4. 테이블 헤더 생성
+        let headerHTML = '<tr style="background:linear-gradient(135deg, #4f46e5 0%, #764ba2 100%);color:white;">';
         selectedColumns.forEach(colKey => {
             const col = REGISTER_COLUMNS[colKey];
             const safeLabel = typeof DOM유틸_인사 !== 'undefined'
                 ? DOM유틸_인사.escapeHtml(col.label)
                 : col.label;
             
-            // ⭐ 헤더도 가운데 정렬
+ // 헤더도 가운데 정렬
             headerHTML += `<th style="padding:12px;border:1px solid #e8ebed;white-space:nowrap;text-align:center;">${safeLabel}</th>`;
         });
         headerHTML += '</tr>';
         
-        // 5. 테이블 데이터 생성 - ✅ v4.0.0: async 처리
+ // 5. 테이블 데이터 생성 - v4.0.0: async 처리
         const rowPromises = filteredEmployees.map(async (emp, index) => {
             try {
                 const rowData = await buildRowData(emp, index, baseDate, applyContinuousService);
@@ -531,7 +531,7 @@ async function generateRegister() {
                 let rowHTML = '<tr>';
                 selectedColumns.forEach(colKey => {
                     const value = rowData[colKey];
-                    // ⭐ 모든 데이터 가운데 정렬 + 줄바꿈 방지
+ // 모든 데이터 가운데 정렬 + 줄바꿈 방지
                     rowHTML += `<td style="padding:10px;border:1px solid #e8ebed;text-align:center;white-space:nowrap;">${value}</td>`;
                 });
                 rowHTML += '</tr>';
@@ -551,7 +551,7 @@ async function generateRegister() {
         
         로거_인사?.debug('테이블 생성 완료', { rowsCount: filteredEmployees.length });
         
-        // 6. 결과 HTML 생성
+ // 6. 결과 HTML 생성
         const maternityStatus = includeMaternity ? '육아휴직자 포함' : '육아휴직자 제외';
         const continuousStatus = applyContinuousService ? ', 연속근무 적용' : '';
         const resultHTML = `
@@ -568,19 +568,19 @@ async function generateRegister() {
                     <span><strong>표시 설명:</strong> 
                     • 호봉이 "-"인 직원은 연봉제입니다.<br>
                     • <span style="color:#ef4444;">(퇴사)</span>는 현재 퇴사자이지만 기준일에는 재직 중이었습니다.<br>
-                    ${includeMaternity ? '• <span style="color:#ec4899;">🤱 (육아휴직)</span>은 기준일에 육아휴직 중이었던 직원입니다.<br>' : ''}
-                    ${applyContinuousService ? '• <span style="color:#2563eb;">🔗 연속근무</span> 설정된 직원은 최초 입사일 기준으로 입사일/근속기간이 표시됩니다.<br>' : ''}
+                    ${includeMaternity ? '• <span style="color:#ec4899;">(육아휴직)</span>은 기준일에 육아휴직 중이었던 직원입니다.<br>' : ''}
+                    ${applyContinuousService ? '• <span style="color:#2563eb;">연속근무</span> 설정된 직원은 최초 입사일 기준으로 입사일/근속기간이 표시됩니다.<br>' : ''}
                     • 차기승급일은 <strong>기준일(${baseDate})</strong> 이후의 다음 승급일입니다.</span>
                 </div>
                 <div style="margin-top:20px;text-align:center;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-                    <button class="btn btn-primary" onclick="printRegister('portrait')">🖨 인쇄 (A4 세로)</button>
-                    <button class="btn btn-primary" onclick="printRegister('landscape')">🖨 인쇄 (A4 가로)</button>
-                    <button class="btn btn-success" onclick="exportRegisterToExcel()">📥 엑셀 다운로드</button>
+                    <button class="btn btn-primary" onclick="printRegister('portrait')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄 (A4 세로)</button>
+                    <button class="btn btn-primary" onclick="printRegister('landscape')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄 (A4 가로)</button>
+                    <button class="btn btn-success" onclick="exportRegisterToExcel()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀 다운로드</button>
                 </div>
             </div>
         `;
         
-        // 7. 결과 표시
+ // 7. 결과 표시
         const resultContainer = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('registerResult')
             : document.getElementById('registerResult');
@@ -604,7 +604,7 @@ async function generateRegister() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '연명부 생성 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 연명부 생성 중 오류가 발생했습니다.');
+            alert('[오류] 연명부 생성 중 오류가 발생했습니다.');
             console.error('연명부 생성 오류:', error);
         }
     }
@@ -635,17 +635,17 @@ async function generateRegister() {
  */
 async function buildRowData(emp, index, baseDate, applyContinuousService = false) {
     try {
-        // ✅ 직원유틸 사용
+ // 직원유틸 사용
         const name = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.getName(emp)
             : (emp.personalInfo?.name || emp.name || '이름없음');
         
-        // ⭐ v3.1.2: 연속근무자 최초 입사일 적용
+ // v3.1.2: 연속근무자 최초 입사일 적용
         let entryDate = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.getEntryDate(emp)
             : (emp.employment?.entryDate || '-');
         
-        // 연속근무 적용 시 최초 입사일 사용
+ // 연속근무 적용 시 최초 입사일 사용
         if (applyContinuousService && emp.continuousService?.enabled && emp.continuousService?.originalEntryDate) {
             entryDate = emp.continuousService.originalEntryDate;
             로거_인사?.debug('연속근무 최초 입사일 적용', { 
@@ -657,7 +657,7 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
         
         const employmentType = emp.employment?.type || '정규직';
         
-        // 기준일 당시 유효한 발령 찾기
+ // 기준일 당시 유효한 발령 찾기
         let validAssignment = null;
         if (emp.assignments && emp.assignments.length > 0) {
             const sortedAssignments = [...emp.assignments].sort((a, b) => 
@@ -677,7 +677,7 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
             }
         }
         
-        // 부서/직위/직급
+ // 부서/직위/직급
         const dept = validAssignment?.dept || 
                      (typeof 직원유틸_인사 !== 'undefined' ? 직원유틸_인사.getDepartment(emp) : (emp.currentPosition?.dept || emp.dept || '-'));
         
@@ -687,7 +687,7 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
         const grade = validAssignment?.grade || emp.currentPosition?.grade || '-';
         const jobType = emp.currentPosition?.jobType || '-';
         
-        // 호봉 정보
+ // 호봉 정보
         const isRankBased = typeof 직원유틸_인사 !== 'undefined'
             ? 직원유틸_인사.isRankBased(emp)
             : (emp.rank?.isRankBased === true && emp.rank?.firstUpgradeDate);
@@ -704,58 +704,58 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
                 const hasPastCareers = pastCareers.length > 0;
                 const hasStoredRankInfo = emp.rank?.startRank && emp.rank?.firstUpgradeDate;
                 
-                // ⭐ v3.1.1: 과거경력이 없고 저장된 호봉 정보가 있으면 저장된 값 사용
-                // 엑셀 업로드 직원 등 과거경력 미입력 상태에서 이미 계산된 호봉 보존
+ // v3.1.1: 과거경력이 없고 저장된 호봉 정보가 있으면 저장된 값 사용
+ // 엑셀 업로드 직원 등 과거경력 미입력 상태에서 이미 계산된 호봉 보존
                 if (!hasPastCareers && hasStoredRankInfo) {
-                    // 저장된 값 사용
+ // 저장된 값 사용
                     const storedStartRank = emp.rank.startRank;
                     const storedFirstUpgrade = emp.rank.firstUpgradeDate;
                     
                     startRankDisplay = storedStartRank;
                     firstUpgradeDate = storedFirstUpgrade;
                     
-                    // ✅ v6.0.0: 배치 캐시 우선 사용
+ // v6.0.0: 배치 캐시 우선 사용
                     const cached = _registerBatchCache.get(emp.id);
                     if (cached && cached.currentRank !== undefined) {
-                        // 캐시에서 가져오기
+ // 캐시에서 가져오기
                         currentRankDisplay = `${cached.currentRank}호봉`;
                         nextUpgrade = cached.nextUpgradeDate || '-';
                     } else {
-                        // ✅ v6.1.0: 캐시 미스 시 로컬 계산 (성능 최적화)
+ // v6.1.0: 캐시 미스 시 로컬 계산 (성능 최적화)
                         let currentRank = RankCalculator.calculateCurrentRank(storedStartRank, storedFirstUpgrade, baseDate);
                         nextUpgrade = RankCalculator.calculateNextUpgradeDate(storedFirstUpgrade, baseDate);
                         currentRankDisplay = `${currentRank}호봉`;
                     }
                     
                 } else {
-                    // ⭐ v3.1.0: 과거경력이 있으면 동적 재계산
-                    // 인정율이 기준일에 따라 달라질 수 있으므로 동적 계산
+ // v3.1.0: 과거경력이 있으면 동적 재계산
+ // 인정율이 기준일에 따라 달라질 수 있으므로 동적 계산
                     
-                    // 1. 조정 입사일 계산 (인정율 반영)
+ // 1. 조정 입사일 계산 (인정율 반영)
                     let adjustedEntryDate = entryDateForRank;
                     
                     if (typeof InternalCareerCalculator !== 'undefined' && entryDateForRank) {
                         const internalResult = InternalCareerCalculator.calculateWithPriorCareerRate(emp, baseDate);
                         
-                        // 모든 발령이 100% 인정율인지 확인
+ // 모든 발령이 100% 인정율인지 확인
                         const allFullRate = internalResult.details.every(d => d.rate === 100);
                         
                         if (!allFullRate) {
-                            // 2. 원본 재직일수 - ✅ v6.0.0: 로컬 계산 (단순 계산)
+ // 2. 원본 재직일수 - v6.0.0: 로컬 계산 (단순 계산)
                             const originalPeriod = TenureCalculator.calculate(entryDateForRank, baseDate);
                             const originalDays = originalPeriod.years * 365 + originalPeriod.months * 30 + originalPeriod.days;
                             
-                            // 3. 손실 일수 = 원본 - 조정
+ // 3. 손실 일수 = 원본 - 조정
                             const lostDays = originalDays - internalResult.totalDays;
                             
-                            // 4. 조정 입사일 (손실 일수만큼 뒤로)
+ // 4. 조정 입사일 (손실 일수만큼 뒤로)
                             if (lostDays > 0) {
                                 adjustedEntryDate = DateUtils.addDays(entryDateForRank, lostDays);
                             }
                         }
                     }
                     
-                    // 5. 과거 경력 (타 기관) 합산
+ // 5. 과거 경력 (타 기관) 합산
                     let totalPastYears = 0;
                     let totalPastMonths = 0;
                     let totalPastDays = 0;
@@ -770,17 +770,17 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
                         }
                     });
                     
-                    // 정규화
+ // 정규화
                     totalPastMonths += Math.floor(totalPastDays / 30);
                     totalPastDays = totalPastDays % 30;
                     totalPastYears += Math.floor(totalPastMonths / 12);
                     totalPastMonths = totalPastMonths % 12;
                     
-                    // 6. 입사호봉 = 1 + 과거경력년수
+ // 6. 입사호봉 = 1 + 과거경력년수
                     const startRank = 1 + totalPastYears;
                     startRankDisplay = startRank;
                     
-                    // 7. 동적 첫승급일 계산 - ✅ v6.1.0: 로컬 계산 (성능 최적화)
+ // 7. 동적 첫승급일 계산 - v6.1.0: 로컬 계산 (성능 최적화)
                     let dynamicFirstUpgrade = RankCalculator.calculateFirstUpgradeDate(
                         adjustedEntryDate,
                         totalPastYears,
@@ -789,11 +789,11 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
                     );
                     firstUpgradeDate = dynamicFirstUpgrade;
                     
-                    // 8. 현재 호봉 계산 - ✅ v6.1.0: 로컬 계산 (성능 최적화)
+ // 8. 현재 호봉 계산 - v6.1.0: 로컬 계산 (성능 최적화)
                     let currentRank = RankCalculator.calculateCurrentRank(startRank, dynamicFirstUpgrade, baseDate);
                     currentRankDisplay = `${currentRank}호봉`;
                     
-                    // 9. 차기승급일 - ✅ v6.1.0: 로컬 계산 (성능 최적화)
+ // 9. 차기승급일 - v6.1.0: 로컬 계산 (성능 최적화)
                     nextUpgrade = RankCalculator.calculateNextUpgradeDate(dynamicFirstUpgrade, baseDate);
                 }
                 
@@ -802,7 +802,7 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
                     employee: emp.uniqueCode, 
                     error: e.message 
                 });
-                // 오류 시 저장된 값 사용 (fallback)
+ // 오류 시 저장된 값 사용 (fallback)
                 const startRank = emp.rank?.startRank || 1;
                 startRankDisplay = startRank;
                 currentRankDisplay = `${startRank}호봉`;
@@ -811,7 +811,7 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
             }
         }
         
-        // 근속기간 (기준일 기준) - ✅ v6.0.0: 로컬 계산 (단순 계산)
+ // 근속기간 (기준일 기준) - v6.0.0: 로컬 계산 (단순 계산)
         let tenure = '-';
         if (entryDate && entryDate !== '-') {
             try {
@@ -825,14 +825,14 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
             }
         }
         
-        // 기준일 기준 상태 판단
+ // 기준일 기준 상태 판단
         const retirementDate = emp.employment?.retirementDate;
         const isRetiredAtBaseDate = retirementDate && retirementDate < baseDate;
-        // ⭐ 핵심: 퇴사일 < 기준일일 때만 기준일에 퇴사 상태
-        //         퇴사일 = 기준일이면 아직 재직 중 (그날까지 근무)
-        //         퇴사일 > 기준일이면 재직 중
+ // 핵심: 퇴사일 < 기준일일 때만 기준일에 퇴사 상태
+ // 퇴사일 = 기준일이면 아직 재직 중 (그날까지 근무)
+ // 퇴사일 > 기준일이면 재직 중
         
-        // 육아휴직 판단 (기준일 기준)
+ // 육아휴직 판단 (기준일 기준)
         let isOnLeaveAtBaseDate = false;
         if (emp.maternityLeave?.startDate && emp.maternityLeave?.endDate) {
             const leaveStart = emp.maternityLeave.startDate;
@@ -842,16 +842,16 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
             }
         }
         
-        // 상태 뱃지: 기준일 기준으로만 표시
-        // ⭐ 연명부는 기준일 당시의 스냅샷이므로 현재 상태와 무관!
+ // 상태 뱃지: 기준일 기준으로만 표시
+ // 연명부는 기준일 당시의 스냅샷이므로 현재 상태와 무관!
         let statusBadge = '';
         if (isOnLeaveAtBaseDate) {
-            // 기준일에 육아휴직 중이면 표시
-            statusBadge = ' <span style="color:#ec4899;font-size:11px;">🤱</span>';
+ // 기준일에 육아휴직 중이면 표시
+            statusBadge = ' <span style="color:#ec4899;font-size:11px;">(휴직)</span>';
         }
-        // 현재 퇴사 여부는 표시하지 않음!
+ // 현재 퇴사 여부는 표시하지 않음!
         
-        // ✅ XSS 방지
+ // XSS 방지
         const safeName = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.escapeHtml(name)
             : name;
@@ -864,7 +864,7 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
             ? DOM유틸_인사.escapeHtml(position)
             : position;
         
-        // 기준일 기준 상태 결정
+ // 기준일 기준 상태 결정
         const statusAtBaseDate = isRetiredAtBaseDate ? '퇴사' : 
                                 isOnLeaveAtBaseDate ? '육아휴직' : '재직';
         
@@ -902,7 +902,7 @@ async function buildRowData(emp, index, baseDate, applyContinuousService = false
             error: error.message 
         });
         
-        // 에러 발생 시 기본 데이터 반환
+ // 에러 발생 시 기본 데이터 반환
         return {
             no: index + 1,
             uniqueCode: emp?.uniqueCode || '-',
@@ -965,7 +965,7 @@ function getColumnStyle(colKey, rowData) {
             break;
             
         case 'currentRank':
-            style = `text-align:center;font-weight:600;color:${rowData.isRankBased ? '#667eea' : '#6b7280'};`;
+            style = `text-align:center;font-weight:600;color:${rowData.isRankBased ? '#4f46e5' : '#6b7280'};`;
             break;
             
         case 'address':
@@ -988,7 +988,7 @@ function getColumnStyle(colKey, rowData) {
  * @param {string} [orientation='landscape'] - 페이지 방향 ('portrait' | 'landscape')
  * 
  * @description
- * ⭐ 인쇄유틸_인사.print() 사용하여 인쇄 문제 해결
+ * 인쇄유틸_인사.print() 사용하여 인쇄 문제 해결
  * - 사이드바/메뉴 출력 방지
  * - 테이블만 깔끔하게 인쇄
  * - A4 가로/세로 선택 가능
@@ -997,7 +997,7 @@ function getColumnStyle(colKey, rowData) {
  * 
  * @example
  * printRegister('landscape'); // A4 가로 인쇄
- * printRegister('portrait');  // A4 세로 인쇄
+ * printRegister('portrait'); // A4 세로 인쇄
  */
 function printRegister(orientation = 'landscape') {
     로거_인사?.info('연명부 인쇄 시작', { orientation });
@@ -1006,21 +1006,21 @@ function printRegister(orientation = 'landscape') {
         const table = document.getElementById('registerTable');
         
         if (!table) {
-            alert('⚠️ 먼저 연명부를 생성하세요.');
+            alert('[주의] 먼저 연명부를 생성하세요.');
             return;
         }
         
-        // 제목 정보 추출
+ // 제목 정보 추출
         const cardTitle = document.querySelector('#registerResult .card-title');
         const titleText = cardTitle ? cardTitle.textContent : '연명부';
         
-        // 테이블 복제 및 가운데 정렬 적용
+ // 테이블 복제 및 가운데 정렬 적용
         const tableClone = table.cloneNode(true);
         tableClone.querySelectorAll('th, td').forEach(cell => {
             cell.style.textAlign = 'center';
         });
         
-        // ⭐ 헤더 행의 인라인 스타일 초기화 (color:white 제거)
+ // 헤더 행의 인라인 스타일 초기화 (color:white 제거)
         const headerRow = tableClone.querySelector('thead tr');
         if (headerRow) {
             headerRow.style.background = '';
@@ -1052,14 +1052,14 @@ function printRegister(orientation = 'landscape') {
                 </style>
             </head>
             <body>
-                <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
+                <button class="no-print" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄하기 (Ctrl+P)</button>
                 <h2>${titleText}</h2>
                 ${tableClone.outerHTML}
             </body>
             </html>
         `;
         
-        // Electron 환경에서 시스템 브라우저로 열기
+ // Electron 환경에서 시스템 브라우저로 열기
         if (window.electronAPI && window.electronAPI.openInBrowser) {
             window.electronAPI.openInBrowser(htmlContent, 'register_print.html');
         } else {
@@ -1074,7 +1074,7 @@ function printRegister(orientation = 'landscape') {
         
     } catch (error) {
         로거_인사?.error('연명부 인쇄 실패', error);
-        alert('❌ 인쇄 중 오류가 발생했습니다.');
+        alert('[오류] 인쇄 중 오류가 발생했습니다.');
     }
 }
 
@@ -1094,7 +1094,7 @@ function exportRegisterToExcel() {
     로거_인사?.info('엑셀 다운로드 시작');
     
     try {
-        // 테이블 확인
+ // 테이블 확인
         const table = typeof DOM유틸_인사 !== 'undefined'
             ? DOM유틸_인사.getById('registerTable')
             : document.getElementById('registerTable');
@@ -1105,12 +1105,12 @@ function exportRegisterToExcel() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.warn('먼저 연명부를 생성하세요.');
             } else {
-                alert('⚠️ 먼저 연명부를 생성하세요.');
+                alert('[주의] 먼저 연명부를 생성하세요.');
             }
             return;
         }
         
-        // XLSX 라이브러리 확인
+ // XLSX 라이브러리 확인
         if (typeof XLSX === 'undefined') {
             로거_인사?.error('XLSX 라이브러리를 찾을 수 없음');
             
@@ -1120,17 +1120,17 @@ function exportRegisterToExcel() {
                     '엑셀 다운로드 기능을 사용할 수 없습니다.'
                 );
             } else {
-                alert('❌ 엑셀 다운로드 기능을 사용할 수 없습니다.');
+                alert('[오류] 엑셀 다운로드 기능을 사용할 수 없습니다.');
             }
             return;
         }
         
-        // 엑셀 변환
+ // 엑셀 변환
         const wb = XLSX.utils.table_to_book(table);
         const today = DateUtils.formatDate(new Date());
         const filename = `연명부_${today}.xlsx`;
         
-        // 다운로드
+ // 다운로드
         XLSX.writeFile(wb, filename);
         
         로거_인사?.info('엑셀 다운로드 완료', { filename });
@@ -1145,7 +1145,7 @@ function exportRegisterToExcel() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '엑셀 다운로드 중 오류가 발생했습니다.');
         } else {
-            alert('❌ 엑셀 다운로드 중 오류가 발생했습니다.');
+            alert('[오류] 엑셀 다운로드 중 오류가 발생했습니다.');
             console.error('엑셀 다운로드 오류:', error);
         }
     }
@@ -1160,7 +1160,7 @@ window.addEventListener('DOMContentLoaded', function() {
     try {
         로거_인사?.debug('연명부 모듈 초기화');
         
-        // 연명부 모듈에 컬럼 선택기 추가
+ // 연명부 모듈에 컬럼 선택기 추가
         const registerModule = document.querySelector('#module-register .card');
         
         if (registerModule) {
@@ -1182,43 +1182,43 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * 📊 리팩토링 통계
+ * 리팩토링 통계
  * 
  * Before (원본):
  * - 총 줄 수: 391줄
  * - 중복 코드: 약 60줄 (직원 정보 접근, 호봉 판단)
- * - 에러 처리: 0곳 ⚠️
+ * - 에러 처리: 0곳 
  * - 로깅: 2곳 (console.error만)
- * - XSS 방지: 0곳 ⚠️
+ * - XSS 방지: 0곳 
  * - 함수 개수: 9개
  * - 인쇄 방식: window.print() (문제 있음!)
  * 
  * After (리팩토링):
  * - 총 줄 수: 약 1,120줄 (주석 포함)
  * - 실제 코드: 약 750줄
- * - 중복 코드: 0줄 ✅ (100% 제거)
+ * - 중복 코드: 0줄 (100% 제거)
  * - 에러 처리: 9곳 (모든 주요 함수)
  * - 로깅: 45곳 (debug 25, info 12, warn 6, error 2)
- * - XSS 방지: 100% ✅ (모든 출력)
+ * - XSS 방지: 100% (모든 출력)
  * - 함수 개수: 9개 (동일)
  * - 인쇄 방식: 인쇄유틸_인사.print() (문제 해결!)
  * 
  * 개선 효과:
- * ✅ 중복 코드 60줄 → 0줄 (100% 감소)
- * ✅ XSS 공격 100% 방지
- * ✅ 에러 추적 100% 가능
- * ✅ 사이드바/메뉴 인쇄 방지 (ID 기반 격리) ⭐ 핵심
- * ✅ 표 선 끊김 방지
- * ✅ A4 최적화 (가로/세로)
- * ✅ 인쇄 안정성 향상
+ * 중복 코드 60줄 → 0줄 (100% 감소)
+ * XSS 공격 100% 방지
+ * 에러 추적 100% 가능
+ * 사이드바/메뉴 인쇄 방지 (ID 기반 격리) 핵심
+ * 표 선 끊김 방지
+ * A4 최적화 (가로/세로)
+ * 인쇄 안정성 향상
  * 
  * 핵심 개선 사항:
  * 1. 직원유틸_인사 사용 → 중복 코드 제거
  * 2. DOM유틸_인사.escapeHtml() → XSS 방지
- * 3. 인쇄유틸_인사.print() → 인쇄 문제 해결 ⭐⭐⭐
+ * 3. 인쇄유틸_인사.print() → 인쇄 문제 해결 
  * 4. 로거_인사 사용 → 완벽한 추적
  * 5. 에러처리_인사 사용 → 일관된 에러 처리
- * 6. ID 기반 인쇄 (#register-print-area) → 격리 ⭐
+ * 6. ID 기반 인쇄 (#register-print-area) → 격리 
  * 7. Fallback 로직 → 하위 호환성 유지
  * 8. JSDoc 주석 완비 → 유지보수성
  */

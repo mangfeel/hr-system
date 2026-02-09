@@ -17,54 +17,54 @@
  * 
  * [변경 이력]
  * v5.0.0 (2026-01-22) ⭐ 배치 API 최적화
- *   - getAllEmployeesSalaryInfo() 배치 API 적용
- *   - getRankAtDate() 배치 캐시 사용
- *   - API 호출 ~100회 → 1회 (배치)
- *   - 급여현황/시간외근무 속도 대폭 개선
+ * - getAllEmployeesSalaryInfo() 배치 API 적용
+ * - getRankAtDate() 배치 캐시 사용
+ * - API 호출 ~100회 → 1회 (배치)
+ * - 급여현황/시간외근무 속도 대폭 개선
  * v4.0.0 (2026-01-21) API 연동 버전
- *   - getRankAtDate() API 우선 사용
- *   - 관련 함수들 async/await 전환
- *   - 서버 API로 호봉 계산 로직 보호
+ * - getRankAtDate() API 우선 사용
+ * - 관련 함수들 async/await 전환
+ * - 서버 API로 호봉 계산 로직 보호
  * 
  * v3.3.0 - 배율 적용 시급 계산 함수 추가 (2026-01-07)
- *   - getRatedHourlyWage(): 배율 적용된 시급 계산
- *   - applyTiming 설정에 따라 절사 시점 결정
- *   - 'after' (기본값): 원시급 × 배율 → 절사
- *   - 'before': 원시급 → 절사 → × 배율
+ * - getRatedHourlyWage(): 배율 적용된 시급 계산
+ * - applyTiming 설정에 따라 절사 시점 결정
+ * - 'after' (기본값): 원시급 × 배율 → 절사
+ * - 'before': 원시급 → 절사 → × 배율
  * v2.4.0 - 명절휴가비 월별 연동 방식 지원 (2025-12-12)
- *   - holidayBonusMethod 설정 반영 ('monthly' | 'annual')
- *   - 월별 연동: 현재 월 기본급 기준으로 명절휴가비 계산
- *   - 연간 고정: 설/추석 당일 호봉 기준으로 계산 (기존 방식)
- *   - getHolidayBonusForOrdinary(): currentBaseSalary 파라미터 추가
+ * - holidayBonusMethod 설정 반영 ('monthly' | 'annual')
+ * - 월별 연동: 현재 월 기본급 기준으로 명절휴가비 계산
+ * - 연간 고정: 설/추석 당일 호봉 기준으로 계산 (기존 방식)
+ * - getHolidayBonusForOrdinary(): currentBaseSalary 파라미터 추가
  * v2.3.0 - 시급 절사 방식 설정 추가 (2025-12-08)
- *   - hourlyWageRounding 설정 반영 (소수점 유지 / 정수 처리)
- *   - getHourlyWageRoundingSettings(): 시급 절사 방식 설정 로드
- *   - applyHourlyWageRounding(): 시급에 절사 방식 적용
- *   - getHourlyWage(): 설정에 따른 절사 적용
- *   - getHourlyWageRaw(): 내부 계산용 (항상 소수점 유지)
- *   - getHourlyWageDisplay(): 설정 반영 후 정수 표시
+ * - hourlyWageRounding 설정 반영 (소수점 유지 / 정수 처리)
+ * - getHourlyWageRoundingSettings(): 시급 절사 방식 설정 로드
+ * - applyHourlyWageRounding(): 시급에 절사 방식 적용
+ * - getHourlyWage(): 설정에 따른 절사 적용
+ * - getHourlyWageRaw(): 내부 계산용 (항상 소수점 유지)
+ * - getHourlyWageDisplay(): 설정 반영 후 정수 표시
  * v2.2.0 - 시급 계산 소수점 유지 (2025-12-05)
- *   - getHourlyWage(): Math.floor() 제거, 소수점 유지
- *   - getHourlyWageDisplay(): 화면 표시용 함수 추가 (정수 버림)
- *   - 시간외수당 계산 시 정확도 향상
- *   - 최종 지급액 계산 시에만 반올림/올림/버림 적용
+ * - getHourlyWage(): Math.floor() 제거, 소수점 유지
+ * - getHourlyWageDisplay(): 화면 표시용 함수 추가 (정수 버림)
+ * - 시간외수당 계산 시 정확도 향상
+ * - 최종 지급액 계산 시에만 반올림/올림/버림 적용
  * v2.1.0 - 월소정근로시간 소수점 처리 설정 (2025-12-05)
- *   - getMonthlyWorkingHours()에 연도 파라미터 추가
- *   - 급여설정의 monthlyHoursRounding 값 참조 (올림/반올림/버림)
- *   - getMonthlyHoursRoundingMethod(), applyRounding() 메서드 추가
- *   - 기본값: 반올림 (고용노동부 예시 기준)
+ * - getMonthlyWorkingHours()에 연도 파라미터 추가
+ * - 급여설정의 monthlyHoursRounding 값 참조 (올림/반올림/버림)
+ * - getMonthlyHoursRoundingMethod(), applyRounding() 메서드 추가
+ * - 기본값: 반올림 (고용노동부 예시 기준)
  * v2.0.2 - 연봉제 기본급 계산 수정 (2025-12-02)
- *   - 연봉제 baseSalary는 월 기본급이므로 /12 제거
+ * - 연봉제 baseSalary는 월 기본급이므로 /12 제거
  * v2.0.1 - db 호환성 개선 (2025-12-02)
- *   - db.getById → db.findEmployee 호환
- *   - db.getAll → db.data.employees 호환
- *   - emp.personal → emp.personalInfo 호환
+ * - db.getById → db.findEmployee 호환
+ * - db.getAll → db.data.employees 호환
+ * - emp.personal → emp.personalInfo 호환
  * v2.0.0 - 통상임금 계산 전면 개선 (2025-12-02)
- *   - 명절휴가비: 설/추석 당일 월의 호봉 기준으로 각각 계산
- *   - 직책수당: 중도입사자 월할 계산 (실제 근무 개월수/12)
- *   - 직무대리: 해당 월 기간 존재 시 전액 포함
- *   - 통상임금 설정(hr_ordinary_wage_settings) 포함 항목 반영
- *   - 월별 시간급 계산 기능 추가
+ * - 명절휴가비: 설/추석 당일 월의 호봉 기준으로 각각 계산
+ * - 직책수당: 중도입사자 월할 계산 (실제 근무 개월수/12)
+ * - 직무대리: 해당 월 기간 존재 시 전액 포함
+ * - 통상임금 설정(hr_ordinary_wage_settings) 포함 항목 반영
+ * - 월별 시간급 계산 기능 추가
  * v1.1.0 - 연봉제 정액 명절휴가비 설/추석 분리 (2025-12-02)
  * v1.0.0 - 최초 생성
  * 
@@ -100,7 +100,7 @@ const WEEKS_PER_MONTH = WEEKS_PER_YEAR / 12;
 
 const SalaryCalculator = {
     
-    // ===== 발령 조회 =====
+ // ===== 발령 조회 =====
     
     getAssignmentAtDate(emp, targetDate) {
         try {
@@ -132,7 +132,7 @@ const SalaryCalculator = {
         }
     },
     
-    // ===== 기본급 조회 =====
+ // ===== 기본급 조회 =====
     
     getBaseSalary(year, grade, rank, isRankBased = true) {
         try {
@@ -151,7 +151,7 @@ const SalaryCalculator = {
                     로거_인사?.warn('getBaseSalary: 연봉제 직급 데이터 없음', { year, grade });
                     return 0;
                 }
-                // 연봉제: baseSalary는 월 기본급
+ // 연봉제: baseSalary는 월 기본급
                 return gradeData.baseSalary || 0;
             }
         } catch (error) {
@@ -160,7 +160,7 @@ const SalaryCalculator = {
         }
     },
     
-    // ===== 직책수당 조회 =====
+ // ===== 직책수당 조회 =====
     
     getPositionAllowance(year, position) {
         try {
@@ -173,9 +173,9 @@ const SalaryCalculator = {
         }
     },
     
-    /**
-     * 직책수당 (중도입사자 월할 계산)
-     */
+ /**
+ * 직책수당 (중도입사자 월할 계산)
+ */
     getPositionAllowanceProrated(year, position, entryDate) {
         try {
             if (!position || !entryDate) return 0;
@@ -189,7 +189,7 @@ const SalaryCalculator = {
             if (targetYear < entryYear) return 0;
             if (targetYear > entryYear) return baseAllowance;
             
-            // 입사 연도와 같은 해: 월할 계산
+ // 입사 연도와 같은 해: 월할 계산
             const entryMonth = parseInt(entryDate.substring(5, 7), 10);
             const workingMonths = 12 - entryMonth + 1;
             const proratedAllowance = Math.round(baseAllowance * workingMonths / 12);
@@ -205,7 +205,7 @@ const SalaryCalculator = {
         }
     },
     
-    // ===== 직무대리 직책수당 =====
+ // ===== 직무대리 직책수당 =====
     
     getActingPositionForMonth(empId, year, month) {
         try {
@@ -252,12 +252,12 @@ const SalaryCalculator = {
         }
     },
     
-    // ===== 호봉 계산 =====
+ // ===== 호봉 계산 =====
     
-    /**
-     * 특정 날짜 기준 호봉 조회
-     * @version 5.0.0 - 배치 캐시 사용 버전
-     */
+ /**
+ * 특정 날짜 기준 호봉 조회
+ * @version 5.0.0 - 배치 캐시 사용 버전
+ */
     async getRankAtDate(emp, targetDate) {
         try {
             if (emp.rank) {
@@ -265,7 +265,7 @@ const SalaryCalculator = {
                 const firstUpgradeDate = emp.rank.firstUpgradeDate;
                 
                 if (firstUpgradeDate) {
-                    // ✅ v5.0.0: API_인사 배치 캐시 우선 사용
+ // v5.0.0: API_인사 배치 캐시 우선 사용
                     if (typeof API_인사 !== 'undefined' && API_인사.getCachedResult) {
                         const cached = API_인사.getCachedResult(emp.id);
                         if (cached && cached.currentRank !== undefined) {
@@ -273,7 +273,7 @@ const SalaryCalculator = {
                         }
                     }
                     
-                    // 캐시 미스 시 개별 API 호출
+ // 캐시 미스 시 개별 API 호출
                     if (typeof API_인사 !== 'undefined') {
                         return await API_인사.calculateCurrentRank(startRank, firstUpgradeDate, targetDate);
                     } else if (typeof RankCalculator !== 'undefined') {
@@ -295,57 +295,57 @@ const SalaryCalculator = {
         }
     },
     
-    // ===== 명절휴가비 계산 =====
+ // ===== 명절휴가비 계산 =====
     
-    /**
-     * 통상임금 산입용 명절휴가비 계산 (월 환산)
-     * holidayBonusMethod 설정에 따라:
-     * - 'monthly': 현재 월의 기본급 기준 (월별 연동)
-     * - 'annual': 설/추석 당일 월의 호봉 기준 (연간 고정)
-     * 
-     * @param {Object} emp - 직원 정보
-     * @param {number} year - 연도
-     * @param {string} grade - 직급
-     * @param {boolean} isRankBased - 호봉제 여부
-     * @param {string} holidayBonusType - 명절휴가비 유형 (percent/fixed)
-     * @param {number} currentBaseSalary - 현재 월 기본급 (월별 연동 시 사용)
-     * @version 4.0.0 - async API 버전
-     */
+ /**
+ * 통상임금 산입용 명절휴가비 계산 (월 환산)
+ * holidayBonusMethod 설정에 따라:
+ * - 'monthly': 현재 월의 기본급 기준 (월별 연동)
+ * - 'annual': 설/추석 당일 월의 호봉 기준 (연간 고정)
+ * 
+ * @param {Object} emp - 직원 정보
+ * @param {number} year - 연도
+ * @param {string} grade - 직급
+ * @param {boolean} isRankBased - 호봉제 여부
+ * @param {string} holidayBonusType - 명절휴가비 유형 (percent/fixed)
+ * @param {number} currentBaseSalary - 현재 월 기본급 (월별 연동 시 사용)
+ * @version 4.0.0 - async API 버전
+ */
     async getHolidayBonusForOrdinary(emp, year, grade, isRankBased = true, holidayBonusType = 'percent', currentBaseSalary = 0) {
         try {
             const yearSettings = SalarySettingsManager.getSettingsByYear(year);
             const holidayBonus = yearSettings.holidayBonus || {};
             
-            // 통상임금 설정에서 명절휴가비 계산 방식 확인
+ // 통상임금 설정에서 명절휴가비 계산 방식 확인
             const ordinaryWageSettings = this.getOrdinaryWageSettings(year);
             const holidayBonusMethod = ordinaryWageSettings.holidayBonusMethod || 'annual';
             
             let annualHolidayBonus = 0;
             
-            // 명절휴가비 비율
+ // 명절휴가비 비율
             const seolRate = holidayBonus['설']?.rate || 0.6;
             const chuseokRate = holidayBonus['추석']?.rate || 0.6;
             
             if (isRankBased && emp) {
-                // 호봉제
+ // 호봉제
                 if (holidayBonusMethod === 'monthly' && currentBaseSalary > 0) {
-                    // 월별 연동: 현재 월 기본급 기준
+ // 월별 연동: 현재 월 기본급 기준
                     annualHolidayBonus = currentBaseSalary * (seolRate + chuseokRate);
                     
                     로거_인사?.debug('명절휴가비 계산 (호봉제 - 월별 연동)', {
                         currentBaseSalary, seolRate, chuseokRate, annualHolidayBonus
                     });
                 } else {
-                    // 연간 고정: 설/추석 당일 월의 호봉 기준으로 각각 계산
+ // 연간 고정: 설/추석 당일 월의 호봉 기준으로 각각 계산
                     const seolDate = holidayBonus['설']?.holidayDate || `${year}-02-01`;
                     const chuseokDate = holidayBonus['추석']?.holidayDate || `${year}-09-15`;
                     
-                    // 설날 당일 월의 호봉으로 기본급 계산
+ // 설날 당일 월의 호봉으로 기본급 계산
                     const seolRank = await this.getRankAtDate(emp, seolDate);
                     const seolBaseSalary = this.getBaseSalary(year, grade, seolRank, true);
                     const seolBonus = seolBaseSalary * seolRate;
                     
-                    // 추석 당일 월의 호봉으로 기본급 계산
+ // 추석 당일 월의 호봉으로 기본급 계산
                     const chuseokRank = await this.getRankAtDate(emp, chuseokDate);
                     const chuseokBaseSalary = this.getBaseSalary(year, grade, chuseokRank, true);
                     const chuseokBonus = chuseokBaseSalary * chuseokRate;
@@ -360,7 +360,7 @@ const SalaryCalculator = {
                 }
                 
             } else if (!isRankBased) {
-                // 연봉제
+ // 연봉제
                 if (holidayBonusType === 'fixed') {
                     const yearTable = SalarySettingsManager.getSalaryTableByYear(year);
                     const gradeData = yearTable.salary?.[grade] || {};
@@ -370,7 +370,7 @@ const SalaryCalculator = {
                     annualHolidayBonus = baseSalary * (seolRate + chuseokRate);
                 }
             } else {
-                // emp가 없는 경우 (하위 호환)
+ // emp가 없는 경우 (하위 호환)
                 const baseSalary = currentBaseSalary > 0 ? currentBaseSalary : this.getBaseSalary(year, grade, 1, isRankBased);
                 annualHolidayBonus = baseSalary * (seolRate + chuseokRate);
             }
@@ -412,7 +412,7 @@ const SalaryCalculator = {
         }
     },
     
-    // ===== 통상임금 설정 =====
+ // ===== 통상임금 설정 =====
     
     getOrdinaryWageSettings(year) {
         try {
@@ -430,33 +430,33 @@ const SalaryCalculator = {
         }
     },
     
-    // ===== 통상임금 계산 =====
+ // ===== 통상임금 계산 =====
     
-    /**
-     * @version 4.0.0 - async API 버전
-     */
+ /**
+ * @version 4.0.0 - async API 버전
+ */
     async calculateOrdinaryWage(params) {
         try {
             const { emp, year, month, grade, rank, position, entryDate, isRankBased = true, holidayBonusType = 'percent' } = params;
             
             const settings = this.getOrdinaryWageSettings(year);
             
-            // 1. 기본급
+ // 1. 기본급
             const baseSalary = this.getBaseSalary(year, grade, rank, isRankBased);
             
-            // 2. 명절휴가비 (월 환산) - 현재 월 기본급 전달
+ // 2. 명절휴가비 (월 환산) - 현재 월 기본급 전달
             let monthlyHolidayBonus = 0;
             if (settings.includeHolidayBonus) {
                 monthlyHolidayBonus = await this.getHolidayBonusForOrdinary(emp, year, grade, isRankBased, holidayBonusType, baseSalary);
             }
             
-            // 3. 직책수당 (중도입사자 월할)
+ // 3. 직책수당 (중도입사자 월할)
             let positionAllowance = 0;
             if (settings.includePositionAllowance && position) {
                 positionAllowance = this.getPositionAllowanceProrated(year, position, entryDate);
             }
             
-            // 4. 직무대리 직책수당
+ // 4. 직무대리 직책수당
             let actingAllowance = 0;
             if (settings.includeActingAllowance && emp) {
                 actingAllowance = this.getActingPositionAllowance(emp.id, parseInt(year), month);
@@ -481,47 +481,47 @@ const SalaryCalculator = {
         return result.ordinaryWage;
     },
     
-    // ===== 시급 계산 =====
+ // ===== 시급 계산 =====
     
-    /**
-     * 월소정근로시간 계산
-     * 
-     * @param {number} weeklyHours - 주 소정근로시간 (기본값: 40)
-     * @param {number} year - 연도 (설정값 참조용, 기본값: 현재연도)
-     * @returns {number} 월소정근로시간
-     * 
-     * @description
-     * 공식: (주 근무시간 + 주휴시간) × (365 ÷ 12 ÷ 7)
-     * - 주휴시간 = 주 근무시간 ÷ 40 × 8 (주 15시간 이상 근무 시)
-     * - 주 15시간 미만: 주휴수당 없음
-     * - 소수점 처리 방식: 급여설정에서 지정 (올림/반올림/버림)
-     * 
-     * @example
-     * SalaryCalculator.getMonthlyWorkingHours(40);  // 반올림 → 209
-     * SalaryCalculator.getMonthlyWorkingHours(35);  // 반올림 → 183
-     * SalaryCalculator.getMonthlyWorkingHours(25);  // 반올림 → 130
-     */
+ /**
+ * 월소정근로시간 계산
+ * 
+ * @param {number} weeklyHours - 주 소정근로시간 (기본값: 40)
+ * @param {number} year - 연도 (설정값 참조용, 기본값: 현재연도)
+ * @returns {number} 월소정근로시간
+ * 
+ * @description
+ * 공식: (주 근무시간 + 주휴시간) × (365 ÷ 12 ÷ 7)
+ * - 주휴시간 = 주 근무시간 ÷ 40 × 8 (주 15시간 이상 근무 시)
+ * - 주 15시간 미만: 주휴수당 없음
+ * - 소수점 처리 방식: 급여설정에서 지정 (올림/반올림/버림)
+ * 
+ * @example
+ * SalaryCalculator.getMonthlyWorkingHours(40); // 반올림 → 209
+ * SalaryCalculator.getMonthlyWorkingHours(35); // 반올림 → 183
+ * SalaryCalculator.getMonthlyWorkingHours(25); // 반올림 → 130
+ */
     getMonthlyWorkingHours(weeklyHours = DEFAULT_WEEKLY_HOURS, year = null) {
         try {
             const hours = parseInt(weeklyHours) || DEFAULT_WEEKLY_HOURS;
             const targetYear = year || new Date().getFullYear();
             
-            // 소수점 처리 방식 설정 로드
+ // 소수점 처리 방식 설정 로드
             const roundingMethod = this.getMonthlyHoursRoundingMethod(targetYear);
             
             let monthlyHours;
             
             if (hours < 15) {
-                // 주 15시간 미만: 주휴수당 없음
+ // 주 15시간 미만: 주휴수당 없음
                 monthlyHours = hours * WEEKS_PER_MONTH;
             } else {
-                // 주휴시간 = 주 근무시간 ÷ 40 × 8
+ // 주휴시간 = 주 근무시간 ÷ 40 × 8
                 const weeklyRestHours = (hours / 40) * 8;
-                // 월소정근로시간 = (주 근무시간 + 주휴시간) × 4.345...
+ // 월소정근로시간 = (주 근무시간 + 주휴시간) × 4.345...
                 monthlyHours = (hours + weeklyRestHours) * WEEKS_PER_MONTH;
             }
             
-            // 소수점 처리
+ // 소수점 처리
             return this.applyRounding(monthlyHours, roundingMethod);
             
         } catch (error) {
@@ -530,11 +530,11 @@ const SalaryCalculator = {
         }
     },
     
-    /**
-     * 소수점 처리 방식 설정값 로드
-     * @param {number} year - 연도
-     * @returns {string} 'ceil' | 'round' | 'floor' (기본값: 'round')
-     */
+ /**
+ * 소수점 처리 방식 설정값 로드
+ * @param {number} year - 연도
+ * @returns {string} 'ceil' | 'round' | 'floor' (기본값: 'round')
+ */
     getMonthlyHoursRoundingMethod(year) {
         try {
             if (typeof SalarySettingsManager !== 'undefined') {
@@ -548,12 +548,12 @@ const SalaryCalculator = {
         }
     },
     
-    /**
-     * 소수점 처리 적용
-     * @param {number} value - 원본 값
-     * @param {string} method - 'ceil' | 'round' | 'floor'
-     * @returns {number} 처리된 값
-     */
+ /**
+ * 소수점 처리 적용
+ * @param {number} value - 원본 값
+ * @param {string} method - 'ceil' | 'round' | 'floor'
+ * @returns {number} 처리된 값
+ */
     applyRounding(value, method) {
         switch (method) {
             case 'ceil':
@@ -566,11 +566,11 @@ const SalaryCalculator = {
         }
     },
     
-    /**
-     * 시급 절사 방식 설정값 로드
-     * @param {number} year - 연도
-     * @returns {Object} { type: 'decimal'|'integer', unit: 1|10, method: 'floor'|'round'|'ceil' }
-     */
+ /**
+ * 시급 절사 방식 설정값 로드
+ * @param {number} year - 연도
+ * @returns {Object} { type: 'decimal'|'integer', unit: 1|10, method: 'floor'|'round'|'ceil' }
+ */
     getHourlyWageRoundingSettings(year) {
         try {
             if (typeof SalarySettingsManager !== 'undefined') {
@@ -584,12 +584,12 @@ const SalaryCalculator = {
         }
     },
     
-    /**
-     * 시급에 절사 방식 적용
-     * @param {number} hourlyWage - 원본 시급 (소수점)
-     * @param {Object} roundingSettings - 절사 설정
-     * @returns {number} 절사 적용된 시급
-     */
+ /**
+ * 시급에 절사 방식 적용
+ * @param {number} hourlyWage - 원본 시급 (소수점)
+ * @param {Object} roundingSettings - 절사 설정
+ * @returns {number} 절사 적용된 시급
+ */
     applyHourlyWageRounding(hourlyWage, roundingSettings) {
         try {
             if (!roundingSettings || roundingSettings.type === 'decimal') {
@@ -599,7 +599,7 @@ const SalaryCalculator = {
             const { unit, method } = roundingSettings;
             const unitValue = unit || 1;
             
-            // 단위에 맞게 절사
+ // 단위에 맞게 절사
             switch (method) {
                 case 'ceil':
                     return Math.ceil(hourlyWage / unitValue) * unitValue;
@@ -615,19 +615,19 @@ const SalaryCalculator = {
         }
     },
     
-    /**
-     * ⭐ [v3.3.0] 배율 적용 시급 계산 (설정에 따른 절사 적용)
-     * 
-     * @param {number} rawHourlyWage - 원시급 (통상임금 ÷ 월소정근로시간)
-     * @param {number} rate - 배율 (1, 1.5 등)
-     * @param {number} year - 연도 (설정 로드용)
-     * @returns {number} 배율 적용된 시급 (설정에 따라 절사)
-     * 
-     * @description
-     * 급여설정의 hourlyWageRounding.applyTiming 설정에 따라 계산합니다.
-     * - 'after' (기본값): 원시급 × 배율 → 절사
-     * - 'before': 원시급 → 절사 → × 배율
-     */
+ /**
+ * ⭐ [v3.3.0] 배율 적용 시급 계산 (설정에 따른 절사 적용)
+ * 
+ * @param {number} rawHourlyWage - 원시급 (통상임금 ÷ 월소정근로시간)
+ * @param {number} rate - 배율 (1, 1.5 등)
+ * @param {number} year - 연도 (설정 로드용)
+ * @returns {number} 배율 적용된 시급 (설정에 따라 절사)
+ * 
+ * @description
+ * 급여설정의 hourlyWageRounding.applyTiming 설정에 따라 계산합니다.
+ * - 'after' (기본값): 원시급 × 배율 → 절사
+ * - 'before': 원시급 → 절사 → × 배율
+ */
     getRatedHourlyWage(rawHourlyWage, rate, year = null) {
         try {
             if (!rawHourlyWage || rate <= 0) return 0;
@@ -635,7 +635,7 @@ const SalaryCalculator = {
             const targetYear = year || new Date().getFullYear();
             const roundingSettings = this.getHourlyWageRoundingSettings(targetYear);
             
-            // 소수점 유지 설정이면 그냥 곱해서 반환
+ // 소수점 유지 설정이면 그냥 곱해서 반환
             if (!roundingSettings || roundingSettings.type === 'decimal') {
                 return rawHourlyWage * rate;
             }
@@ -643,11 +643,11 @@ const SalaryCalculator = {
             const applyTiming = roundingSettings.applyTiming || 'after';
             
             if (applyTiming === 'before') {
-                // 배율 적용 전 절사: 원시급 → 절사 → × 배율
+ // 배율 적용 전 절사: 원시급 → 절사 → × 배율
                 const roundedHourly = this.applyHourlyWageRounding(rawHourlyWage, roundingSettings);
                 return roundedHourly * rate;
             } else {
-                // 배율 적용 후 절사: 원시급 × 배율 → 절사
+ // 배율 적용 후 절사: 원시급 × 배율 → 절사
                 const ratedValue = rawHourlyWage * rate;
                 return this.applyHourlyWageRounding(ratedValue, roundingSettings);
             }
@@ -657,26 +657,26 @@ const SalaryCalculator = {
         }
     },
     
-    /**
-     * 시급 계산 (설정에 따른 절사 적용)
-     * 
-     * @param {number} ordinaryWage - 통상임금
-     * @param {number} monthlyWorkingHours - 월소정근로시간
-     * @param {number} year - 연도 (설정 로드용, 기본값: 현재연도)
-     * @returns {number} 시급 (설정에 따라 소수점 또는 정수)
-     * 
-     * @description
-     * 급여설정의 hourlyWageRounding 설정에 따라 시급을 계산합니다.
-     * - 소수점 유지: 그대로 반환
-     * - 정수 처리: 단위/방식에 따라 절사
-     */
+ /**
+ * 시급 계산 (설정에 따른 절사 적용)
+ * 
+ * @param {number} ordinaryWage - 통상임금
+ * @param {number} monthlyWorkingHours - 월소정근로시간
+ * @param {number} year - 연도 (설정 로드용, 기본값: 현재연도)
+ * @returns {number} 시급 (설정에 따라 소수점 또는 정수)
+ * 
+ * @description
+ * 급여설정의 hourlyWageRounding 설정에 따라 시급을 계산합니다.
+ * - 소수점 유지: 그대로 반환
+ * - 정수 처리: 단위/방식에 따라 절사
+ */
     getHourlyWage(ordinaryWage, monthlyWorkingHours, year = null) {
         try {
             if (!monthlyWorkingHours || monthlyWorkingHours <= 0) return 0;
             
             const rawHourlyWage = ordinaryWage / monthlyWorkingHours;
             
-            // 설정에 따른 절사 적용
+ // 설정에 따른 절사 적용
             const targetYear = year || new Date().getFullYear();
             const roundingSettings = this.getHourlyWageRoundingSettings(targetYear);
             
@@ -687,17 +687,17 @@ const SalaryCalculator = {
         }
     },
     
-    /**
-     * 시급 계산 (소수점 유지 - 내부 계산용)
-     * 
-     * @param {number} ordinaryWage - 통상임금
-     * @param {number} monthlyWorkingHours - 월소정근로시간
-     * @returns {number} 시급 (소수점 유지)
-     * 
-     * @description
-     * 설정과 무관하게 항상 소수점을 유지합니다.
-     * 내부 정밀 계산이 필요한 경우 사용합니다.
-     */
+ /**
+ * 시급 계산 (소수점 유지 - 내부 계산용)
+ * 
+ * @param {number} ordinaryWage - 통상임금
+ * @param {number} monthlyWorkingHours - 월소정근로시간
+ * @returns {number} 시급 (소수점 유지)
+ * 
+ * @description
+ * 설정과 무관하게 항상 소수점을 유지합니다.
+ * 내부 정밀 계산이 필요한 경우 사용합니다.
+ */
     getHourlyWageRaw(ordinaryWage, monthlyWorkingHours) {
         try {
             if (!monthlyWorkingHours || monthlyWorkingHours <= 0) return 0;
@@ -708,18 +708,18 @@ const SalaryCalculator = {
         }
     },
     
-    /**
-     * 시급 표시용 (설정에 따른 절사 적용 후 정수 표시)
-     * 
-     * @param {number} ordinaryWage - 통상임금
-     * @param {number} monthlyWorkingHours - 월소정근로시간
-     * @param {number} year - 연도 (설정 로드용)
-     * @returns {number} 시급 (정수)
-     * 
-     * @description
-     * 화면 표시용으로 사용합니다.
-     * 설정이 소수점 유지인 경우에도 정수로 버림 표시합니다.
-     */
+ /**
+ * 시급 표시용 (설정에 따른 절사 적용 후 정수 표시)
+ * 
+ * @param {number} ordinaryWage - 통상임금
+ * @param {number} monthlyWorkingHours - 월소정근로시간
+ * @param {number} year - 연도 (설정 로드용)
+ * @returns {number} 시급 (정수)
+ * 
+ * @description
+ * 화면 표시용으로 사용합니다.
+ * 설정이 소수점 유지인 경우에도 정수로 버림 표시합니다.
+ */
     getHourlyWageDisplay(ordinaryWage, monthlyWorkingHours, year = null) {
         try {
             if (!monthlyWorkingHours || monthlyWorkingHours <= 0) return 0;
@@ -730,11 +730,11 @@ const SalaryCalculator = {
             const rawHourlyWage = ordinaryWage / monthlyWorkingHours;
             
             if (roundingSettings.type === 'decimal') {
-                // 소수점 유지 설정이어도 표시는 정수로 (버림)
+ // 소수점 유지 설정이어도 표시는 정수로 (버림)
                 return Math.floor(rawHourlyWage);
             }
             
-            // 정수 처리 설정이면 그대로 적용
+ // 정수 처리 설정이면 그대로 적용
             return this.applyHourlyWageRounding(rawHourlyWage, roundingSettings);
         } catch (error) {
             로거_인사?.error('getHourlyWageDisplay 오류', error);
@@ -742,11 +742,11 @@ const SalaryCalculator = {
         }
     },
     
-    // ===== 월별 시간급 계산 =====
+ // ===== 월별 시간급 계산 =====
     
-    /**
-     * @version 4.0.0 - async API 버전
-     */
+ /**
+ * @version 4.0.0 - async API 버전
+ */
     async getMonthlyHourlyWage(emp, year, month) {
         try {
             const targetDate = `${year}-${String(month).padStart(2, '0')}-15`;
@@ -792,9 +792,9 @@ const SalaryCalculator = {
         }
     },
     
-    /**
-     * @version 4.0.0 - async API 버전
-     */
+ /**
+ * @version 4.0.0 - async API 버전
+ */
     async getYearlyHourlyWages(emp, year) {
         try {
             const results = [];
@@ -810,14 +810,14 @@ const SalaryCalculator = {
         }
     },
     
-    // ===== 종합 계산 =====
+ // ===== 종합 계산 =====
     
-    /**
-     * @version 4.0.0 - async API 버전
-     */
+ /**
+ * @version 4.0.0 - async API 버전
+ */
     async getEmployeeSalaryInfo(empId, targetDate) {
         try {
-            // db 호환성: findEmployee 또는 data.employees에서 직접 찾기
+ // db 호환성: findEmployee 또는 data.employees에서 직접 찾기
             let emp = null;
             if (typeof db !== 'undefined') {
                 emp = db.findEmployee?.(empId) || 
@@ -860,9 +860,9 @@ const SalaryCalculator = {
             });
             
             const monthlyWorkingHours = this.getMonthlyWorkingHours(weeklyWorkingHours, year);
-            // ⭐ [v3.3.0] 원시급 (절사 전) - 배율 적용 계산용
+ // ⭐ [v3.3.0] 원시급 (절사 전) - 배율 적용 계산용
             const rawHourlyWage = monthlyWorkingHours > 0 ? ordinaryResult.ordinaryWage / monthlyWorkingHours : 0;
-            // 절사 적용된 시급 (기존)
+ // 절사 적용된 시급 (기존)
             const hourlyWage = this.getHourlyWage(ordinaryResult.ordinaryWage, monthlyWorkingHours, year);
             
             const result = {
@@ -901,22 +901,22 @@ const SalaryCalculator = {
         }
     },
     
-    /**
-     * @version 5.0.0 - 배치 API 최적화 버전
-     */
+ /**
+ * @version 5.0.0 - 배치 API 최적화 버전
+ */
     async getAllEmployeesSalaryInfo(targetDate) {
         try {
-            // db 호환성: data.employees 또는 getEmployees() 또는 getAll()
+ // db 호환성: data.employees 또는 getEmployees() 또는 getAll()
             let employees = [];
             if (typeof db !== 'undefined') {
                 employees = db.data?.employees || db.getEmployees?.() || db.getAll?.() || [];
             }
             
-            // ⭐ v5.0.0: 배치 API로 호봉 계산 (성능 최적화)
-            // API_인사.calculateBatchForEmployees 호출 시 내부 캐시 자동 채워짐
+ // ⭐ v5.0.0: 배치 API로 호봉 계산 (성능 최적화)
+ // API_인사.calculateBatchForEmployees 호출 시 내부 캐시 자동 채워짐
             if (typeof API_인사 !== 'undefined' && typeof API_인사.calculateBatchForEmployees === 'function') {
                 try {
-                    // 호봉제 직원 필터링
+ // 호봉제 직원 필터링
                     const rankBasedEmployees = employees.filter(emp => {
                         const hasStoredRankInfo = emp.rank?.startRank && emp.rank?.firstUpgradeDate;
                         const isRankBased = emp.rank?.isRankBased !== false && hasStoredRankInfo;
@@ -948,7 +948,7 @@ const SalaryCalculator = {
         }
     },
     
-    // ===== 호봉 역산 =====
+ // ===== 호봉 역산 =====
     
     getRankBySalary(year, grade, salary) {
         try {
@@ -1002,5 +1002,5 @@ if (typeof window !== 'undefined') {
 }
 
 if (typeof CONFIG !== 'undefined' && CONFIG.DEBUG) {
-    console.log('✅ 급여계산기_인사.js v2.1.0 로드 완료');
+    console.log(' 급여계산기_인사.js v2.1.0 로드 완료');
 }

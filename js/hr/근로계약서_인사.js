@@ -21,59 +21,59 @@
  * 
  * [변경 이력]
  * v5.3.0 (2026-02-04) ⭐ 추가 조항 기능
- *   - 기타 조항에 추가 조항 등록 가능
- *   - 추가 조항 삭제 기능 (X 버튼)
- *   - 조항 내용 편집 가능
- *   - 호봉제/연봉제/연봉제(단시간) 3개 서식 모두 적용
- *   - 인쇄 시 추가/삭제 버튼 자동 숨김
+ * - 기타 조항에 추가 조항 등록 가능
+ * - 추가 조항 삭제 기능 (X 버튼)
+ * - 조항 내용 편집 가능
+ * - 호봉제/연봉제/연봉제(단시간) 3개 서식 모두 적용
+ * - 인쇄 시 추가/삭제 버튼 자동 숨김
  *
  * v5.2.0 (2026-02-04) ⭐ 추가 수당 기능
- *   - 기본 수당 외 추가 수당 등록 가능
- *   - 추가 수당 삭제 기능 (X 버튼)
- *   - 수당명/금액 편집 가능
- *   - 호봉제/연봉제/연봉제(단시간) 3개 서식 모두 적용
- *   - 인쇄 시 추가/삭제 버튼 자동 숨김
+ * - 기본 수당 외 추가 수당 등록 가능
+ * - 추가 수당 삭제 기능 (X 버튼)
+ * - 수당명/금액 편집 가능
+ * - 호봉제/연봉제/연봉제(단시간) 3개 서식 모두 적용
+ * - 인쇄 시 추가/삭제 버튼 자동 숨김
  *
  * v5.1.0 (2026-02-04) ⭐ 미리보기 편집 기능 확장
- *   - 주근무장소: 미리보기에서 편집 가능 (contenteditable)
- *   - 근무일/휴일: 미리보기에서 편집 가능 (contenteditable)
- *   - 가족수당: 미리보기에서 편집 가능 (contenteditable)
- *   - 호봉제/연봉제/연봉제(단시간) 3개 서식 모두 적용
+ * - 주근무장소: 미리보기에서 편집 가능 (contenteditable)
+ * - 근무일/휴일: 미리보기에서 편집 가능 (contenteditable)
+ * - 가족수당: 미리보기에서 편집 가능 (contenteditable)
+ * - 호봉제/연봉제/연봉제(단시간) 3개 서식 모두 적용
  *
  * v5.0.0 (2026-01-22) ⭐ API 전용 버전
- *   - 호봉 계산에서 저장된 값 사용 (getDynamicRankInfo가 async)
- *   - 모든 계산 로직 서버 API로 이동
+ * - 호봉 계산에서 저장된 값 사용 (getDynamicRankInfo가 async)
+ * - 모든 계산 로직 서버 API로 이동
  *
  * v3.6 - 휴게시간 설정 범위 확장 (2026-01-13)
- *   - 휴게시간 선택 범위: 11시~16시 → 9시~21시로 확장
- *   - 호봉제/연봉제 탭 모두 적용
+ * - 휴게시간 선택 범위: 11시~16시 → 9시~21시로 확장
+ * - 호봉제/연봉제 탭 모두 적용
  * v3.5 - 연봉제/연봉제(단시간) 서식 생성 오류 수정 (2026-01-07)
- *   - _generateSalaryContractHTML: employee 변수 destructuring 누락 수정
- *   - _generateSalaryPartTimeContractHTML: employee 변수 destructuring 누락 수정
- *   - 미리보기/인쇄 시 "ReferenceError: employee is not defined" 오류 해결
+ * - _generateSalaryContractHTML: employee 변수 destructuring 누락 수정
+ * - _generateSalaryPartTimeContractHTML: employee 변수 destructuring 누락 수정
+ * - 미리보기/인쇄 시 "ReferenceError: employee is not defined" 오류 해결
  * v3.4 - 업무 내용 편집 기능 추가 (2025-12-12)
- *   - 미리보기에서 "업무의 내용" 직접 수정 가능 (contenteditable)
- *   - 수정된 값은 메모리에 저장되어 선택 인쇄 시 반영
- *   - 기관별 맞춤 업무 내용 출력 가능
+ * - 미리보기에서 "업무의 내용" 직접 수정 가능 (contenteditable)
+ * - 수정된 값은 메모리에 저장되어 선택 인쇄 시 반영
+ * - 기관별 맞춤 업무 내용 출력 가능
  * v3.3 - 근로개시일/수습기간 날짜 누락 버그 수정 (2025-12-11)
- *   - v3.0에서 UI 변경 시 날짜 입력 필드가 제거됨
- *   - DOM 조회 → 직원 데이터에서 직접 조회로 변경
- *   - hireDate: employee.employment?.entryDate || employee.hireDate
- *   - contractStart/End: 직원 데이터 또는 해당 연도 기본값
- *   - 호봉제/연봉제 탭에 출근/퇴근/휴게시간 설정 기능 추가 (탄력근무 지원)
+ * - v3.0에서 UI 변경 시 날짜 입력 필드가 제거됨
+ * - DOM 조회 → 직원 데이터에서 직접 조회로 변경
+ * - hireDate: employee.employment?.entryDate || employee.hireDate
+ * - contractStart/End: 직원 데이터 또는 해당 연도 기본값
+ * - 호봉제/연봉제 탭에 출근/퇴근/휴게시간 설정 기능 추가 (탄력근무 지원)
  * v3.2 - 신규입사자 승급 정보 표시 개선 (2025-12-10)
- *   - 계약년도 내 승급 없는 경우: 기본급 + 첫 승급 예정일 표시
- *   - 계약년도 내 승급 있는 경우: 기존 방식 유지 (호봉 변경 정보)
+ * - 계약년도 내 승급 없는 경우: 기본급 + 첫 승급 예정일 표시
+ * - 계약년도 내 승급 있는 경우: 기존 방식 유지 (호봉 변경 정보)
  * v3.1 - 신규직원 목록 누락 버그 수정 (2025-12-10)
- *   - _isRankBasedAtDate: 다중 폴백 패턴 적용 (rank.isRankBased → employment.isRankBased)
- *   - _getContractType: 동일 패턴 적용
- *   - assignments 필드 폴백 (effectiveDate → date)
+ * - _isRankBasedAtDate: 다중 폴백 패턴 적용 (rank.isRankBased → employment.isRankBased)
+ * - _getContractType: 동일 패턴 적용
+ * - assignments 필드 폴백 (effectiveDate → date)
  * v3.0 - UI 대폭 개선 (2025-12-09)
- *   - 검색 + 체크박스 테이블 방식
- *   - 다중 선택 및 일괄 인쇄
- *   - 전체 선택/해제
+ * - 검색 + 체크박스 테이블 방식
+ * - 다중 선택 및 일괄 인쇄
+ * - 전체 선택/해제
  * v2.0 - 원본 서식 반영 (2025-12-09)
- *   - 근로계약서_서식_v2.html 기반 서식 적용
+ * - 근로계약서_서식_v2.html 기반 서식 적용
  * v1.0 - 초기 버전 (2025-12-09)
  * 
  * [서식 분류]
@@ -112,21 +112,21 @@ function loadEmploymentContractModule() {
     try {
         로거_인사?.debug('근로계약서 모듈 초기화');
         
-        // ⭐ UI 스타일 주입
+ // ⭐ UI 스타일 주입
         _injectContractStyles();
         
-        // ⭐ 기준일에 오늘 날짜 설정
+ // ⭐ 기준일에 오늘 날짜 설정
         const today = new Date().toISOString().split('T')[0];
         const baseDateEl = document.getElementById('contractBaseDate');
         if (baseDateEl) baseDateEl.value = today;
         
-        // ⭐ 전체 탭 UI 재구성
+ // ⭐ 전체 탭 UI 재구성
         _rebuildAllTabsUI();
         
-        // ⭐ 직원 목록 로드
+ // ⭐ 직원 목록 로드
         _loadAllEmployeeLists();
         
-        // 초기 미리보기 숨기기
+ // 초기 미리보기 숨기기
         const previewContainer = document.getElementById('contractPreviewContainer');
         if (previewContainer) previewContainer.innerHTML = '';
         
@@ -147,7 +147,7 @@ function _injectContractStyles() {
     const style = document.createElement('style');
     style.id = 'contract-custom-styles';
     style.textContent = `
-        /* ===== 탭 버튼 균등 배치 ===== */
+ /* ===== 탭 버튼 균등 배치 ===== */
         .contract-tabs {
             display: flex !important;
             gap: 0 !important;
@@ -198,7 +198,7 @@ function _injectContractStyles() {
             color: white !important;
         }
         
-        /* ===== 검색 바 ===== */
+ /* ===== 검색 바 ===== */
         .contract-search-bar {
             display: flex;
             align-items: center;
@@ -232,7 +232,7 @@ function _injectContractStyles() {
             white-space: nowrap;
         }
         
-        /* ===== 직원 테이블 ===== */
+ /* ===== 직원 테이블 ===== */
         .contract-employee-table {
             width: 100%;
             border-collapse: collapse;
@@ -288,7 +288,7 @@ function _injectContractStyles() {
             margin-bottom: 12px;
         }
         
-        /* ===== 선택 정보 & 버튼 영역 ===== */
+ /* ===== 선택 정보 & 버튼 영역 ===== */
         .contract-action-bar {
             display: flex;
             justify-content: space-between;
@@ -347,7 +347,7 @@ function _injectContractStyles() {
             cursor: not-allowed;
         }
         
-        /* ===== 단시간 전용: 시간 설정 ===== */
+ /* ===== 단시간 전용: 시간 설정 ===== */
         .parttime-settings {
             display: flex;
             gap: 15px;
@@ -401,7 +401,7 @@ function _injectContractStyles() {
             margin-left: auto;
         }
         
-        /* ===== 수습기간 옵션 ===== */
+ /* ===== 수습기간 옵션 ===== */
         .probation-options {
             padding: 12px;
             background: #f8fafc;
@@ -435,16 +435,16 @@ function _injectContractStyles() {
  * 전체 탭 UI 재구성
  */
 function _rebuildAllTabsUI() {
-    // 기존 탭 버튼에 단시간 추가
+ // 기존 탭 버튼에 단시간 추가
     _addSalaryPartTimeTabButton();
     
-    // 호봉제 탭 재구성
+ // 호봉제 탭 재구성
     _rebuildTabContent('rank', 'contractTabRank', '호봉제');
     
-    // 연봉제 탭 재구성
+ // 연봉제 탭 재구성
     _rebuildTabContent('salary', 'contractTabSalary', '연봉제');
     
-    // 단시간 탭 생성
+ // 단시간 탭 생성
     _createSalaryPartTimeTab();
 }
 
@@ -476,7 +476,7 @@ function _rebuildTabContent(tabType, tabId, tabName) {
     tabEl.innerHTML = `
         <!-- 검색 바 -->
         <div class="contract-search-bar">
-            <input type="text" id="contractSearch${suffix}" placeholder="🔍 이름, 부서, 직위로 검색..." oninput="_filterEmployeeTable('${tabType}')">
+            <input type="text" id="contractSearch${suffix}" placeholder="이름, 부서, 직위로 검색..." oninput="_filterEmployeeTable('${tabType}')">
             <label class="select-all-group">
                 <input type="checkbox" id="contractSelectAll${suffix}" onchange="_toggleSelectAll('${tabType}')">
                 전체선택
@@ -507,8 +507,8 @@ function _rebuildTabContent(tabType, tabId, tabName) {
                 전체: <span id="contractTotalCount${suffix}">0</span>명
             </div>
             <div class="contract-action-buttons">
-                <button type="button" class="btn-preview" onclick="_previewFirstSelected('${tabType}')">👁️ 미리보기</button>
-                <button type="button" class="btn-print" id="contractPrintBtn${suffix}" onclick="_printSelectedEmployees('${tabType}')" disabled>🖨️ 선택 인쇄</button>
+                <button type="button" class="btn-preview" onclick="_previewFirstSelected('${tabType}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> 미리보기</button>
+                <button type="button" class="btn-print" id="contractPrintBtn${suffix}" onclick="_printSelectedEmployees('${tabType}')" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 선택 인쇄</button>
             </div>
         </div>
         
@@ -555,7 +555,7 @@ function _rebuildTabContent(tabType, tabId, tabName) {
         <!-- 휴게시간 설정 -->
         <div class="parttime-settings break-time">
             <div class="time-group">
-                <span class="time-group-label">☕ 휴게</span>
+                <span class="time-group-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg> 휴게</span>
                 <select id="contractBreakStartHour${suffix}" onchange="_updatePreviewIfSelected()">
                     ${Array.from({length: 13}, (_, i) => i + 9).map(h => `<option value="${h}" ${h === 12 ? 'selected' : ''}>${h}시</option>`).join('')}
                 </select>
@@ -597,7 +597,7 @@ function _createSalaryPartTimeTab() {
     partTimeTab.innerHTML = `
         <!-- 검색 바 -->
         <div class="contract-search-bar">
-            <input type="text" id="contractSearchSalaryPartTime" placeholder="🔍 이름, 부서, 직위로 검색..." oninput="_filterEmployeeTable('salary-parttime')">
+            <input type="text" id="contractSearchSalaryPartTime" placeholder="이름, 부서, 직위로 검색..." oninput="_filterEmployeeTable('salary-parttime')">
             <label class="select-all-group">
                 <input type="checkbox" id="contractSelectAllSalaryPartTime" onchange="_toggleSelectAll('salary-parttime')">
                 전체선택
@@ -629,8 +629,8 @@ function _createSalaryPartTimeTab() {
                 전체: <span id="contractTotalCountSalaryPartTime">0</span>명
             </div>
             <div class="contract-action-buttons">
-                <button type="button" class="btn-preview" onclick="_previewFirstSelected('salary-parttime')">👁️ 미리보기</button>
-                <button type="button" class="btn-print" id="contractPrintBtnSalaryPartTime" onclick="_printSelectedEmployees('salary-parttime')" disabled>🖨️ 선택 인쇄</button>
+                <button type="button" class="btn-preview" onclick="_previewFirstSelected('salary-parttime')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> 미리보기</button>
+                <button type="button" class="btn-print" id="contractPrintBtnSalaryPartTime" onclick="_printSelectedEmployees('salary-parttime')" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 선택 인쇄</button>
             </div>
         </div>
         
@@ -662,7 +662,7 @@ function _createSalaryPartTimeTab() {
         <!-- 휴게시간 설정 -->
         <div class="parttime-settings break-time">
             <div class="time-group">
-                <span class="time-group-label">☕ 휴게</span>
+                <span class="time-group-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg> 휴게</span>
                 <select id="contractBreakStartHour" onchange="_updatePreviewIfSelected()">
                     ${Array.from({length: 13}, (_, i) => i + 9).map(h => `<option value="${h}" ${h === 12 ? 'selected' : ''}>${h}시</option>`).join('')}
                 </select>
@@ -716,18 +716,18 @@ function switchContractTab(tabType) {
     _currentContractTab = tabType;
     _currentPreviewIndex = 0;  // 미리보기 인덱스 초기화
     
-    // 탭 버튼 활성화
+ // 탭 버튼 활성화
     document.querySelectorAll('.contract-tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabType);
     });
     
-    // 탭 컨텐츠 표시
+ // 탭 컨텐츠 표시
     document.getElementById('contractTabRank').style.display = tabType === 'rank' ? 'block' : 'none';
     document.getElementById('contractTabSalary').style.display = tabType === 'salary' ? 'block' : 'none';
     const partTimeTab = document.getElementById('contractTabSalaryPartTime');
     if (partTimeTab) partTimeTab.style.display = tabType === 'salary-parttime' ? 'block' : 'none';
     
-    // 미리보기 초기화
+ // 미리보기 초기화
     const previewContainer = document.getElementById('contractPreviewContainer');
     if (previewContainer) previewContainer.innerHTML = '';
 }
@@ -740,7 +740,7 @@ function _loadAllEmployeeLists() {
     
     const employees = db.getEmployees();
     
-    // 재직자 필터링
+ // 재직자 필터링
     const activeEmployees = employees.filter(emp => {
         const entryDate = emp.employment?.entryDate || emp.hireDate;
         const retireDate = emp.employment?.retirementDate || emp.resignationDate;
@@ -749,11 +749,11 @@ function _loadAllEmployeeLists() {
         return true;
     });
     
-    // 호봉제/연봉제 분리
+ // 호봉제/연봉제 분리
     const rankEmployees = activeEmployees.filter(emp => _isRankBasedAtDate(emp, baseDate));
     const allSalaryEmployees = activeEmployees.filter(emp => !_isRankBasedAtDate(emp, baseDate));
     
-    // 연봉제를 전일제/단시간으로 분리
+ // 연봉제를 전일제/단시간으로 분리
     const salaryEmployees = allSalaryEmployees.filter(emp => {
         const weeklyHours = emp.employment?.weeklyWorkingHours ?? 40;
         return weeklyHours >= 40;
@@ -763,7 +763,7 @@ function _loadAllEmployeeLists() {
         return weeklyHours < 40;
     });
     
-    // 이름순 정렬
+ // 이름순 정렬
     const sortByName = (a, b) => {
         const nameA = a.personalInfo?.name || '';
         const nameB = b.personalInfo?.name || '';
@@ -774,22 +774,22 @@ function _loadAllEmployeeLists() {
     salaryEmployees.sort(sortByName);
     salaryPartTimeEmployees.sort(sortByName);
     
-    // 캐시 저장
+ // 캐시 저장
     _employeeListCache.rank = rankEmployees;
     _employeeListCache.salary = salaryEmployees;
     _employeeListCache['salary-parttime'] = salaryPartTimeEmployees;
     
-    // 선택 초기화
+ // 선택 초기화
     _selectedEmployees.rank.clear();
     _selectedEmployees.salary.clear();
     _selectedEmployees['salary-parttime'].clear();
     
-    // 테이블 렌더링
+ // 테이블 렌더링
     _renderEmployeeTable('rank');
     _renderEmployeeTable('salary');
     _renderEmployeeTable('salary-parttime');
     
-    // 탭 인원수 업데이트
+ // 탭 인원수 업데이트
     _updateTabCounts();
 }
 
@@ -801,7 +801,7 @@ function _renderEmployeeTable(tabType) {
     const employees = _employeeListCache[tabType] || [];
     const searchTerm = document.getElementById(`contractSearch${suffix}`)?.value?.toLowerCase() || '';
     
-    // 검색 필터링
+ // 검색 필터링
     const filteredEmployees = employees.filter(emp => {
         if (!searchTerm) return true;
         const name = emp.personalInfo?.name || '';
@@ -812,7 +812,7 @@ function _renderEmployeeTable(tabType) {
                position.toLowerCase().includes(searchTerm);
     });
     
-    // 테이블 렌더링
+ // 테이블 렌더링
     if (filteredEmployees.length === 0) {
         tbody.innerHTML = `<tr><td colspan="${tabType === 'salary-parttime' ? 5 : 4}" style="text-align: center; color: #9ca3af; padding: 30px;">직원이 없습니다</td></tr>`;
     } else {
@@ -832,7 +832,7 @@ function _renderEmployeeTable(tabType) {
         }).join('');
     }
     
-    // 전체 수 업데이트
+ // 전체 수 업데이트
     const totalCountEl = document.getElementById(`contractTotalCount${suffix}`);
     if (totalCountEl) totalCountEl.textContent = filteredEmployees.length;
     
@@ -872,7 +872,7 @@ function _toggleSelectAll(tabType) {
     const suffix = tabType === 'rank' ? 'Rank' : (tabType === 'salary' ? 'Salary' : 'SalaryPartTime');
     const searchTerm = document.getElementById(`contractSearch${suffix}`)?.value?.toLowerCase() || '';
     
-    // 현재 필터된 직원만
+ // 현재 필터된 직원만
     const filteredEmployees = _employeeListCache[tabType].filter(emp => {
         if (!searchTerm) return true;
         const name = emp.personalInfo?.name || '';
@@ -883,14 +883,14 @@ function _toggleSelectAll(tabType) {
                position.toLowerCase().includes(searchTerm);
     });
     
-    // 전체 선택 여부 확인
+ // 전체 선택 여부 확인
     const allSelected = filteredEmployees.every(emp => _selectedEmployees[tabType].has(emp.id));
     
     if (allSelected) {
-        // 모두 해제
+ // 모두 해제
         filteredEmployees.forEach(emp => _selectedEmployees[tabType].delete(emp.id));
     } else {
-        // 모두 선택
+ // 모두 선택
         filteredEmployees.forEach(emp => _selectedEmployees[tabType].add(emp.id));
     }
     
@@ -932,7 +932,7 @@ function _updateSelectionInfo(tabType) {
     if (countEl) countEl.textContent = count;
     if (printBtn) {
         printBtn.disabled = count === 0;
-        printBtn.textContent = count > 0 ? `🖨️ 선택 인쇄 (${count}명)` : '🖨️ 선택 인쇄';
+        printBtn.innerHTML = count > 0 ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 선택 인쇄 (${count}명)` : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 선택 인쇄';
     }
 }
 
@@ -998,10 +998,10 @@ function _previewFirstSelected(tabType) {
         return;
     }
     
-    // ⭐ 미리보기 버튼 클릭 시 수정된 업무 내용 초기화 (자동 생성값으로 복원)
+ // ⭐ 미리보기 버튼 클릭 시 수정된 업무 내용 초기화 (자동 생성값으로 복원)
     _customJobDescriptions = {};
     
-    // 첫 번째 직원부터 시작
+ // 첫 번째 직원부터 시작
     _currentPreviewIndex = 0;
     _showPreviewAtIndex(tabType, _currentPreviewIndex);
 }
@@ -1013,7 +1013,7 @@ function _showPreviewAtIndex(tabType, index) {
     const selectedIds = Array.from(_selectedEmployees[tabType]);
     if (selectedIds.length === 0) return;
     
-    // 인덱스 범위 확인
+ // 인덱스 범위 확인
     if (index < 0) index = 0;
     if (index >= selectedIds.length) index = selectedIds.length - 1;
     _currentPreviewIndex = index;
@@ -1023,7 +1023,7 @@ function _showPreviewAtIndex(tabType, index) {
     
     const empName = employee.personalInfo?.name || '';
     
-    // 네비게이션 UI + 계약서 생성
+ // 네비게이션 UI + 계약서 생성
     _renderPreviewWithNavigation(employee, tabType, index, selectedIds.length, empName);
 }
 
@@ -1043,7 +1043,7 @@ function _renderPreviewWithNavigation(employee, tabType, currentIndex, totalCoun
     const previewContainer = document.getElementById('contractPreviewContainer');
     if (!previewContainer) return;
     
-    // 네비게이션 UI
+ // 네비게이션 UI
     const navHTML = `
         <div class="preview-navigation" style="
             display: flex;
@@ -1052,7 +1052,7 @@ function _renderPreviewWithNavigation(employee, tabType, currentIndex, totalCoun
             gap: 15px;
             padding: 12px 20px;
             margin-top: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4f46e5 0%, #764ba2 100%);
             border-radius: 10px;
             margin-bottom: 15px;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
@@ -1135,17 +1135,17 @@ function _updatePreviewIfSelected() {
     const tabType = _getCurrentContractTab();
     const selectedIds = Array.from(_selectedEmployees[tabType]);
     
-    // ⭐ 미리보기 갱신 시 수정된 업무 내용 초기화 (자동 생성값으로 복원)
+ // ⭐ 미리보기 갱신 시 수정된 업무 내용 초기화 (자동 생성값으로 복원)
     _customJobDescriptions = {};
     
     if (selectedIds.length > 0) {
-        // 현재 인덱스가 범위를 벗어나면 조정
+ // 현재 인덱스가 범위를 벗어나면 조정
         if (_currentPreviewIndex >= selectedIds.length) {
             _currentPreviewIndex = selectedIds.length - 1;
         }
         _showPreviewAtIndex(tabType, _currentPreviewIndex);
     } else {
-        // 선택된 직원 없으면 미리보기 초기화
+ // 선택된 직원 없으면 미리보기 초기화
         const previewContainer = document.getElementById('contractPreviewContainer');
         if (previewContainer) previewContainer.innerHTML = '';
     }
@@ -1160,7 +1160,7 @@ function _generateAndShowPreview(employee, tabType) {
     else if (tabType === 'salary-parttime') contractType = 'salary-parttime';
     else contractType = 'salary';
     
-    // suffix 변환 (tabType -> DOM ID suffix)
+ // suffix 변환 (tabType -> DOM ID suffix)
     const suffix = tabType === 'rank' ? 'Rank' : (tabType === 'salary' ? 'Salary' : 'SalaryPartTime');
     
     const empCategory = _getEmploymentCategory(employee);
@@ -1179,13 +1179,13 @@ function _printSelectedEmployees(tabType) {
         return;
     }
     
-    // 선택된 직원들의 계약서 HTML 생성
+ // 선택된 직원들의 계약서 HTML 생성
     let contractType;
     if (tabType === 'rank') contractType = 'rank';
     else if (tabType === 'salary-parttime') contractType = 'salary-parttime';
     else contractType = 'salary';
     
-    // suffix 변환 (tabType -> DOM ID suffix)
+ // suffix 변환 (tabType -> DOM ID suffix)
     const suffix = tabType === 'rank' ? 'Rank' : (tabType === 'salary' ? 'Salary' : 'SalaryPartTime');
     
     const contractHTMLs = selectedIds.map(empId => {
@@ -1197,7 +1197,7 @@ function _printSelectedEmployees(tabType) {
     
     if (contractHTMLs.length === 0) return;
     
-    // 브라우저로 열기 위한 HTML 생성
+ // 브라우저로 열기 위한 HTML 생성
     const htmlContent = `
         <!DOCTYPE html>
         <html lang="ko">
@@ -1205,11 +1205,11 @@ function _printSelectedEmployees(tabType) {
             <meta charset="UTF-8">
             <title>근로계약서 인쇄 (${selectedIds.length}명)</title>
             <style>
-                /* 기본 스타일 */
-                * { margin: 0; padding: 0; box-sizing: border-box; }
+ /* 기본 스타일 */
+ * { margin: 0; padding: 0; box-sizing: border-box; }
                 body { font-family: 'Malgun Gothic', sans-serif; font-size: 12px; line-height: 1.6; padding: 20px; }
                 
-                /* 인쇄 페이지 설정 - 여백 균등 */
+ /* 인쇄 페이지 설정 - 여백 균등 */
                 @page { 
                     size: A4; 
                     margin: 15mm 15mm 15mm 15mm;  /* 상 우 하 좌 균등 */
@@ -1240,7 +1240,7 @@ function _printSelectedEmployees(tabType) {
                 .data-field { font-weight: bold; }
                 .editable-field { border-bottom: 1px solid #999; padding: 0 3px; }
                 
-                /* 서명 영역 */
+ /* 서명 영역 */
                 .signature-section { margin-top: 30px; page-break-inside: avoid; }
                 .signature-date { text-align: center; margin-bottom: 20px; }
                 .contract-date { text-align: center; margin-bottom: 20px; }
@@ -1260,13 +1260,13 @@ function _printSelectedEmployees(tabType) {
                 .signature-label { min-width: 60px; }
                 .signature-value { flex: 1; }
                 
-                /* 서명란 성명 힌트 */
+ /* 서명란 성명 힌트 */
                 .sign-name-hint { color: #ccc; font-weight: normal; letter-spacing: 3px; }
                 
-                /* 편집 가능 필드 - 화면에서는 밑줄 표시, 인쇄 시 숨김 */
+ /* 편집 가능 필드 - 화면에서는 밑줄 표시, 인쇄 시 숨김 */
                 .editable-field { border-bottom: 1px solid #999; padding: 0 3px; }
                 
-                /* 추가 수당 관련 스타일 */
+ /* 추가 수당 관련 스타일 */
                 .custom-allowance { position: relative; }
                 .custom-allowance-name { padding-left: 0 !important; }
                 .btn-remove-allowance {
@@ -1284,7 +1284,7 @@ function _printSelectedEmployees(tabType) {
                 .btn-add-allowance:hover { background: #388E3C; }
                 .allowance-add-btn { margin-top: 5px; }
                 
-                /* 추가 조항 관련 스타일 */
+ /* 추가 조항 관련 스타일 */
                 .custom-clause-content { padding-left: 0 !important; }
                 .btn-remove-clause {
                     background: #ff5252; color: white; border: none;
@@ -1301,11 +1301,11 @@ function _printSelectedEmployees(tabType) {
                 .btn-add-clause:hover { background: #388E3C; }
                 .clause-add-btn { margin-top: 5px; }
                 
-                /* 호봉 테이블 */
+ /* 호봉 테이블 */
                 table.rank-table { border-collapse: collapse; display: inline-table; margin: 0 3px; vertical-align: middle; }
                 table.rank-table td { border: 1px solid #000; padding: 4px 12px; text-align: center; font-size: 12px; }
                 
-                /* 인쇄 버튼 */
+ /* 인쇄 버튼 */
                 .no-print { 
                     position: fixed; top: 20px; right: 20px; 
                     background: #2196F3; color: white; 
@@ -1319,9 +1319,9 @@ function _printSelectedEmployees(tabType) {
                     .contract-page { border: none; margin: 0; padding: 0; }
                     .no-print { display: none !important; }
                     .sign-name-hint { color: #ccc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    /* 인쇄 시 편집 필드 밑줄 숨김 */
+ /* 인쇄 시 편집 필드 밑줄 숨김 */
                     .editable-field { border-bottom: none !important; }
-                    /* 인쇄 시 추가/삭제 버튼 숨김 */
+ /* 인쇄 시 추가/삭제 버튼 숨김 */
                     .btn-remove-allowance { display: none !important; }
                     .btn-add-allowance { display: none !important; }
                     .allowance-add-btn { display: none !important; }
@@ -1332,13 +1332,13 @@ function _printSelectedEmployees(tabType) {
             </style>
         </head>
         <body>
-            <button class="no-print" onclick="window.print()">🖨️ 인쇄하기 (Ctrl+P)</button>
+            <button class="no-print" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄하기 (Ctrl+P)</button>
             ${contractHTMLs.join('\n')}
         </body>
         </html>
     `;
     
-    // Electron 환경에서 시스템 브라우저로 열기
+ // Electron 환경에서 시스템 브라우저로 열기
     if (window.electronAPI && window.electronAPI.openInBrowser) {
         window.electronAPI.openInBrowser(htmlContent, 'contract_print.html')
             .then(result => {
@@ -1346,7 +1346,7 @@ function _printSelectedEmployees(tabType) {
                     로거_인사?.info('근로계약서 브라우저로 열기: ' + result.path);
                 } else {
                     console.error('브라우저 열기 실패:', result.error);
-                    // 실패 시 기존 방식으로 fallback
+ // 실패 시 기존 방식으로 fallback
                     _openPrintWindowFallback(htmlContent);
                 }
             })
@@ -1355,7 +1355,7 @@ function _printSelectedEmployees(tabType) {
                 _openPrintWindowFallback(htmlContent);
             });
     } else {
-        // Electron이 아닌 환경 (웹 브라우저) - 기존 방식
+ // Electron이 아닌 환경 (웹 브라우저) - 기존 방식
         _openPrintWindowFallback(htmlContent);
     }
     로거_인사?.info(`근로계약서 인쇄: ${selectedIds.length}명`);
@@ -1453,7 +1453,7 @@ function _addCustomAllowance(empId) {
     _customAllowances[empId].push(newAllowance);
     로거_인사?.debug('추가 수당 추가', { empId, allowance: newAllowance });
     
-    // 미리보기 갱신
+ // 미리보기 갱신
     _refreshCurrentPreview();
 }
 
@@ -1465,7 +1465,7 @@ function _removeCustomAllowance(empId, allowanceId) {
         _customAllowances[empId] = _customAllowances[empId].filter(a => a.id !== allowanceId);
         로거_인사?.debug('추가 수당 삭제', { empId, allowanceId });
         
-        // 미리보기 갱신
+ // 미리보기 갱신
         _refreshCurrentPreview();
     }
 }
@@ -1514,7 +1514,7 @@ function _generateCustomAllowancesHTML(empId) {
         <div class="allowance-item custom-allowance" data-allowance-id="${a.id}">· <span class="editable-field custom-allowance-name" contenteditable="true" title="수당명 수정" data-emp-id="${empId}" data-allowance-id="${a.id}" onblur="_updateCustomAllowanceName(this)">${a.name}</span> : <span class="editable-field" contenteditable="true" title="금액/내용 수정" data-emp-id="${empId}" data-allowance-id="${a.id}" onblur="_updateCustomAllowanceValue(this)">${a.value}</span><button type="button" class="btn-remove-allowance" onclick="_removeCustomAllowance('${empId}', ${a.id})" title="삭제">×</button></div>
     `).join('');
     
-    // 추가 버튼
+ // 추가 버튼
     html += `
         <div class="allowance-add-btn">
             <button type="button" class="btn-add-allowance" onclick="_addCustomAllowance('${empId}')">+ 수당 추가</button>
@@ -1584,7 +1584,7 @@ function _addCustomClause(empId) {
     _customClauses[empId].push(newClause);
     로거_인사?.debug('추가 조항 추가', { empId, clause: newClause });
     
-    // 미리보기 갱신
+ // 미리보기 갱신
     _refreshCurrentPreview();
 }
 
@@ -1596,7 +1596,7 @@ function _removeCustomClause(empId, clauseId) {
         _customClauses[empId] = _customClauses[empId].filter(c => c.id !== clauseId);
         로거_인사?.debug('추가 조항 삭제', { empId, clauseId });
         
-        // 미리보기 갱신
+ // 미리보기 갱신
         _refreshCurrentPreview();
     }
 }
@@ -1626,7 +1626,7 @@ function _generateCustomClausesHTML(empId) {
     
     let html = clauses.map(c => `<br>- <span class="editable-field custom-clause-content" contenteditable="true" title="조항 내용 수정" data-emp-id="${empId}" data-clause-id="${c.id}" onblur="_updateCustomClauseContent(this)">${c.content}</span><button type="button" class="btn-remove-clause" onclick="_removeCustomClause('${empId}', ${c.id})" title="삭제">×</button>`).join('');
     
-    // 추가 버튼
+ // 추가 버튼
     html += `
         <div class="clause-add-btn">
             <button type="button" class="btn-add-clause" onclick="_addCustomClause('${empId}')">+ 조항 추가</button>
@@ -1655,7 +1655,7 @@ function onContractBaseDateChange() {
  * - employment.isRankBased (신규 직원)
  */
 function _isRankBasedAtDate(employee, baseDate) {
-    // ⭐ 다중 폴백: rank.isRankBased → employment.isRankBased
+ // ⭐ 다중 폴백: rank.isRankBased → employment.isRankBased
     const getDefaultIsRankBased = (emp) => {
         if (emp.rank?.isRankBased !== undefined) return emp.rank.isRankBased === true;
         if (emp.employment?.isRankBased !== undefined) return emp.employment.isRankBased === true;
@@ -1672,7 +1672,7 @@ function _isRankBasedAtDate(employee, baseDate) {
         return getDefaultIsRankBased(employee);
     }
     
-    // ⭐ assignments에서 effectiveDate 또는 date 필드 확인 (다중 폴백)
+ // ⭐ assignments에서 effectiveDate 또는 date 필드 확인 (다중 폴백)
     const sortedAssignments = assignments
         .filter(a => {
             const aDate = a.effectiveDate || a.date;
@@ -1700,7 +1700,7 @@ function _isRankBasedAtDate(employee, baseDate) {
 // ===== 분류 판단 함수 =====
 
 function _getContractType(employee, weeklyHours = 40) {
-    // ⭐ 다중 폴백: rank.isRankBased → employment.isRankBased
+ // ⭐ 다중 폴백: rank.isRankBased → employment.isRankBased
     const isRankBased = employee.rank?.isRankBased !== undefined 
         ? employee.rank.isRankBased === true
         : employee.employment?.isRankBased === true;
@@ -1777,7 +1777,7 @@ function _updateContractUIByEmployee(employee, suffix) {
     
     const empCategory = _getEmploymentCategory(employee);
     
-    // 정규직/계약직 구분에 따른 UI
+ // 정규직/계약직 구분에 따른 UI
     if (empCategory === 'permanent') {
         if (hireDateGroup) hireDateGroup.style.display = '';
         if (periodGroup) periodGroup.style.display = 'none';
@@ -1803,7 +1803,7 @@ function _updateContractUIByEmployee(employee, suffix) {
     
     if (probationGroup) probationGroup.style.display = '';
     
-    // ⭐ 단시간 탭: 날짜 자동 설정 (hireDateGroup 등이 없는 경우 직접 설정)
+ // ⭐ 단시간 탭: 날짜 자동 설정 (hireDateGroup 등이 없는 경우 직접 설정)
     if (suffix === 'SalaryPartTime') {
         const entryDate = employee.employment?.entryDate || employee.hireDate;
         const hireDateEl = document.getElementById(`contractHireDate${suffix}`);
@@ -1816,7 +1816,7 @@ function _updateContractUIByEmployee(employee, suffix) {
         if (endDateEl) endDateEl.value = `${today.getFullYear()}-12-31`;
     }
     
-    // ⭐ 주당근무시간/월소정근로시간 자동 조회
+ // ⭐ 주당근무시간/월소정근로시간 자동 조회
     _updateWorkingHoursDisplay(employee, suffix);
 }
 
@@ -1826,7 +1826,7 @@ function _updateContractUIByEmployee(employee, suffix) {
  * @param {string} suffix - 'Rank', 'Salary', 'SalaryPartTime'
  */
 function _updateWorkingHoursDisplay(employee, suffix) {
-    // 직원의 employment에서 주당근무시간 조회
+ // 직원의 employment에서 주당근무시간 조회
     const weeklyHours = employee.employment?.weeklyWorkingHours ?? 40;
     
     const monthlyHours = _calculateMonthlyWorkingHours(weeklyHours);
@@ -1876,12 +1876,12 @@ function toggleContractProbation(tabType) {
 }
 
 function _calculateMonthlyWorkingHours(weeklyHours) {
-    // ⭐ 급여계산기의 함수 사용 (급여설정의 올림/반올림/버림 적용)
+ // ⭐ 급여계산기의 함수 사용 (급여설정의 올림/반올림/버림 적용)
     if (typeof SalaryCalculator !== 'undefined' && SalaryCalculator.getMonthlyWorkingHours) {
         return SalaryCalculator.getMonthlyWorkingHours(weeklyHours);
     }
     
-    // fallback: 기본 계산 (반올림)
+ // fallback: 기본 계산 (반올림)
     const WEEKS_PER_MONTH = 365 / 12 / 7;
     const weeklyRestHours = (weeklyHours / 40) * 8;
     const monthlyHours = (weeklyHours + weeklyRestHours) * WEEKS_PER_MONTH;
@@ -1939,7 +1939,7 @@ function updateContractPreview() {
         
         const weeklyHours = _getSelectedWeeklyHours();
         
-        // ⭐ 탭 타입에 따라 계약서 유형 결정
+ // ⭐ 탭 타입에 따라 계약서 유형 결정
         let contractType;
         if (tabType === 'rank') {
             contractType = 'rank';
@@ -1964,7 +1964,7 @@ function updateContractPreview() {
 // ===== HTML 생성 =====
 
 function _generateContractHTML(employee, contractType, empCategory, suffix) {
-    // 조직 설정
+ // 조직 설정
     const orgSettings = db.getOrganizationSettings();
     const orgName = orgSettings.name || '○○복지관';
     const orgAddress = orgSettings.address || '서울특별시 강남구 테헤란로 123';
@@ -1972,11 +1972,11 @@ function _generateContractHTML(employee, contractType, empCategory, suffix) {
     const pensionBank = orgSettings.pensionBank || '농협은행';
     const pensionType = orgSettings.pensionType || 'DC';
     
-    // 최고관리자 (기준일 기준)
+ // 최고관리자 (기준일 기준)
     let managerPosition = '관장';
     let managerName = '';
     try {
-        // 조직도 설정에서 order: 1인 직위 찾기
+ // 조직도 설정에서 order: 1인 직위 찾기
         const orgChartSettings = JSON.parse(localStorage.getItem('hr_org_chart_settings') || '{}');
         const positionSettings = orgChartSettings.positionSettings || [];
         const topPosition = positionSettings.find(p => p.order === 1);
@@ -1984,13 +1984,13 @@ function _generateContractHTML(employee, contractType, empCategory, suffix) {
             managerPosition = topPosition.name;
         }
         
-        // 기준일에 해당 직위를 가진 직원 찾기
+ // 기준일에 해당 직위를 가진 직원 찾기
         const employees = db.getEmployees();
-        // ⭐ 직접 기준일 조회 (contractDate가 아직 정의되지 않음)
+ // ⭐ 직접 기준일 조회 (contractDate가 아직 정의되지 않음)
         const baseDate = document.getElementById('contractBaseDate')?.value || new Date().toISOString().split('T')[0];
         
         for (const emp of employees) {
-            // 기준일에 유효한 발령 찾기
+ // 기준일에 유효한 발령 찾기
             const assignments = emp.assignments || [];
             const sortedAssignments = [...assignments]
                 .filter(a => a.startDate && a.startDate <= baseDate)
@@ -2012,24 +2012,24 @@ function _generateContractHTML(employee, contractType, empCategory, suffix) {
         로거_인사?.warn('최고관리자 조회 오류', e);
     }
     
-    // 직원 정보
+ // 직원 정보
     const empName = employee.personalInfo?.name || employee.name || '';
     const empDept = employee.currentPosition?.dept || '';
     const empPosition = employee.currentPosition?.position || '';
     const empGrade = employee.currentPosition?.grade || '';
     
-    // ⭐ 계약일 = 공통 기준일
+ // ⭐ 계약일 = 공통 기준일
     const contractDate = document.getElementById('contractBaseDate')?.value || new Date().toISOString().split('T')[0];
     
-    // ⭐ 연도 (contractStart/End보다 먼저 정의 필요)
+ // ⭐ 연도 (contractStart/End보다 먼저 정의 필요)
     const year = contractDate ? new Date(contractDate).getFullYear() : new Date().getFullYear();
     
-    // ⭐ [v3.3 수정] 날짜를 직원 데이터에서 직접 조회 (v3.0에서 DOM 요소 제거됨)
+ // ⭐ [v3.3 수정] 날짜를 직원 데이터에서 직접 조회 (v3.0에서 DOM 요소 제거됨)
     const hireDate = employee.employment?.entryDate || employee.hireDate || '';
     const contractStart = employee.employment?.contractStartDate || `${year}-01-01`;
     const contractEnd = employee.employment?.contractEndDate || `${year}-12-31`;
     
-    // 수습기간 (탭별 ID)
+ // 수습기간 (탭별 ID)
     const hasProbation = document.getElementById(`contractHasProbation${suffix}`)?.checked || false;
     const probationMonths = document.getElementById(`contractProbationMonths${suffix}`)?.value || '3';
     const probationStartDate = empCategory === 'permanent' ? hireDate : contractStart;
@@ -2040,12 +2040,12 @@ function _generateContractHTML(employee, contractType, empCategory, suffix) {
         if (periodTextEl) periodTextEl.textContent = `${_formatDateDot(probationStartDate)} ~ ${_formatDateDot(probationEnd)}`;
     }
     
-    // 근무시간 (직원 정보에서 자동 조회)
+ // 근무시간 (직원 정보에서 자동 조회)
     const weeklyHours = _getSelectedWeeklyHours();
     const monthlyHours = _calculateMonthlyWorkingHours(weeklyHours);
     const dailyHours = weeklyHours / 5;
     
-    // ⭐ 연봉제 기본급 조회
+ // ⭐ 연봉제 기본급 조회
     let salaryBasePay = 0;
     if (contractType !== 'rank') {
         try {
@@ -2059,12 +2059,12 @@ function _generateContractHTML(employee, contractType, empCategory, suffix) {
         }
     }
     
-    // ⭐ 직책수당 조회
+ // ⭐ 직책수당 조회
     let positionAllowance = 0;
     try {
         const allowances = JSON.parse(localStorage.getItem('hr_position_allowances') || '{}');
         const yearAllowances = allowances[year] || {};
-        // 직위(position)로 조회
+ // 직위(position)로 조회
         if (empPosition && yearAllowances[empPosition]) {
             positionAllowance = yearAllowances[empPosition];
         }
@@ -2072,14 +2072,14 @@ function _generateContractHTML(employee, contractType, empCategory, suffix) {
         로거_인사?.warn('직책수당 조회 오류', e);
     }
     
-    // ⭐ 명절휴가비 조회
+ // ⭐ 명절휴가비 조회
     let holidayBonusInfo = { type: 'rate', seolRate: 60, chuseokRate: 60, seolBonus: 0, chuseokBonus: 0 };
     try {
         const salarySettings = JSON.parse(localStorage.getItem('hr_salary_settings') || '{}');
         const salaryTables = JSON.parse(localStorage.getItem('hr_salary_tables') || '{}');
         
         if (contractType === 'rank') {
-            // 호봉제: 비율로 표시 (설/추석 각각)
+ // 호봉제: 비율로 표시 (설/추석 각각)
             const seolRate = salarySettings[year]?.holidayBonus?.설?.rate ?? 0.6;
             const chuseokRate = salarySettings[year]?.holidayBonus?.추석?.rate ?? 0.6;
             holidayBonusInfo = { 
@@ -2088,7 +2088,7 @@ function _generateContractHTML(employee, contractType, empCategory, suffix) {
                 chuseokRate: Math.round(chuseokRate * 100) 
             };
         } else {
-            // 연봉제: 정액으로 표시
+ // 연봉제: 정액으로 표시
             const gradeInfo = salaryTables[year]?.salary?.[empGrade];
             if (gradeInfo?.seolBonus || gradeInfo?.chuseokBonus) {
                 holidayBonusInfo = { 
@@ -2102,26 +2102,26 @@ function _generateContractHTML(employee, contractType, empCategory, suffix) {
         로거_인사?.warn('명절휴가비 조회 오류', e);
     }
     
-    // ⭐ 연봉제 계약기간: 기준일 ~ 연말
+ // ⭐ 연봉제 계약기간: 기준일 ~ 연말
     let salaryContractStart = contractStart || contractDate;
     let salaryContractEnd = contractEnd || `${year}-12-31`;
     
-    // ⭐ 업무 내용 동적 생성 (미리보기에서 수정한 값 우선 사용)
+ // ⭐ 업무 내용 동적 생성 (미리보기에서 수정한 값 우선 사용)
     let jobDescription = _customJobDescriptions[employee.id] || null;
     
     if (!jobDescription) {
-        // 저장된 값이 없으면 자동 생성
+ // 저장된 값이 없으면 자동 생성
         jobDescription = `${empDept} 업무`;  // 기본값
         try {
             const orgChartSettings = JSON.parse(localStorage.getItem('hr_org_chart_settings') || '{}');
             const positionSettings = orgChartSettings.positionSettings || [];
             
-            // 직원의 직위로 role 찾기
+ // 직원의 직위로 role 찾기
             const positionInfo = positionSettings.find(p => p.name === empPosition);
             const role = positionInfo?.role || '';
             
             if (role === 'director' || role === 'viceDirector') {
-                // 기관장/부기관장: 조직명에서 "복지관/시설/센터" 추출
+ // 기관장/부기관장: 조직명에서 "복지관/시설/센터" 추출
                 let orgType = '복지관';  // 기본값
                 if (orgName.includes('센터')) {
                     orgType = '센터';
@@ -2139,16 +2139,16 @@ function _generateContractHTML(employee, contractType, empCategory, suffix) {
                     jobDescription = `${orgType} 사업 총괄 업무`;
                 }
             } else if (role === 'deptHead') {
-                // 부서장: 부서명 + 총괄 업무
+ // 부서장: 부서명 + 총괄 업무
                 jobDescription = `${empDept} 총괄 업무`;
             }
-            // 그 외는 기본값 유지: 부서명 + 업무
+ // 그 외는 기본값 유지: 부서명 + 업무
         } catch (e) {
             로거_인사?.warn('업무 내용 생성 오류', e);
         }
     }
     
-    // ⭐ [v3.3 수정] 모든 탭에서 근무시간 정보 읽기
+ // ⭐ [v3.3 수정] 모든 탭에서 근무시간 정보 읽기
     let workTimeInfo = {
         startHour: 9, startMin: 0,
         endHour: 18, endMin: 0,
@@ -2157,18 +2157,18 @@ function _generateContractHTML(employee, contractType, empCategory, suffix) {
         hasBreak: true
     };
     
-    // ⭐ 탭별 DOM ID suffix 결정
+ // ⭐ 탭별 DOM ID suffix 결정
     const timeSuffix = contractType === 'salary-parttime' ? '' : suffix;
     const noBreak = document.getElementById(`contractNoBreak${timeSuffix}`)?.checked;
     
-    // ⭐ ?? 사용: null/undefined만 기본값, 0은 유효한 값으로 처리
+ // ⭐ ?? 사용: null/undefined만 기본값, 0은 유효한 값으로 처리
     const getVal = (id, def) => {
         const el = document.getElementById(id);
         const val = el?.value;
         return val !== undefined && val !== '' ? parseInt(val) : def;
     };
     
-    // 기본값 설정 (호봉제/연봉제: 09~18시, 단시간: 10~15:30)
+ // 기본값 설정 (호봉제/연봉제: 09~18시, 단시간: 10~15:30)
     const defaultStart = contractType === 'salary-parttime' ? 10 : 9;
     const defaultEnd = contractType === 'salary-parttime' ? 15 : 18;
     const defaultEndMin = contractType === 'salary-parttime' ? 30 : 0;
@@ -2186,10 +2186,10 @@ function _generateContractHTML(employee, contractType, empCategory, suffix) {
         hasBreak: !noBreak
     };
     
-    // 단시간용 변수 (하위 호환)
+ // 단시간용 변수 (하위 호환)
     let partTimeWorkInfo = workTimeInfo;
     
-    // 공통 데이터
+ // 공통 데이터
     const data = {
         orgName, orgAddress, orgPhone, pensionBank, pensionType,
         managerPosition, managerName,
@@ -2228,7 +2228,7 @@ function _generateRankBasedContractHTML(data) {
         empCategory, employee
     } = data;
     
-    // ⭐ [v3.3] 근무시간 정보 추출 (기본값 포함)
+ // ⭐ [v3.3] 근무시간 정보 추출 (기본값 포함)
     const {
         startHour = 9, startMin = 0,
         endHour = 18, endMin = 0,
@@ -2237,17 +2237,17 @@ function _generateRankBasedContractHTML(data) {
         hasBreak = true
     } = workTimeInfo || {};
     
-    // 휴게시간 표시 텍스트
+ // 휴게시간 표시 텍스트
     const breakTimeText = hasBreak 
         ? `${breakStartHour}시 ${String(breakStartMin).padStart(2,'0')}분 ~ ${breakEndHour}시 ${String(breakEndMin).padStart(2,'0')}분`
         : '없음';
     
-    // 1조: 근로개시일 또는 계약기간
+ // 1조: 근로개시일 또는 계약기간
     const clause1 = empCategory === 'permanent'
         ? `<span class="section-title">1. 근로개시일 : <span class="data-field">${_formatDateKorean(hireDate)}</span> 부터</span>`
         : `<span class="section-title">1. 근로계약기간 : <span class="data-field">${_formatDateKorean(contractStart)}</span> 부터 <span class="data-field">${_formatDateKorean(contractEnd)}</span> 까지</span>`;
     
-    // 수습기간 섹션
+ // 수습기간 섹션
     const probationSection = hasProbation ? `
         <div class="probation-section">
             <div>· 수습기간 : <span class="data-field">${probationMonths}</span>개월 (<span class="data-field">${_formatDateDot(probationStartDate)}</span> ~ <span class="data-field">${_formatDateDot(probationEnd)}</span>)</div>
@@ -2257,24 +2257,24 @@ function _generateRankBasedContractHTML(data) {
         </div>
     ` : '';
     
-    // 호봉 정보 - 계약일 기준으로 동적 계산
+ // 호봉 정보 - 계약일 기준으로 동적 계산
     let currentRank = employee.rank?.startRank || 1;
     let upgradeDate = '';
     
-    // ⭐ v5.0.0: 계약일 기준 로컬 호봉 계산
+ // ⭐ v5.0.0: 계약일 기준 로컬 호봉 계산
     try {
         const startRank = employee.rank?.startRank || 1;
         const firstUpgradeDateStr = employee.rank?.firstUpgradeDate;
         
         if (firstUpgradeDateStr && firstUpgradeDateStr !== '-' && contractDate >= firstUpgradeDateStr) {
-            // 최초 승급 이후: startRank + 1 + 경과년수
+ // 최초 승급 이후: startRank + 1 + 경과년수
             const firstUpgrade = new Date(firstUpgradeDateStr);
             const contract = new Date(contractDate);
             
-            // 경과 년수 계산 (승급일 기준)
+ // 경과 년수 계산 (승급일 기준)
             let yearsAfterFirst = contract.getFullYear() - firstUpgrade.getFullYear();
             
-            // 승급월일이 아직 안 지났으면 -1
+ // 승급월일이 아직 안 지났으면 -1
             const upgradeMonth = firstUpgrade.getMonth();
             const upgradeDay = firstUpgrade.getDate();
             const contractMonth = contract.getMonth();
@@ -2293,34 +2293,34 @@ function _generateRankBasedContractHTML(data) {
         currentRank = employee.rank?.startRank || 1;
     }
     
-    // ⭐ 계약 연도의 승급일 직접 계산 (firstUpgradeDate에서 월/일 추출)
+ // ⭐ 계약 연도의 승급일 직접 계산 (firstUpgradeDate에서 월/일 추출)
     const contractYear = new Date(contractDate).getFullYear();
     const firstUpgradeDate = employee.rank?.firstUpgradeDate;
     const nextUpgradeDate = employee.rank?.nextUpgradeDate;
     
-    // ⭐ [v3.2] 첫 승급일이 계약년도 이후인지 확인 (신규입사자 판단)
+ // ⭐ [v3.2] 첫 승급일이 계약년도 이후인지 확인 (신규입사자 판단)
     const firstUpgradeYear = firstUpgradeDate ? parseInt(firstUpgradeDate.substring(0, 4)) : null;
     const hasNoUpgradeThisYear = firstUpgradeYear && firstUpgradeYear > contractYear;
     
     if (firstUpgradeDate && firstUpgradeDate !== '-' && firstUpgradeDate.length >= 10 && !hasNoUpgradeThisYear) {
-        // 기존 직원: firstUpgradeDate에서 월/일 추출 → 계약연도 적용
+ // 기존 직원: firstUpgradeDate에서 월/일 추출 → 계약연도 적용
         const upgradeMonthDay = firstUpgradeDate.substring(5); // "08-01"
         upgradeDate = `${contractYear}-${upgradeMonthDay}`;
     }
     
-    // ⭐ 승급일이 계약일 **이후**인지 확인 (같은 연도는 이미 보장됨)
+ // ⭐ 승급일이 계약일 **이후**인지 확인 (같은 연도는 이미 보장됨)
     const contractDateTime = new Date(contractDate);
     const upgradeDateTime = upgradeDate ? new Date(upgradeDate) : null;
     
-    // 승급일이 계약일보다 이후인 경우에만 호봉 변경
-    // - 계약일 2025.1.1, 승급일 2025.1.1 → 동일 (이미 승급 완료)
-    // - 계약일 2025.1.1, 승급일 2025.8.1 → 변경 (연중 승급 예정)
+ // 승급일이 계약일보다 이후인 경우에만 호봉 변경
+ // - 계약일 2025.1.1, 승급일 2025.1.1 → 동일 (이미 승급 완료)
+ // - 계약일 2025.1.1, 승급일 2025.8.1 → 변경 (연중 승급 예정)
     const isUpgradeAfterContract = upgradeDateTime && upgradeDateTime > contractDateTime;
     
-    // 승급 후 호봉 (계약일 이후 승급일 때만 변경)
+ // 승급 후 호봉 (계약일 이후 승급일 때만 변경)
     const nextRankCalc = isUpgradeAfterContract ? currentRank + 1 : currentRank;
     
-    // 급여표에서 기본급 조회
+ // 급여표에서 기본급 조회
     let currentBasePay = 0;
     let nextBasePay = 0;
     try {
@@ -2497,7 +2497,7 @@ function _generateSalaryContractHTML(data) {
         empCategory, employee  // ⭐ [v3.5] employee 추가
     } = data;
     
-    // ⭐ [v3.3] 근무시간 정보 추출 (기본값 포함)
+ // ⭐ [v3.3] 근무시간 정보 추출 (기본값 포함)
     const {
         startHour = 9, startMin = 0,
         endHour = 18, endMin = 0,
@@ -2506,15 +2506,15 @@ function _generateSalaryContractHTML(data) {
         hasBreak = true
     } = workTimeInfo || {};
     
-    // 휴게시간 표시 텍스트
+ // 휴게시간 표시 텍스트
     const breakTimeText = hasBreak 
         ? `${breakStartHour}시 ${String(breakStartMin).padStart(2,'0')}분 ~ ${breakEndHour}시 ${String(breakEndMin).padStart(2,'0')}분`
         : '없음';
     
-    // ⭐ 연봉제는 항상 계약기간으로 표시 (기준일 ~ 연말)
+ // ⭐ 연봉제는 항상 계약기간으로 표시 (기준일 ~ 연말)
     const clause1 = `<span class="section-title">1. 근로계약기간 : <span class="data-field">${_formatDateKorean(salaryContractStart)}</span> 부터 <span class="data-field">${_formatDateKorean(salaryContractEnd)}</span> 까지</span>`;
     
-    // 수습기간 섹션
+ // 수습기간 섹션
     const probationSection = hasProbation ? `
         <div class="probation-section">
             <div>· 수습기간 : <span class="data-field">${probationMonths}</span>개월 (<span class="data-field">${_formatDateDot(probationStartDate)}</span> ~ <span class="data-field">${_formatDateDot(probationEnd)}</span>)</div>
@@ -2524,7 +2524,7 @@ function _generateSalaryContractHTML(data) {
         </div>
     ` : '';
     
-    // ⭐ 기본급 표시 (급여설정에서 조회)
+ // ⭐ 기본급 표시 (급여설정에서 조회)
     const baseSalaryDisplay = salaryBasePay > 0 
         ? `<span class="data-field">${_formatNumber(salaryBasePay)}</span>` 
         : '__________________';
@@ -2649,18 +2649,18 @@ function _generateSalaryPartTimeContractHTML(data) {
         empCategory, employee  // ⭐ [v3.5] employee 추가
     } = data;
     
-    // ⭐ 입력받은 근무시간 사용
+ // ⭐ 입력받은 근무시간 사용
     const { startHour, startMin, endHour, endMin, 
             breakStartHour, breakStartMin, breakEndHour, breakEndMin } = partTimeWorkInfo;
     
-    // 휴게시간 계산 (분 단위)
+ // 휴게시간 계산 (분 단위)
     const breakMinutes = (breakEndHour * 60 + breakEndMin) - (breakStartHour * 60 + breakStartMin);
     const hasBreak = breakMinutes > 0;
     
-    // ⭐ 연봉제(단시간)도 항상 계약기간으로 표시 (기준일 ~ 연말)
+ // ⭐ 연봉제(단시간)도 항상 계약기간으로 표시 (기준일 ~ 연말)
     const clause1 = `<span class="section-title">1. 근로계약기간 : <span class="data-field">${_formatDateKorean(salaryContractStart)}</span> 부터 <span class="data-field">${_formatDateKorean(salaryContractEnd)}</span> 까지</span>`;
     
-    // 수습기간 섹션
+ // 수습기간 섹션
     const probationSection = hasProbation ? `
         <div class="probation-section">
             <div>· 수습기간 : <span class="data-field">${probationMonths}</span>개월 (<span class="data-field">${_formatDateDot(probationStartDate)}</span> ~ <span class="data-field">${_formatDateDot(probationEnd)}</span>)</div>
@@ -2670,7 +2670,7 @@ function _generateSalaryPartTimeContractHTML(data) {
         </div>
     ` : '';
     
-    // ⭐ 기본급 표시 (급여설정에서 조회)
+ // ⭐ 기본급 표시 (급여설정에서 조회)
     const baseSalaryDisplay = salaryBasePay > 0 
         ? `<span class="data-field">${_formatNumber(salaryBasePay)}</span>` 
         : '__________________';
@@ -2825,7 +2825,7 @@ function _generateSignatureSection(data) {
 
 function printEmploymentContract() {
     try {
-        // ⭐ 현재 탭에 따라 적절한 직원 선택 요소 확인
+ // ⭐ 현재 탭에 따라 적절한 직원 선택 요소 확인
         const tabType = _getCurrentContractTab();
         let suffix;
         if (tabType === 'rank') suffix = 'Rank';
@@ -2880,4 +2880,4 @@ function printEmploymentContract() {
     }
 }
 
-console.log('✅ 근로계약서_인사.js 로드 완료 (v5.3.0 - 추가 조항 기능)');
+console.log(' 근로계약서_인사.js 로드 완료 (v5.3.0 - 추가 조항 기능)');

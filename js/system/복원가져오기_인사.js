@@ -13,65 +13,65 @@
  * 
  * [변경 이력]
  * v4.4 - Electron 포커스 문제 해결 (2026-02-06)
- *   - Excel 가져오기 완료 후 window.focus() 호출
- *   - 가져오기 후 입력란에 바로 커서가 들어가지 않는 문제 수정
+ * - Excel 가져오기 완료 후 window.focus() 호출
+ * - 가져오기 후 입력란에 바로 커서가 들어가지 않는 문제 수정
  *
  * v4.3 - 복원 결과 메시지 한글화 (2026-01-30)
- *   - 시스템 설정 복원 결과 메시지에서 영어 키 이름을 한글로 변환
- *   - salaryGrades → 직급 관리, salaryTables → 급여표 등
+ * - 시스템 설정 복원 결과 메시지에서 영어 키 이름을 한글로 변환
+ * - salaryGrades → 직급 관리, salaryTables → 급여표 등
  * 
  * v4.2 - 엑셀 가져오기 호봉 숫자 변환 수정 (2026-01-30)
- *   - startRank, currentRank를 parseInt()로 숫자 변환
- *   - 문자열 "1" → 숫자 1 로 저장하여 호봉 계산 오류 방지
- *   - 기존: "1" + 1 + yearDiff = "112" (문자열 연결 버그)
- *   - 수정: 1 + 1 + yearDiff = 정상 호봉 계산
+ * - startRank, currentRank를 parseInt()로 숫자 변환
+ * - 문자열 "1" → 숫자 1 로 저장하여 호봉 계산 오류 방지
+ * - 기존: "1" + 1 + yearDiff = "112" (문자열 연결 버그)
+ * - 수정: 1 + 1 + yearDiff = 정상 호봉 계산
  * 
  * v4.1 - 디코딩 헤더 구조 개선 (2026-01-30)
- *   - v4.1 헤더(12자리): 청크개수(6) + 원본길이(6)
- *   - v4.0 헤더(6자리) 레거시 호환 유지
- *   - 마지막 청크가 16자 미만일 때 복원 오류 수정
- *   - 백업_인사.js v4.1과 호환
+ * - v4.1 헤더(12자리): 청크개수(6) + 원본길이(6)
+ * - v4.0 헤더(6자리) 레거시 호환 유지
+ * - 마지막 청크가 16자 미만일 때 복원 오류 수정
+ * - 백업_인사.js v4.1과 호환
  * 
  * v4.0 - 보안 백업 형식 지원 (2026-01-29)
- *   - .hrm 파일 복원 지원 (압축 + 인코딩)
- *   - .json 파일도 레거시로 계속 지원
- *   - _decodeBackupData() 함수 추가
- *   - 파일 확장자에 따른 자동 처리
+ * - .hrm 파일 복원 지원 (압축 + 인코딩)
+ * - .json 파일도 레거시로 계속 지원
+ * - _decodeBackupData() 함수 추가
+ * - 파일 확장자에 따른 자동 처리
  * 
  * v3.5 - 발령 데이터 자동 마이그레이션 (2025-12-10)
- *   - 복원 시 구버전 발령 데이터 자동 변환
- *   - id: 숫자 → 문자열 (assign-timestamp)
- *   - code: 없으면 생성 (고유번호-순번 패턴)
- *   - startDate: 없으면 date에서 복사
- *   - status: 없으면 자동 설정 (active/ended)
- *   - _migrateAssignmentData() 함수 추가
+ * - 복원 시 구버전 발령 데이터 자동 변환
+ * - id: 숫자 → 문자열 (assign-timestamp)
+ * - code: 없으면 생성 (고유번호-순번 패턴)
+ * - startDate: 없으면 date에서 복사
+ * - status: 없으면 자동 설정 (active/ended)
+ * - _migrateAssignmentData() 함수 추가
  * 
  * v3.4 - 누락된 설정 키 추가 (2025-12-08)
- *   - hr_position_allowances (직책수당 금액 설정)
- *   - hr_salary_basic_settings (급여 기본 설정) - KEYS에 누락되어 있던 것 추가
+ * - hr_position_allowances (직책수당 금액 설정)
+ * - hr_salary_basic_settings (급여 기본 설정) - KEYS에 누락되어 있던 것 추가
  * 
  * v3.3 - 급여 기본 설정 복원 추가 (2025-12-02)
- *   - hr_salary_basic_settings (급여 기준일, 직무대리 지급 설정)
+ * - hr_salary_basic_settings (급여 기준일, 직무대리 지급 설정)
  * 
  * v3.2 - 급여 설정 복원 추가 (2025-12-02)
- *   - 직급 관리 (연도별) 복원 추가
- *   - 급여표 (연도별) 복원 추가
- *   - 급여 설정 (직책수당, 명절휴가비) 복원 추가
+ * - 직급 관리 (연도별) 복원 추가
+ * - 급여표 (연도별) 복원 추가
+ * - 급여 설정 (직책수당, 명절휴가비) 복원 추가
  * 
  * v3.1 - 전체 시스템 데이터 복원
- *   - 겸직/직무대리 설정 복원 추가
- *   - 조직도 설정 복원 추가
- *   - 근속현황표 특수부서 설정 복원 추가
- *   - 구버전(v3.1 이전) 백업 파일 호환
+ * - 겸직/직무대리 설정 복원 추가
+ * - 조직도 설정 복원 추가
+ * - 근속현황표 특수부서 설정 복원 추가
+ * - 구버전(v3.1 이전) 백업 파일 호환
  * 
  * v3.0 - 프로덕션급 리팩토링
- *   - Phase 1 유틸리티 적용 (로거, 에러처리, 상수)
- *   - 완벽한 에러 처리
- *   - 체계적 로깅
- *   - 코드 정리 및 주석 추가
- *   - 함수 분리 (가독성 향상)
- *   - 검증 강화
- *   - 진행 상황 표시
+ * - Phase 1 유틸리티 적용 (로거, 에러처리, 상수)
+ * - 완벽한 에러 처리
+ * - 체계적 로깅
+ * - 코드 정리 및 주석 추가
+ * - 함수 분리 (가독성 향상)
+ * - 검증 강화
+ * - 진행 상황 표시
  * 
  * [하위 호환성]
  * - 모든 기존 함수명 유지
@@ -99,27 +99,27 @@
  * @constant {Object}
  */
 const RESTORE_SYSTEM_KEYS = {
-    // 조직 관련
+ // 조직 관련
     concurrentPositions: 'hr_concurrent_positions',     // 겸직/직무대리
     orgChartSettings: 'hr_org_chart_settings',          // 조직도 설정
     
-    // 보고서 관련
+ // 보고서 관련
     tenureSpecialDepts: 'tenureReport_specialDepts',    // 근속현황표 특수부서
     
-    // 포상 관련
+ // 포상 관련
     awardsData: 'hr_awards_data',                        // 포상 데이터
     
-    // 급여 설정 관련 (v3.2 추가)
+ // 급여 설정 관련 (v3.2 추가)
     salaryGrades: 'hr_salary_grades',                    // 직급 관리 (연도별)
     salaryTables: 'hr_salary_tables',                    // 급여표 (연도별)
     salarySettings: 'hr_salary_settings',                // 급여 설정 (직책수당, 명절휴가비)
     ordinaryWageSettings: 'hr_ordinary_wage_settings',   // 통상임금 설정
     
-    // 급여 설정 관련 (v3.4 추가)
+ // 급여 설정 관련 (v3.4 추가)
     positionAllowances: 'hr_position_allowances',        // 직책수당 금액 설정 (연도별)
     salaryBasicSettings: 'hr_salary_basic_settings',     // 급여 기본 설정 (기준일, 직무대리 지급)
     
-    // 시간외근무 관련 (v3.6 추가)
+ // 시간외근무 관련 (v3.6 추가)
     overtimeSettings: 'hr_overtime_settings',            // 시간외근무 유형 설정
     overtimeRecords: 'hr_overtime_records'               // 시간외근무 기록 (연월별)
 };
@@ -141,45 +141,45 @@ const RESTORE_SYSTEM_KEYS = {
  */
 function _decodeBackupData(encoded) {
     try {
-        // v4.0 형식 (6자리 헤더) vs v4.1 형식 (12자리 헤더) 감지
-        // v4.1: 헤더 12자리 = 청크개수(6) + 원본길이(6)
-        // v4.0: 헤더 6자리 = 청크개수만
+ // v4.0 형식 (6자리 헤더) vs v4.1 형식 (12자리 헤더) 감지
+ // v4.1: 헤더 12자리 = 청크개수(6) + 원본길이(6)
+ // v4.0: 헤더 6자리 = 청크개수만
         
         const chunkSize = 16;
         let chunkCount, originalLength, shuffled;
         
-        // 헤더 형식 감지: v4.1은 12자리, v4.0은 6자리
-        // v4.1 형식인지 확인 (원본길이가 유효한 숫자인지)
+ // 헤더 형식 감지: v4.1은 12자리, v4.0은 6자리
+ // v4.1 형식인지 확인 (원본길이가 유효한 숫자인지)
         const possibleOriginalLength = parseInt(encoded.substring(6, 12), 10);
         const possibleChunkCount = parseInt(encoded.substring(0, 6), 10);
         
-        // v4.1 형식 검증: 청크개수 * 16 >= 원본길이 > (청크개수-1) * 16
+ // v4.1 형식 검증: 청크개수 * 16 >= 원본길이 > (청크개수-1) * 16
         const isV41Format = !isNaN(possibleOriginalLength) && 
                            possibleOriginalLength > 0 &&
                            possibleChunkCount * chunkSize >= possibleOriginalLength &&
                            possibleOriginalLength > (possibleChunkCount - 1) * chunkSize;
         
         if (isV41Format) {
-            // v4.1 형식: 12자리 헤더
+ // v4.1 형식: 12자리 헤더
             chunkCount = possibleChunkCount;
             originalLength = possibleOriginalLength;
             shuffled = encoded.substring(12);
         } else {
-            // v4.0 형식: 6자리 헤더 (레거시 호환)
+ // v4.0 형식: 6자리 헤더 (레거시 호환)
             chunkCount = parseInt(encoded.substring(0, 6), 10);
             shuffled = encoded.substring(6);
-            // 원본 길이 추정 (마지막 청크가 16자라고 가정)
+ // 원본 길이 추정 (마지막 청크가 16자라고 가정)
             originalLength = shuffled.length;
         }
         
-        // 마지막 청크 크기 계산
+ // 마지막 청크 크기 계산
         const lastChunkSize = originalLength % chunkSize || chunkSize;
         
-        // 홀수/짝수 청크 개수 계산
+ // 홀수/짝수 청크 개수 계산
         const oddCount = Math.floor(chunkCount / 2);
         const evenCount = chunkCount - oddCount;
         
-        // 홀수 청크들의 총 길이 계산 (인덱스 1, 3, 5, ...)
+ // 홀수 청크들의 총 길이 계산 (인덱스 1, 3, 5, ...)
         let oddTotalLength = 0;
         for (let i = 1; i < chunkCount; i += 2) {
             if (i === chunkCount - 1) {
@@ -192,7 +192,7 @@ function _decodeBackupData(encoded) {
         const oddPart = shuffled.substring(0, oddTotalLength);
         const evenPart = shuffled.substring(oddTotalLength);
         
-        // 홀수 청크 분리 (인덱스 1, 3, 5, ...)
+ // 홀수 청크 분리 (인덱스 1, 3, 5, ...)
         const oddChunks = [];
         let pos = 0;
         for (let i = 1; i < chunkCount; i += 2) {
@@ -201,7 +201,7 @@ function _decodeBackupData(encoded) {
             pos += size;
         }
         
-        // 짝수 청크 분리 (인덱스 0, 2, 4, ...)
+ // 짝수 청크 분리 (인덱스 0, 2, 4, ...)
         const evenChunks = [];
         pos = 0;
         for (let i = 0; i < chunkCount; i += 2) {
@@ -210,7 +210,7 @@ function _decodeBackupData(encoded) {
             pos += size;
         }
         
-        // 원래 순서로 복원
+ // 원래 순서로 복원
         const restored = [];
         let evenIdx = 0, oddIdx = 0;
         for (let i = 0; i < chunkCount; i++) {
@@ -222,13 +222,13 @@ function _decodeBackupData(encoded) {
         }
         const reversed = restored.join('');
         
-        // 바이트 순서 원복
+ // 바이트 순서 원복
         const base64 = reversed.split('').reverse().join('');
         
-        // Base64 → UTF-8 디코딩
+ // Base64 → UTF-8 디코딩
         const jsonStr = decodeURIComponent(escape(atob(base64)));
         
-        // JSON 파싱
+ // JSON 파싱
         return JSON.parse(jsonStr);
         
     } catch (error) {
@@ -264,14 +264,14 @@ function restoreFromJSON(file) {
     try {
         로거_인사?.debug('백업 복원 시작', { filename: file?.name });
         
-        // 파일 확인
+ // 파일 확인
         if (!file) {
             로거_인사?.warn('복원 파일이 없습니다');
             에러처리_인사?.warn('파일을 선택해주세요.');
             return;
         }
         
-        // 파일 확장자 확인
+ // 파일 확장자 확인
         const fileName = file.name.toLowerCase();
         const isHrmFile = fileName.endsWith('.hrm');
         const isJsonFile = fileName.endsWith('.json');
@@ -282,10 +282,10 @@ function restoreFromJSON(file) {
             return;
         }
         
-        // 사용자 확인
+ // 사용자 확인
         const fileTypeLabel = isHrmFile ? '보안 백업' : 'JSON 백업';
         const confirmMessage = 
-            `⚠️ 경고: 데이터 복원\n\n` +
+            `[주의] 경고: 데이터 복원\n\n` +
             `파일: ${file.name}\n` +
             `형식: ${fileTypeLabel}\n` +
             `크기: ${_formatFileSize(file.size)}\n\n` +
@@ -299,7 +299,7 @@ function restoreFromJSON(file) {
             return;
         }
         
-        // FileReader로 파일 읽기
+ // FileReader로 파일 읽기
         const reader = new FileReader();
         
         reader.onload = function(e) {
@@ -309,9 +309,9 @@ function restoreFromJSON(file) {
                 const fileContent = e.target.result;
                 let rawData;
                 
-                // ⭐ v4.0: 파일 형식에 따른 처리
+ // ⭐ v4.0: 파일 형식에 따른 처리
                 if (isHrmFile) {
-                    // .hrm 파일: 헤더 확인 후 디코딩
+ // .hrm 파일: 헤더 확인 후 디코딩
                     const lines = fileContent.split('\n');
                     const header = lines[0];
                     
@@ -324,27 +324,27 @@ function restoreFromJSON(file) {
                     로거_인사?.debug('HRM 보안 백업 디코딩 완료');
                     
                 } else {
-                    // .json 파일: 기존 방식
+ // .json 파일: 기존 방식
                     rawData = JSON.parse(fileContent);
                     로거_인사?.debug('JSON 백업 파싱 완료');
                 }
                 
-                // 백업 버전 확인 (v3.2+ 또는 구버전)
+ // 백업 버전 확인 (v3.2+ 또는 구버전)
                 const isNewFormat = rawData._backupInfo && rawData.database;
                 
-                // 데이터베이스 데이터 추출
+ // 데이터베이스 데이터 추출
                 const dbData = isNewFormat ? rawData.database : rawData;
                 
-                // 데이터 검증
+ // 데이터 검증
                 if (!_validateBackupData(dbData)) {
                     throw new Error('올바른 백업 파일이 아닙니다.');
                 }
                 
-                // ⭐ v3.5: 발령 데이터 마이그레이션
+ // ⭐ v3.5: 발령 데이터 마이그레이션
                 const migrationResult = _migrateAssignmentData(dbData);
                 로거_인사?.debug('발령 데이터 마이그레이션', migrationResult);
                 
-                // 1. 데이터베이스 복원
+ // 1. 데이터베이스 복원
                 const storageKey = (typeof CONFIG_인사 !== 'undefined')
                     ? CONFIG_인사.STORAGE_KEY
                     : 'hr_system_v25_db';
@@ -352,7 +352,7 @@ function restoreFromJSON(file) {
                 localStorage.setItem(storageKey, JSON.stringify(dbData));
                 로거_인사?.debug('데이터베이스 복원 완료');
                 
-                // 2. 시스템 설정 복원 (v3.2+ 백업만)
+ // 2. 시스템 설정 복원 (v3.2+ 백업만)
                 let settingsRestored = [];
                 if (isNewFormat && rawData.systemSettings) {
                     Object.entries(RESTORE_SYSTEM_KEYS).forEach(([key, storageKey]) => {
@@ -376,9 +376,9 @@ function restoreFromJSON(file) {
                     migrationResult: migrationResult
                 });
                 
-                // 복원 결과 메시지 구성
+ // 복원 결과 메시지 구성
                 const settingsInfo = settingsRestored.length > 0
-                    ? `\n\n📋 시스템 설정 복원:\n• ${settingsRestored.map(k => {
+                    ? `\n\n시스템 설정 복원:\n• ${settingsRestored.map(k => {
                         switch(k) {
                             case 'concurrentPositions': return '겸직/직무대리';
                             case 'orgChartSettings': return '조직도 설정';
@@ -397,13 +397,13 @@ function restoreFromJSON(file) {
                     }).join('\n• ')}`
                     : (isNewFormat ? '' : '\n\n(구버전 백업 파일 - 시스템 설정 없음)');
                 
-                // ⭐ v3.5: 마이그레이션 정보
+ // ⭐ v3.5: 마이그레이션 정보
                 const migrationInfo = migrationResult.migratedCount > 0
-                    ? `\n\n🔄 발령 데이터 마이그레이션: ${migrationResult.migratedCount}건`
+                    ? `\n\n발령 데이터 마이그레이션: ${migrationResult.migratedCount}건`
                     : '';
                 
                 alert(
-                    `✅ 복원 완료!\n\n` +
+                    `복원 완료!\n\n` +
                     `파일 형식: ${isHrmFile ? 'HRM 보안 백업' : 'JSON 백업'}\n` +
                     `직원 수: ${dbData.employees?.length || 0}명` +
                     settingsInfo +
@@ -411,7 +411,7 @@ function restoreFromJSON(file) {
                     `\n\n페이지를 새로고침합니다.`
                 );
                 
-                // 페이지 새로고침
+ // 페이지 새로고침
                 location.reload();
                 
             } catch (error) {
@@ -427,7 +427,7 @@ function restoreFromJSON(file) {
             _clearFileInput('restoreFile');
         };
         
-        // 파일 읽기 시작
+ // 파일 읽기 시작
         reader.readAsText(file);
         
     } catch (error) {
@@ -449,7 +449,7 @@ function restoreFromJSON(file) {
  */
 function _validateBackupData(data) {
     try {
-        // 필수 속성 확인
+ // 필수 속성 확인
         if (!data || typeof data !== 'object') {
             로거_인사?.warn('데이터가 객체가 아닙니다');
             return false;
@@ -491,7 +491,7 @@ function _validateBackupData(data) {
  * - 발령 이력 자동 구성
  * - 최대 고유번호 자동 업데이트
  * 
- * ⚠️ 주의: 과거 경력은 포함되지 않음
+ * ️ 주의: 과거 경력은 포함되지 않음
  * 
  * @example
  * // HTML: <input type="file" onchange="importFromGoogleSheets(this.files[0])">
@@ -503,39 +503,39 @@ function importFromGoogleSheets(file) {
     try {
         로거_인사?.debug('Excel 가져오기 시작', { filename: file?.name });
         
-        // 파일 확인
+ // 파일 확인
         if (!file) {
             로거_인사?.warn('가져올 파일이 없습니다');
             에러처리_인사?.warn('파일을 선택해주세요.');
             return;
         }
         
-        // XLSX 라이브러리 확인
+ // XLSX 라이브러리 확인
         if (typeof XLSX === 'undefined') {
             로거_인사?.error('XLSX 라이브러리를 찾을 수 없습니다');
             에러처리_인사?.warn('Excel 라이브러리를 찾을 수 없습니다.');
             return;
         }
         
-        // DB 확인
+ // DB 확인
         if (typeof db === 'undefined' || !db) {
             로거_인사?.error('DB를 찾을 수 없습니다');
             에러처리_인사?.warn('데이터베이스를 찾을 수 없습니다.');
             return;
         }
         
-        // FileReader로 파일 읽기
+ // FileReader로 파일 읽기
         const reader = new FileReader();
         
         reader.onload = function(e) {
             try {
                 로거_인사?.debug('Excel 파일 읽기 완료');
                 
-                // Excel 워크북 읽기
+ // Excel 워크북 읽기
                 const data = new Uint8Array(e.target.result);
                 const wb = XLSX.read(data, { type: 'array' });
                 
-                // "직원정보" 시트 찾기
+ // "직원정보" 시트 찾기
                 const ws = wb.Sheets['직원정보'];
                 
                 if (!ws) {
@@ -545,12 +545,12 @@ function importFromGoogleSheets(file) {
                     return;
                 }
                 
-                // 시트를 JSON으로 변환
+ // 시트를 JSON으로 변환
                 const rows = XLSX.utils.sheet_to_json(ws);
                 
                 로거_인사?.info('Excel 데이터 읽기 완료', { rowCount: rows.length });
                 
-                // 직원 데이터 생성
+ // 직원 데이터 생성
                 const employees = _buildEmployeesFromExcel(rows);
                 
                 if (employees.length === 0) {
@@ -560,13 +560,13 @@ function importFromGoogleSheets(file) {
                     return;
                 }
                 
-                // 사용자 확인
+ // 사용자 확인
                 const confirmMessage = 
-                    `📊 Excel 데이터 가져오기\n\n` +
+                    `Excel 데이터 가져오기\n\n` +
                     `파일: ${file.name}\n` +
                     `직원 수: ${employees.length}명\n` +
                     `원본 행 수: ${rows.length}행\n\n` +
-                    `⚠️ 주의: 과거 경력은 포함되지 않습니다.\n\n` +
+                    `[주의] 주의: 과거 경력은 포함되지 않습니다.\n\n` +
                     `진행하시겠습니까?`;
                 
                 if (!confirm(confirmMessage)) {
@@ -575,7 +575,7 @@ function importFromGoogleSheets(file) {
                     return;
                 }
                 
-                // 데이터베이스에 저장
+ // 데이터베이스에 저장
                 _saveImportedEmployees(employees);
                 
                 로거_인사?.info('Excel 가져오기 완료', { 
@@ -583,14 +583,14 @@ function importFromGoogleSheets(file) {
                 });
                 
                 에러처리_인사?.success(
-                    `✅ 가져오기 완료!\n\n` +
+                    `가져오기 완료!\n\n` +
                     `${employees.length}명의 직원 데이터를 가져왔습니다.`
                 );
                 
-                // 파일 입력 초기화
+ // 파일 입력 초기화
                 _clearFileInputs(['googleImportFile', 'googleImportFile2']);
                 
-                // UI 업데이트
+ // UI 업데이트
                 if (typeof updateDashboard === 'function') {
                     updateDashboard();
                 }
@@ -598,7 +598,7 @@ function importFromGoogleSheets(file) {
                     loadEmployeeList();
                 }
                 
-                // ⭐ v4.4: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
+ // ⭐ v4.4: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
                 const rf = async () => { if (window.electronAPI?.focusWindow) await window.electronAPI.focusWindow(); };
                 setTimeout(rf, 500);
                 setTimeout(rf, 2000);
@@ -616,7 +616,7 @@ function importFromGoogleSheets(file) {
             _clearFileInputs(['googleImportFile', 'googleImportFile2']);
         };
         
-        // 파일 읽기 시작
+ // 파일 읽기 시작
         reader.readAsArrayBuffer(file);
         
     } catch (error) {
@@ -643,7 +643,7 @@ function _buildEmployeesFromExcel(rows) {
     try {
         const uniqueEmployees = {};
         
-        // 1. 고유번호별로 그룹화
+ // 1. 고유번호별로 그룹화
         rows.forEach(row => {
             const id = row['고유번호'];
             if (!id) {
@@ -659,7 +659,7 @@ function _buildEmployeesFromExcel(rows) {
         
         const employees = [];
         
-        // 2. 각 직원별로 데이터 구성
+ // 2. 각 직원별로 데이터 구성
         for (const [uniqueCode, assignments] of Object.entries(uniqueEmployees)) {
             try {
                 const employee = _createEmployeeFromAssignments(uniqueCode, assignments);
@@ -698,17 +698,17 @@ function _buildEmployeesFromExcel(rows) {
  */
 function _createEmployeeFromAssignments(uniqueCode, assignments) {
     try {
-        // 발령 이력을 날짜순으로 정렬 (최신순)
+ // 발령 이력을 날짜순으로 정렬 (최신순)
         const sortedAssignments = assignments.sort((a, b) => {
             const dateA = excelDateToJS(a['인사발령일']);
             const dateB = excelDateToJS(b['인사발령일']);
             return new Date(dateB) - new Date(dateA);
         });
         
-        // 최신 발령 정보 (현재 정보)
+ // 최신 발령 정보 (현재 정보)
         const latest = sortedAssignments[0];
         
-        // 직원 객체 생성
+ // 직원 객체 생성
         const employee = {
             id: `EMP${Date.now()}${Math.random().toString(36).substr(2, 5)}`,
             uniqueCode: uniqueCode,
@@ -759,7 +759,7 @@ function _createEmployeeFromAssignments(uniqueCode, assignments) {
                 email: latest['이메일'] || ''
             },
             
-            careerDetails: []  // ⚠️ Excel에는 과거 경력 없음
+            careerDetails: []  // Excel에는 과거 경력 없음
         };
         
         return employee;
@@ -844,12 +844,12 @@ function _saveImportedEmployees(employees) {
     try {
         로거_인사?.debug('직원 데이터 저장 시작', { count: employees.length });
         
-        // 최대 고유번호 찾기
+ // 최대 고유번호 찾기
         let maxNum = db.data.settings.nextUniqueCodeNumber - 1;
         
         employees.forEach(emp => {
             try {
-                // 고유번호에서 숫자 추출 (H001 → 1)
+ // 고유번호에서 숫자 추출 (H001 → 1)
                 const num = parseInt(emp.uniqueCode.replace(/[^0-9]/g, ''));
                 if (!isNaN(num) && num > maxNum) {
                     maxNum = num;
@@ -862,14 +862,14 @@ function _saveImportedEmployees(employees) {
             }
         });
         
-        // 다음 고유번호 업데이트
+ // 다음 고유번호 업데이트
         db.data.settings.nextUniqueCodeNumber = maxNum + 1;
         
         로거_인사?.debug('다음 고유번호 업데이트', { 
             nextNumber: db.data.settings.nextUniqueCodeNumber 
         });
         
-        // 각 직원 저장
+ // 각 직원 저장
         employees.forEach(emp => {
             try {
                 db.saveEmployee(emp);
@@ -910,35 +910,35 @@ function _saveImportedEmployees(employees) {
  */
 function excelDateToJS(excelDate) {
     try {
-        // null/undefined 처리
+ // null/undefined 처리
         if (!excelDate) {
             return null;
         }
         
-        // 문자열 형태의 날짜
+ // 문자열 형태의 날짜
         if (typeof excelDate === 'string') {
-            // YYYY-MM-DD 형식 확인
+ // YYYY-MM-DD 형식 확인
             if (excelDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
                 return excelDate;
             }
-            // 다른 형식은 그대로 반환
+ // 다른 형식은 그대로 반환
             return excelDate;
         }
         
-        // Excel 날짜 숫자
+ // Excel 날짜 숫자
         if (typeof excelDate === 'number') {
-            // Excel 시리얼 날짜 변환
-            // Excel 기준일: 1900-01-01 = 1
-            // JavaScript 기준일: 1970-01-01
-            // 차이: 25569일
+ // Excel 시리얼 날짜 변환
+ // Excel 기준일: 1900-01-01 = 1
+ // JavaScript 기준일: 1970-01-01
+ // 차이: 25569일
             const date = new Date((excelDate - 25569) * 86400 * 1000);
             
-            // DateUtils 사용 (있으면)
+ // DateUtils 사용 (있으면)
             if (typeof DateUtils !== 'undefined' && DateUtils.formatDate) {
                 return DateUtils.formatDate(date);
             }
             
-            // 수동 포맷
+ // 수동 포맷
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
@@ -994,26 +994,26 @@ function _migrateAssignmentData(dbData) {
             emp.assignments.forEach((assign, idx) => {
                 let migrated = false;
                 
-                // 1. id가 숫자인 경우 → 문자열로 변환
+ // 1. id가 숫자인 경우 → 문자열로 변환
                 if (typeof assign.id === 'number') {
                     assign.id = `assign-${Date.now()}-${idx}`;
                     migrated = true;
                 }
                 
-                // 2. code가 없고 type만 있는 경우 → code 생성
+ // 2. code가 없고 type만 있는 경우 → code 생성
                 if (!assign.code && assign.type) {
                     const assignNum = String(idx + 1).padStart(2, '0');
                     assign.code = `${uniqueCode}-${assignNum}`;
                     migrated = true;
                 }
                 
-                // 3. startDate가 없고 date만 있는 경우 → startDate 추가
+ // 3. startDate가 없고 date만 있는 경우 → startDate 추가
                 if (!assign.startDate && assign.date) {
                     assign.startDate = assign.date;
                     migrated = true;
                 }
                 
-                // 4. status가 없는 경우 → 자동 설정
+ // 4. status가 없는 경우 → 자동 설정
                 if (!assign.status) {
                     const isLast = idx === emp.assignments.length - 1;
                     assign.status = isLast ? 'active' : 'ended';

@@ -14,55 +14,55 @@
  * @location js/labor/급여현황_인사.js
  * 
  * [변경 이력]
- * v2.0.0 (2026-01-22) ⭐ async API 연동 버전
- *   - generateSalaryStatus() async로 변경
- *   - SalaryCalculator.getAllEmployeesSalaryInfo() await 추가
- *   - 급여계산기 v4.0.0 API 버전 호환
+ * v2.0.0 (2026-01-22) async API 연동 버전
+ * - generateSalaryStatus() async로 변경
+ * - SalaryCalculator.getAllEmployeesSalaryInfo() await 추가
+ * - 급여계산기 v4.0.0 API 버전 호환
  * v1.9.0 - 시급 배율 적용 절사 시점 설정 반영 (2026-01-07)
- *   - 급여설정의 hourlyWageRounding.applyTiming 설정 반영
- *   - 'after' (기본값): 원시급 × 배율 → 절사
- *   - 'before': 원시급 → 절사 → × 배율
- *   - _getHourlyWage1xValue, _getHourlyWage15xValue: getRatedHourlyWage 사용
+ * - 급여설정의 hourlyWageRounding.applyTiming 설정 반영
+ * - 'after' (기본값): 원시급 × 배율 → 절사
+ * - 'before': 원시급 → 절사 → × 배율
+ * - _getHourlyWage1xValue, _getHourlyWage15xValue: getRatedHourlyWage 사용
  * v1.8.0 - 육아휴직자 제외 옵션 추가 (2025-12-12)
- *   - "육아휴직자 제외" 체크박스 추가 (기본 체크)
- *   - 해당 월 전체가 육아휴직인 직원만 제외
- *   - 일부 근무일이 있는 직원은 체크 여부와 관계없이 표시
+ * - "육아휴직자 제외" 체크박스 추가 (기본 체크)
+ * - 해당 월 전체가 육아휴직인 직원만 제외
+ * - 일부 근무일이 있는 직원은 체크 여부와 관계없이 표시
  * v1.7.0 - 명절휴가비 산입 방식에 따른 헤더 동적 표시 (2025-12-11)
- *   - holidayBonusMethod 설정에 따라 헤더 변경
- *   - 연간 고정: "명절휴가비(월환산)"
- *   - 월별 연동: "명절휴가비(X%)" (설정된 비율 표시)
- *   - 테이블/엑셀/인쇄 모두 동일하게 적용
+ * - holidayBonusMethod 설정에 따라 헤더 변경
+ * - 연간 고정: "명절휴가비(월환산)"
+ * - 월별 연동: "명절휴가비(X%)" (설정된 비율 표시)
+ * - 테이블/엑셀/인쇄 모두 동일하게 적용
  * v1.6.0 - 소수점 표시 옵션 추가 (2025-12-11)
- *   - 급여설정이 "소수점 유지"일 때 체크박스 옵션 추가
- *   - 체크 해제: 시급을 소수점 2자리까지 표시
- *   - 체크: 화면/인쇄는 정수로 표시 (안내 문구 포함)
- *   - 엑셀: 항상 실제 소수점 값 저장 (계산 정확도 유지)
- *   - _getHourlyWage1xValue(), _getHourlyWage15xValue() 원본값 함수 추가
- *   - _updateDecimalHint(), _onDecimalOptionChange() 체크박스 처리 함수 추가
+ * - 급여설정이 "소수점 유지"일 때 체크박스 옵션 추가
+ * - 체크 해제: 시급을 소수점 2자리까지 표시
+ * - 체크: 화면/인쇄는 정수로 표시 (안내 문구 포함)
+ * - 엑셀: 항상 실제 소수점 값 저장 (계산 정확도 유지)
+ * - _getHourlyWage1xValue(), _getHourlyWage15xValue() 원본값 함수 추가
+ * - _updateDecimalHint(), _onDecimalOptionChange() 체크박스 처리 함수 추가
  * v1.5.0 - 시급(1.5배) 설정 반영 버그 수정 (2025-12-11)
- *   - 시급(1.5배) 계산 시 급여설정의 절사 방식(method) 반영
- *   - 기존: 설정과 무관하게 항상 반올림 처리
- *   - 수정: 설정된 방식(버림/반올림/올림) 및 단위(1원/10원) 적용
- *   - _getHourlyWage1xDisplay(), _getHourlyWage15xDisplay() 헬퍼 함수 추가
- *   - 화면/엑셀/인쇄 모두 동일하게 설정 반영
+ * - 시급(1.5배) 계산 시 급여설정의 절사 방식(method) 반영
+ * - 기존: 설정과 무관하게 항상 반올림 처리
+ * - 수정: 설정된 방식(버림/반올림/올림) 및 단위(1원/10원) 적용
+ * - _getHourlyWage1xDisplay(), _getHourlyWage15xDisplay() 헬퍼 함수 추가
+ * - 화면/엑셀/인쇄 모두 동일하게 설정 반영
  * v1.4.0 - 시급 절사 방식 설정 반영 (2025-12-08)
- *   - SalaryCalculator.getHourlyWage()에서 설정에 따라 절사된 시급 사용
- *   - 소수점 유지 / 정수 처리(1원·10원 단위, 버림·반올림·올림) 설정 반영
- *   - 시급(1배): 설정에 따라 계산된 값을 정수로 표시
- *   - 시급(1.5배): 시급(1배) × 1.5 후 반올림 표시
+ * - SalaryCalculator.getHourlyWage()에서 설정에 따라 절사된 시급 사용
+ * - 소수점 유지 / 정수 처리(1원·10원 단위, 버림·반올림·올림) 설정 반영
+ * - 시급(1배): 설정에 따라 계산된 값을 정수로 표시
+ * - 시급(1.5배): 시급(1배) × 1.5 후 반올림 표시
  * v1.3.0 - 시급 표시 정수화 (2025-12-05)
- *   - 시급 1배: Math.floor() 적용하여 정수로 표시
- *   - 내부 계산용 값은 소수점 유지 (시간외수당 정확도)
- *   - 화면/엑셀/인쇄 모두 동일하게 정수 표시
+ * - 시급 1배: Math.floor() 적용하여 정수로 표시
+ * - 내부 계산용 값은 소수점 유지 (시간외수당 정확도)
+ * - 화면/엑셀/인쇄 모두 동일하게 정수 표시
  * v1.2.0 - 정렬 기준 개선 (2025-12-02)
- *   - 조직도와 동일한 정렬: 부서 → 직위순서 → 급여유형 → 호봉 → 입사일
- *   - 조직도설정(hr_org_chart_settings)의 직위 order 값 사용
+ * - 조직도와 동일한 정렬: 부서 → 직위순서 → 급여유형 → 호봉 → 입사일
+ * - 조직도설정(hr_org_chart_settings)의 직위 order 값 사용
  * v1.1.0 - 시급 1.5배 컬럼 추가 (2025-12-02)
- *   - 시급(1배), 시급(1.5배) 두 컬럼 표시
- *   - 연장/야간/휴일 근무 수당 계산 편의
+ * - 시급(1배), 시급(1.5배) 두 컬럼 표시
+ * - 연장/야간/휴일 근무 수당 계산 편의
  * v1.0.1 - db 호환성 수정 (2025-12-02)
- *   - assignment.department → assignment.dept
- *   - employee.personal.name → employee.personalInfo.name
+ * - assignment.department → assignment.dept
+ * - employee.personal.name → employee.personalInfo.name
  * v1.0.0 - 최초 생성 (2025-12-02)
  * 
  * [의존성]
@@ -105,16 +105,16 @@ function _isFullMonthMaternityLeave(emp, monthStart, monthEnd) {
         const history = emp.maternityLeave?.history;
         if (!history || history.length === 0) return false;
         
-        // 어떤 휴직 이력이 해당 월 전체를 포함하는지 확인
+ // 어떤 휴직 이력이 해당 월 전체를 포함하는지 확인
         for (const leave of history) {
             const leaveStart = leave.startDate;
-            // 복직일이 있으면 복직일, 없으면 예정종료일 사용
+ // 복직일이 있으면 복직일, 없으면 예정종료일 사용
             const leaveEnd = leave.returnedAt || leave.plannedEndDate;
             
             if (!leaveStart || !leaveEnd) continue;
             
-            // 휴직 시작일 <= 월 시작일 AND 휴직 종료일 >= 월 종료일
-            // → 해당 월 전체가 휴직 기간에 포함됨
+ // 휴직 시작일 <= 월 시작일 AND 휴직 종료일 >= 월 종료일
+ // → 해당 월 전체가 휴직 기간에 포함됨
             if (leaveStart <= monthStart && leaveEnd >= monthEnd) {
                 return true;
             }
@@ -144,7 +144,7 @@ function loadSalaryStatusModule() {
         
         container.innerHTML = _generateSalaryStatusHTML();
         
-        // 기본값 설정 (현재 연월)
+ // 기본값 설정 (현재 연월)
         _setDefaultDateValues();
         
         로거_인사?.info('급여 현황표 모듈 로드 완료');
@@ -186,10 +186,10 @@ function _generateSalaryStatusHTML() {
     
     return `
         <div class="card">
-            <div class="card-title">📊 급여 현황표</div>
+            <div class="card-title"><span class="card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> 급여 현황표</div>
             
             <div class="alert alert-info">
-                <span>💡</span>
+                <span class="alert-svg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
                 <span>기준 연월의 재직자별 급여 정보를 조회합니다. 급여 설정이 완료되어야 정확한 정보가 표시됩니다.</span>
             </div>
             
@@ -235,20 +235,20 @@ function _generateSalaryStatusHTML() {
                             <span>시급을 정수로 표시</span>
                         </label>
                         <div class="decimal-option-hint" id="salaryStatusDecimalHint">
-                            💡 급여설정이 "소수점 유지"로 되어 있어 시급이 소수점 2자리까지 표시됩니다.
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> 급여설정이 "소수점 유지"로 되어 있어 시급이 소수점 2자리까지 표시됩니다.
                         </div>
                     </div>
                 </div>
                 
                 <div class="filter-actions">
                     <button class="btn btn-primary" onclick="generateSalaryStatus()">
-                        📊 현황표 생성
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> 현황표 생성
                     </button>
                     
                     <!-- 육아휴직자 제외 옵션 -->
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 12px;background:#fef3c7;border-radius:6px;border:1px solid #fcd34d;margin-left:12px;">
                         <input type="checkbox" id="salaryStatusExcludeMaternity" checked>
-                        <span>🤱 육아휴직자 제외</span>
+                        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg> 육아휴직자 제외</span>
                     </label>
                 </div>
             </div>
@@ -296,7 +296,7 @@ function _generateSalaryStatusHTML() {
                 justify-content: flex-end;
             }
             
-            /* 소수점 옵션 스타일 */
+ /* 소수점 옵션 스타일 */
             .decimal-option-group {
                 flex: 1;
                 background: #fef3c7;
@@ -332,7 +332,7 @@ function _generateSalaryStatusHTML() {
                 margin-bottom: 12px;
             }
             
-            /* 결과 테이블 스타일 */
+ /* 결과 테이블 스타일 */
             .salary-status-table-container {
                 margin-top: 20px;
                 overflow-x: auto;
@@ -381,7 +381,7 @@ function _generateSalaryStatusHTML() {
                 font-weight: 600;
             }
             
-            /* 요약 카드 */
+ /* 요약 카드 */
             .salary-summary-cards {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -406,7 +406,7 @@ function _generateSalaryStatusHTML() {
                 margin-top: 4px;
             }
             
-            /* 액션 버튼 */
+ /* 액션 버튼 */
             .salary-status-actions {
                 display: flex;
                 gap: 8px;
@@ -426,7 +426,7 @@ async function generateSalaryStatus() {
     try {
         로거_인사?.info('급여 현황표 생성 시작');
         
-        // 조회 조건 수집
+ // 조회 조건 수집
         const year = parseInt(document.getElementById('salaryStatusYear')?.value, 10);
         const month = parseInt(document.getElementById('salaryStatusMonth')?.value, 10);
         const deptFilter = document.getElementById('salaryStatusDept')?.value || '';
@@ -438,35 +438,35 @@ async function generateSalaryStatus() {
             return;
         }
         
-        // 기준일 설정 (해당 월의 마지막 날)
+ // 기준일 설정 (해당 월의 마지막 날)
         const lastDay = new Date(year, month, 0).getDate();
         const targetDate = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
         const monthStart = `${year}-${String(month).padStart(2, '0')}-01`;
         const monthEnd = targetDate;
         
-        // 시급 절사 설정 확인
+ // 시급 절사 설정 확인
         const ordinarySettings = SalarySettingsManager?.getOrdinarySettingsByYear?.(year) || {};
         const hourlyWageRounding = ordinarySettings.hourlyWageRounding || { type: 'decimal', unit: 1, method: 'floor' };
         const isDecimalMode = hourlyWageRounding.type === 'decimal';
         
-        // 명절휴가비 산입 방식 확인
+ // 명절휴가비 산입 방식 확인
         const holidayBonusMethod = ordinarySettings.holidayBonusMethod || 'annual';
         const holidayBonusMonthlyRate = SalaryCalculator?.getHolidayBonusMonthlyRate?.(year) || '10.0';
         
-        // 소수점 유지 설정일 때 체크박스 표시
+ // 소수점 유지 설정일 때 체크박스 표시
         const decimalOptionsEl = document.getElementById('salaryStatusDecimalOptions');
         if (decimalOptionsEl) {
             decimalOptionsEl.style.display = isDecimalMode ? 'flex' : 'none';
         }
         
-        // 설정 저장
+ // 설정 저장
         _salaryStatusSettings = {
             year, month, targetDate, deptFilter, payTypeFilter, excludeMaternity,
             isDecimalMode, hourlyWageRounding,
             holidayBonusMethod, holidayBonusMonthlyRate
         };
         
-        // 전체 재직자 급여 정보 조회 - ✅ v2.0.0: async API 버전
+ // 전체 재직자 급여 정보 조회 - v2.0.0: async API 버전
         let data = await SalaryCalculator.getAllEmployeesSalaryInfo(targetDate);
         
         if (!data || data.length === 0) {
@@ -474,19 +474,19 @@ async function generateSalaryStatus() {
             return;
         }
         
-        // ⭐ [v1.9.0] rawHourlyWage를 hourlyWage로 사용 (배율 적용 시점 설정 반영)
+ // [v1.9.0] rawHourlyWage를 hourlyWage로 사용 (배율 적용 시점 설정 반영)
         data = data.map(d => ({
             ...d,
             hourlyWage: d.rawHourlyWage || d.hourlyWage
         }));
         
-        // 육아휴직자 제외 필터
+ // 육아휴직자 제외 필터
         if (excludeMaternity) {
             data = data.filter(d => {
                 const emp = d.employee;
                 if (!emp) return true;
                 
-                // 해당 월 전체가 육아휴직인지 확인
+ // 해당 월 전체가 육아휴직인지 확인
                 if (_isFullMonthMaternityLeave(emp, monthStart, monthEnd)) {
                     로거_인사?.debug(`육아휴직 제외: ${emp.personalInfo?.name}`);
                     return false;
@@ -495,12 +495,12 @@ async function generateSalaryStatus() {
             });
         }
         
-        // 부서 필터 적용
+ // 부서 필터 적용
         if (deptFilter) {
             data = data.filter(d => d.assignment?.dept === deptFilter);
         }
         
-        // 급여방식 필터 적용
+ // 급여방식 필터 적용
         if (payTypeFilter) {
             if (payTypeFilter === 'rank') {
                 data = data.filter(d => d.isRankBased === true);
@@ -509,7 +509,7 @@ async function generateSalaryStatus() {
             }
         }
         
-        // 조직도 설정에서 직위 순서 가져오기
+ // 조직도 설정에서 직위 순서 가져오기
         let positionOrderMap = new Map();
         try {
             const orgChartSettings = localStorage.getItem('hr_org_chart_settings');
@@ -525,31 +525,31 @@ async function generateSalaryStatus() {
             로거_인사?.warn('조직도 설정 로드 실패', e);
         }
         
-        // 정렬 (부서 → 직위순서 → 급여유형 → 호봉 → 입사일)
+ // 정렬 (부서 → 직위순서 → 급여유형 → 호봉 → 입사일)
         data.sort((a, b) => {
-            // 1차: 부서 (가나다순)
+ // 1차: 부서 (가나다순)
             const deptA = a.assignment?.dept || '';
             const deptB = b.assignment?.dept || '';
             if (deptA !== deptB) return deptA.localeCompare(deptB, 'ko');
             
-            // 2차: 직위 순서 (조직도설정 order)
+ // 2차: 직위 순서 (조직도설정 order)
             const posA = a.position || '';
             const posB = b.position || '';
             const orderA = positionOrderMap.get(posA) || 999;
             const orderB = positionOrderMap.get(posB) || 999;
             if (orderA !== orderB) return orderA - orderB;
             
-            // 3차: 급여 유형 (호봉제 → 연봉제)
+ // 3차: 급여 유형 (호봉제 → 연봉제)
             if (a.isRankBased !== b.isRankBased) {
                 return a.isRankBased ? -1 : 1;
             }
             
-            // 4차: 호봉 (높은 순)
+ // 4차: 호봉 (높은 순)
             if (a.isRankBased && b.isRankBased && a.rank && b.rank) {
                 if (a.rank !== b.rank) return b.rank - a.rank;
             }
             
-            // 5차: 입사일 (빠른 순)
+ // 5차: 입사일 (빠른 순)
             const entryA = a.entryDate || '';
             const entryB = b.entryDate || '';
             if (entryA && entryB && entryA !== entryB) {
@@ -559,13 +559,13 @@ async function generateSalaryStatus() {
             return 0;
         });
         
-        // 데이터 저장
+ // 데이터 저장
         _salaryStatusData = data;
         
-        // 부서 필터 옵션 업데이트
+ // 부서 필터 옵션 업데이트
         _updateDeptFilterOptions(data);
         
-        // 결과 렌더링
+ // 결과 렌더링
         _renderSalaryStatusResult(data);
         
         로거_인사?.info('급여 현황표 생성 완료', { count: data.length });
@@ -632,14 +632,14 @@ function _renderSalaryStatusResult(data) {
     
     const settings = _salaryStatusSettings;
     
-    // 집계 계산
+ // 집계 계산
     const totalCount = data.length;
     const rankBasedCount = data.filter(d => d.isRankBased).length;
     const salaryBasedCount = data.filter(d => !d.isRankBased).length;
     const totalBaseSalary = data.reduce((sum, d) => sum + (d.baseSalary || 0), 0);
     const totalOrdinaryWage = data.reduce((sum, d) => sum + (d.ordinaryWage || 0), 0);
     
-    // 평균 시급 계산 (설정 반영된 값 기준)
+ // 평균 시급 계산 (설정 반영된 값 기준)
     const avgHourlyWage1x = totalCount > 0 
         ? data.reduce((sum, d) => sum + _getHourlyWage1xValue(d.hourlyWage, d.year), 0) / totalCount 
         : 0;
@@ -647,7 +647,7 @@ function _renderSalaryStatusResult(data) {
         ? data.reduce((sum, d) => sum + _getHourlyWage15xValue(d.hourlyWage, d.year), 0) / totalCount 
         : 0;
     
-    // 평균 시급 표시용 포맷
+ // 평균 시급 표시용 포맷
     const showAsInteger = document.getElementById('salaryStatusShowInteger')?.checked || false;
     const avgHourlyWageDisplay = settings.isDecimalMode && !showAsInteger 
         ? _formatCurrency(avgHourlyWage1x, 2)
@@ -659,7 +659,7 @@ function _renderSalaryStatusResult(data) {
     container.innerHTML = `
         <div class="card">
             <div class="card-title">
-                📊 ${settings.year}년 ${settings.month}월 급여 현황표
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> ${settings.year}년 ${settings.month}월 급여 현황표
                 <span style="font-size:14px;font-weight:400;color:#6b7280;margin-left:8px;">
                     (기준일: ${settings.targetDate})
                 </span>
@@ -688,16 +688,16 @@ function _renderSalaryStatusResult(data) {
             <!-- 액션 버튼 -->
             <div class="salary-status-actions">
                 <button class="btn btn-secondary btn-sm" onclick="downloadSalaryStatusExcel()">
-                    📥 엑셀 다운로드
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 엑셀 다운로드
                 </button>
                 <button class="btn btn-secondary btn-sm" onclick="printSalaryStatus()">
-                    🖨️ 인쇄
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> 인쇄
                 </button>
             </div>
             
             ${settings.isDecimalMode && showAsInteger ? `
             <div class="decimal-notice">
-                ⚠️ 시급 컬럼은 정수로 표시되어 있으나, <strong>실제 값은 소수점이 포함</strong>되어 있습니다. 
+                시급 컬럼은 정수로 표시되어 있으나, <strong>실제 값은 소수점이 포함</strong>되어 있습니다. 
                 정확한 계산이 필요한 경우 엑셀을 다운로드하세요.
             </div>
             ` : ''}
@@ -800,10 +800,10 @@ function downloadSalaryStatusExcel() {
         
         const settings = _salaryStatusSettings;
         
-        // 데이터 구성
+ // 데이터 구성
         const rows = [];
         
-        // 헤더 (명절휴가비 컬럼명은 설정에 따라 다르게 표시)
+ // 헤더 (명절휴가비 컬럼명은 설정에 따라 다르게 표시)
         const holidayBonusHeader = settings.holidayBonusMethod === 'monthly' 
             ? `명절휴가비(${settings.holidayBonusMonthlyRate}%)`
             : '명절휴가비(월환산)';
@@ -814,7 +814,7 @@ function downloadSalaryStatusExcel() {
             '주근로시간', '월소정근로시간', '시급(1배)', '시급(1.5배)'
         ]);
         
-        // 데이터 행
+ // 데이터 행
         _salaryStatusData.forEach((d, index) => {
             rows.push([
                 index + 1,
@@ -835,12 +835,12 @@ function downloadSalaryStatusExcel() {
             ]);
         });
         
-        // 워크북 생성
+ // 워크북 생성
         const ws = XLSX.utils.aoa_to_sheet(rows);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, '급여현황표');
         
-        // 열 너비 설정
+ // 열 너비 설정
         ws['!cols'] = [
             { wch: 5 },   // No
             { wch: 15 },  // 부서
@@ -859,7 +859,7 @@ function downloadSalaryStatusExcel() {
             { wch: 10 }   // 시급(1.5배)
         ];
         
-        // 다운로드
+ // 다운로드
         const filename = `급여현황표_${settings.year}년${settings.month}월.xlsx`;
         XLSX.writeFile(wb, filename);
         
@@ -886,7 +886,7 @@ function printSalaryStatus() {
         
         const settings = _salaryStatusSettings;
         
-        // 인쇄 스타일
+ // 인쇄 스타일
         const printStyles = `
             <style>
                 @page {
@@ -938,15 +938,15 @@ function printSalaryStatus() {
             </style>
         `;
         
-        // 집계 계산
+ // 집계 계산
         const totalCount = _salaryStatusData.length;
         const totalBaseSalary = _salaryStatusData.reduce((sum, d) => sum + (d.baseSalary || 0), 0);
         const totalOrdinaryWage = _salaryStatusData.reduce((sum, d) => sum + (d.ordinaryWage || 0), 0);
         
-        // 체크박스 상태 확인
+ // 체크박스 상태 확인
         const showAsInteger = document.getElementById('salaryStatusShowInteger')?.checked || false;
         
-        // 평균 시급 계산 (설정 반영된 값 기준)
+ // 평균 시급 계산 (설정 반영된 값 기준)
         const avgHourlyWage1x = totalCount > 0 
             ? _salaryStatusData.reduce((sum, d) => sum + _getHourlyWage1xValue(d.hourlyWage, d.year), 0) / totalCount 
             : 0;
@@ -954,7 +954,7 @@ function printSalaryStatus() {
             ? _salaryStatusData.reduce((sum, d) => sum + _getHourlyWage15xValue(d.hourlyWage, d.year), 0) / totalCount 
             : 0;
         
-        // 평균 시급 표시용 포맷
+ // 평균 시급 표시용 포맷
         const avgHourlyWageDisplay = settings.isDecimalMode && !showAsInteger 
             ? _formatCurrency(avgHourlyWage1x, 2)
             : _formatCurrency(Math.round(avgHourlyWage1x));
@@ -962,12 +962,12 @@ function printSalaryStatus() {
             ? _formatCurrency(avgHourlyWage15x, 2)
             : _formatCurrency(Math.round(avgHourlyWage15x));
         
-        // 소수점 안내 문구 (정수 표시 체크 시에만)
+ // 소수점 안내 문구 (정수 표시 체크 시에만)
         const decimalNotice = settings.isDecimalMode && showAsInteger 
-            ? '<div style="background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;padding:8px 12px;border-radius:4px;font-size:10px;margin-bottom:10px;">⚠️ 시급은 정수로 표시되어 있으나, 실제 값은 소수점이 포함되어 있습니다.</div>'
+            ? '<div style="background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;padding:8px 12px;border-radius:4px;font-size:10px;margin-bottom:10px;">시급은 정수로 표시되어 있으나, 실제 값은 소수점이 포함되어 있습니다.</div>'
             : '';
         
-        // 인쇄 내용
+ // 인쇄 내용
         const printContent = `
             <!DOCTYPE html>
             <html>
@@ -1048,7 +1048,7 @@ function printSalaryStatus() {
             </html>
         `;
         
-        // 인쇄 창 열기
+ // 인쇄 창 열기
         const printWindow = window.open('', '_blank');
         printWindow.document.write(printContent);
         printWindow.document.close();
@@ -1096,21 +1096,21 @@ function _getHourlyWage1xValue(hourlyWage, year) {
     try {
         if (!hourlyWage) return 0;
         
-        // ⭐ [v1.6.0] SalaryCalculator.getRatedHourlyWage 사용
+ // [v1.6.0] SalaryCalculator.getRatedHourlyWage 사용
         if (typeof SalaryCalculator !== 'undefined' && SalaryCalculator.getRatedHourlyWage) {
             return SalaryCalculator.getRatedHourlyWage(hourlyWage, 1, year);
         }
         
-        // fallback: 기존 방식
+ // fallback: 기존 방식
         const settings = SalarySettingsManager?.getOrdinarySettingsByYear?.(year) || {};
         const rounding = settings.hourlyWageRounding || { type: 'decimal', unit: 1, method: 'floor' };
         
         if (rounding.type === 'decimal') {
-            // 소수점 유지 설정: 원본값 그대로
+ // 소수점 유지 설정: 원본값 그대로
             return hourlyWage;
         }
         
-        // 정수 처리 설정: 이미 적용된 값 반환
+ // 정수 처리 설정: 이미 적용된 값 반환
         return Math.floor(hourlyWage);
     } catch (error) {
         로거_인사?.error('_getHourlyWage1xValue 오류', error);
@@ -1125,7 +1125,7 @@ function _getHourlyWage1xValue(hourlyWage, year) {
  * @param {number} year - 연도
  * @returns {number} 시급(1.5배) - 설정에 따라 소수점 또는 정수
  * 
- * ⭐ [v1.6.0] applyTiming 설정 반영
+ * [v1.6.0] applyTiming 설정 반영
  * - 'after' (기본값): 원시급 × 1.5 → 절사
  * - 'before': 원시급 → 절사 → × 1.5
  */
@@ -1133,27 +1133,27 @@ function _getHourlyWage15xValue(hourlyWage, year) {
     try {
         if (!hourlyWage) return 0;
         
-        // ⭐ [v1.6.0] SalaryCalculator.getRatedHourlyWage 사용
+ // [v1.6.0] SalaryCalculator.getRatedHourlyWage 사용
         if (typeof SalaryCalculator !== 'undefined' && SalaryCalculator.getRatedHourlyWage) {
             return SalaryCalculator.getRatedHourlyWage(hourlyWage, 1.5, year);
         }
         
-        // fallback: 기존 방식 (절사된 시급 × 1.5)
+ // fallback: 기존 방식 (절사된 시급 × 1.5)
         const settings = SalarySettingsManager?.getOrdinarySettingsByYear?.(year) || {};
         const rounding = settings.hourlyWageRounding || { type: 'decimal', unit: 1, method: 'floor' };
         
-        // 시급(1배) 원본값
+ // 시급(1배) 원본값
         const hourly1x = _getHourlyWage1xValue(hourlyWage, year);
         
-        // 1.5배 계산
+ // 1.5배 계산
         const raw15 = hourly1x * 1.5;
         
         if (rounding.type === 'decimal') {
-            // 소수점 유지 설정: 소수점 그대로
+ // 소수점 유지 설정: 소수점 그대로
             return raw15;
         }
         
-        // 정수 처리 설정: 설정된 단위/방식으로 절사
+ // 정수 처리 설정: 설정된 단위/방식으로 절사
         const unit = rounding.unit || 1;
         const method = rounding.method || 'floor';
         
@@ -1185,11 +1185,11 @@ function _getHourlyWage1xDisplay(hourlyWage, year) {
     const showAsInteger = document.getElementById('salaryStatusShowInteger')?.checked || false;
     
     if (settings.isDecimalMode && !showAsInteger) {
-        // 소수점 유지 + 소수점 표시: 2자리
+ // 소수점 유지 + 소수점 표시: 2자리
         return _formatCurrency(value, 2);
     }
     
-    // 정수로 표시
+ // 정수로 표시
     return _formatCurrency(Math.floor(value));
 }
 
@@ -1206,11 +1206,11 @@ function _getHourlyWage15xDisplay(hourlyWage, year) {
     const showAsInteger = document.getElementById('salaryStatusShowInteger')?.checked || false;
     
     if (settings.isDecimalMode && !showAsInteger) {
-        // 소수점 유지 + 소수점 표시: 2자리
+ // 소수점 유지 + 소수점 표시: 2자리
         return _formatCurrency(value, 2);
     }
     
-    // 정수로 표시 (소수점 유지 설정이라도 체크 시 반올림)
+ // 정수로 표시 (소수점 유지 설정이라도 체크 시 반올림)
     return _formatCurrency(Math.round(value));
 }
 
@@ -1224,14 +1224,14 @@ function _updateDecimalHint() {
     
     if (hintEl) {
         if (isChecked) {
-            hintEl.innerHTML = '⚠️ <strong>주의:</strong> 화면과 인쇄에는 정수로 표시되지만, <strong>실제 값은 소수점이 포함</strong>되어 있습니다. 엑셀에는 원본 소수점 값이 저장됩니다.';
+            hintEl.innerHTML = '<strong>주의:</strong> 화면과 인쇄에는 정수로 표시되지만, <strong>실제 값은 소수점이 포함</strong>되어 있습니다. 엑셀에는 원본 소수점 값이 저장됩니다.';
             hintEl.style.background = '#fef2f2';
             hintEl.style.color = '#991b1b';
             hintEl.style.padding = '8px 12px';
             hintEl.style.borderRadius = '4px';
             hintEl.style.border = '1px solid #fca5a5';
         } else {
-            hintEl.innerHTML = '💡 급여설정이 "소수점 유지"로 되어 있어 시급이 소수점 2자리까지 표시됩니다.';
+            hintEl.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> 급여설정이 "소수점 유지"로 되어 있어 시급이 소수점 2자리까지 표시됩니다.';
             hintEl.style.background = 'transparent';
             hintEl.style.color = '#92400e';
             hintEl.style.padding = '0';
@@ -1245,10 +1245,10 @@ function _updateDecimalHint() {
  * @private
  */
 function _onDecimalOptionChange() {
-    // 힌트 메시지 업데이트
+ // 힌트 메시지 업데이트
     _updateDecimalHint();
     
-    // 데이터가 있으면 테이블 새로고침
+ // 데이터가 있으면 테이블 새로고침
     if (_salaryStatusData && _salaryStatusData.length > 0) {
         _renderSalaryStatusResult(_salaryStatusData);
     }
@@ -1284,5 +1284,5 @@ if (typeof window !== 'undefined') {
 
 // 초기화 로그
 if (typeof CONFIG !== 'undefined' && CONFIG.DEBUG) {
-    console.log('✅ 급여현황_인사.js 로드 완료');
+    console.log(' 급여현황_인사.js 로드 완료');
 }
