@@ -157,6 +157,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 /* ===== 카드 ===== */
 .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 1px solid #e5e7eb; }
 .card-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: #111827; }
+.card-icon { display: inline-flex; align-items: center; color: #6b7280; }
+.card-icon svg { width: 16px; height: 16px; }
+
+/* alert 내 SVG 아이콘 */
+.alert-svg-icon { display: inline-flex; align-items: center; flex-shrink: 0; }
+.alert-svg-icon svg { width: 16px; height: 16px; }
+
+/* 버튼 내 SVG 정렬 */
+.btn svg, .btn-register svg, .btn-add-career svg { vertical-align: middle; }
 
 /* ===== 폼 ===== */
 .form-group { margin-bottom: 20px; }
@@ -171,11 +180,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 /* ===== 라디오 그룹 ===== */
 .radio-group { display: flex; gap: 20px; margin-top: 8px; }
 .radio-label { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px 16px; border: 2px solid #e8ebed; border-radius: 8px; transition: all 0.3s; }
-.radio-label:hover { border-color: #667eea; background: #f8f9fe; }
+.radio-label:hover { border-color: #4f46e5; background: #f8f9fe; }
 .radio-label input[type="radio"] { width: 18px; height: 18px; cursor: pointer; }
 
 /* ===== 자동생성 필드 ===== */
-.auto-generated { background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%); border: 2px solid #667eea !important; font-weight: 600; color: #667eea; }
+.auto-generated { background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%); border: 2px solid #4f46e5 !important; font-weight: 600; color: #4f46e5; }
 
 /* ===== 버튼 (2026 플랫 스타일) ===== */
 .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
@@ -220,7 +229,7 @@ tr:hover td { background: #fafbfc; }
 /* ===== 직원 목록 ===== */
 .employee-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
 .employee-item { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
-.employee-item:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); border-color: #667eea; }
+.employee-item:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); border-color: #4f46e5; }
 .employee-name { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
 .employee-position { font-size: 14px; color: #6b7280; margin-bottom: 4px; }
 .employee-dept { font-size: 13px; color: #9ca3af; }
@@ -1185,7 +1194,7 @@ tr:hover td { background: #fafbfc; }
 .cert-employee-group-header {
     font-size: 12px;
     font-weight: 600;
-    color: #667eea;
+    color: #4f46e5;
     padding: 8px 12px;
     background: #f3f4f6;
     border-radius: 4px;
@@ -1207,7 +1216,7 @@ tr:hover td { background: #fafbfc; }
 
 /* 프로필 헤더 영역 */
 .emp-profile-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
     padding: 28px 32px;
     position: relative;
     border-radius: 20px 20px 0 0;
@@ -1306,7 +1315,7 @@ tr:hover td { background: #fafbfc; }
 }
 
 .profile-stat-item.highlight .profile-stat-label {
-    color: #667eea;
+    color: #4f46e5;
 }
 
 .profile-stat-value {
@@ -1316,7 +1325,7 @@ tr:hover td { background: #fafbfc; }
 }
 
 .profile-stat-item.highlight .profile-stat-value {
-    color: #667eea;
+    color: #4f46e5;
 }
 
 /* 탭 네비게이션 */
@@ -1348,7 +1357,7 @@ tr:hover td { background: #fafbfc; }
 }
 
 .emp-detail-tab.active {
-    color: #667eea;
+    color: #4f46e5;
     font-weight: 600;
 }
 
@@ -1359,12 +1368,12 @@ tr:hover td { background: #fafbfc; }
     left: 0;
     right: 0;
     height: 3px;
-    background: #667eea;
+    background: #4f46e5;
     border-radius: 3px 3px 0 0;
 }
 
 .tab-count {
-    background: #667eea;
+    background: #4f46e5;
     color: white;
     font-size: 11px;
     font-weight: 600;
@@ -1492,8 +1501,8 @@ tr:hover td { background: #fafbfc; }
 }
 
 .emp-stat-card.active {
-    border-color: #667eea;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #4f46e5;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
 }
 
 .emp-stat-card.active .emp-stat-label,
@@ -1537,9 +1546,11 @@ tr:hover td { background: #fafbfc; }
     left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 16px;
+    display: flex;
+    align-items: center;
     color: #9ca3af;
 }
+.emp-search-box .emp-search-icon svg { width: 16px; height: 16px; }
 
 .emp-search-box .form-control {
     padding-left: 42px;
@@ -1564,12 +1575,12 @@ tr:hover td { background: #fafbfc; }
 }
 
 .emp-filter-select:hover {
-    border-color: #667eea;
+    border-color: #4f46e5;
 }
 
 .emp-filter-select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #4f46e5;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -1589,12 +1600,14 @@ tr:hover td { background: #fafbfc; }
     background: transparent;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 18px;
     transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #6b7280;
 }
+.emp-view-btn svg { width: 16px; height: 16px; }
+.emp-view-btn.active svg { color: #4f46e5; }
 
 .emp-view-btn:hover {
     background: white;
@@ -2123,7 +2136,7 @@ tr:hover td { background: #fafbfc; }
     padding: 4px 10px;
     border-radius: 12px;
     background: #e0e7ff;
-    color: #667eea;
+    color: #4f46e5;
     font-weight: 500;
 }
 
@@ -2274,7 +2287,7 @@ tr:hover td { background: #fafbfc; }
 .radio-label-inline input[type="radio"] {
     width: 16px;
     height: 16px;
-    accent-color: #667eea;
+    accent-color: #4f46e5;
 }
 
 /* v3.4.1 경력 없음 체크박스 */
@@ -2299,7 +2312,7 @@ tr:hover td { background: #fafbfc; }
 .checkbox-label input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: #667eea;
+    accent-color: #4f46e5;
 }
 
 /* 경력 섹션 숨김 */
@@ -2318,7 +2331,7 @@ tr:hover td { background: #fafbfc; }
 .optional-badge {
     display: inline-block;
     background: #e0e7ff;
-    color: #667eea;
+    color: #4f46e5;
     font-size: 11px;
     font-weight: 600;
     padding: 2px 8px;
@@ -2418,7 +2431,7 @@ tr:hover td { background: #fafbfc; }
 }
 
 .radio-label:hover {
-    border-color: #667eea;
+    border-color: #4f46e5;
     background: #f8f9fe;
 }
 
@@ -2430,16 +2443,16 @@ tr:hover td { background: #fafbfc; }
 }
 
 .radio-label input[type="radio"]:checked + span {
-    color: #667eea;
+    color: #4f46e5;
     font-weight: 600;
 }
 
 .radio-label input[type="radio"]:checked ~ .radio-hint {
-    color: #667eea;
+    color: #4f46e5;
 }
 
 .radio-label:has(input:checked) {
-    border-color: #667eea;
+    border-color: #4f46e5;
     background: #f0f3ff;
 }
 
@@ -2467,8 +2480,8 @@ tr:hover td { background: #fafbfc; }
 }
 
 .btn-add-career:hover {
-    border-color: #667eea;
-    color: #667eea;
+    border-color: #4f46e5;
+    color: #4f46e5;
     background: #f8f9fe;
 }
 
@@ -2492,7 +2505,7 @@ tr:hover td { background: #fafbfc; }
 }
 
 .career-section:hover {
-    border-color: #667eea;
+    border-color: #4f46e5;
 }
 
 .career-header {
@@ -2507,7 +2520,7 @@ tr:hover td { background: #fafbfc; }
 .career-title {
     font-size: 15px;
     font-weight: 600;
-    color: #667eea;
+    color: #4f46e5;
 }
 
 /* 모바일 반응형 */
@@ -2604,8 +2617,8 @@ tr:hover td { background: #fafbfc; }
 .career-edit-info-card {
     margin: 20px 28px;
     padding: 20px;
-    background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-    border: 1px solid #667eea30;
+    background: linear-gradient(135deg, #4f46e515 0%, #7c3aed15 100%);
+    border: 1px solid #4f46e530;
     border-radius: 12px;
 }
 
@@ -2615,7 +2628,7 @@ tr:hover td { background: #fafbfc; }
     gap: 12px;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 1px solid #667eea20;
+    border-bottom: 1px solid #4f46e520;
 }
 
 .career-edit-info-icon {
@@ -2708,7 +2721,7 @@ tr:hover td { background: #fafbfc; }
 }
 
 .career-edit-section:hover {
-    border-color: #667eea;
+    border-color: #4f46e5;
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
 }
 
@@ -2736,7 +2749,7 @@ tr:hover td { background: #fafbfc; }
     justify-content: center;
     width: 24px;
     height: 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
     color: white;
     font-size: 12px;
     font-weight: 700;
@@ -2783,8 +2796,8 @@ tr:hover td { background: #fafbfc; }
 }
 
 .btn-add-career-edit:hover {
-    border-color: #667eea;
-    color: #667eea;
+    border-color: #4f46e5;
+    color: #4f46e5;
     background: #f8f9fe;
 }
 
@@ -2876,8 +2889,8 @@ tr:hover td { background: #fafbfc; }
 }
 
 .edit-tab-btn.active {
-    color: #667eea;
-    border-bottom-color: #667eea;
+    color: #4f46e5;
+    border-bottom-color: #4f46e5;
     background: transparent;
 }
 
@@ -2950,14 +2963,14 @@ tr:hover td { background: #fafbfc; }
 
 .payment-option.selected,
 .payment-option:has(input:checked) {
-    border-color: #667eea;
+    border-color: #4f46e5;
     background: #f0f5ff;
 }
 
 .payment-option input[type="radio"] {
     width: 18px;
     height: 18px;
-    accent-color: #667eea;
+    accent-color: #4f46e5;
 }
 
 .payment-label {
@@ -3010,7 +3023,7 @@ tr:hover td { background: #fafbfc; }
 .cs-checkbox-label input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: #667eea;
+    accent-color: #4f46e5;
 }
 
 .cs-hint {
