@@ -165,7 +165,7 @@ function _updateGreeting() {
         }
         
  // 조직명
-        const orgName = db.data?.settings?.organizationName || '인사관리시스템';
+        const orgName = db.data?.settings?.organizationName || '사회복지시설 인사관리시스템';
         const orgElement = document.getElementById('dashboard-org-name');
         if (orgElement) {
             orgElement.textContent = orgName;
@@ -1412,7 +1412,7 @@ function getTopManagerInfo() {
  */
 window.addEventListener('DOMContentLoaded', function() {
     try {
-        console.log(' 인사관리 시스템 v3.0 시작');
+        console.log(' 사회복지시설 인사관리 시스템 v3.0 시작');
         로거_인사?.info('시스템 초기화 시작');
         
  // 1. 대시보드 업데이트

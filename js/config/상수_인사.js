@@ -28,7 +28,7 @@ const CONFIG_인사 = Object.freeze({
  * 시스템 정보
  */
     VERSION: '3.0',
-    SYSTEM_NAME: '인사관리시스템',
+    SYSTEM_NAME: '사회복지시설 인사관리시스템',
     
  /**
  * localStorage 설정
@@ -304,7 +304,7 @@ const CONFIG_인사 = Object.freeze({
         EXCEL_FILENAME_FORMAT: 'YYYY-MM-DD',
         
  // 인쇄 설정
-        PRINT_TITLE_PREFIX: '인사관리시스템',
+        PRINT_TITLE_PREFIX: '사회복지시설 인사관리시스템',
         PAGE_SIZE: 'A4',
         ORIENTATION: 'landscape' // 'portrait' | 'landscape'
     }),
