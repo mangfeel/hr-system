@@ -10,10 +10,14 @@
  * - 주당근무시간 관리 v3.0.9 추가
  * - 발령별 이전 경력 인정율 반영 v3.1.0 추가
  * 
- * @version 4.1.1
+ * @version 4.1.2
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v4.1.2 (2026-02-10) 호봉 재계산 후 Electron 포커스 복원
+ * - recalculateCareer() 저장 완료 후 focusWindow() 호출
+ * - blur/focus 트릭으로 입력란 커서 비활성화 문제 해결
+ * 
  * v4.1.1 (2026-01-30) 저장 후 UI 블로킹 개선 및 캐시 무효화
  * - API_인사.clearBatchCache() 호출하여 배치 캐시 무효화
  * - 호봉 변경 후 직원목록에 즉시 반영되지 않던 문제 해결
@@ -527,6 +531,13 @@ async function recalculateCareer() {
                 loadEmployeeList();
             }
         }, 50);
+        
+        // ⭐ v3.1.2: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
+        if (window.electronAPI?.focusWindow) {
+            setTimeout(async () => {
+                await window.electronAPI.focusWindow();
+            }, 500);
+        }
         
     } catch (error) {
         로거_인사?.error('경력 재계산 실패', error);

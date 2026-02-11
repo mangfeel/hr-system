@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SW HRM 사용자 매뉴얼 - 사회복지 인사관리시스템</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#4f46e5;--primary-light:#e0e7ff;--primary-dark:#3730a3;
+  --text:#1e293b;--text-light:#64748b;--text-lighter:#94a3b8;
+  --bg:#ffffff;--bg-alt:#f8fafc;--bg-card:#ffffff;
+  --border:#e2e8f0;--border-light:#f1f5f9;
+  --success:#059669;--success-bg:#ecfdf5;
+  --warning:#d97706;--warning-bg:#fffbeb;
+  --danger:#dc2626;--danger-bg:#fef2f2;
+  --info:#0284c7;--info-bg:#f0f9ff;
+  --radius:12px;--shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.05);
+}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{
+  font-family:'Noto Sans KR',sans-serif;color:var(--text);
+  background:var(--bg-alt);line-height:1.8;font-size:15px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── 상단 네비게이션 ── */
+.nav-bar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;
+}
+.nav-inner{
+  max-width:960px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
+.nav-logo-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--primary),#7c3aed);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;font-size:14px;
+}
+.nav-logo-text{font-weight:700;font-size:16px;letter-spacing:-.3px}
+.nav-logo-sub{font-size:11px;color:var(--text-light);font-weight:400}
+.nav-toc-btn{
+  padding:8px 16px;border-radius:8px;
+  border:1px solid var(--border);background:#fff;
+  font-size:13px;color:var(--text-light);cursor:pointer;
+  font-family:inherit;
+}
+.nav-toc-btn:hover{border-color:var(--primary);color:var(--primary)}
+
+/* ── 레이아웃 ── */
+.layout{max-width:960px;margin:0 auto;padding:32px 24px;display:block}
+.sidebar{
+  display:none;position:fixed;top:60px;right:16px;bottom:auto;
+  width:280px;max-height:calc(100vh - 80px);overflow-y:auto;
+  z-index:100;padding-right:8px;
+  border-radius:var(--radius);
+  box-shadow:0 8px 32px rgba(0,0,0,.18);
+}
+.sidebar.open{display:block}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.content{width:100%;min-width:0}
+
+/* ── 플로팅 목차 버튼 ── */
+.toc-fab{
+  position:fixed;bottom:24px;right:24px;z-index:101;
+  width:48px;height:48px;border-radius:50%;border:none;
+  background:linear-gradient(135deg,var(--primary),#7c3aed);
+  color:#fff;font-size:20px;cursor:pointer;
+  box-shadow:0 4px 14px rgba(79,70,229,.4);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .2s,box-shadow .2s;
+  font-family:inherit;
+}
+.toc-fab:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(79,70,229,.5)}
+.toc-fab.active{background:#ef4444;box-shadow:0 4px 14px rgba(239,68,68,.4)}
+
+/* ── 오버레이 배경 ── */
+.toc-overlay{
+  display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,.3);z-index:99;
+}
+.toc-overlay.open{display:block}
+
+/* ── 사이드바 목차 ── */
+.toc{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);padding:20px;box-shadow:var(--shadow)}
+.toc-title{font-size:12px;font-weight:600;color:var(--text-lighter);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.toc a{
+  display:block;padding:6px 0;color:var(--text-light);
+  text-decoration:none;font-size:13px;line-height:1.5;
+  transition:color .15s;border-left:2px solid transparent;
+  padding-left:12px;margin-left:-1px;
+}
+.toc a:hover{color:var(--primary)}
+.toc a.active{color:var(--primary);border-left-color:var(--primary);font-weight:500}
+.toc a.sub{padding-left:28px;font-size:12.5px}
+.toc-divider{height:1px;background:var(--border-light);margin:8px 0}
+
+/* ── 섹션 ── */
+.section{
+  background:var(--bg-card);border-radius:var(--radius);
+  border:1px solid var(--border);box-shadow:var(--shadow);
+  padding:36px 40px;margin-bottom:24px;
+}
+.section-header{
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:28px;padding-bottom:20px;
+  border-bottom:1px solid var(--border-light);
+}
+.section-num{
+  width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(135deg,var(--primary),#7c3aed);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:16px;flex-shrink:0;
+}
+.section-title{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+
+/* ── 서브 섹션 ── */
+.sub-section{margin-bottom:32px}
+.sub-section:last-child{margin-bottom:0}
+.sub-title{
+  font-size:17px;font-weight:600;color:var(--text);
+  margin-bottom:16px;display:flex;align-items:center;gap:10px;
+}
+.sub-title::before{
+  content:'';width:4px;height:20px;border-radius:2px;
+  background:var(--primary);flex-shrink:0;
+}
+.sub-desc{color:var(--text-light);margin-bottom:16px;line-height:1.9}
+
+/* ── 입력 필드 설명 테이블 ── */
+.field-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:10px;overflow:hidden;border:1px solid var(--border);margin:16px 0}
+.field-table th{
+  background:var(--bg-alt);font-size:12px;font-weight:600;
+  color:var(--text-light);text-align:left;padding:10px 16px;
+  text-transform:uppercase;letter-spacing:.5px;
+  border-bottom:1px solid var(--border);
+}
+.field-table td{padding:12px 16px;border-bottom:1px solid var(--border-light);font-size:14px;vertical-align:top}
+.field-table tr:last-child td{border-bottom:none}
+.field-table tr:hover td{background:#fafbfe}
+.field-name{font-weight:600;color:var(--text);white-space:nowrap}
+.field-required{
+  display:inline-block;font-size:10px;font-weight:600;
+  color:var(--danger);background:var(--danger-bg);
+  padding:1px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;
+}
+.field-auto{
+  display:inline-block;font-size:10px;font-weight:600;
+  color:var(--info);background:var(--info-bg);
+  padding:1px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;
+}
+.field-optional{
+  display:inline-block;font-size:10px;font-weight:500;
+  color:var(--text-lighter);background:var(--border-light);
+  padding:1px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;
+}
+
+/* ── 알림/팁 박스 ── */
+.tip-box{
+  border-radius:10px;padding:16px 20px;margin:16px 0;
+  font-size:14px;line-height:1.7;display:flex;gap:12px;
+}
+.tip-box.info{background:var(--info-bg);border-left:3px solid var(--info);color:#075985}
+.tip-box.success{background:var(--success-bg);border-left:3px solid var(--success);color:#065f46}
+.tip-box.warning{background:var(--warning-bg);border-left:3px solid var(--warning);color:#92400e}
+.tip-box.danger{background:var(--danger-bg);border-left:3px solid var(--danger);color:#991b1b}
+.tip-icon{font-size:18px;flex-shrink:0;line-height:1.5}
+
+/* ── 순서 리스트 ── */
+.step-list{counter-reset:step;margin:16px 0;padding:0;list-style:none}
+.step-list li{
+  counter-increment:step;position:relative;
+  padding:12px 0 12px 48px;
+  border-bottom:1px dashed var(--border-light);
+}
+.step-list li:last-child{border-bottom:none}
+.step-list li::before{
+  content:counter(step);position:absolute;left:0;top:12px;
+  width:32px;height:32px;border-radius:50%;
+  background:var(--primary-light);color:var(--primary);
+  font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.step-list li strong{color:var(--text)}
+
+/* ── 메뉴 구조 카드 ── */
+.menu-tree{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}
+.menu-card{
+  background:var(--bg-alt);border:1px solid var(--border);
+  border-radius:10px;padding:16px;
+}
+.menu-card-title{font-weight:600;font-size:14px;color:var(--primary);margin-bottom:8px}
+.menu-card ul{list-style:none;padding:0}
+.menu-card li{
+  font-size:13px;color:var(--text-light);padding:3px 0;
+  padding-left:14px;position:relative;
+}
+.menu-card li::before{
+  content:'';position:absolute;left:0;top:10px;
+  width:6px;height:6px;border-radius:50%;background:var(--border);
+}
+
+/* ── 탭 ── */
+.tab-group{margin:16px 0}
+.tab-header{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab-btn{
+  padding:10px 20px;border:none;background:transparent;
+  font-size:13px;font-weight:500;color:var(--text-light);
+  cursor:pointer;border-bottom:2px solid transparent;
+  font-family:inherit;transition:.15s;
+}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ── 키보드 단축키 ── */
+kbd{
+  display:inline-block;padding:2px 8px;font-size:12px;
+  font-family:'Fira Code',monospace;
+  background:var(--bg-alt);border:1px solid var(--border);
+  border-radius:5px;color:var(--text);box-shadow:0 1px 0 var(--border);
+}
+
+/* ── 히어로 배너 ── */
+.hero{
+  background:linear-gradient(135deg,#312e81 0%,#4f46e5 50%,#7c3aed 100%);
+  color:#fff;padding:60px 40px;border-radius:var(--radius);
+  margin-bottom:24px;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-50%;right:-20%;
+  width:500px;height:500px;border-radius:50%;
+  background:rgba(255,255,255,.04);
+}
+.hero::after{
+  content:'';position:absolute;bottom:-30%;left:-10%;
+  width:400px;height:400px;border-radius:50%;
+  background:rgba(255,255,255,.03);
+}
+.hero-content{position:relative;z-index:1}
+.hero-badge{
+  display:inline-block;padding:4px 14px;border-radius:20px;
+  background:rgba(255,255,255,.15);font-size:12px;font-weight:500;
+  margin-bottom:16px;backdrop-filter:blur(4px);
+}
+.hero h1{font-size:32px;font-weight:700;margin-bottom:8px;letter-spacing:-.5px}
+.hero p{font-size:15px;opacity:.8;max-width:500px}
+.hero-meta{
+  margin-top:24px;display:flex;gap:24px;
+  font-size:13px;opacity:.6;
+}
+
+/* ── FAQ ── */
+.faq-item{border-bottom:1px solid var(--border-light);padding:16px 0}
+.faq-item:last-child{border-bottom:none}
+.faq-q{
+  font-weight:600;color:var(--text);cursor:pointer;
+  display:flex;align-items:center;gap:10px;
+  padding:4px 0;
+}
+.faq-q::before{
+  content:'Q';display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:6px;
+  background:var(--primary);color:#fff;font-size:12px;
+  font-weight:700;flex-shrink:0;
+}
+.faq-a{
+  margin-top:8px;padding-left:34px;
+  color:var(--text-light);font-size:14px;line-height:1.8;
+}
+
+/* ── 반응형 ── */
+@media(max-width:768px){
+  .layout{padding:16px}
+  .section{padding:24px 20px}
+  .hero{padding:40px 24px}
+  .hero h1{font-size:24px}
+  .sidebar{right:8px;width:calc(100vw - 32px);max-width:320px}
+  .toc-fab{bottom:16px;right:16px;width:44px;height:44px;font-size:18px}
+}
+
+/* 인쇄 스타일 */
+@media print{
+  .nav-bar,.sidebar{display:none!important}
+  .layout{max-width:100%;padding:0}
+  .section{break-inside:avoid;box-shadow:none;border:1px solid #ddd}
+}
+</style>
+</head>
+<body>
+
+<!-- 상단 내비게이션 -->
+<div class="nav-bar">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#top">
+      <div class="nav-logo-icon">HR</div>
+      <div>
+        <div class="nav-logo-text">SW HRM 사용자 매뉴얼</div>
+        <div class="nav-logo-sub">사회복지 인사관리시스템</div>
+      </div>
+    </a>
+    <button class="nav-toc-btn" onclick="toggleToc()">☰ 목차</button>
+  </div>
+</div>
+
+<div class="toc-overlay" id="tocOverlay" onclick="toggleToc()"></div>
+
+<div class="layout" id="top">
+
+  <!-- 사이드바 목차 (플로팅 패널) -->
+  <aside class="sidebar" id="sidebarToc">
+    <div class="toc">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div class="toc-title" style="margin-bottom:0">목차</div>
+        <button onclick="toggleToc()" style="border:none;background:none;cursor:pointer;font-size:18px;color:var(--text-light);padding:4px 8px;border-radius:4px;" title="닫기">✕</button>
+      </div>
+      <a href="#sec-start">시작하기</a>
+      <a href="#sec-start-install" class="sub">설치 및 로그인</a>
+      <a href="#sec-start-order" class="sub">권장 설정 순서</a>
+      <div class="toc-divider"></div>
+      <a href="#sec-layout">화면 구성</a>
+      <a href="#sec-dashboard">대시보드</a>
+      <div class="toc-divider"></div>
+      <a href="#sec-hr">인력관리</a>
+      <a href="#sec-hr-register" class="sub">신규 직원 등록</a>
+      <a href="#sec-hr-list" class="sub">직원 목록/수정</a>
+      <a href="#sec-hr-career" class="sub">경력 관리</a>
+      <a href="#sec-hr-assign" class="sub">인사 발령</a>
+      <a href="#sec-hr-concurrent" class="sub">겸직/직무대리</a>
+      <a href="#sec-hr-contract" class="sub">근로계약서</a>
+      <a href="#sec-hr-maternity" class="sub">육아 휴직</a>
+      <a href="#sec-hr-reduced" class="sub">단축근로 관리</a>
+      <a href="#sec-hr-awards" class="sub">포상 등록</a>
+      <a href="#sec-hr-retire" class="sub">퇴사 관리</a>
+      <div class="toc-divider"></div>
+      <a href="#sec-labor">노무관리</a>
+      <a href="#sec-labor-settings" class="sub">급여 설정</a>
+      <a href="#sec-labor-status" class="sub">급여 현황표</a>
+      <a href="#sec-labor-overtime" class="sub">시간외근무</a>
+      <div class="toc-divider"></div>
+      <a href="#sec-report">보고서</a>
+      <div class="toc-divider"></div>
+      <a href="#sec-system">시스템</a>
+      <a href="#sec-system-org" class="sub">조직 설정</a>
+      <a href="#sec-system-backup" class="sub">백업/복원</a>
+      <a href="#sec-system-import" class="sub">가져오기</a>
+      <div class="toc-divider"></div>
+      <a href="#sec-faq">자주 묻는 질문</a>
+    </div>
+  </aside>
+
+  <!-- 메인 콘텐츠 -->
+  <main class="content">
+
+    <!-- 히어로 배너 -->
+    <div class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">📖 사용자 매뉴얼 v3.2</div>
+        <h1>사회복지 인사관리시스템</h1>
+        <p>직원 등록부터 급여 관리, 보고서 출력까지 — 사회복지시설 인사 업무를 위한 올인원 시스템 사용 가이드</p>
+        <div class="hero-meta">
+          <span>SW HRM</span>
+          <span>저작권등록 제C-2026-007142호</span>
+          <span>2026년 2월</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1. 시작하기 -->
+    <!-- ============================================================ -->
+    <div class="section" id="sec-start">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div class="section-title">시작하기</div>
+      </div>
+
+      <div class="sub-section" id="sec-start-install">
+        <div class="sub-title">설치 및 로그인</div>
+        <ol class="step-list">
+          <li>홈페이지에서 <strong>"다운로드"</strong> 버튼을 클릭하여 설치파일을 받습니다.</li>
+          <li>다운로드된 <strong>HRM-System-Setup-x.x.x.exe</strong> 를 실행합니다.<br>
+            <span style="color:var(--text-light);font-size:13px;">Windows 보안 경고 시 → "추가 정보" → "실행" 클릭</span></li>
+          <li>설치 완료 후 프로그램을 실행하면 <strong>로그인 화면</strong>이 나타납니다.</li>
+          <li><strong>"회원가입"</strong> 버튼 클릭 → 이메일과 비밀번호를 입력하여 계정을 만듭니다.</li>
+          <li>관리자에게 <strong>라이선스 발급</strong>을 요청합니다.<br>
+            <span style="color:var(--text-light);font-size:13px;">이메일로 승인이 완료되면 프로그램 사용이 가능합니다.</span></li>
+          <li>승인된 이메일과 비밀번호로 <strong>로그인</strong>하면 메인 화면이 열립니다.</li>
+        </ol>
+      </div>
+
+      <div class="sub-section" id="sec-start-order">
+        <div class="sub-title">권장 설정 순서</div>
+        <p class="sub-desc">프로그램에 처음 들어오면 데이터가 비어 있습니다. 아래 순서대로 설정하면 가장 효율적입니다.</p>
+        <ol class="step-list">
+          <li><strong>시스템 → 조직 설정</strong><br>기관 이름·주소·연락처·퇴직연금 정보를 먼저 입력합니다.<br>
+            <span style="color:var(--text-light);font-size:13px;">예: 조직명 "○○종합사회복지관", 주소 "경기도 ○○시 ○○로 123", 연락처 "031-123-4567", 퇴직연금 "농협은행 DC형"</span></li>
+          <li><strong>인력관리 → 신규 직원 등록</strong><br>직원 정보를 한 명씩 등록합니다. 직급·직위는 자유 텍스트로 입력하면 됩니다.<br>
+            <span style="color:var(--text-light);font-size:13px;">예: 직급 "사회복지사", 직위 "팀장" 등을 직접 입력. 기존 데이터가 있으면 시스템 → 가져오기에서 엑셀로 일괄 등록도 가능합니다.</span></li>
+          <li><strong>노무관리 → 급여 설정 → 직급 관리</strong><br>"직원에서 직급 불러오기" 버튼을 클릭하면 등록된 직원들의 직급이 자동으로 추출됩니다.<br>
+            <span style="color:var(--text-light);font-size:13px;">예: 직원 등록 시 입력한 "사회복지사, 일반직 1급, 관리직 2급" 등이 호봉제/연봉제로 자동 분류됩니다.</span></li>
+          <li><strong>노무관리 → 급여 설정 → 급여표 관리</strong><br>불러온 직급별로 호봉에 따른 기본급 금액을 입력합니다.<br>
+            <span style="color:var(--text-light);font-size:13px;">예: 사회복지사 1호봉 2,127,600원, 2호봉 2,180,000원 … (인건비가이드라인 참고)</span></li>
+          <li><strong>시스템 → 조직도 설정</strong><br>직원 발령 데이터에서 직위와 부서가 자동 추출됩니다. 직위 순서(관장 → 부관장 → 팀장 → 주임 …)와 부서 합치기만 설정하면 됩니다.</li>
+        </ol>
+        <div class="tip-box info">
+          <span class="tip-icon">💡</span>
+          <div><strong>왜 이 순서가 중요한가요?</strong><br>직원 등록 시 입력한 <strong>직급·직위 정보</strong>가 급여 설정과 조직도 설정의 기초 데이터가 됩니다. 직원을 먼저 등록하면 급여 설정에서 "직급 불러오기", 조직도 설정에서 "직위/부서 자동 추출" 기능으로 입력 작업이 크게 줄어듭니다.<br>
+          <span style="color:var(--text-light);font-size:13px;">급여표 입력 전에 등록한 직원의 기본급은 급여표 완성 후 자동으로 반영됩니다.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 2. 화면 구성 -->
+    <!-- ============================================================ -->
+    <div class="section" id="sec-layout">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <div class="section-title">화면 구성</div>
+      </div>
+
+      <p class="sub-desc">프로그램 화면은 크게 세 영역으로 나뉩니다.</p>
+
+      <div class="sub-section">
+        <div class="sub-title">상단 메뉴 (5개 대분류)</div>
+        <p class="sub-desc">화면 맨 위의 메뉴 버튼을 클릭하면 해당 카테고리의 하위 메뉴가 왼쪽 사이드바에 표시됩니다. 오른쪽 끝에는 현재 라이선스 정보가 표시됩니다.</p>
+        <div class="menu-tree">
+          <div class="menu-card"><div class="menu-card-title">대시보드</div><ul><li>메인 현황 화면</li></ul></div>
+          <div class="menu-card"><div class="menu-card-title">인력관리</div><ul><li>신규 직원 등록</li><li>직원 목록/수정</li><li>경력 관리</li><li>인사 발령</li><li>겸직/직무대리</li><li>근로계약서</li><li>육아 휴직</li><li>단축근로 관리</li><li>포상 등록</li></ul></div>
+          <div class="menu-card"><div class="menu-card-title">노무관리</div><ul><li>급여 설정</li><li>급여 현황표</li><li>시간외근무 관리</li></ul></div>
+          <div class="menu-card"><div class="menu-card-title">보고서</div><ul><li>조직도</li><li>인사카드</li><li>포상 현황</li><li>교차 통계 분석</li><li>근속현황표</li><li>연명부</li><li>호봉획정표</li><li>입사자 목록</li><li>퇴사자 목록</li></ul></div>
+          <div class="menu-card"><div class="menu-card-title">시스템</div><ul><li>조직 설정</li><li>조직도 설정</li><li>겸직/직무대리 관리</li><li>백업/복원</li><li>가져오기</li><li>프로그램 정보</li></ul></div>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-title">왼쪽 사이드바</div>
+        <p class="sub-desc">카테고리별 하위 메뉴가 표시됩니다. 카테고리 이름을 클릭하면 접거나 펼 수 있고, 하위 메뉴를 클릭하면 해당 기능 화면으로 이동합니다.</p>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-title">빠른 검색</div>
+        <p class="sub-desc">사이드바 상단의 "빠른 검색..." 버튼을 클릭하거나 <kbd>Ctrl</kbd> + <kbd>K</kbd> 를 누르면 검색창이 열립니다. 직원 이름, 부서, 고유번호를 입력하면 해당 직원을 빠르게 찾을 수 있습니다.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 3. 대시보드 -->
+    <!-- ============================================================ -->
+    <div class="section" id="sec-dashboard">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <div class="section-title">대시보드</div>
+      </div>
+
+      <p class="sub-desc">프로그램을 열면 가장 먼저 보이는 메인 화면입니다. 등록된 직원 데이터를 기반으로 자동 집계된 현황을 보여줍니다.</p>
+
+      <table class="field-table">
+        <thead><tr><th>영역</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td class="field-name">통계 카드</td><td>전체 직원, 재직 중, 휴직 중, 퇴사, 평균 호봉을 한눈에 보여줍니다. 숫자를 클릭하면 상세 목록을 확인할 수 있습니다.</td></tr>
+          <tr><td class="field-name">빠른 실행</td><td>자주 쓰는 기능(직원 등록, 인사발령, 육아휴직, 호봉획정표)으로 바로 이동하는 버튼입니다.</td></tr>
+          <tr><td class="field-name">알림 / 예정</td><td>이번 달 승급 예정자, 복직 예정 직원 등을 자동으로 알려줍니다.</td></tr>
+          <tr><td class="field-name">이번 달 현황</td><td>당월 입사자, 퇴사자, 발령 건수, 승급자 수를 표시합니다.</td></tr>
+          <tr><td class="field-name">부서별 현황</td><td>부서별 재직 인원 수를 보여줍니다. 클릭하면 소속 직원 목록이 나타납니다.</td></tr>
+          <tr><td class="field-name">최근 활동</td><td>최근에 등록·수정한 직원 이력이 시간순으로 표시됩니다.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 4. 인력관리 -->
+    <!-- ============================================================ -->
+    <div class="section" id="sec-hr">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <div class="section-title">인력관리</div>
+      </div>
+
+      <div class="tip-box info">
+        <span class="tip-icon">💡</span>
+        <div><strong>직급·직위는 자유 입력</strong><br>직원 등록 시 직급과 직위는 텍스트로 직접 입력합니다. 등록 후 <strong>노무관리 → 급여 설정 → 직급 관리</strong>에서 "직원에서 직급 불러오기" 버튼을 클릭하면 입력한 직급이 자동으로 추출됩니다. 이후 급여표를 입력하면 기본급이 연동됩니다.<br>
+        <span style="color:var(--text-light);font-size:13px;">예: 직급 "사회복지사"를 입력하고 등록 → 급여 설정에서 직급 불러오기 → 급여표에 사회복지사 1호봉 2,127,600원 입력 → 기본급 자동 반영</span></div>
+      </div>
+
+      <!-- 4-1 신규 직원 등록 -->
+      <div class="sub-section" id="sec-hr-register">
+        <div class="sub-title">신규 직원 등록</div>
+        <p class="sub-desc">새 직원을 시스템에 등록하는 화면입니다. 3개 카드로 구성되며, <span style="color:var(--danger);font-weight:500;">*</span> 표시 항목은 반드시 입력해야 합니다.</p>
+
+        <strong style="display:block;margin:20px 0 8px;color:var(--primary)">카드 1 — 기본 정보</strong>
+        <table class="field-table">
+          <thead><tr><th style="width:160px">항목</th><th>입력 방법</th></tr></thead>
+          <tbody>
+            <tr><td><span class="field-name">고유번호</span><span class="field-auto">자동</span></td><td>시스템이 자동 부여합니다 (H001, H002 …). 수정 불가.<br>
+              <span style="color:var(--text-light);font-size:13px;">발령 코드도 이 번호 기준으로 생성됩니다. 예: H105-01(첫 번째 발령), H105-02(두 번째 발령)</span></td></tr>
+            <tr><td><span class="field-name">사원번호</span><span class="field-optional">선택</span></td><td>기관 자체 사원번호. 입사일 입력 시 자동 생성되며, 🔄 버튼이나 직접 수정도 가능.<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 2026년 입사 3번째 직원 → 2026-0003 자동 생성</span></td></tr>
+            <tr><td><span class="field-name">성명</span><span class="field-required">필수</span></td><td>직원 이름. 예: 김민수</td></tr>
+            <tr><td><span class="field-name">입사일</span><span class="field-required">필수</span></td><td>입사 날짜 선택. 이 날짜 기준으로 호봉과 근속기간이 자동 계산됩니다.<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 2024-03-02 입사, 과거 경력 3년 인정 → 입사호봉 4호봉 결정</span></td></tr>
+            <tr><td><span class="field-name">고용형태</span><span class="field-required">필수</span></td><td>정규직 / 무기계약직 / 계약직 / 육아휴직대체 중 선택<br>
+              <span style="color:var(--text-light);font-size:13px;">육아휴직대체: 기존 직원의 육아휴직 기간 동안 대체 근무하는 직원</span></td></tr>
+          </tbody>
+        </table>
+
+        <strong style="display:block;margin:20px 0 8px;color:var(--primary)">카드 2 — 소속 및 급여 정보</strong>
+        <table class="field-table">
+          <thead><tr><th style="width:180px">항목</th><th>입력 방법</th></tr></thead>
+          <tbody>
+            <tr><td><span class="field-name">부서</span><span class="field-required">필수</span></td><td>소속 부서명. 예: 사무국, 사회복지팀, 주간보호팀, 장애인활동지원팀</td></tr>
+            <tr><td><span class="field-name">직위</span><span class="field-required">필수</span></td><td>직위. 예: 관장, 부장, 팀장, 주임, 사원<br>
+              <span style="color:var(--text-light);font-size:13px;">조직도 표시 순서와 직책수당에 영향을 줍니다.</span></td></tr>
+            <tr><td><span class="field-name">직급</span><span class="field-required">필수</span></td><td>인건비가이드라인 기준 직급. 예: 사회복지사, 일반직 1급, 관리직 2급, 선임사회복지사<br>
+              <span style="color:var(--warning);font-size:13px;">⚠ 이 직급이 급여표와 연동되어 기본급이 결정됩니다. 급여 설정 → 직급 관리에서 먼저 등록한 직급명과 정확히 일치해야 합니다.</span></td></tr>
+            <tr><td><span class="field-name">직종</span><span class="field-required">필수</span></td><td>자격 기반 직종. 예: 사회복지사, 요양보호사, 간호사, 영양사, 조리원<br>
+              <span style="color:var(--text-light);font-size:13px;">직급과 직종은 다를 수 있습니다. 예: 직급 "일반직 1급" + 직종 "사무원"</span></td></tr>
+            <tr><td><span class="field-name">주 소정근로시간</span></td><td>1주일 근로시간 입력 (기본 40시간). 단축근로자는 해당 시간 입력.<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 주 40시간 → 월 209시간 / 주 35시간 → 월 182.87시간 / 주 15시간(시간제) → 월 78.37시간</span></td></tr>
+            <tr><td><span class="field-name">월 소정근로시간</span><span class="field-auto">자동</span></td><td>주 소정근로시간을 기반으로 자동 계산됩니다. (주간 시간 × 4.345주)</td></tr>
+            <tr><td><span class="field-name">급여체계</span><span class="field-required">필수</span></td><td>호봉제 또는 연봉제 선택<br>
+              <span style="color:var(--text-light);font-size:13px;">호봉제: 직급별 급여표에 따라 기본급 결정 / 연봉제: 별도 연봉 책정</span></td></tr>
+          </tbody>
+        </table>
+
+        <strong style="display:block;margin:20px 0 8px;color:var(--primary)">카드 3 — 과거 경력 (선택)</strong>
+        <p class="sub-desc">입사 전 동종 기관 경력이 있으면 입력합니다. 경력이 없으면 "경력 없음(신입)" 체크하면 됩니다. 입력한 경력은 호봉 계산에 자동 반영됩니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:180px">항목</th><th>입력 방법</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">근무처/경력 내용</td><td>이전 근무기관. 예: ○○주간보호센터, △△노인복지관, □□장애인복지관</td></tr>
+            <tr><td class="field-name">시작일 / 종료일</td><td>해당 기관에서의 근무 기간. 예: 2018-03-01 ~ 2022-02-28 (4년)</td></tr>
+            <tr><td class="field-name">인정률 (%)</td><td>경력 인정 비율 (0~100%). 기관 규정에 따라 입력.<br>
+              <span style="color:var(--text-light);font-size:13px;">동종(사회복지관→사회복지관): 100% / 유사(노인요양→사회복지관): 80% / 이종: 기관 규정</span></td></tr>
+            <tr><td class="field-name">주당근무시간</td><td>해당 기관에서의 주 근로시간 (1~40). 풀타임이 아닌 경우 비례 환산됩니다.<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 실제 4년 근무, 주 20시간(파트타임) → 환산 경력 2년</span></td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box info">
+          <span class="tip-icon">💡</span>
+          <div><strong>등록 예시 시나리오</strong><br>
+          김민수 사회복지사가 2026-03-02에 입사합니다.<br>
+          ① 기본 정보: 성명 "김민수", 입사일 2026-03-02, 정규직<br>
+          ② 소속/급여: 사회복지팀, 주임, 직급 "사회복지사", 직종 "사회복지사", 주 40시간, 호봉제<br>
+          ③ 과거 경력: △△노인복지관 2022-03-02~2025-02-28 (3년), 인정률 100%, 주 40시간<br>
+          → <strong>"호봉 계산 및 등록"</strong> 클릭 → 과거경력 3년 반영 → <strong>입사호봉 4호봉</strong> 자동 산출, 기본급 2,234,700원 결정<br>
+          "경력 추가" 버튼으로 여러 건의 경력을 입력할 수 있습니다.</div>
+        </div>
+
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>실전 예시 — 경력직 사회복지사 등록</strong><br><br>
+          <strong>상황:</strong> 김사회(사회복지사 1급)가 2026년 3월 2일 ○○종합사회복지관에 입사합니다. 이전에 △△주간보호센터에서 3년(2022-03-01 ~ 2025-02-28), □□노인복지관에서 2년(2020-03-01 ~ 2022-02-28) 근무한 경력이 있습니다.<br><br>
+          <strong>입력 방법:</strong><br>
+          ① 카드1: 성명 "김사회", 입사일 "2026-03-02", 고용형태 "정규직"<br>
+          ② 카드2: 부서 "사회복지팀", 직위 "사원", 직급 "사회복지사", 직종 "사회복지사", 급여체계 "호봉제"<br>
+          ③ 카드3: 경력1 — □□노인복지관, 2020-03-01 ~ 2022-02-28, 인정률 100%, 주당 40시간<br>
+          　　　　 경력2 — △△주간보호센터, 2022-03-01 ~ 2025-02-28, 인정률 100%, 주당 40시간<br><br>
+          <strong>결과:</strong> "호봉 계산 및 등록" 클릭 → 환산 총 경력 5년, 입사호봉 6호봉, 기본급 2,386,400원 자동 산출</div>
+        </div>
+      </div>
+
+      <!-- 4-2 직원 목록/수정 -->
+      <div class="sub-section" id="sec-hr-list">
+        <div class="sub-title">직원 목록/수정</div>
+        <p class="sub-desc">등록된 직원을 조회하고 정보를 수정하는 화면입니다. 상단에 상태별 통계 카드(전체/재직/퇴사/휴직중)가 표시되며, 클릭하면 해당 상태로 필터링됩니다.</p>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">조회 기능</strong>
+        <table class="field-table">
+          <thead><tr><th style="width:140px">기능</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">상태 필터</td><td>상단 통계 카드(전체/재직/퇴사/휴직중) 클릭 시 해당 상태만 필터링. 예: "휴직중" 클릭 → 육아휴직 중인 직원만 표시</td></tr>
+            <tr><td class="field-name">검색</td><td>이름, 부서, 고유번호로 실시간 검색. 예: "복지팀" 입력 → 사회복지팀 소속 직원만 표시</td></tr>
+            <tr><td class="field-name">부서 필터</td><td>드롭다운에서 특정 부서만 선택하여 보기. 예: "주간보호팀" 선택</td></tr>
+            <tr><td class="field-name">정렬</td><td>이름순 / 입사일(최신/오래된순) / 호봉(높은/낮은순) 선택</td></tr>
+            <tr><td class="field-name">보기 전환</td><td><strong>카드 보기</strong>(직원별 카드 — 사진·부서·직위·호봉 한눈에 확인)와 <strong>테이블 보기</strong>(고유번호·이름·부서·직위·호봉·입사일·상태를 표 형식으로 표시)를 전환할 수 있습니다.</td></tr>
+          </tbody>
+        </table>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">직원 상세 정보 (4개 탭)</strong>
+        <p class="sub-desc">직원 카드의 "상세보기"를 클릭하면 상세 모달이 열립니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:140px">탭</th><th>표시 내용</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">기본정보</td><td>개인정보(성명·성별·생년월일·주민번호), 소속정보(부서·직위·직급·직종·고용형태), 자격증(최대 2개), 연락처(전화·이메일·주소)<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 김민수 / 남 / 1990-05-15 / 사회복지팀 주임 / 사회복지사 1급, 요양보호사</span></td></tr>
+            <tr><td class="field-name">경력·호봉</td><td>현재 호봉, 입사호봉, 첫승급일, 근속기간, 차기승급일, 과거경력 목록<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 현재 6호봉 / 입사호봉 4호봉 / 근속 2년 / 차기승급일 2027-01-01</span><br>"경력 편집" 버튼으로 경력 추가/수정 후 호봉 재계산 가능</td></tr>
+            <tr><td class="field-name">발령이력</td><td>모든 인사발령 내역 (발령일·부서·직위·급여방식·근무시간). 건수 배지 표시<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 2024-03-02 신규임용(사회복지팀/사원) → 2025-03-01 승진(사회복지팀/주임)</span></td></tr>
+            <tr><td class="field-name">휴직이력</td><td>육아휴직 이력 (시작일·종료일·복직 여부). 건수 배지 표시</td></tr>
+          </tbody>
+        </table>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">직원 정보 수정 (3개 탭)</strong>
+        <p class="sub-desc">"수정" 버튼을 클릭하면 수정 모달이 열립니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:140px">탭</th><th>수정 가능 항목</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">기본정보</td><td>성명, 주민등록번호(입력 시 생년월일·성별 자동 파싱), 사원번호, 직종, 고용형태<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 주민번호 "900315-2XXXXXX" 입력 → 생년월일 "1990-03-15", 성별 "여" 자동 입력</span></td></tr>
+            <tr><td class="field-name">자격·연락처</td><td>자격증1/2, 전화번호, 이메일, 주소<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 자격증1 "사회복지사 1급", 자격증2 "요양보호사"</span></td></tr>
+            <tr><td class="field-name">급여·발령</td><td>급여방식(호봉제↔연봉제) 변경, 연속근무 연결(동일인물 재입사 시 근속 통합), 발령별 이전 경력 인정율 수정<br>
+              <span style="color:var(--text-light);font-size:13px;">예1: 연봉제→호봉제 전환 시 경력 인정율 80%로 조정 → 호봉 자동 재계산<br>
+              예2: 퇴사 후 재입사한 직원 → "연속근무 적용" 체크 → "자동 검색"으로 이전 기록 연결 → 근속기간이 통합 계산되어 퇴직금·근속수당에 반영</span></td></tr>
+          </tbody>
+        </table>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)" id="sec-hr-retire">퇴사 처리</strong>
+        <p class="sub-desc">직원 카드의 "퇴사 처리" 버튼을 클릭하면 퇴사 모달이 열립니다. 퇴사일을 입력하고 확인하면 해당 직원의 상태가 "퇴사"로 변경됩니다.</p>
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>예시:</strong> 홍길동 직원이 2026-02-28 퇴사 → 퇴사 처리 모달에서 퇴사일 "2026-02-28" 입력 → 확인<br>
+          직원 목록에서 상태가 "퇴사"로 변경되고, 연명부·통계에서 해당일 이후로 제외됩니다.</div>
+        </div>
+        <div class="tip-box warning">
+          <span class="tip-icon">⚠️</span>
+          <div>"삭제"는 데이터가 완전히 사라지며 복구할 수 없습니다. 퇴사한 직원은 삭제 대신 <strong>퇴사 처리</strong>를 권장합니다. 퇴사 처리된 직원은 나중에 "퇴사 취소"로 재직 상태로 되돌릴 수 있습니다.</div>
+        </div>
+      </div>
+
+      <!-- 4-3 경력 관리 -->
+      <div class="sub-section" id="sec-hr-career">
+        <div class="sub-title">경력 관리</div>
+        <p class="sub-desc">전체 직원의 경력 현황을 한눈에 보고, 승급 예정자를 확인합니다. 2개 탭으로 구성됩니다.</p>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">탭 1 — 전체 경력 현황</strong>
+        <table class="field-table">
+          <thead><tr><th style="width:150px">기능</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">통계 카드</td><td>전체 재직자, 호봉제, 연봉제, 과거경력 보유자 수를 카드로 한눈에 표시</td></tr>
+            <tr><td class="field-name">필터링</td><td>전체 / 호봉제만 / 연봉제만 / 과거경력 보유자만 필터 선택</td></tr>
+            <tr><td class="field-name">직원별 카드</td><td>각 직원의 현재 호봉, 근속기간, 과거경력 건수 표시</td></tr>
+            <tr><td class="field-name">경력 편집</td><td>"경력 편집" 버튼 클릭 → 과거 경력 추가/수정/삭제 및 호봉 재계산. 경력 변경 시 입사호봉과 첫승급일이 자동으로 다시 계산됩니다.<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 박복지 직원이 누락된 경력 1년 발견 → 경력 편집에서 추가 → 호봉 재계산 → 4호봉에서 5호봉으로 자동 변경</span></td></tr>
+          </tbody>
+        </table>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">탭 2 — 승급 예정자</strong>
+        <p class="sub-desc">향후 호봉이 오를 직원을 우선순위별로 보여줍니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:150px">우선순위</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#dc2626;margin-right:6px;"></span><strong style="color:#991b1b">이번 달</strong></td><td>승급일이 현재 월에 속하는 직원 (30일 이내). 즉시 조치 필요</td></tr>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ea580c;margin-right:6px;"></span><strong style="color:#9a3412">다음 달</strong></td><td>승급일이 다음 월에 속하는 직원 (60일 이내). 사전 준비 필요</td></tr>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#16a34a;margin-right:6px;"></span><strong style="color:#166534">3개월 이내</strong></td><td>승급일이 2~3개월 뒤인 직원. 참고용</td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>실전 예시 — 2026년 3월 승급 예정자 확인</strong><br><br>
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#dc2626;margin-right:4px;"></span> 이번 달: 김민수(사회복지사 5호봉 → 6호봉, 승급일 2026-03-02) — 기본급 2,350,200원 → 2,411,100원<br>
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ea580c;margin-right:4px;"></span> 다음 달: 박복지(일반직 1급 3호봉 → 4호봉, 승급일 2026-04-01) — 기본급 2,078,000원 → 2,130,000원<br>
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:4px;"></span> 3개월 내: 최영희(관리직 2급 5호봉 → 6호봉, 승급일 2026-05-15)<br><br>
+          <span style="color:var(--text-light);font-size:13px;">승급이 자동으로 반영되므로 별도 조치는 필요 없지만, 승급에 따른 급여 변동을 미리 파악하는 데 활용합니다.</span></div>
+        </div>
+      </div>
+
+      <!-- 4-4 인사 발령 -->
+      <div class="sub-section" id="sec-hr-assign">
+        <div class="sub-title">인사 발령</div>
+        <p class="sub-desc">부서 이동, 직위 변경, 급여방식 변경 등 인사 변동을 등록합니다. "발령 등록"과 "발령 내역" 2개 탭으로 구성됩니다.</p>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">발령 등록 (3단계)</strong>
+        <table class="field-table">
+          <thead><tr><th style="width:60px">단계</th><th style="width:140px">항목</th><th>입력 방법</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="2" style="font-weight:600;color:var(--primary)">①<br>발령 대상<br>선택</td><td><span class="field-name">직원</span><span class="field-required">필수</span></td><td>발령할 직원을 드롭다운에서 선택. 예: 홍길동 (사회복지팀/주임)</td></tr>
+            <tr><td><span class="field-name">발령일</span><span class="field-required">필수</span></td><td>발령이 적용되는 날짜 선택 (기본값: 오늘). 예: 2026-03-01</td></tr>
+            <tr><td rowspan="4" style="font-weight:600;color:var(--primary)">②<br>발령 정보</td><td><span class="field-name">부서</span><span class="field-required">필수</span></td><td>새로 배치할 부서. 예: 사무국</td></tr>
+            <tr><td><span class="field-name">직위</span><span class="field-required">필수</span></td><td>새 직위. 예: 팀장</td></tr>
+            <tr><td><span class="field-name">직급</span></td><td>새 직급 (선택). 예: 사회복지사</td></tr>
+            <tr><td><span class="field-name">고용형태</span></td><td>정규직 / 무기계약직 / 계약직 / 육아휴직대체. 변경 없으면 기존 값 유지</td></tr>
+            <tr><td rowspan="2" style="font-weight:600;color:var(--primary)">③<br>급여 및<br>근무조건</td><td><span class="field-name">급여방식</span><span class="field-required">필수</span></td><td>호봉제 또는 연봉제 선택 (세그먼트 버튼)</td></tr>
+            <tr><td><span class="field-name">근무시간</span></td><td>주당 근로시간 (기본 40). 월 소정근로시간은 자동 계산 표시</td></tr>
+          </tbody>
+        </table>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">발령 내역</strong>
+        <p class="sub-desc">등록된 발령 이력을 검색·필터링(전체/현재 발령만/종료 발령만)하여 조회하고, 수정·삭제할 수 있습니다.</p>
+        <div class="tip-box info">
+          <span class="tip-icon">💡</span>
+          <div><strong>발령 예시 시나리오</strong><br>
+          김민수 주임(사회복지팀)이 2026-03-01부로 사무국 팀장으로 승진 발령:<br>
+          ① 발령 대상: 김민수 선택, 발령일 2026-03-01<br>
+          ② 발령 정보: 부서 "사무국", 직위 "팀장", 직급 "사회복지사", 고용형태 "정규직"<br>
+          ③ 급여 및 근무조건: 호봉제, 주 40시간(월 209시간)<br>
+          → "인사발령 등록" 클릭 → 발령코드 H105-02 자동 생성, 직원 정보 즉시 반영</div>
+        </div>
+
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>실전 예시 — 부서 이동 + 직위 변경</strong><br><br>
+          <strong>상황:</strong> 사회복지팀 주임 김사회가 2026-03-01부로 사무국 팀장으로 발령됩니다.<br><br>
+          <strong>입력 방법:</strong><br>
+          ① 발령 대상 선택: 직원 "김사회", 발령일 "2026-03-01"<br>
+          ② 발령 정보: 부서 "사무국", 직위 "팀장", 직급 "사회복지사" (동일 유지)<br>
+          ③ 급여 및 근무조건: 급여방식 "호봉제", 근무시간 "40시간/주"<br><br>
+          <strong>결과:</strong> 발령 등록 → 김사회의 소속이 사무국/팀장으로 변경되고, 발령 내역에 기록됩니다. 직책수당도 팀장 기준으로 자동 변경됩니다.</div>
+        </div>
+      </div>
+
+      <!-- 4-5 겸직/직무대리 -->
+      <div class="sub-section" id="sec-hr-concurrent">
+        <div class="sub-title">겸직/직무대리</div>
+        <p class="sub-desc">한 직원이 본래 직위 외에 다른 직위를 겸직하거나, 상위 직위를 임시로 대행(직무대리)하는 경우를 관리합니다. 등록된 겸직/직무대리 정보는 급여 계산(직책수당)과 조직도에 반영됩니다.</p>
+
+        <table class="field-table">
+          <thead><tr><th style="width:150px">항목</th><th>입력 방법</th></tr></thead>
+          <tbody>
+            <tr><td><span class="field-name">직원 선택</span><span class="field-required">필수</span></td><td>겸직/직무대리 대상 직원 선택</td></tr>
+            <tr><td><span class="field-name">유형</span><span class="field-required">필수</span></td><td><strong>겸직</strong>: 본래 직위와 다른 직위를 동시에 수행<br><strong>직무대리</strong>: 상위 직위자의 부재 시 해당 직위를 임시 대행</td></tr>
+            <tr><td><span class="field-name">부서</span><span class="field-required">필수</span></td><td>겸직/대리 직위의 부서. 예: 사무국</td></tr>
+            <tr><td><span class="field-name">직위</span><span class="field-required">필수</span></td><td>겸직/대리 직위명. 예: 팀장</td></tr>
+            <tr><td><span class="field-name">시작일</span><span class="field-required">필수</span></td><td>겸직/대리 시작 날짜. 예: 2026-04-01</td></tr>
+            <tr><td><span class="field-name">종료일</span></td><td>종료 날짜 (미입력 시 계속 유효). 예: 2026-09-30</td></tr>
+            <tr><td class="field-name">비고</td><td>사유 등 메모. 예: 팀장 육아휴직 기간 직무대리</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>실전 예시 — 직무대리 등록</strong><br><br>
+          <strong>상황:</strong> 사회복지팀 이팀장이 2026-04-01부터 6개월간 육아휴직에 들어갑니다. 같은 팀 김주임이 팀장 직무를 대리합니다.<br><br>
+          <strong>입력:</strong> 직원 "김주임" 선택 → 유형 "직무대리" → 부서 "사회복지팀" → 직위 "팀장" → 시작일 "2026-04-01" → 종료일 "2026-09-30" → 비고 "이팀장 육아휴직 기간"<br><br>
+          <strong>효과:</strong> 김주임에게 팀장 직책수당(150,000원)이 해당 기간 동안 추가 지급됩니다. 통상임금 설정에서 "직무대리 직책수당 포함"을 체크했다면 시간외수당 계산에도 반영됩니다.</div>
+        </div>
+      </div>
+
+      <!-- 4-6 근로계약서 -->
+      <div class="sub-section" id="sec-hr-contract">
+        <div class="sub-title">근로계약서</div>
+        <p class="sub-desc">직원별 근로계약서를 자동 생성하고 인쇄합니다. 조직 설정의 기관 정보가 자동 반영됩니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:180px">항목</th><th>입력 방법</th></tr></thead>
+          <tbody>
+            <tr><td><span class="field-name">기준일 (계약일)</span><span class="field-required">필수</span></td><td>계약서 작성 기준 날짜. 이 날짜에 재직 중인 직원만 목록에 표시됩니다.</td></tr>
+            <tr><td><span class="field-name">직원 선택</span><span class="field-required">필수</span></td><td>호봉제 탭 / 연봉제 탭에서 해당 직원을 선택</td></tr>
+            <tr><td><span class="field-name">입사일 (근로개시일)</span></td><td>자동 표시, 수정 가능</td></tr>
+            <tr><td><span class="field-name">계약 시작일 / 종료일</span></td><td>계약직인 경우 입력</td></tr>
+            <tr><td><span class="field-name">수습기간 적용</span></td><td>신규 입사자 체크 시 1~3개월 수습기간 설정 가능</td></tr>
+            <tr><td><span class="field-name">근무시간 정보</span><span class="field-auto">자동</span></td><td>직원의 주당 근무시간, 월소정근로시간이 자동 조회 표시됩니다.</td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box info">
+          <span class="tip-icon">💡</span>
+          <div><strong>근로계약서 발급 예시</strong><br>
+          ① 기준일 "2026-01-01" 입력 → 해당 날짜에 재직 중인 직원이 호봉제/연봉제 탭에 자동 분류<br>
+          ② 호봉제 탭에서 "김민수" 선택 → 입사일, 근무시간, 급여 정보가 자동 표시<br>
+          ③ (계약직인 경우) 계약 시작일/종료일 입력, (신규 입사자인 경우) 수습기간 3개월 체크<br>
+          ④ 화면 하단에 <strong>근로계약서 미리보기</strong> 자동 생성 → 기본급 2,234,700원, 직책수당, 시간급 등 급여 설정 기반으로 자동 채워짐<br>
+          ⑤ "인쇄" 버튼으로 A4 출력. 조직 설정의 기관 정보(기관명·주소·대표자)가 자동 반영됩니다.</div>
+        </div>
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>실전 예시 — 2026년 근로계약서 작성</strong><br><br>
+          ① 기준일(계약일) "2026-03-01" 입력 → 해당 날짜 재직 중인 직원이 호봉제/연봉제 탭에 자동 분류<br>
+          ② 호봉제 탭에서 "김사회" 선택 → 입사일, 기본급(2,386,400원), 직책수당(150,000원), 시간급(12,136원) 자동 표시<br>
+          ③ 수습기간이 필요하면 "수습기간 적용" 체크 후 3개월 선택<br>
+          ④ 미리보기 확인 후 "인쇄" → A4 근로계약서 출력<br>
+          <span style="color:var(--text-light);font-size:13px;">* 조직 설정에서 입력한 기관명·주소·대표자명이 계약서에 자동 반영됩니다.</span></div>
+        </div>
+      </div>
+
+      <!-- 4-6 육아 휴직 -->
+      <div class="sub-section" id="sec-hr-maternity">
+        <div class="sub-title">육아 휴직</div>
+        <table class="field-table">
+          <thead><tr><th style="width:180px">항목</th><th>입력 방법</th></tr></thead>
+          <tbody>
+            <tr><td><span class="field-name">직원 선택</span><span class="field-required">필수</span></td><td>휴직할 직원을 선택. 예: 이지원 (사회복지팀/사원)</td></tr>
+            <tr><td><span class="field-name">휴직 시작일</span><span class="field-required">필수</span></td><td>육아휴직 시작 날짜. 예: 2026-04-01</td></tr>
+            <tr><td><span class="field-name">휴직 종료일 (예정)</span><span class="field-required">필수</span></td><td>복직 예정 날짜. 예: 2027-03-31 (1년)</td></tr>
+          </tbody>
+        </table>
+        <p class="sub-desc" style="margin-top:12px">등록 후 직원 상태가 "휴직 중"으로 변경됩니다. 아래 목록에서 "복직 처리" 버튼으로 복직할 수 있으며, 복직 후 부서/직위가 바뀌면 "인사 발령"에서 별도 등록해주세요.</p>
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>실전 예시 — 육아휴직 등록 및 복직</strong><br><br>
+          <strong>등록:</strong> 이지원 직원 선택 → 휴직 시작일 "2026-04-01", 종료일(예정) "2027-03-31" → 등록<br>
+          → 직원 상태 "휴직 중"으로 변경, 연명부·급여현황에서 제외<br><br>
+          <strong>복직:</strong> 복직일이 되면 목록에서 "복직 처리" 클릭 → 상태 "재직"으로 복원<br>
+          → 복직 시 사무국에서 주간보호팀으로 배치 변경된다면, 복직 처리 후 "인사 발령"에서 부서 변경 등록</div>
+        </div>
+      </div>
+
+      <!-- 4-7 단축근로 -->
+      <div class="sub-section" id="sec-hr-reduced">
+        <div class="sub-title">단축근로 관리</div>
+
+        <strong style="display:block;margin:12px 0 8px;color:var(--primary)">임산부 단축근로</strong>
+        <table class="field-table">
+          <thead><tr><th style="width:160px">항목</th><th>입력 방법</th></tr></thead>
+          <tbody>
+            <tr><td><span class="field-name">직원 선택</span><span class="field-required">필수</span></td><td>대상 직원 선택. 예: 박미영</td></tr>
+            <tr><td><span class="field-name">구분</span><span class="field-required">필수</span></td><td>임신 12주 이내 / 임신 32주 이후 / 고위험 임신(전 기간)<br>
+              <span style="color:var(--text-light);font-size:13px;">임산부는 1일 2시간 단축, 급여 100% 보장, 시간외근로·야간근로·휴일근로 금지</span></td></tr>
+            <tr><td><span class="field-name">출산예정일</span></td><td>출산 예정 날짜. 예: 2026-08-15</td></tr>
+            <tr><td><span class="field-name">단축 시작일 / 종료일</span><span class="field-required">필수</span></td><td>단축근로 적용 기간. 예: 2026-06-01 ~ 2026-08-14</td></tr>
+            <tr><td><span class="field-name">단축 방식</span></td><td>늦은 출근 / 이른 퇴근 / 분할 사용. 예: 이른 퇴근(1시간 단축)</td></tr>
+            <tr><td><span class="field-name">비고</span></td><td>특이사항 메모. 예: 임신 37주차, 주 2시간 단축</td></tr>
+          </tbody>
+        </table>
+
+        <strong style="display:block;margin:20px 0 8px;color:var(--primary)">육아기 단축근로</strong>
+        <p class="sub-desc" style="margin-bottom:8px">만 8세 이하 자녀를 둔 직원이 대상입니다. 주 15~35시간 범위에서 설정하며, 급여는 근무시간에 비례합니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:160px">항목</th><th>입력 방법</th></tr></thead>
+          <tbody>
+            <tr><td><span class="field-name">직원 선택</span><span class="field-required">필수</span></td><td>대상 직원 선택. 예: 최영희</td></tr>
+            <tr><td><span class="field-name">자녀 이름</span><span class="field-required">필수</span></td><td>대상 자녀의 이름. 예: 최민준</td></tr>
+            <tr><td><span class="field-name">자녀 생년월일</span><span class="field-required">필수</span></td><td>자녀의 생년월일. 예: 2022-05-10</td></tr>
+            <tr><td><span class="field-name">자녀 구분</span></td><td>미취학 아동 / 초등학생. 예: 미취학 아동</td></tr>
+            <tr><td><span class="field-name">단축 시작일 / 종료일</span><span class="field-required">필수</span></td><td>단축근로 적용 기간. 예: 2026-03-01 ~ 2026-08-31</td></tr>
+            <tr><td><span class="field-name">근무 유형</span><span class="field-required">필수</span></td><td>균일 근무(매일 동일 시간) / 요일별 다른 시간(요일마다 설정)</td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>실전 예시 — 육아기 단축근로 등록</strong><br><br>
+          <strong>상황:</strong> 최영희 주임(사무국)이 만 3세 자녀(최민준, 2022-05-10생) 양육을 위해 2026-03-01부터 6개월간 주 30시간 근무를 신청합니다.<br><br>
+          <strong>입력:</strong> 직원 "최영희" → 자녀이름 "최민준" → 생년월일 "2022-05-10" → 구분 "미취학 아동" → 기간 "2026-03-01 ~ 2026-08-31" → 근무유형 "균일 근무" → 주 30시간<br><br>
+          <strong>효과:</strong> 주 소정근로시간이 40→30시간으로 변경되어, 월소정근로시간 156.75시간 기준으로 기본급이 비례 산정됩니다.</div>
+        </div>
+      </div>
+
+      <!-- 4-8 포상 등록 -->
+      <div class="sub-section" id="sec-hr-awards">
+        <div class="sub-title">포상 등록</div>
+        <p class="sub-desc">직원의 내부/외부 포상 이력을 등록하고 관리합니다. 직원 검색 → 포상 정보 입력 → 등록/수정 순서로 진행합니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:150px">항목</th><th>입력 방법</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">직원 선택</td><td>포상 대상 직원을 이름으로 검색하여 선택. 예: "김민수" 검색 → 김민수(사회복지팀/주임) 선택</td></tr>
+            <tr><td><span class="field-name">포상구분</span><span class="field-required">필수</span></td><td>내부(기관 자체 포상) / 외부(지자체·정부 등 외부기관 포상)</td></tr>
+            <tr><td><span class="field-name">포상년도</span><span class="field-required">필수</span></td><td>포상을 받은 연도. 예: 2025</td></tr>
+            <tr><td><span class="field-name">수상년월일</span><span class="field-required">필수</span></td><td>실제 수상 날짜. 예: 2025-09-07 (사회복지의 날)</td></tr>
+            <tr><td><span class="field-name">포상내역</span><span class="field-required">필수</span></td><td>포상 제목. 예: 제19회 사회복지의 날 유공자 표창</td></tr>
+            <tr><td class="field-name">훈격</td><td>훈격 정보. 예: ○○시장상, 경기도지사상, 보건복지부장관상</td></tr>
+            <tr><td class="field-name">포상주관처</td><td>포상 수여 기관. 예: ○○시, 경기도, 보건복지부</td></tr>
+            <tr><td class="field-name">포상내용</td><td>포상 상세 내용. 예: 표창패, 상금 50만원</td></tr>
+            <tr><td><span class="field-name">선정여부</span><span class="field-required">필수</span></td><td>선정 / 미선정 / 미발표</td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>실전 예시 — 외부 포상 등록</strong><br><br>
+          직원 "김사회" 선택 → 포상구분 "외부", 포상년도 "2026", 수상년월일 "2026-01-15"<br>
+          포상내역 "사회복지의 날", 훈격 "○○시장", 포상주관처 "○○시", 포상내용 "표창패", 선정여부 "선정"<br>
+          → 등록 완료. 보고서 → 포상 현황에서 전체 포상 이력 조회·인쇄 가능</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- 5. 노무관리 -->
+    <!-- ============================================================ -->
+    <div class="section" id="sec-labor">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <div class="section-title">노무관리</div>
+      </div>
+
+      <div class="tip-box info">
+        <span class="tip-icon">💡</span>
+        <div><strong>직원 등록 후 급여 설정하기</strong><br>직원을 먼저 등록했다면, 직급 관리 탭에서 <strong>"직원에서 직급 불러오기"</strong> 버튼을 클릭하세요. 등록된 직원들의 직급이 자동으로 추출되어 호봉제/연봉제로 분류됩니다. 이후 급여표에 금액만 입력하면 모든 급여가 자동 계산됩니다.</div>
+      </div>
+
+      <!-- 5-1 급여 설정 -->
+      <div class="sub-section" id="sec-labor-settings">
+        <div class="sub-title">급여 설정</div>
+        <p class="sub-desc">급여 계산에 필요한 각종 기준을 연도별로 설정합니다. 6개 탭으로 구성됩니다.</p>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">탭 1 — 직급 관리</strong>
+        <p class="sub-desc">호봉제 직급과 연봉제 직급을 관리합니다. 직원 등록 시 입력한 직급을 "직원에서 직급 불러오기" 버튼으로 자동 추출하거나, 직접 등록할 수 있습니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:120px">구분</th><th>예시</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">호봉제 직급</td><td>사회복지사, 일반직 1급, 관리직 2급, 선임사회복지사, 생활지도원 등<br><span style="color:var(--text-light);font-size:13px;">인건비가이드라인의 급여표 직급명과 동일하게 입력합니다. 직급명이 한 글자라도 다르면 급여 연동이 안 됩니다.</span></td></tr>
+            <tr><td class="field-name">연봉제 직급</td><td>영양사, 조리원, 운전원, 시간제 등<br><span style="color:var(--text-light);font-size:13px;">호봉표가 적용되지 않는 직급입니다. 별도 연봉 계약으로 관리합니다.</span></td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>실전 예시 — 30인 규모 종합사회복지관의 직급 설정</strong><br><br>
+          <strong>방법 1 — 직원에서 불러오기 (권장):</strong><br>
+          직원 등록을 먼저 완료한 경우 → "2026년 근무 직원에서 직급 불러오기" 버튼 클릭 → 등록된 직원의 직급이 자동 추출되어 호봉제/연봉제로 분류<br><br>
+          <strong>방법 2 — 직접 등록:</strong><br>
+          호봉제: "사회복지사" → "선임사회복지사" → "일반직 1급" → "관리직 2급" → "생활지도원"<br>
+          연봉제: "영양사" → "조리원" → "운전원"<br><br>
+          <span style="color:var(--text-light);font-size:13px;">* 직급 이름은 시·도별 인건비가이드라인의 급여표 항목명과 완전히 일치해야 합니다.</span></div>
+        </div>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">탭 2 — 급여표 관리</strong>
+        <p class="sub-desc">직급별·호봉별 기본급을 입력하는 표입니다. 연도를 선택하고, 최대 호봉 수를 설정(예: 30호봉)한 뒤, 각 칸에 원 단위 금액을 입력합니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:140px">항목</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><span class="field-name">연도</span><span class="field-required">필수</span></td><td>급여표가 적용되는 연도 선택. 예: 2026년 → 2026년 인건비가이드라인 금액 입력</td></tr>
+            <tr><td><span class="field-name">최대 호봉</span></td><td>급여표의 최대 호봉 수 설정. 예: 30호봉 (기관 규정에 따라)</td></tr>
+            <tr><td class="field-name">전년도 복사</td><td>작년 급여표를 가져와서 변경분만 수정. 매년 인건비가이드라인 변경 시 유용</td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box info">
+          <span class="tip-icon">💡</span>
+          <div><strong>입력 예시 (2026년 인건비가이드라인 기준)</strong><br>
+          <strong>사회복지사:</strong> 1호봉 2,127,600원 / 2호봉 2,180,000원 / 3호봉 2,234,700원 / 4호봉 2,291,400원 / 5호봉 2,350,200원 …<br>
+          <strong>일반직 1급:</strong> 1호봉 1,980,000원 / 2호봉 2,028,000원 / 3호봉 2,078,000원 …<br>
+          <strong>관리직 2급:</strong> 1호봉 2,280,000원 / 2호봉 2,340,000원 …<br><br>
+          "전년도 복사" 버튼으로 2025년 데이터를 가져온 뒤 인상분만 수정하면 빠릅니다.</div>
+        </div>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">탭 3 — 직책수당 설정</strong>
+        <p class="sub-desc">직위(직책)별 월 수당 금액을 설정합니다. 직위를 선택(또는 직접 입력)하고 금액을 입력한 뒤 "추가"합니다.</p>
+        <div class="tip-box info">
+          <span class="tip-icon">💡</span>
+          <div><strong>입력 예시</strong><br>
+          관장 300,000원 / 부관장 250,000원 / 부장 200,000원 / 팀장 150,000원 / 주임 100,000원 / 사원 0원<br>
+          <span style="color:var(--text-light);font-size:13px;">직위명이 직원 등록·발령에서 사용하는 직위명과 정확히 일치해야 자동 적용됩니다.<br>
+          예: 급여현황표에서 김민수(사회복지팀/팀장)의 직책수당에 150,000원이 자동 표시됩니다.</span></div>
+        </div>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">탭 4 — 명절휴가비 설정</strong>
+        <table class="field-table">
+          <thead><tr><th style="width:140px">항목</th><th>입력 방법</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">설날 날짜 (양력)</td><td>양력 기준 설날 날짜. 예: 2026-02-17</td></tr>
+            <tr><td class="field-name">설날 지급 비율</td><td>기본급 대비 비율. 예: 60% (기본급 × 0.6)</td></tr>
+            <tr><td class="field-name">추석 날짜 (양력)</td><td>양력 기준 추석 날짜. 예: 2026-10-05</td></tr>
+            <tr><td class="field-name">추석 지급 비율</td><td>기본급 대비 비율. 예: 60%</td></tr>
+          </tbody>
+        </table>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">탭 5 — 통상임금 설정</strong>
+        <p class="sub-desc">시간외근무수당 계산 기초가 되는 통상임금에 포함할 항목을 설정합니다.</p>
+        <table class="field-table">
+          <thead><tr><th>항목</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">명절휴가비 포함</td><td>체크 시 통상임금에 포함. 산정 방식 선택 가능:<br>
+              <strong>연간 고정</strong>: (설 기본급×비율 + 추석 기본급×비율) ÷ 12 → 매월 동일 금액<br>
+              <strong>월별 연동</strong>: 해당 월 기본급 × (비율 합계 ÷ 12) → 호봉 변동 시 자동 연동</td></tr>
+            <tr><td class="field-name">직책수당 포함</td><td>체크 시 통상임금에 포함. 예: 팀장 직책수당 150,000원이 통상임금에 합산</td></tr>
+            <tr><td class="field-name">직무대리 직책수당 포함</td><td>체크 시 겸직/직무대리의 직책수당도 통상임금에 포함</td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>계산 예시 — 팀장 김민수의 통상임금</strong><br><br>
+          기본급 2,498,000원(사회복지사 8호봉) + 직책수당 150,000원(팀장) + 명절휴가비 월할액 249,800원<br>
+          = <strong>통상임금 2,897,800원</strong><br>
+          → 통상시급: 2,897,800원 ÷ 209시간 = <strong>13,865원</strong> (시간외수당 계산 기초)</div>
+        </div>
+
+        <strong style="display:block;margin:16px 0 8px;color:var(--primary)">탭 6 — 수당 계산 설정</strong>
+        <p class="sub-desc">급여 및 수당 계산의 세부 규칙을 설정합니다.</p>
+        <table class="field-table">
+          <thead><tr><th>항목</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">월소정근로시간 단수처리</td><td>올림 / 반올림 / 버림</td></tr>
+            <tr><td class="field-name">시급 처리 방식</td><td>소수점 유지 또는 정수 처리. 정수 처리 시 절사 단위(1원/10원), 방법(버림/반올림/올림), 절사 적용 시점(배율 적용 전/후) 설정</td></tr>
+            <tr><td class="field-name">시간외수당 절사</td><td>절사 단위(1원/10원), 방법(올림/반올림/버림)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>종합 예시 — 2026년 급여 설정 완료 워크플로우</strong><br><br>
+          ① <strong>직급 관리:</strong> 호봉제 5개(사회복지사, 선임사회복지사, 일반직 1급, 관리직 2급, 생활지도원), 연봉제 3개(영양사, 조리원, 운전원) 등록<br>
+          ② <strong>급여표 관리:</strong> 2026년 선택 → "전년도 복사"로 2025년 데이터 가져옴 → 인건비가이드라인 인상분 반영 → 저장<br>
+          ③ <strong>직책수당:</strong> 관장 300,000 / 부관장 250,000 / 부장 200,000 / 팀장 150,000 / 주임 100,000원 입력<br>
+          ④ <strong>명절휴가비:</strong> 설날 2026-02-17(60%), 추석 2026-10-05(60%) 설정<br>
+          ⑤ <strong>통상임금:</strong> 명절휴가비 포함(연간 고정), 직책수당 포함 체크<br>
+          ⑥ <strong>수당 계산:</strong> 월소정근로시간 올림, 시급 정수처리(10원 단위 버림), 시간외수당 10원 단위 버림<br><br>
+          → 급여 설정 완료! 이미 등록된 직원의 급여가 자동으로 반영되어 <strong>급여 현황표</strong>에서 확인할 수 있습니다.</div>
+        </div>
+      </div>
+
+      <!-- 5-2 급여 현황표 -->
+      <div class="sub-section" id="sec-labor-status">
+        <div class="sub-title">급여 현황표</div>
+        <p class="sub-desc">연도와 월을 선택하면 직원별 월 급여 내역이 자동 계산되어 표로 나타납니다. 급여 설정에서 입력한 급여표·직책수당·통상임금 기준이 모두 반영됩니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:140px">표시 항목</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">기본 정보</td><td>직원명, 부서, 직위, 직급, 호봉, 급여방식(호봉제/연봉제), 주당근로시간</td></tr>
+            <tr><td class="field-name">급여 항목</td><td>기본급, 직책수당, 명절휴가비(설·추석 해당월만), 통상임금 합계</td></tr>
+            <tr><td class="field-name">시간급 정보</td><td>월소정근로시간, 통상시급(통상임금 ÷ 월소정근로시간)</td></tr>
+            <tr><td class="field-name">부서별 필터</td><td>전체 / 특정 부서만 선택하여 보기. 예: "사회복지팀"만 선택</td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box info" style="background:#f0fdf4;border-left-color:#16a34a;">
+          <span class="tip-icon">📋</span>
+          <div><strong>실전 예시 — 2026년 3월 급여 현황표</strong><br><br>
+          <table style="width:100%;border-collapse:collapse;font-size:13px;margin:8px 0;">
+            <tr style="background:#f1f5f9;font-weight:600;">
+              <td style="padding:6px;border:1px solid #e2e8f0;">성명</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;">부서/직위</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;">직급/호봉</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">기본급</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">직책수당</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">통상임금</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">시간급</td>
+            </tr>
+            <tr>
+              <td style="padding:6px;border:1px solid #e2e8f0;">김사회</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;">사회복지팀/팀장</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;">사회복지사 8호봉</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">2,498,000</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">150,000</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">2,648,000</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">12,670</td>
+            </tr>
+            <tr>
+              <td style="padding:6px;border:1px solid #e2e8f0;">박복지</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;">주간보호팀/사원</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;">일반직 1급 3호봉</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">2,078,000</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">0</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">2,078,000</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">9,943</td>
+            </tr>
+            <tr>
+              <td style="padding:6px;border:1px solid #e2e8f0;">최영희</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;">사무국/주임</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;">관리직 2급 5호봉</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">2,460,000</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">100,000</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">2,560,000</td>
+              <td style="padding:6px;border:1px solid #e2e8f0;text-align:right;">12,249</td>
+            </tr>
+          </table>
+          <span style="color:var(--text-light);font-size:13px;">* 엑셀 다운로드 또는 A4 인쇄 가능. 부서별 필터로 특정 부서만 출력할 수 있습니다.</span></div>
+        </div>
+      </div>
+
+      <!-- 5-3 시간외근무 -->
+      <div class="sub-section" id="sec-labor-overtime">
+        <div class="sub-title">시간외근무 관리</div>
+        <p class="sub-desc">시간외근무(초과근무)의 유형 설정과 월별 기록을 관리합니다. 상세한 시간외근무 입력과 수당 계산은 별도의 <strong>"시간외근무관리 프로그램"</strong>에서 진행합니다.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 6. 보고서 -->
+    <!-- ============================================================ -->
+    <div class="section" id="sec-report">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <div class="section-title">보고서</div>
+      </div>
+
+      <p class="sub-desc">다양한 보고서를 자동 생성하고 인쇄·다운로드할 수 있습니다.</p>
+
+      <table class="field-table">
+        <thead><tr><th style="width:150px">메뉴</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td class="field-name">조직도</td><td>기관의 조직 구조를 도표로 표시합니다. 부서별 소속 직원이 직위 순서대로 나타나며, 겸직·직무대리도 표시됩니다. 인쇄 가능.<br>
+            <span style="color:var(--text-light);font-size:13px;">예: 관장 — 사무국(부장·주임) / 사회복지팀(팀장·사회복지사·사원) / 주간보호팀(팀장·생활지도원) 형태로 출력</span></td></tr>
+          <tr><td class="field-name">인사카드</td><td>개별 직원의 인사카드를 생성합니다. 인적사항, 입사일, 부서, 호봉, 경력, 발령이력 등이 포함됩니다. 부서별 일괄 출력 가능.<br>
+            <span style="color:var(--text-light);font-size:13px;">예: 김사회 인사카드 → 사회복지팀/팀장/8호봉, 과거경력 2건, 발령이력 3건 → A4 인쇄</span></td></tr>
+          <tr><td class="field-name">포상 현황</td><td>연도별·유형별(내부/외부) 포상 현황을 조회합니다. 필터링 및 인쇄 가능.<br>
+            <span style="color:var(--text-light);font-size:13px;">예: 2026년 외부 포상 → "사회복지의 날" 표창 2건, "지역사회 공헌상" 1건 조회</span></td></tr>
+          <tr><td class="field-name">교차 통계 분석</td><td>기준일을 선택하고 부서별·직급별·직위별·직종별·고용형태별 등으로 교차 분석합니다. 표와 그래프로 결과 표시.<br>
+            <span style="color:var(--text-light);font-size:13px;"><strong>빠른 분석 (원클릭):</strong> 부서별 인원현황, 직위별 인원현황, 직종별 현황, 부서×직위 교차분석 등 자주 쓰는 통계 즉시 생성<br>
+            예: "부서×직위 교차분석" 클릭 → 사회복지팀(팀장 1, 주임 1, 사원 2) / 주간보호팀(팀장 1, 생활지도원 3) / 사무국(부장 1, 주임 1) 교차표 자동 생성</span></td></tr>
+          <tr><td class="field-name">근속현황표</td><td>재직 직원의 근속연수별 분포(1년 미만, 1~3년, 3~5년, 5~10년, 10년 이상)를 보여줍니다.</td></tr>
+          <tr><td class="field-name">연명부</td><td>기준일에 재직 중이었던 모든 직원의 기본 정보를 표로 출력합니다. 24개 항목 중 필요한 것만 선택 가능. 프리셋(간략 5개/기본 12개/상세 전체) 지원. 엑셀 다운로드 및 A4 세로/가로 인쇄.<br>
+            <span style="color:var(--text-light);font-size:13px;">예: 기준일 "2026-03-01" + 기본 프리셋 → 고유번호, 성명, 부서, 직위, 직급, 입사일, 호봉, 근속기간 등 12개 항목 표 생성</span></td></tr>
+          <tr><td class="field-name">호봉획정표</td><td>직원의 호봉 산출 근거를 상세히 보여줍니다. 3가지 출력 양식(공문서/모던/표준), 직원 검색·필터 후 일괄 생성 가능.<br>
+            <span style="color:var(--text-light);font-size:13px;">예: 김사회 호봉획정표 → 과거경력 5년 + 현 기관 3년 = 총 경력 8년, 현재 8호봉 근거 문서 출력</span></td></tr>
+          <tr><td class="field-name">입사자 목록</td><td>시작일~종료일 기간 동안 입사한 직원 목록. 컬럼 선택, 프리셋, 엑셀 다운로드, 인쇄 가능.<br>
+            <span style="color:var(--text-light);font-size:13px;">예: 2026-01-01 ~ 2026-12-31 → 올해 입사한 직원 3명 목록 출력</span></td></tr>
+          <tr><td class="field-name">퇴사자 목록</td><td>시작일~종료일 기간 동안 퇴사한 직원 목록. 20개 컬럼 중 선택, 엑셀 다운로드, 인쇄 가능.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 7. 시스템 -->
+    <!-- ============================================================ -->
+    <div class="section" id="sec-system">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <div class="section-title">시스템</div>
+      </div>
+
+      <!-- 7-1 조직 설정 -->
+      <div class="sub-section" id="sec-system-org">
+        <div class="sub-title">조직 설정</div>
+        <p class="sub-desc">기관의 기본 정보를 설정합니다. 근로계약서, 인쇄물 등에 자동 반영됩니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:170px">항목</th><th>입력 방법</th></tr></thead>
+          <tbody>
+            <tr><td><span class="field-name">조직명</span><span class="field-required">필수</span></td><td>기관의 정식 명칭. 예: ○○종합사회복지관</td></tr>
+            <tr><td class="field-name">기관 주소</td><td>기관 소재지 주소. 예: 경기도 ○○시 ○○로 123</td></tr>
+            <tr><td class="field-name">기관 연락처</td><td>대표 전화번호. 예: 031-123-4567</td></tr>
+            <tr><td class="field-name">퇴직연금 은행</td><td>농협, 신한, 국민, 우리, 하나, 기업, SC제일, 한국투자증권, 삼성생명, 미래에셋증권 중 선택</td></tr>
+            <tr><td class="field-name">퇴직연금 유형</td><td>DC형(확정기여형) 또는 DB형(확정급여형). 예: 농협은행 DC형</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-title">조직도 설정</div>
+        <p class="sub-desc">보고서 > 조직도의 표시 방식을 설정합니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:160px">기능</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">직위 순서</td><td>직위의 표시 순서를 설정합니다. 각 직위에 역할(기관장/부기관장/부서장/팀원)을 지정합니다.<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 관장(기관장) → 부관장(부기관장) → 부장(부서장) → 팀장(부서장) → 주임(팀원) → 사원(팀원)</span></td></tr>
+            <tr><td class="field-name">부서 합치기</td><td>조직도에서 소규모 부서를 하나로 묶어 표시할 수 있습니다.<br>
+              <span style="color:var(--text-light);font-size:13px;">예: "경리팀"과 "총무팀"을 "사무국"으로 합쳐서 표시</span></td></tr>
+            <tr><td class="field-name">비고란 역할 표시</td><td>조직도 비고란에 기관장/부기관장/부서장 역할을 표시합니다.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-title">겸직/직무대리 관리</div>
+        <p class="sub-desc">직원이 다른 부서를 겸직하거나 타 직원의 직무를 대리하는 경우를 등록합니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:120px">유형</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">겸직</td><td>직원이 현재 소속 외 다른 부서 업무를 겸임하는 경우. 직원·겸직 부서·직위·기간 입력.<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 사무국 부장이 사회복지팀장을 겸직 (2026-03-01 ~ 별도 종료일 없음)</span></td></tr>
+            <tr><td class="field-name">직무대리</td><td>특정 직위의 업무를 타 직원이 대리하는 경우. 직원·대리 부서·직위·기간 입력.<br>
+              <span style="color:var(--text-light);font-size:13px;">예: 팀장 육아휴직 기간 중 주임이 팀장 직무대리 (2026-04-01 ~ 2027-03-31)</span></td></tr>
+          </tbody>
+        </table>
+        <p class="sub-desc" style="margin-top:8px">등록된 겸직/직무대리는 조직도에 자동 반영되며, 통상임금 설정에서 "직무대리 직책수당 포함"을 체크하면 급여 계산에도 반영됩니다.</p>
+      </div>
+
+      <!-- 7-4 백업/복원 -->
+      <div class="sub-section" id="sec-system-backup">
+        <div class="sub-title">백업/복원</div>
+        <p class="sub-desc">시스템 데이터를 안전하게 보관하고 복원하는 기능입니다. <strong>정기적인 백업을 강력히 권장합니다.</strong></p>
+
+        <table class="field-table">
+          <thead><tr><th style="width:170px">기능</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="field-name">HRM 백업</span><br><span style="font-size:11px;color:var(--success);font-weight:500">권장</span></td>
+              <td>"HRM 백업" 버튼 클릭 시 <strong>.hrm 파일</strong>이 자동 저장됩니다. 직원 정보, 발령 이력, 급여 설정, 포상 데이터 등 모든 데이터가 보안 인코딩되어 완벽하게 보존됩니다.</td>
+            </tr>
+            <tr>
+              <td class="field-name">엑셀 백업</td>
+              <td>엑셀 형식으로 저장. 다른 프로그램에서 데이터 확인 시 유용. 일부 설정이 포함되지 않을 수 있습니다.</td>
+            </tr>
+            <tr>
+              <td class="field-name">시스템 복원</td>
+              <td>"백업 파일 선택" 클릭 → 이전에 저장한 <strong>.hrm 또는 .json</strong> 파일을 선택하면 복원됩니다.</td>
+            </tr>
+            <tr>
+              <td><span class="field-name">전체 삭제</span></td>
+              <td>모든 데이터를 삭제합니다. 되돌릴 수 없으므로 반드시 백업 후 실행하세요.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="tip-box danger">
+          <span class="tip-icon">🚨</span>
+          <div><strong>복원하면 현재 데이터가 모두 대체됩니다.</strong> 복원 전에 현재 데이터를 먼저 백업해두세요.</div>
+        </div>
+      </div>
+
+      <!-- 7-5 가져오기 -->
+      <div class="sub-section" id="sec-system-import">
+        <div class="sub-title">가져오기</div>
+        <p class="sub-desc">다른 곳에서 관리하던 데이터를 엑셀로 일괄 등록합니다. 처음 시작 시 기존 데이터를 옮길 때 유용합니다.</p>
+        <table class="field-table">
+          <thead><tr><th style="width:170px">기능</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="field-name">인사 기초데이터</td>
+              <td>엑셀 파일(.xlsx, .xls) 선택 → 직원 정보, 발령 이력 자동 등록.<br>
+                <span style="color:var(--warning);font-size:13px">※ 과거 경력은 포함되지 않습니다. 완벽한 이관은 HRM 백업을 사용하세요.</span></td>
+            </tr>
+            <tr>
+              <td class="field-name">포상 데이터</td>
+              <td>기존 포상대장 엑셀을 업로드합니다. 성명+입사일로 직원 DB와 자동 매칭됩니다.<br>
+                <span style="color:var(--text-light);font-size:12px">컬럼 순서: 포상구분 | 성명 | 입사일 | 퇴사일 | 퇴사여부 | 직위 | 포상연도 | 포상내역 | 훈격 | 포상주관처 | 포상내용 | 선정여부 | 수상년월일 | 상장사진</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-title">프로그램 정보</div>
+        <p class="sub-desc">프로그램 버전, 저작권 등록 정보, 라이선스 정보를 확인할 수 있습니다.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 8. FAQ -->
+    <!-- ============================================================ -->
+    <div class="section" id="sec-faq">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <div class="section-title">자주 묻는 질문</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">직원의 호봉은 어떻게 계산되나요?</div>
+        <div class="faq-a">입사일, 과거 경력(인정비율 적용), 주당근로시간 등을 종합하여 자동 계산됩니다. "인력관리 → 신규 직원 등록"에서 정보를 입력하고 "호봉 계산 및 등록" 버튼을 누르면 결과를 확인할 수 있습니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">호봉표를 매년 바꿔야 하나요?</div>
+        <div class="faq-a">네, 매년 인건비가이드라인이 변경되므로 "노무관리 → 급여 설정 → 급여표 관리"에서 해당 연도의 급여표를 새로 입력해주세요. 연도별로 별도 관리됩니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">직원이 부서를 이동하면 어떻게 하나요?</div>
+        <div class="faq-a">"인력관리 → 인사 발령"에서 발령을 등록하세요. 발령 등록 후 직원의 부서, 직위 등이 자동으로 변경됩니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">퇴사 처리는 어떻게 하나요?</div>
+        <div class="faq-a">"인력관리 → 직원 목록/수정"에서 해당 직원을 클릭한 후 "퇴사 처리" 버튼을 누르고 퇴사일을 입력하면 됩니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">데이터가 날아갈까 걱정됩니다.</div>
+        <div class="faq-a">"시스템 → 백업/복원"에서 정기적으로 <strong>HRM 백업</strong>을 해주세요. 백업 파일(.hrm)을 USB, 클라우드 등 안전한 곳에 보관하면 언제든 복원할 수 있습니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">여러 대의 컴퓨터에서 같은 데이터를 쓸 수 있나요?</div>
+        <div class="faq-a">현재 버전에서는 데이터가 각 PC에 개별 저장됩니다. 한 PC에서 HRM 백업한 파일을 다른 PC에서 복원하면 데이터를 옮길 수 있습니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">근로계약서에 기관장 이름이 안 나옵니다.</div>
+        <div class="faq-a">"시스템 → 조직 설정"에서 조직명이 입력되어 있는지 확인하세요. 기관장 정보는 등록된 직원 중 가장 높은 직위의 직원이 자동 표시됩니다. "시스템 → 조직도 설정"에서 직위 순서를 확인해주세요.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">급여 현황표의 금액이 이상합니다.</div>
+        <div class="faq-a">"노무관리 → 급여 설정"에서 해당 연도의 급여표 금액, 직책수당 설정, 수당 계산 설정(단수처리 방식)이 올바르게 되어 있는지 확인하세요.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">프로그램 업데이트는 어떻게 하나요?</div>
+        <div class="faq-a">새 버전 출시 시 프로그램 실행 시 자동으로 업데이트 알림이 나타납니다. 안내에 따라 업데이트하면 됩니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">문의는 어디로 하나요?</div>
+        <div class="faq-a">개발일지 블로그 <a href="https://swhrm.tistory.com/" target="_blank" style="color:var(--primary)">swhrm.tistory.com</a> 을 통해 문의하실 수 있습니다.</div>
+      </div>
+    </div>
+
+    <!-- 푸터 -->
+    <div style="text-align:center;padding:40px 0 20px;color:var(--text-lighter);font-size:13px">
+      <p>© 2026 SW HRM — 사회복지 인사관리시스템</p>
+      <p style="margin-top:4px">저작권등록 제C-2026-007142호</p>
+    </div>
+
+  </main>
+</div>
+
+<button class="toc-fab" id="tocFab" onclick="toggleToc()" title="목차 열기/닫기">☰</button>
+
+<script>
+// 목차 토글
+function toggleToc(){
+  const sb=document.getElementById('sidebarToc');
+  const ov=document.getElementById('tocOverlay');
+  const fab=document.getElementById('tocFab');
+  const isOpen=sb.classList.toggle('open');
+  ov.classList.toggle('open',isOpen);
+  fab.classList.toggle('active',isOpen);
+  fab.innerHTML=isOpen?'✕':'☰';
+  fab.title=isOpen?'목차 닫기':'목차 열기';
+}
+function toggleMobileToc(){toggleToc()}
+
+// 목차 링크 클릭 시 패널 닫기
+document.querySelectorAll('.toc a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    const sb=document.getElementById('sidebarToc');
+    if(sb.classList.contains('open'))toggleToc();
+  });
+});
+
+// 스크롤 시 활성 목차 하이라이트
+const tocLinks=document.querySelectorAll('.toc a');
+const sections=[];
+tocLinks.forEach(a=>{
+  const id=a.getAttribute('href')?.replace('#','');
+  if(id){const el=document.getElementById(id);if(el)sections.push({el,link:a})}
+});
+
+let ticking=false;
+window.addEventListener('scroll',()=>{
+  if(!ticking){
+    requestAnimationFrame(()=>{
+      let current='';
+      sections.forEach(({el})=>{
+        if(el.getBoundingClientRect().top<120)current=el.id;
+      });
+      tocLinks.forEach(a=>{
+        a.classList.toggle('active',a.getAttribute('href')==='#'+current);
+      });
+      ticking=false;
+    });
+    ticking=true;
+  }
+});
+</script>
+</body>
+</html>
