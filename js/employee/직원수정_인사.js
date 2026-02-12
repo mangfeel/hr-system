@@ -471,6 +471,11 @@ async function saveEmployeeEdit() {
             } else {
                 alert('[주의] 수정할 직원 정보를 찾을 수 없습니다.');
             }
+            
+            // ⭐ v4.2.0: 포커스 복원
+            if (window.electronAPI?.focusWindow) {
+                setTimeout(async () => { await window.electronAPI.focusWindow(); }, 300);
+            }
             return;
         }
         
@@ -483,6 +488,11 @@ async function saveEmployeeEdit() {
                 에러처리_인사.warn('직원을 찾을 수 없습니다.');
             } else {
                 alert('[주의] 직원을 찾을 수 없습니다.');
+            }
+            
+            // ⭐ v4.2.0: 포커스 복원
+            if (window.electronAPI?.focusWindow) {
+                setTimeout(async () => { await window.electronAPI.focusWindow(); }, 300);
             }
             return;
         }
@@ -517,6 +527,13 @@ async function saveEmployeeEdit() {
                     validation.errors.map((e, i) => `${i + 1}. ${e}`).join('\n');
                 alert(errorMsg);
             }
+            
+            // ⭐ v4.2.0: 검증 실패 후 포커스 복원
+            if (window.electronAPI?.focusWindow) {
+                setTimeout(async () => {
+                    await window.electronAPI.focusWindow();
+                }, 300);
+            }
             return;
         }
         
@@ -538,6 +555,13 @@ async function saveEmployeeEdit() {
             const confirmResult = _confirmPaymentMethodChange(emp, oldPaymentMethod, newPaymentMethod);
             if (!confirmResult) {
                 로거_인사?.info('급여 지급 방식 변경 취소', { empId: emp.id });
+                
+                // ⭐ v4.2.0: 급여방식 변경 취소 후 포커스 복원
+                if (window.electronAPI?.focusWindow) {
+                    setTimeout(async () => {
+                        await window.electronAPI.focusWindow();
+                    }, 300);
+                }
                 return;
             }
             
@@ -593,6 +617,13 @@ async function saveEmployeeEdit() {
             에러처리_인사.handle(error, '저장 중 오류가 발생했습니다.');
         } else {
             alert('[오류] 저장 중 오류가 발생했습니다.');
+        }
+        
+        // ⭐ v4.2.0: 저장 실패 후에도 포커스 복원
+        if (window.electronAPI?.focusWindow) {
+            setTimeout(async () => {
+                await window.electronAPI.focusWindow();
+            }, 300);
         }
     }
 }

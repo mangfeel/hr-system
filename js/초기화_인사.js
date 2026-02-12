@@ -6,10 +6,15 @@
  * - 대시보드 업데이트
  * - 조직 설정 관리
  * 
- * @version 3.4.0
+ * @version 3.5.0
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v3.5.0 (2026-02-12) 전역 alert/confirm 포커스 복원
+ * - window.alert, window.confirm 오버라이드
+ * - Electron에서 대화상자 닫힌 후 자동 포커스 복원
+ * - 모든 JS 파일에 일괄 적용 (개별 수정 불필요)
+ *
  * v3.4.0 (2026-02-06) Electron 포커스 문제 해결
  * - 페이지 초기화 완료 후 윈도우 포커스 복원
  * - 복원/전체삭제 후 입력란에 커서가 안 들어가는 문제 수정
@@ -67,6 +72,36 @@
  * - 이 파일은 페이지 로드 시 자동 실행됩니다
  * - DOMContentLoaded 이벤트에서 초기화 진행
  */
+
+// ===== v3.5.0: 전역 alert/confirm 포커스 복원 =====
+// Electron에서 alert/confirm 후 윈도우 포커스가 풀리는 문제를 전역으로 해결
+// 모든 JS 파일에서 alert/confirm 사용 시 자동으로 포커스 복원됨
+(function() {
+    const originalAlert = window.alert;
+    const originalConfirm = window.confirm;
+    
+    window.alert = function(message) {
+        const result = originalAlert.call(window, message);
+        // alert 닫힌 후 포커스 복원
+        if (window.electronAPI?.focusWindow) {
+            setTimeout(async () => {
+                await window.electronAPI.focusWindow();
+            }, 200);
+        }
+        return result;
+    };
+    
+    window.confirm = function(message) {
+        const result = originalConfirm.call(window, message);
+        // confirm 닫힌 후 포커스 복원
+        if (window.electronAPI?.focusWindow) {
+            setTimeout(async () => {
+                await window.electronAPI.focusWindow();
+            }, 200);
+        }
+        return result;
+    };
+})();
 
 // ===== 대시보드 업데이트 =====
 
