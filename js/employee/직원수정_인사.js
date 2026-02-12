@@ -13,10 +13,15 @@
  * - 발령별 이전 경력 인정율 수정 ⭐ v3.3.0 추가
  * - 탭 기반 UI로 전면 개편 ⭐ v3.4.0 추가
  * 
- * @version 4.1.0
+ * @version 4.2.0
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v4.2.0 (2026-02-12) 저장 후 포커스 복원 + 주민등록번호 자동 하이픈
+ * - saveEmployeeEdit() 완료 후 focusWindow() 호출 (Electron 포커스 문제)
+ * - formatResidentNumber() 함수 추가 (숫자 입력 시 6자리 후 자동 하이픈)
+ * - editResidentNumber 필드에 oninput 이벤트 + maxlength 추가
+ * 
  * v4.1.0 (2026-01-22) ⭐ 검증 API 연동
  * - _validateEditForm → API_인사.validateEdit
  * - 서버 API로 검증 로직 보호
@@ -252,6 +257,39 @@ function switchEditTab(tabId) {
     } catch (error) {
         로거_인사?.error('탭 전환 실패', error);
     }
+}
+
+/**
+ * 주민등록번호 자동 하이픈 포맷팅
+ * 
+ * @description
+ * 숫자만 입력해도 6자리 이후 자동으로 하이픈(-) 삽입
+ * 예: 9101011234567 → 910101-1234567
+ * 
+ * @param {HTMLInputElement} input - 입력 필드
+ * @version 3.2.1
+ */
+function formatResidentNumber(input) {
+    // 숫자만 추출
+    let value = input.value.replace(/[^0-9]/g, '');
+    
+    // 최대 13자리 제한
+    if (value.length > 13) {
+        value = value.substring(0, 13);
+    }
+    
+    // 6자리 이상이면 하이픈 삽입 (6자리 입력 완료 즉시 하이픈 표시)
+    if (value.length >= 6) {
+        value = value.substring(0, 6) + '-' + value.substring(6);
+    }
+    
+    // 커서 위치 보정
+    const cursorPos = input.selectionStart;
+    const prevLen = input.value.length;
+    input.value = value;
+    const newLen = input.value.length;
+    const newPos = cursorPos + (newLen - prevLen);
+    input.setSelectionRange(newPos, newPos);
 }
 
 /**
@@ -541,6 +579,13 @@ async function saveEmployeeEdit() {
             loadEmployeeList();
         }
         
+        // ⭐ v3.2.1: 윈도우 포커스 복원 (Electron 포커스 문제 해결)
+        if (window.electronAPI?.focusWindow) {
+            setTimeout(async () => {
+                await window.electronAPI.focusWindow();
+            }, 500);
+        }
+        
     } catch (error) {
         로거_인사?.error('직원 정보 저장 실패', error);
         
@@ -649,7 +694,7 @@ function _generateEditModalHTML(emp) {
                             </div>
                             <div class="form-group">
                                 <label>주민등록번호</label>
-                                <input type="text" id="editResidentNumber" class="form-control" placeholder="000000-0000000" value="${residentNumber}" onchange="parseResidentNumber()">
+                                <input type="text" id="editResidentNumber" class="form-control" placeholder="000000-0000000" value="${residentNumber}" maxlength="14" oninput="formatResidentNumber(this)" onchange="parseResidentNumber()">
                             </div>
                         </div>
                         <div class="form-row">
