@@ -176,7 +176,12 @@
                 // 기존 셀 포맷(z) 보존하면서 스타일 적용
                 var existingFormat = ws[addr].z;
                 ws[addr].s = (R === 0) ? headerStyle : dataStyle;
-                if (existingFormat) ws[addr].z = existingFormat;
+                // 셀 포맷 보존: 기존 포맷 유지, 숫자 셀은 날짜 변환 방지
+                if (existingFormat) {
+                    ws[addr].z = existingFormat;
+                } else if (ws[addr].t === 'n') {
+                    ws[addr].z = 'General';
+                }
             }
         }
         
