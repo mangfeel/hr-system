@@ -396,17 +396,7 @@
                     
                     document.getElementById('loginEmail').value = savedLogin.email;
                     
-                    // 비밀번호 디코딩
-                    if (savedLogin.password) {
-                        try {
-                            const decodedPassword = atob(savedLogin.password);
-                            document.getElementById('loginPassword').value = decodedPassword;
-                        } catch (e) {
-                            console.warn('[Login] 비밀번호 디코딩 실패');
-                        }
-                    }
-                    
-                    console.log('[Login] 저장된 로그인 정보 불러옴:', savedLogin.email);
+                    console.log('[Login] 저장된 이메일 불러옴:', savedLogin.email);
                 } else {
                     console.log('[Login] 저장된 로그인 정보 없음');
                 }
@@ -416,11 +406,10 @@
         }
         
         /**
-         * 로그인 정보 저장
+         * 로그인 정보 저장 (이메일만 - 비밀번호는 저장하지 않음)
          * @param {string} email - 이메일
-         * @param {string} password - 비밀번호
          */
-        async function saveLoginInfo(email, password) {
+        async function saveLoginInfo(email) {
             try {
                 // Electron 환경에서만 동작
                 if (typeof window.electronStore === 'undefined') {
@@ -428,16 +417,12 @@
                     return;
                 }
                 
-                // 비밀번호는 간단한 인코딩 처리
-                const encodedPassword = btoa(password);
-                
                 await window.electronStore.set('savedLogin', {
                     email: email,
-                    password: encodedPassword,
                     savedAt: new Date().toISOString()
                 });
                 
-                console.log('[Login] 로그인 정보 저장됨:', email);
+                console.log('[Login] 이메일 저장됨:', email);
             } catch (error) {
                 console.warn('[Login] 로그인 정보 저장 실패:', error);
             }
@@ -481,8 +466,8 @@
                 
                 currentUser = data.user;
                 
-                // ⭐ 로그인 정보 저장 (다음 접속 시 자동 입력)
-                await saveLoginInfo(email, password);
+                // ⭐ 이메일만 저장 (비밀번호는 저장하지 않음, 세션은 Supabase가 관리)
+                await saveLoginInfo(email);
                 
                 // ★ 현재 사용자 정보 저장 (라이선스 검증용)
                 if (typeof License !== 'undefined' && License.setCurrentUser) {
