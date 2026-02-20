@@ -8,10 +8,15 @@
  * - 개발/프로덕션 모드 구분
  * - 검증 에러 표시
  * 
- * @version 3.0
+ * @version 4.0
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v4.0 (2026-02-13) - 토스트 알림 시스템 도입
+ *   - success(), info() → 토스트 알림 (자동 사라짐)
+ *   - warn(), handle(), showValidationErrors() → alert 유지
+ *   - 짧은 메시지 3초, 긴 메시지 5초 표시
+ *   - 클릭 또는 × 버튼으로 즉시 닫기 가능
  * v3.0 - 프로덕션급 리팩토링: 에러 처리 시스템 구축
  * 
  * [의존성]
@@ -228,6 +233,86 @@ const 에러처리_인사 = (function() {
     }
     
  /**
+ * 토스트 컨테이너 생성/반환
+ * @private
+ * @returns {HTMLElement}
+ */
+    function _getToastContainer() {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
+        return container;
+    }
+    
+ /**
+ * 토스트 알림 표시
+ * @private
+ * @param {string} message - 메시지
+ * @param {string} type - 'success' | 'info'
+ */
+    function _showToast(message, type) {
+        var container = _getToastContainer();
+        
+        var toast = document.createElement('div');
+        toast.className = 'toast toast-' + type;
+        
+        // 메시지 길이에 따라 표시 시간 결정
+        var duration = (message.length > 50 || message.indexOf('\n') !== -1) ? 5000 : 3000;
+        
+        // 아이콘
+        var icon = (type === 'success') ? '✓' : 'ℹ';
+        var title = (type === 'success') ? '완료' : '안내';
+        
+        toast.innerHTML = 
+            '<div class="toast-title">' +
+                '<span>' + icon + '</span> ' + title +
+            '</div>' +
+            '<div class="toast-message">' + message.replace(/\n/g, '<br>') + '</div>' +
+            '<button class="toast-close" aria-label="닫기">&times;</button>' +
+            '<div class="toast-progress" style="animation-duration: ' + duration + 'ms"></div>';
+        
+        // 닫기 버튼
+        toast.querySelector('.toast-close').addEventListener('click', function(e) {
+            e.stopPropagation();
+            _removeToast(toast);
+        });
+        
+        // 토스트 클릭으로 닫기
+        toast.addEventListener('click', function() {
+            _removeToast(toast);
+        });
+        
+        container.appendChild(toast);
+        
+        // 자동 제거
+        toast._timer = setTimeout(function() {
+            _removeToast(toast);
+        }, duration);
+    }
+    
+ /**
+ * 토스트 제거 (애니메이션 포함)
+ * @private
+ * @param {HTMLElement} toast
+ */
+    function _removeToast(toast) {
+        if (!toast || toast.classList.contains('toast-removing')) return;
+        
+        if (toast._timer) clearTimeout(toast._timer);
+        toast.classList.add('toast-removing');
+        
+        setTimeout(function() {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }
+    
+ /**
  * 개발자 정보 추가 여부
  * @private
  * @param {Object} errorInfo - 에러 정보
@@ -336,7 +421,7 @@ const 에러처리_인사 = (function() {
                 로거_인사.info('성공 메시지', { message });
             }
             
-            alert(`${message}`);
+            _showToast(message, 'success');
         },
         
  /**
@@ -370,7 +455,7 @@ const 에러처리_인사 = (function() {
                 로거_인사.info('정보 메시지', { message });
             }
             
-            alert(`ℹ️ ${message}`);
+            _showToast(message, 'info');
         },
         
  /**
