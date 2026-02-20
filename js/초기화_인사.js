@@ -6,10 +6,17 @@
  * - 대시보드 업데이트
  * - 조직 설정 관리
  * 
- * @version 3.5.0
+ * @version 3.6.0
  * @since 2024-11-05
  * 
  * [변경 이력]
+ * v3.6.0 (2026-02-13) 전역 엑셀 스타일 적용
+ * - XLSX.writeFile 오버라이드로 모든 엑셀 다운로드에 자동 스타일 적용
+ * - 헤더: 볼드, 연한 파란 배경(#E8EDF3), 하단 테두리
+ * - 데이터: 가운데 정렬, 맑은 고딕 10pt
+ * - 열 너비 자동 조정 (한글 폭 고려)
+ * - xlsx-js-style CDN으로 교체 필요 (메인_인사.html)
+ *
  * v3.5.0 (2026-02-12) 전역 alert/confirm 포커스 복원
  * - window.alert, window.confirm 오버라이드
  * - Electron에서 대화상자 닫힌 후 자동 포커스 복원
@@ -101,6 +108,99 @@
         }
         return result;
     };
+})();
+
+// ===== v3.6.0: 전역 엑셀 스타일 적용 =====
+// xlsx-js-style 라이브러리 사용 시 모든 엑셀 다운로드에 자동 스타일 적용
+// 12개 파일 개별 수정 없이 일괄 적용
+(function() {
+    if (typeof XLSX === 'undefined') return;
+    
+    const originalWriteFile = XLSX.writeFile;
+    
+    XLSX.writeFile = function(wb, filename, opts) {
+        // 모든 시트에 스타일 적용
+        try {
+            wb.SheetNames.forEach(function(sheetName) {
+                _applyGlobalExcelStyle(wb.Sheets[sheetName]);
+            });
+        } catch (e) {
+            console.warn('[엑셀 스타일] 적용 실패 (무시하고 진행):', e);
+        }
+        
+        return originalWriteFile.call(XLSX, wb, filename, opts);
+    };
+    
+    /**
+     * 워크시트에 전역 스타일 적용
+     * - 헤더(1행): 볼드 11pt, 연한 파란 배경, 하단 테두리
+     * - 데이터: 가운데 정렬, 맑은 고딕 10pt
+     * - 열 너비: 내용 기반 자동 조정 (한글 2배 폭)
+     */
+    function _applyGlobalExcelStyle(ws) {
+        if (!ws || !ws['!ref']) return;
+        
+        var range = XLSX.utils.decode_range(ws['!ref']);
+        
+        var headerStyle = {
+            font: { bold: true, sz: 11, name: '\uB9D1\uC740 \uACE0\uB515' },
+            fill: { fgColor: { rgb: 'E8EDF3' } },
+            alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+            border: {
+                top: { style: 'thin', color: { rgb: 'B0B0B0' } },
+                bottom: { style: 'thin', color: { rgb: 'B0B0B0' } },
+                left: { style: 'thin', color: { rgb: 'B0B0B0' } },
+                right: { style: 'thin', color: { rgb: 'B0B0B0' } }
+            }
+        };
+        
+        var dataStyle = {
+            font: { sz: 10, name: '\uB9D1\uC740 \uACE0\uB515' },
+            alignment: { horizontal: 'center', vertical: 'center' },
+            border: {
+                top: { style: 'thin', color: { rgb: 'D9D9D9' } },
+                bottom: { style: 'thin', color: { rgb: 'D9D9D9' } },
+                left: { style: 'thin', color: { rgb: 'D9D9D9' } },
+                right: { style: 'thin', color: { rgb: 'D9D9D9' } }
+            }
+        };
+        
+        for (var R = range.s.r; R <= range.e.r; R++) {
+            for (var C = range.s.c; C <= range.e.c; C++) {
+                var addr = XLSX.utils.encode_cell({ r: R, c: C });
+                if (!ws[addr]) {
+                    // 빈 셀도 스타일 적용 (테두리 유지)
+                    ws[addr] = { t: 's', v: '' };
+                }
+                
+                // 기존 셀 포맷(z) 보존하면서 스타일 적용
+                var existingFormat = ws[addr].z;
+                ws[addr].s = (R === 0) ? headerStyle : dataStyle;
+                if (existingFormat) ws[addr].z = existingFormat;
+            }
+        }
+        
+        // 열 너비 자동 조정 (기존 !cols가 없는 경우만)
+        if (!ws['!cols']) {
+            var cols = [];
+            for (var C2 = range.s.c; C2 <= range.e.c; C2++) {
+                var maxWidth = 8;
+                for (var R2 = range.s.r; R2 <= range.e.r; R2++) {
+                    var addr2 = XLSX.utils.encode_cell({ r: R2, c: C2 });
+                    if (ws[addr2] && ws[addr2].v != null) {
+                        var val = String(ws[addr2].v);
+                        var width = 0;
+                        for (var i = 0; i < val.length; i++) {
+                            width += (/[\uAC00-\uD7A3]/.test(val[i])) ? 2.2 : 1;
+                        }
+                        maxWidth = Math.max(maxWidth, width + 2);
+                    }
+                }
+                cols.push({ wch: Math.min(maxWidth, 35) });
+            }
+            ws['!cols'] = cols;
+        }
+    }
 })();
 
 // ===== 대시보드 업데이트 =====
