@@ -440,10 +440,11 @@ function _buildAIContext() {
                         context += `- ${a.name || ''}`;
                         if (a.type) context += ` | 구분: ${a.type}`;
                         if (a.awardName) context += ` | 내역: ${a.awardName}`;
+                        if (a.year) context += ` | 포상년도: ${a.year}`;
                         if (a.awardDate) context += ` | 수상일: ${a.awardDate}`;
                         if (a.honor) context += ` | 훈격: ${a.honor}`;
                         if (a.organization) context += ` | 주관처: ${a.organization}`;
-                        if (a.selected) context += ` | 선정: ${a.selected}`;
+                        if (a.status) context += ` | 선정여부: ${a.status}`;
                         context += `\n`;
                     });
                 }
