@@ -1,6 +1,10 @@
 cd C:\hr-system
 npm start
 
+# 2단계: 개발 모드로 실행
+cd H:\server\hr-system
+npm start
+
 
 v1.0.1 - 빠른실행 육아휴직 버그 수정
 v1.0.2 - 업데이트 진행률 UI 개선

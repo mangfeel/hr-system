@@ -90,6 +90,7 @@ const MODULE_CATEGORY_MAP = {
     'concurrent-position': 'system',
     'backup': 'system',
     'import': 'system',
+    'ai-settings': 'system',
     'statistics': 'reports'
 };
 
@@ -232,7 +233,8 @@ function _initializeModule(moduleId) {
             'salary-settings': () => typeof initSalarySettingsModule === 'function' && initSalarySettingsModule(),  // ⭐ 신규: 급여 설정
             'salary-status': () => typeof loadSalaryStatusModule === 'function' && loadSalaryStatusModule(),        // ⭐ 신규: 급여 현황표
             'overtime': () => typeof loadOvertimeModule === 'function' && loadOvertimeModule(),                      // ⭐ 신규: 시간외근무 관리
-            'import': () => typeof refreshAwardsImportStatus === 'function' && refreshAwardsImportStatus()  // ⭐ 신규: 가져오기 상태 갱신
+            'import': () => typeof refreshAwardsImportStatus === 'function' && refreshAwardsImportStatus(),  // ⭐ 신규: 가져오기 상태 갱신
+            'ai-settings': () => typeof loadAISettingsModule === 'function' && loadAISettingsModule()  // ⭐ 신규: AI 도우미 설정
         };
         
         const initializer = moduleInitializers[moduleId];
