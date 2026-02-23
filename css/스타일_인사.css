@@ -3243,11 +3243,12 @@ tr:hover td { background: #fafbfc; }
 
 /* 상단 AI 토글 버튼 */
 .ai-toggle-btn {
-    background: none; border: none; cursor: pointer; padding: 8px;
+    background: #f0f0ff; border: 1px solid #c7d2fe; cursor: pointer; padding: 6px 14px;
     border-radius: 8px; color: #4f46e5; transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    white-space: nowrap;
 }
-.ai-toggle-btn:hover { background: #f0f0ff; }
+.ai-toggle-btn:hover { background: #e0e7ff; border-color: #a5b4fc; }
 
 /* 사이드 채팅 패널 */
 .ai-chat-panel {

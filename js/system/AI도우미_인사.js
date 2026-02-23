@@ -667,8 +667,17 @@ function _updateAIButtonState() {
     if (!btn) return;
     
     const hasKey = !!_getAIApiKey();
-    btn.style.opacity = hasKey ? '1' : '0.5';
-    btn.title = hasKey ? 'AI 도우미 열기' : 'AI 도우미 (설정 필요)';
+    if (hasKey) {
+        btn.style.opacity = '1';
+        btn.style.background = '#f0f0ff';
+        btn.style.borderColor = '#c7d2fe';
+        btn.title = 'AI 도우미 열기';
+    } else {
+        btn.style.opacity = '0.4';
+        btn.style.background = '#f9fafb';
+        btn.style.borderColor = '#e5e7eb';
+        btn.title = 'AI 도우미 (시스템 > AI 도우미 설정에서 API 키를 먼저 등록하세요)';
+    }
 }
 
 /**
