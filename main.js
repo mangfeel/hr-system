@@ -7,10 +7,16 @@
  * - electron-store 기반 데이터 저장
  * - 자동 업데이트
  * 
- * @version 3.3.0
+ * @version 3.4.0
  * @since 2026-01-23
  * 
  * [변경 이력]
+ * v3.4.0 (2026-02-13) - 자동 백업 시스템 추가
+ *   - 앱 시작 시 7일 경과 여부 확인 후 자동 백업
+ *   - .hrm 형식 (수동 백업과 동일한 인코딩)
+ *   - AppData/hr-system/backups/ 에 저장
+ *   - 최근 7개만 보관, 오래된 백업 자동 삭제
+ *
  * v3.3.0 (2026-02-06) - 윈도우 포커스 복원 API 추가
  *   - focus-window IPC 핸들러 추가
  *   - 직원 등록/삭제 후 입력란 포커스 문제 해결
@@ -73,6 +79,186 @@ const store = new Store({
 });
 
 console.log('[Main] electron-store 경로:', store.path);
+
+// ===== 자동 백업 시스템 (v3.4.0) =====
+
+/**
+ * 자동 백업 설정
+ */
+const AUTO_BACKUP = {
+    INTERVAL_DAYS: 7,       // 백업 주기 (일)
+    MAX_BACKUPS: 7,         // 최대 보관 개수
+    FOLDER_NAME: 'backups'  // 백업 폴더명
+};
+
+/**
+ * 백업 폴더 경로 반환
+ * @returns {string} AppData/hr-system/backups/
+ */
+function getBackupDir() {
+    return path.join(app.getPath('userData'), AUTO_BACKUP.FOLDER_NAME);
+}
+
+/**
+ * 백업 데이터 인코딩 (.hrm 형식 - 백업_인사.js와 동일 알고리즘)
+ * JSON → Base64 → 역순 → 청크 섞기 → 헤더 추가
+ * @param {Object} data - 백업 데이터 객체
+ * @returns {string} 인코딩된 문자열
+ */
+function encodeBackupData(data) {
+    // 1. JSON 문자열화
+    const jsonStr = JSON.stringify(data);
+    
+    // 2. UTF-8 → Base64 인코딩 (Node.js Buffer 사용)
+    const base64 = Buffer.from(jsonStr, 'utf-8').toString('base64');
+    
+    // 3. 바이트 순서 뒤집기
+    const reversed = base64.split('').reverse().join('');
+    
+    // 4. 원본 길이 저장
+    const originalLength = reversed.length;
+    
+    // 5. 청크로 나누어 섞기 (16자 단위)
+    const chunkSize = 16;
+    const chunks = [];
+    for (let i = 0; i < reversed.length; i += chunkSize) {
+        chunks.push(reversed.substring(i, i + chunkSize));
+    }
+    
+    // 홀수/짝수 인덱스 분리 후 재조합
+    const evenChunks = chunks.filter((_, i) => i % 2 === 0);
+    const oddChunks = chunks.filter((_, i) => i % 2 === 1);
+    const shuffled = [...oddChunks, ...evenChunks].join('');
+    
+    // 6. 헤더: 청크 개수(6자리) + 원본 길이(6자리) = 12자리
+    const header = String(chunks.length).padStart(6, '0') + String(originalLength).padStart(6, '0');
+    
+    return header + shuffled;
+}
+
+/**
+ * 자동 백업 실행 (앱 시작 시 호출)
+ * - 마지막 백업으로부터 7일 경과 시 실행
+ * - 직원 데이터가 있는 경우에만 실행
+ * - .hrm 형식으로 저장 (수동 백업과 동일)
+ */
+function runAutoBackup() {
+    try {
+        const backupDir = getBackupDir();
+        
+        // 백업 폴더 생성
+        if (!fs.existsSync(backupDir)) {
+            fs.mkdirSync(backupDir, { recursive: true });
+        }
+        
+        // 마지막 백업 날짜 확인
+        const lastBackup = store.get('_autoBackupLastDate');
+        if (lastBackup) {
+            const daysSince = Math.floor((Date.now() - new Date(lastBackup).getTime()) / (1000 * 60 * 60 * 24));
+            if (daysSince < AUTO_BACKUP.INTERVAL_DAYS) {
+                console.log(`[AutoBackup] 마지막 백업 ${daysSince}일 전 - 스킵 (${AUTO_BACKUP.INTERVAL_DAYS}일 주기)`);
+                return;
+            }
+        }
+        
+        // 데이터 확인
+        const allData = store.store;
+        const employees = allData?.hr_system_v25_db?.employees;
+        if (!employees || employees.length === 0) {
+            console.log('[AutoBackup] 직원 데이터 없음 - 스킵');
+            return;
+        }
+        
+        // 파일명 생성
+        const today = new Date().toISOString().split('T')[0];
+        const filename = `auto_backup_${today}.hrm`;
+        const filePath = path.join(backupDir, filename);
+        
+        // 같은 날 백업이 이미 있으면 스킵
+        if (fs.existsSync(filePath)) {
+            console.log('[AutoBackup] 오늘 백업 이미 존재 - 스킵');
+            store.set('_autoBackupLastDate', new Date().toISOString());
+            return;
+        }
+        
+        // 백업 데이터 구성 (수동 백업과 동일 구조)
+        const backupData = {
+            _backupInfo: {
+                version: '3.2',
+                createdAt: new Date().toISOString(),
+                type: 'auto_backup',
+                appVersion: app.getVersion(),
+                employeeCount: employees.length
+            },
+            database: allData.hr_system_v25_db || {},
+            systemSettings: {}
+        };
+        
+        // 시스템 설정 수집
+        const settingKeys = [
+            'hr_concurrent_positions',
+            'hr_org_chart_settings',
+            'tenureReport_specialDepts',
+            'hr_awards_data',
+            'hr_salary_grades',
+            'hr_salary_tables',
+            'hr_salary_settings',
+            'hr_ordinary_wage_settings',
+            'hr_position_allowances',
+            'hr_salary_basic_settings',
+            'hr_overtime_settings',
+            'hr_overtime_records'
+        ];
+        
+        settingKeys.forEach(key => {
+            const value = store.get(key);
+            if (value) {
+                backupData.systemSettings[key] = value;
+            }
+        });
+        
+        // .hrm 형식으로 인코딩 후 저장
+        const encoded = encodeBackupData(backupData);
+        fs.writeFileSync(filePath, encoded, 'utf-8');
+        
+        // 마지막 백업 날짜 기록
+        store.set('_autoBackupLastDate', new Date().toISOString());
+        
+        const fileSize = fs.statSync(filePath).size;
+        console.log(`[AutoBackup] 백업 완료: ${filename} (${(fileSize / 1024).toFixed(1)}KB, 직원 ${employees.length}명)`);
+        
+        // 오래된 백업 정리
+        cleanOldBackups();
+        
+    } catch (error) {
+        console.error('[AutoBackup] 백업 실패:', error.message);
+    }
+}
+
+/**
+ * 오래된 백업 파일 삭제 (최근 7개만 유지)
+ */
+function cleanOldBackups() {
+    try {
+        const backupDir = getBackupDir();
+        if (!fs.existsSync(backupDir)) return;
+        
+        const files = fs.readdirSync(backupDir)
+            .filter(f => f.startsWith('auto_backup_') && f.endsWith('.hrm'))
+            .sort()
+            .reverse();  // 최신순
+        
+        if (files.length > AUTO_BACKUP.MAX_BACKUPS) {
+            const toDelete = files.slice(AUTO_BACKUP.MAX_BACKUPS);
+            toDelete.forEach(f => {
+                fs.unlinkSync(path.join(backupDir, f));
+                console.log('[AutoBackup] 오래된 백업 삭제:', f);
+            });
+        }
+    } catch (error) {
+        console.error('[AutoBackup] 정리 실패:', error.message);
+    }
+}
 
 // ===== 자동 업데이트 설정 =====
 
@@ -412,6 +598,9 @@ app.whenReady().then(() => {
     console.log('[Main] 개발 모드:', isDev);
     console.log('[Main] 앱 경로:', app.getAppPath());
     console.log('[Main] 데이터 저장 경로:', app.getPath('userData'));
+    
+    // 자동 백업 (v3.4.0)
+    runAutoBackup();
     
     createWindow();
 
