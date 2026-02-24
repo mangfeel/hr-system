@@ -12,10 +12,15 @@
  * - 발령 데이터 구조 통일 v3.4.2 추가
  * - 검증 및 저장
  * 
- * @version 4.2.0
+ * @version 4.3.0
  * @since 2024-11-04
  * 
  * [변경 이력]
+ * v4.3.0 (2026-02-24) 입력 자동완성 추가
+ * - 부서/직위/직급/직종 datalist 자동완성
+ * - 기존 직원 데이터에서 고유값 추출하여 추천
+ * - 직원 등록 후 목록 자동 갱신
+ *
  * v4.2.0 (2026-02-06) Electron 포커스 문제 해결
  * - 직원 등록 완료 후 window.focus() 호출
  * - 등록 후 입력란에 바로 커서가 들어가지 않는 문제 수정
@@ -713,6 +718,11 @@ async function calculateAndSave() {
         }
         updateUniqueCodeField();
         
+ // 자동완성 목록 갱신 (새 부서/직위가 추가되었을 수 있음)
+        if (typeof updateAutocompleteLists === 'function') {
+            updateAutocompleteLists();
+        }
+        
  // 폼 초기화
         resetRegisterForm();
         
@@ -1072,3 +1082,91 @@ function toggleCareerSection() {
         로거_인사?.error('경력 섹션 토글 실패', error);
     }
 }
+
+// ===== 입력 자동완성 (datalist) =====
+
+/**
+ * 부서/직위/직급/직종 자동완성 목록 갱신
+ * - 기존 직원 데이터에서 고유값 추출
+ * - <datalist>에 option으로 채움
+ * - 직원등록/인사발령 공용
+ */
+function updateAutocompleteLists() {
+    try {
+        if (typeof db === 'undefined' || !db) return;
+        
+        const employees = db.getEmployees();
+        if (!employees || employees.length === 0) return;
+        
+        const deptSet = new Set();
+        const positionSet = new Set();
+        const gradeSet = new Set();
+        const jobTypeSet = new Set();
+        
+        employees.forEach(emp => {
+            // 현재 정보 (employment)
+            if (emp.employment?.dept) deptSet.add(emp.employment.dept);
+            if (emp.employment?.position) positionSet.add(emp.employment.position);
+            if (emp.employment?.grade) gradeSet.add(emp.employment.grade);
+            if (emp.employment?.jobType) jobTypeSet.add(emp.employment.jobType);
+            
+            // currentPosition (최신 발령 반영)
+            if (emp.currentPosition?.dept) deptSet.add(emp.currentPosition.dept);
+            if (emp.currentPosition?.position) positionSet.add(emp.currentPosition.position);
+            if (emp.currentPosition?.grade) gradeSet.add(emp.currentPosition.grade);
+            if (emp.currentPosition?.jobType) jobTypeSet.add(emp.currentPosition.jobType);
+            
+            // 발령 이력
+            if (emp.assignments && Array.isArray(emp.assignments)) {
+                emp.assignments.forEach(a => {
+                    if (a.dept) deptSet.add(a.dept);
+                    if (a.department) deptSet.add(a.department);
+                    if (a.position) positionSet.add(a.position);
+                    if (a.grade) gradeSet.add(a.grade);
+                });
+            }
+        });
+        
+        _fillDatalist('autolist-dept', deptSet);
+        _fillDatalist('autolist-position', positionSet);
+        _fillDatalist('autolist-grade', gradeSet);
+        _fillDatalist('autolist-jobtype', jobTypeSet);
+        
+        로거_인사?.debug('자동완성 목록 갱신', {
+            부서: deptSet.size, 직위: positionSet.size,
+            직급: gradeSet.size, 직종: jobTypeSet.size
+        });
+        
+    } catch (error) {
+        로거_인사?.error('자동완성 목록 갱신 실패', error);
+    }
+}
+
+/**
+ * datalist에 option 채우기
+ * @param {string} datalistId - datalist 요소 ID
+ * @param {Set} valueSet - 고유값 Set
+ */
+function _fillDatalist(datalistId, valueSet) {
+    const datalist = document.getElementById(datalistId);
+    if (!datalist) return;
+    
+    datalist.innerHTML = '';
+    const sorted = Array.from(valueSet)
+        .filter(v => v && v.trim())
+        .sort((a, b) => a.localeCompare(b, 'ko'));
+    sorted.forEach(val => {
+        const option = document.createElement('option');
+        option.value = val;
+        datalist.appendChild(option);
+    });
+}
+
+// 앱 시작 시 자동완성 목록 초기화 (DB 로드 후)
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        if (typeof updateAutocompleteLists === 'function') {
+            updateAutocompleteLists();
+        }
+    }, 2000);
+});

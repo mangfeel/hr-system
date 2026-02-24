@@ -685,6 +685,10 @@ async function saveAssignment() {
                 if (typeof updateDashboard === 'function') {
                     updateDashboard();
                 }
+ // 자동완성 목록 갱신
+                if (typeof updateAutocompleteLists === 'function') {
+                    updateAutocompleteLists();
+                }
             });
         } else {
  // 성공 메시지
@@ -714,6 +718,11 @@ async function saveAssignment() {
  // 대시보드 갱신
             if (typeof updateDashboard === 'function') {
                 updateDashboard();
+            }
+            
+ // 자동완성 목록 갱신 (새 부서/직위가 추가되었을 수 있음)
+            if (typeof updateAutocompleteLists === 'function') {
+                updateAutocompleteLists();
             }
         }
         
@@ -1434,6 +1443,11 @@ async function saveAssignmentEdit() {
             
  // 마지막으로 모달 닫기
             closeEditAssignmentModal();
+            
+ // 자동완성 목록 갱신
+            if (typeof updateAutocompleteLists === 'function') {
+                updateAutocompleteLists();
+            }
         }
         
     } catch (error) {
@@ -1580,6 +1594,11 @@ function deleteAssignment(empId, assignmentId) {
         if (isActiveAssignment && typeof loadEmployeeList === 'function') {
             로거_인사?.debug('직원 목록 갱신 호출');
             loadEmployeeList();
+        }
+        
+ // 자동완성 목록 갱신
+        if (typeof updateAutocompleteLists === 'function') {
+            updateAutocompleteLists();
         }
         
     } catch (error) {
