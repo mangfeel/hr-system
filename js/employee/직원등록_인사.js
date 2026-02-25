@@ -20,6 +20,7 @@
  * - 부서/직위/직급/직종 datalist 자동완성
  * - 기존 직원 데이터에서 고유값 추출하여 추천
  * - 직원 등록 후 목록 자동 갱신
+ * - 인라인 자동완성: 후보 1개일 때 나머지 자동 채움
  *
  * v4.2.0 (2026-02-06) Electron 포커스 문제 해결
  * - 직원 등록 완료 후 window.focus() 호출
@@ -1168,5 +1169,108 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof updateAutocompleteLists === 'function') {
             updateAutocompleteLists();
         }
+        _initInlineAutocomplete();
     }, 2000);
 });
+
+// ===== 인라인 자동완성 (후보 1개일 때 자동 채움) =====
+
+/**
+ * 인라인 자동완성 초기화
+ * - 대상 input에 이벤트 리스너 등록
+ * - 직원등록 + 인사발령 공용
+ */
+function _initInlineAutocomplete() {
+    const targetIds = [
+        'employeeDept', 'employeePosition', 'employeeGrade', 'employeeJobType',
+        'assignmentDept', 'assignmentPosition', 'assignmentGrade'
+    ];
+    
+    targetIds.forEach(id => {
+        const input = document.getElementById(id);
+        if (!input) return;
+        
+        input._isComposing = false;
+        input._suppressAutocomplete = false;
+        
+        // 백스페이스/Delete/방향키 등에서는 자동완성 억제
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                // 자동완성된 부분 제거: 선택 영역 앞까지만 유지
+                const cursorPos = input.selectionStart;
+                if (input.selectionStart !== input.selectionEnd) {
+                    input.value = input.value.substring(0, cursorPos);
+                }
+                input._suppressAutocomplete = true;
+            } else if (e.key === 'Backspace' || e.key === 'Delete' || 
+                e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                input._suppressAutocomplete = true;
+            }
+        });
+        
+        // 입력 시 인라인 자동완성
+        input.addEventListener('input', _handleInlineAutocomplete);
+        
+        // 한글 조합 중에는 자동완성 방지
+        input.addEventListener('compositionstart', () => {
+            input._isComposing = true;
+        });
+        input.addEventListener('compositionend', (e) => {
+            input._isComposing = false;
+            if (input._suppressAutocomplete) {
+                input._suppressAutocomplete = false;
+                return;
+            }
+            _handleInlineAutocomplete(e);
+        });
+    });
+    
+    로거_인사?.debug('인라인 자동완성 초기화 완료');
+}
+
+/**
+ * 인라인 자동완성 핸들러
+ * - datalist에서 현재 입력값과 매칭되는 후보 검색
+ * - 후보가 1개면 나머지를 자동 채우고 선택 영역으로 표시
+ */
+function _handleInlineAutocomplete(e) {
+    const input = e.target;
+    
+    // 한글 조합 중이면 무시
+    if (input._isComposing) return;
+    
+    // 삭제/방향키 등이면 무시하고 플래그 리셋
+    if (input._suppressAutocomplete) {
+        input._suppressAutocomplete = false;
+        return;
+    }
+    
+    const typed = input.value;
+    if (!typed || typed.length === 0) return;
+    
+    // 이미 선택 영역이 있으면 사용자가 입력한 부분만 추출
+    const cursorPos = input.selectionStart;
+    const actualTyped = typed.substring(0, cursorPos);
+    if (!actualTyped || actualTyped.length === 0) return;
+    
+    // 연결된 datalist에서 후보 검색
+    const datalistId = input.getAttribute('list');
+    if (!datalistId) return;
+    
+    const datalist = document.getElementById(datalistId);
+    if (!datalist) return;
+    
+    const options = Array.from(datalist.options).map(o => o.value);
+    
+    // 입력값으로 시작하는 후보 필터링
+    const matches = options.filter(opt => 
+        opt.startsWith(actualTyped) && opt !== actualTyped
+    );
+    
+    // 후보가 정확히 1개일 때만 자동 채움
+    if (matches.length === 1) {
+        const fullValue = matches[0];
+        input.value = fullValue;
+        input.setSelectionRange(actualTyped.length, fullValue.length);
+    }
+}
