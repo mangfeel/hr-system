@@ -7,10 +7,14 @@
  * - electron-store 기반 데이터 저장
  * - 자동 업데이트
  * 
- * @version 3.4.0
+ * @version 3.5.0
  * @since 2026-01-23
  * 
  * [변경 이력]
+ * v3.5.0 (2026-02-25) - IPC 파일 시스템 경로 보안 강화
+ *   - write-file, read-file 핸들러에 시스템 보호 폴더 차단 추가
+ *   - Windows, Program Files 등 시스템 경로 쓰기/읽기 차단
+ *
  * v3.4.0 (2026-02-13) - 자동 백업 시스템 추가
  *   - 앱 시작 시 7일 경과 여부 확인 후 자동 백업
  *   - .hrm 형식 (수동 백업과 동일한 인코딩)
@@ -845,10 +849,30 @@ ipcMain.handle('show-open-dialog', async (event, options) => {
 // ===== IPC 핸들러: 파일 시스템 =====
 
 /**
+ * 시스템 보호 폴더 목록 (write/read 차단)
+ * @type {string[]}
+ */
+const BLOCKED_PATHS = ['C:\\Windows', 'C:\\Program Files', 'C:\\Program Files (x86)'];
+
+/**
+ * 경로가 시스템 보호 폴더인지 검사
+ * @param {string} filePath - 검사할 파일 경로
+ * @returns {boolean} 차단 대상이면 true
+ */
+function isBlockedPath(filePath) {
+    const normalized = path.resolve(filePath).toLowerCase();
+    return BLOCKED_PATHS.some(bp => normalized.startsWith(bp.toLowerCase()));
+}
+
+/**
  * 파일 쓰기
  */
 ipcMain.handle('write-file', async (event, filePath, data) => {
     try {
+        if (isBlockedPath(filePath)) {
+            console.warn('[Main] 차단된 경로 쓰기 시도:', filePath);
+            return { success: false, error: '시스템 보호 폴더에는 파일을 저장할 수 없습니다.' };
+        }
         fs.writeFileSync(filePath, data, 'utf8');
         console.log('[Main] 파일 저장:', filePath);
         return { success: true };
@@ -863,6 +887,10 @@ ipcMain.handle('write-file', async (event, filePath, data) => {
  */
 ipcMain.handle('read-file', async (event, filePath) => {
     try {
+        if (isBlockedPath(filePath)) {
+            console.warn('[Main] 차단된 경로 읽기 시도:', filePath);
+            return { success: false, error: '시스템 보호 폴더의 파일은 읽을 수 없습니다.' };
+        }
         const data = fs.readFileSync(filePath, 'utf8');
         console.log('[Main] 파일 읽기:', filePath);
         return { success: true, data: data };
@@ -946,4 +974,4 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('[Main] Promise 거부:', reason);
 });
 
-console.log('[Main] main.js 로드 완료 (v3.3.0)');
+console.log('[Main] main.js 로드 완료 (v3.5.0)');
