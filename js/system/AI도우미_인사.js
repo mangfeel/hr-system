@@ -41,7 +41,7 @@ const AI_CONFIG = {
 - 특정 조건(부서별, 성별 등)의 인원수를 물으면 해당 통계 섹션의 숫자를 사용하세요.
 
 [중요: 미리 계산된 통계 사용 규칙]
-- [월별 호봉승급자], [부서별 재직자], [재직자 성비], [재직자 연령대 분포] 섹션이 제공됩니다.
+- [월별 호봉승급자], [부서별 재직자], [재직자 성비], [재직자 연령대 분포], [육아휴직 현황], [단축근로 현황] 섹션이 제공됩니다.
 - 이 섹션의 데이터는 시스템이 정확하게 계산한 결과이므로, 반드시 이 데이터를 그대로 사용하세요.
 - "2월 호봉승급자는?" → [월별 호봉승급자]의 2월 목록을 그대로 답변하세요. 직접 목록을 검색하지 마세요.
 - "부서별 인원은?" → [부서별 재직자]를 그대로 답변하세요.
@@ -66,6 +66,13 @@ const AI_CONFIG = {
 - 호봉승급자 질문 시 반드시 [월별 호봉승급자] 섹션의 목록을 그대로 답변하세요.
 - "2026년 2월 호봉승급자" → [월별 호봉승급자]의 "2월" 항목을 그대로 사용하세요.
 - 직원 목록에서 직접 찾지 마세요. 미리 계산된 목록이 정확합니다.
+
+[육아휴직/단축근로 조회]
+- 육아휴직자 질문 시 [육아휴직 현황] 섹션의 목록을 그대로 사용하세요.
+- 각 직원의 [육아휴직] 정보에 시작일, 종료예정일이 포함됩니다.
+- [육아휴직이력]에 과거 휴직 기록(복직 완료, 연속휴직 여부)이 포함됩니다.
+- 단축근로자 질문 시 [단축근로 현황] 섹션의 목록을 사용하세요.
+- 각 직원의 [임신기단축근로], [육아기단축근로]에 기간, 근무시간 등 상세 정보가 포함됩니다.
 
 [성별/연령 분석]
 - 각 직원의 나이(만 나이)와 연령대가 제공됩니다. 생년월일은 제공되지 않습니다.
@@ -288,6 +295,52 @@ function _sanitizeEmployeeForAI(employee) {
         // 주민번호, 급여, 계좌번호, 주소, 연락처 제외
     };
     
+    // 육아휴직 상세
+    if (employee.maternityLeave) {
+        const ml = employee.maternityLeave;
+        if (ml.isOnLeave) {
+            result.육아휴직 = {
+                상태: '휴직중',
+                시작일: ml.startDate || '',
+                종료예정일: ml.endDate || ''
+            };
+        }
+        if (ml.history && ml.history.length > 0) {
+            result.육아휴직이력 = ml.history.map(h => {
+                const item = {
+                    시작일: h.startDate || '',
+                    종료예정일: h.plannedEndDate || ''
+                };
+                if (h.actualEndDate) item.실제종료일 = h.actualEndDate;
+                if (h.returnedAt) item.복직처리 = '완료';
+                if (h.continuousMaternity) item.연속휴직 = true;
+                return item;
+            });
+        }
+    }
+    
+    // 임신기 단축근로
+    if (employee.reducedWork?.pregnancy && employee.reducedWork.pregnancy.length > 0) {
+        result.임신기단축근로 = employee.reducedWork.pregnancy.map(r => ({
+            시작일: r.startDate || '',
+            종료일: r.endDate || '',
+            단축시간: `${r.originalHours || 8}시간→${r.reducedHours || 6}시간`,
+            근무방식: r.reductionMethod || '',
+            출산예정일: r.expectedDueDate || ''
+        }));
+    }
+    
+    // 육아기 단축근로
+    if (employee.reducedWork?.childcare && employee.reducedWork.childcare.length > 0) {
+        result.육아기단축근로 = employee.reducedWork.childcare.map(r => ({
+            시작일: r.startDate || '',
+            종료일: r.endDate || '',
+            자녀이름: r.childName || '',
+            주당근무시간: r.weeklyHours || '',
+            인정비율: r.recognitionRate ? `${r.recognitionRate}%` : ''
+        }));
+    }
+    
     // 발령이력
     if (employee.assignments && employee.assignments.length > 0) {
         result.발령이력 = employee.assignments.map(a => {
@@ -396,6 +449,48 @@ function _buildAIContext() {
         });
         context += `\n`;
         
+        // 육아휴직 현황
+        const onLeaveEmps = activeEmps.filter(e => e.휴직상태 === '휴직중');
+        if (onLeaveEmps.length > 0) {
+            context += `[육아휴직 현황] (현재 휴직중: ${onLeaveEmps.length}명)\n`;
+            onLeaveEmps.forEach(e => {
+                context += `- ${e.이름}`;
+                if (e.육아휴직) {
+                    context += ` | ${e.육아휴직.시작일} ~ ${e.육아휴직.종료예정일}`;
+                }
+                context += `\n`;
+            });
+            context += `\n`;
+        }
+        
+        // 단축근로 현황
+        const today = new Date().toISOString().split('T')[0];
+        const pregnancyReducedEmps = activeEmps.filter(e => 
+            e.임신기단축근로 && e.임신기단축근로.some(r => r.시작일 <= today && r.종료일 >= today)
+        );
+        const childcareReducedEmps = activeEmps.filter(e => 
+            e.육아기단축근로 && e.육아기단축근로.some(r => r.시작일 <= today && r.종료일 >= today)
+        );
+        
+        if (pregnancyReducedEmps.length > 0 || childcareReducedEmps.length > 0) {
+            context += `[단축근로 현황]\n`;
+            if (pregnancyReducedEmps.length > 0) {
+                context += `임신기 단축근로: ${pregnancyReducedEmps.length}명\n`;
+                pregnancyReducedEmps.forEach(e => {
+                    const current = e.임신기단축근로.find(r => r.시작일 <= today && r.종료일 >= today);
+                    context += `- ${e.이름} | ${current.시작일} ~ ${current.종료일} | ${current.단축시간}\n`;
+                });
+            }
+            if (childcareReducedEmps.length > 0) {
+                context += `육아기 단축근로: ${childcareReducedEmps.length}명\n`;
+                childcareReducedEmps.forEach(e => {
+                    const current = e.육아기단축근로.find(r => r.시작일 <= today && r.종료일 >= today);
+                    context += `- ${e.이름} | ${current.시작일} ~ ${current.종료일} | 주${current.주당근무시간}시간\n`;
+                });
+            }
+            context += `\n`;
+        }
+        
         context += `[직원 목록]\n`;
         
         sanitized.forEach((emp, idx) => {
@@ -426,6 +521,42 @@ function _buildAIContext() {
                 context += `  [과거경력]\n`;
                 emp.과거경력.forEach(c => {
                     context += `    - ${c.기관명}: ${c.시작일}~${c.종료일} (${c.근무기간})\n`;
+                });
+            }
+            
+            // 육아휴직 상세
+            if (emp.육아휴직) {
+                context += `  [육아휴직] ${emp.육아휴직.상태} | ${emp.육아휴직.시작일} ~ ${emp.육아휴직.종료예정일}\n`;
+            }
+            if (emp.육아휴직이력 && emp.육아휴직이력.length > 0) {
+                context += `  [육아휴직이력]\n`;
+                emp.육아휴직이력.forEach(h => {
+                    context += `    - ${h.시작일} ~ ${h.종료예정일}`;
+                    if (h.실제종료일) context += ` (실제종료: ${h.실제종료일})`;
+                    if (h.복직처리) context += ` [복직완료]`;
+                    if (h.연속휴직) context += ` [연속휴직]`;
+                    context += `\n`;
+                });
+            }
+            
+            // 임신기 단축근로
+            if (emp.임신기단축근로 && emp.임신기단축근로.length > 0) {
+                context += `  [임신기단축근로]\n`;
+                emp.임신기단축근로.forEach(r => {
+                    context += `    - ${r.시작일} ~ ${r.종료일} | ${r.단축시간}`;
+                    if (r.출산예정일) context += ` | 출산예정: ${r.출산예정일}`;
+                    context += `\n`;
+                });
+            }
+            
+            // 육아기 단축근로
+            if (emp.육아기단축근로 && emp.육아기단축근로.length > 0) {
+                context += `  [육아기단축근로]\n`;
+                emp.육아기단축근로.forEach(r => {
+                    context += `    - ${r.시작일} ~ ${r.종료일} | 주${r.주당근무시간}시간`;
+                    if (r.자녀이름) context += ` | 자녀: ${r.자녀이름}`;
+                    if (r.인정비율) context += ` | 인정비율: ${r.인정비율}`;
+                    context += `\n`;
                 });
             }
         });
