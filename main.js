@@ -7,10 +7,13 @@
  * - electron-store 기반 데이터 저장
  * - 자동 업데이트
  * 
- * @version 3.5.0
+ * @version 3.6.0
  * @since 2026-01-23
  * 
  * [변경 이력]
+ * v3.6.0 (2026-02-25) - 보안 강화: sandbox 명시 + CSP 적용
+ *   - webPreferences에 sandbox: true 명시적 추가
+ *
  * v3.5.0 (2026-02-25) - IPC 파일 시스템 경로 보안 강화
  *   - write-file, read-file 핸들러에 시스템 보호 폴더 차단 추가
  *   - Windows, Program Files 등 시스템 경로 쓰기/읽기 차단
@@ -311,6 +314,7 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: false,          // 보안: Node.js 직접 접근 차단
             contextIsolation: true,          // 보안: 컨텍스트 격리
+            sandbox: true,                   // 보안: 렌더러 샌드박스 (v3.6.0)
             preload: path.join(__dirname, 'preload.js'),  // 보안 브릿지
             devTools: isDev                  // 개발 모드에서만 DevTools 허용
         },
@@ -974,4 +978,4 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('[Main] Promise 거부:', reason);
 });
 
-console.log('[Main] main.js 로드 완료 (v3.5.0)');
+console.log('[Main] main.js 로드 완료 (v3.6.0)');
