@@ -67,6 +67,18 @@ const AI_CONFIG = {
 - "2026년 2월 호봉승급자" → [월별 호봉승급자]의 "2월" 항목을 그대로 사용하세요.
 - 직원 목록에서 직접 찾지 마세요. 미리 계산된 목록이 정확합니다.
 
+[특정 시점 호봉 계산 규칙] ★ 중요
+- 각 직원에게 입사호봉, 첫승급일, 현재호봉, 매년승급일이 제공됩니다.
+- 호봉 계산 공식: 매년 승급일(예: 2월 1일)에 1호봉씩 승급합니다.
+- 특정 연도의 호봉을 구하려면 입사호봉과 첫승급일을 기준으로 계산하세요.
+- 예시: 입사호봉=15, 첫승급일=2022-02-01, 매년승급일=2월 1일인 경우
+  → 2022년 1월: 15호봉 (아직 첫승급 전)
+  → 2022년 2월: 16호봉 (첫승급일에 +1)
+  → 2023년 1월: 16호봉 (아직 승급 전)
+  → 2023년 2월: 17호봉 (+1)
+  → 2024년 2월: 18호봉 (+1)
+- 절대로 현재호봉에서 역산하지 마세요. 반드시 입사호봉 + 첫승급일 기준으로 정방향 계산하세요.
+
 [육아휴직/단축근로 조회]
 - 육아휴직자 질문 시 [육아휴직 현황] 섹션의 목록을 그대로 사용하세요.
 - 각 직원의 [육아휴직] 정보에 시작일, 종료예정일이 포함됩니다.
@@ -284,6 +296,8 @@ function _sanitizeEmployeeForAI(employee) {
         입사일: employee.employment?.entryDate || '',
         고용형태: employee.employment?.employmentType || '',
         호봉제여부: (employee.employment?.isRankBased || employee.rank?.isRankBased) ? '호봉제' : '연봉제',
+        입사호봉: employee.rank?.startRank || null,
+        첫승급일: employee.rank?.firstUpgradeDate || null,
         현재호봉: _calculateCurrentRank(employee),
         매년승급일: _getUpgradeMonthDay(employee),
         경력연수: employee.career?.totalYears || 0,
@@ -500,6 +514,8 @@ function _buildAIContext() {
             context += ` | ${emp.부서} | ${emp.직위}`;
             if (emp.직급) context += ` | ${emp.직급}`;
             if (emp.현재호봉) context += ` | ${emp.현재호봉}호봉`;
+            if (emp.입사호봉) context += ` | 입사호봉: ${emp.입사호봉}`;
+            if (emp.첫승급일) context += ` | 첫승급일: ${emp.첫승급일}`;
             context += ` | 입사일: ${emp.입사일}`;
             context += ` | ${emp.고용형태}`;
             context += ` | ${emp.재직상태}`;
