@@ -7,10 +7,15 @@
  * - electron-store 기반 데이터 저장
  * - 자동 업데이트
  * 
- * @version 3.6.0
+ * @version 3.7.0
  * @since 2026-01-23
  * 
  * [변경 이력]
+ * v3.7.0 (2026-02-26) - 프로덕션 console 출력 비활성화
+ *   - app.isPackaged 체크로 패키징 환경에서만 적용
+ *   - console.log/info/debug → no-op 교체
+ *   - console.error, console.warn은 유지 (오류 및 경고 추적용)
+ *
  * v3.6.0 (2026-02-25) - 보안 강화: sandbox 명시 + CSP 적용
  *   - webPreferences에 sandbox: true 명시적 추가
  *
@@ -59,6 +64,16 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
+
+// ===== 프로덕션 console 비활성화 (v3.7.0) =====
+// 패키징된 앱에서 console.log/info/debug 출력 차단
+// console.error, console.warn은 유지 (오류 및 경고 추적용)
+if (app.isPackaged) {
+    const _noop = () => {};
+    console.log = _noop;
+    console.info = _noop;
+    console.debug = _noop;
+}
 
 // ===== electron-store 설정 =====
 
@@ -978,4 +993,4 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('[Main] Promise 거부:', reason);
 });
 
-console.log('[Main] main.js 로드 완료 (v3.6.0)');
+console.log('[Main] main.js 로드 완료 (v3.7.0)');

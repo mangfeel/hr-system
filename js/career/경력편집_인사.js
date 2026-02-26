@@ -443,7 +443,7 @@ async function recalculateCareer() {
             if (typeof 에러처리_인사 !== 'undefined') {
                 에러처리_인사.handle(error, '경력 데이터를 처리하는 중 오류가 발생했습니다.');
             } else {
-                alert('[오류] 경력 데이터를 처리하는 중 오류가 발생했습니다.\n' + error.message);
+                alert('[오류] 경력 데이터를 처리하는 중 오류가 발생했습니다.');
             }
             return;
         }
@@ -950,7 +950,7 @@ async function _collectEditCareerData() {
             }
         } catch (error) {
             로거_인사?.error('경력 기간 계산 오류', { i, startDate, endDate, error });
-            throw new Error(`경력 ${index + 1}: 기간 계산 중 오류가 발생했습니다.\n${error.message}`);
+            throw new Error(`경력 ${index + 1}: 기간 계산 중 오류가 발생했습니다.`);
         }
         
  // v4.1.0: 1단계 - 인정률 적용 (API 우선)

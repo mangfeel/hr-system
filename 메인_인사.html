@@ -1413,6 +1413,17 @@
     <!-- ==================== Phase 1: 핵심 인프라 (최우선) ==================== -->
     <!-- 중요: 이 6개 스크립트는 반드시 다른 모든 스크립트보다 먼저 로드되어야 합니다 -->
     
+    <!-- 프로덕션 console 비활성화 (모든 JS보다 먼저 로드) -->
+    <script>
+        if (location.href.includes('app.asar')) {
+            const _noop = () => {};
+            console.log = _noop;
+            console.info = _noop;
+            console.debug = _noop;
+            // console.error, console.warn은 유지 (오류 및 경고 추적용)
+        }
+    </script>
+
     <script src="js/config/상수_인사.js"></script>
     <script src="js/utils/로거_인사.js"></script>
     <script src="js/utils/에러처리_인사.js"></script>

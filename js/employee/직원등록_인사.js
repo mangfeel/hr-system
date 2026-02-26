@@ -748,7 +748,7 @@ async function calculateAndSave() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '직원 등록 중 오류가 발생했습니다.');
         } else {
-            alert('[오류] 직원 등록 중 오류가 발생했습니다.\n\n' + error.message);
+            alert('[오류] 직원 등록 중 오류가 발생했습니다.');
         }
     }
 }

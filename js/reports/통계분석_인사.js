@@ -796,7 +796,7 @@ async function generateStatistics() {
         if (typeof 에러처리_인사 !== 'undefined') {
             에러처리_인사.handle(error, '통계를 생성하는 중 오류가 발생했습니다.');
         } else {
-            alert('[오류] 통계를 생성하는 중 오류가 발생했습니다.\n' + error.message);
+            alert('[오류] 통계를 생성하는 중 오류가 발생했습니다.');
         }
     }
 }
