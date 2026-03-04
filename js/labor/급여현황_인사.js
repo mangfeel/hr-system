@@ -731,7 +731,7 @@ function _renderSalaryStatusResult(data) {
                         <tr>
                             <td colspan="7">합계 / 평균</td>
                             <td class="number-col">${_formatCurrency(totalBaseSalary)}</td>
-                            <td class="number-col">${_formatCurrency(data.reduce((sum, d) => sum + (d.positionAllowance || 0), 0))}</td>
+                            <td class="number-col">${_formatCurrency(data.reduce((sum, d) => sum + (d.positionAllowance || 0) + (d.actingAllowance || 0), 0))}</td>
                             <td class="number-col">${_formatCurrency(data.reduce((sum, d) => sum + (d.monthlyHolidayBonus || 0), 0))}</td>
                             <td class="number-col">${_formatCurrency(totalOrdinaryWage)}</td>
                             <td>-</td>
@@ -775,7 +775,7 @@ function _renderSalaryStatusRow(data, rowNum) {
             <td>${_escapeHtml(position)}</td>
             <td class="${payTypeClass}">${payType}</td>
             <td class="number-col">${_formatCurrency(data.baseSalary)}</td>
-            <td class="number-col">${_formatCurrency(data.positionAllowance)}</td>
+            <td class="number-col">${_formatCurrency((data.positionAllowance || 0) + (data.actingAllowance || 0))}</td>
             <td class="number-col">${_formatCurrency(data.monthlyHolidayBonus)}</td>
             <td class="number-col">${_formatCurrency(data.ordinaryWage)}</td>
             <td class="number-col">${data.weeklyWorkingHours || 40}</td>
@@ -825,7 +825,7 @@ function downloadSalaryStatusExcel() {
                 d.position || '',
                 d.isRankBased ? '호봉제' : '연봉제',
                 d.baseSalary || 0,
-                d.positionAllowance || 0,
+                (d.positionAllowance || 0) + (d.actingAllowance || 0),
                 d.monthlyHolidayBonus || 0,
                 d.ordinaryWage || 0,
                 d.weeklyWorkingHours || 40,
@@ -1019,7 +1019,7 @@ function printSalaryStatus() {
                                     <td>${_escapeHtml(d.position || '-')}</td>
                                     <td class="${payTypeClass}">${payType}</td>
                                     <td class="number-col">${_formatCurrency(d.baseSalary)}</td>
-                                    <td class="number-col">${_formatCurrency(d.positionAllowance)}</td>
+                                    <td class="number-col">${_formatCurrency((d.positionAllowance || 0) + (d.actingAllowance || 0))}</td>
                                     <td class="number-col">${_formatCurrency(d.monthlyHolidayBonus)}</td>
                                     <td class="number-col">${_formatCurrency(d.ordinaryWage)}</td>
                                     <td class="number-col">${d.weeklyWorkingHours || 40}</td>
@@ -1034,7 +1034,7 @@ function printSalaryStatus() {
                         <tr>
                             <td colspan="7">합계 / 평균</td>
                             <td class="number-col">${_formatCurrency(totalBaseSalary)}</td>
-                            <td class="number-col">${_formatCurrency(_salaryStatusData.reduce((sum, d) => sum + (d.positionAllowance || 0), 0))}</td>
+                            <td class="number-col">${_formatCurrency(_salaryStatusData.reduce((sum, d) => sum + (d.positionAllowance || 0) + (d.actingAllowance || 0), 0))}</td>
                             <td class="number-col">${_formatCurrency(_salaryStatusData.reduce((sum, d) => sum + (d.monthlyHolidayBonus || 0), 0))}</td>
                             <td class="number-col">${_formatCurrency(totalOrdinaryWage)}</td>
                             <td>-</td>
