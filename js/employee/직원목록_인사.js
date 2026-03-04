@@ -601,11 +601,34 @@ function _createEmployeeTableRowHTML(emp, today) {
     
  // 호봉
  // v6.0.0: 캐시에서 호봉 가져오기
+ // ⭐ v6.2.0: 퇴사자도 퇴사시 호봉 표시
     let rankDisplay = '-';
-    if (status !== '퇴사' && isRankBased) {
-        const currentRank = _getRankFromCache(emp, today);
-        rankDisplay = `${currentRank}호봉`;
+    if (isRankBased) {
+        if (status === '퇴사') {
+            // 퇴사자: 퇴사일 기준 호봉 - 캐시 미사용 (캐시는 오늘 기준)
+            const retireDate = emp.employment?.retirementDate || today;
+            if (emp.rank?.startRank && emp.rank?.firstUpgradeDate && typeof RankCalculator !== 'undefined') {
+                try {
+                    const retiredRank = RankCalculator.calculateCurrentRank(
+                        emp.rank.startRank,
+                        emp.rank.firstUpgradeDate,
+                        retireDate
+                    );
+                    rankDisplay = `${retiredRank}호봉`;
+                } catch (e) {
+                    rankDisplay = '-';
+                }
+            }
+        } else {
+            const currentRank = _getRankFromCache(emp, today);
+            rankDisplay = `${currentRank}호봉`;
+        }
     }
+    
+ // 퇴사일
+    const retirementDate = (status === '퇴사' && emp.employment?.retirementDate)
+        ? DOM유틸_인사.escapeHtml(emp.employment.retirementDate)
+        : '-';
     
  // 상태 배지
     let statusBadge = '';
@@ -625,6 +648,7 @@ function _createEmployeeTableRowHTML(emp, today) {
             <td>${safePosition}</td>
             <td>${rankDisplay}</td>
             <td>${safeEntryDate}</td>
+            <td>${retirementDate}</td>
             <td>${statusBadge}</td>
             <td>
                 <button class="btn btn-small btn-primary" onclick="event.stopPropagation(); showEditEmployeeModal('${emp.id}')">수정</button>

@@ -206,7 +206,12 @@ async function _extractEmployeeInfo(emp, today) {
         : (emp.employment?.status || '재직');
     
  // v4.0.0: 비동기 호출
-    const rankInfo = await _calculateRankInfo(emp, today, isRankBased);
+ // ⭐ v4.1.0: 퇴사자는 퇴사일 기준으로 호봉 계산
+    let rankBaseDate = today;
+    if (status === '퇴사' && emp.employment?.retirementDate) {
+        rankBaseDate = emp.employment.retirementDate;
+    }
+    const rankInfo = await _calculateRankInfo(emp, rankBaseDate, isRankBased);
     const tenure = await _calculateTenure(emp, today);
     
     return {
@@ -500,11 +505,15 @@ function _generateProfileHeader(emp, info) {
  // 현재호봉
     const currentRank = escapeHtml(info.currentRankDisplay || '-');
     
+ // ⭐ v4.1.0: 퇴사자는 "퇴사시 호봉" 라벨, 퇴사일 표시
  // 상태 배지
     const isRetired = info.status === '퇴사';
     const statusBadge = isRetired 
         ? '<span class="profile-status-badge retired">퇴사</span>'
         : '<span class="profile-status-badge active">재직</span>';
+    
+    const rankLabel = isRetired ? '퇴사시 호봉' : '현재호봉';
+    const retirementDate = isRetired ? escapeHtml(emp.employment?.retirementDate || '-') : '';
     
  // 육아휴직 중 표시
     const isOnMaternity = emp.maternityLeave?.isOnLeave && !isRetired;
@@ -537,12 +546,16 @@ function _generateProfileHeader(emp, info) {
                     <div class="profile-stat-label">입사일</div>
                     <div class="profile-stat-value">${entryDate}</div>
                 </div>
+                ${isRetired ? `<div class="profile-stat-item">
+                    <div class="profile-stat-label">퇴사일</div>
+                    <div class="profile-stat-value">${retirementDate}</div>
+                </div>` : ''}
                 <div class="profile-stat-item">
                     <div class="profile-stat-label">근속기간</div>
                     <div class="profile-stat-value">${tenure}</div>
                 </div>
                 <div class="profile-stat-item highlight">
-                    <div class="profile-stat-label">현재호봉</div>
+                    <div class="profile-stat-label">${rankLabel}</div>
                     <div class="profile-stat-value">${currentRank}</div>
                 </div>
             </div>
