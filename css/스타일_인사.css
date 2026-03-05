@@ -1214,6 +1214,13 @@ tr:hover td { background: #fafbfc; }
     overflow: hidden;
 }
 
+/* ⭐ v1.0.67: 주민등록번호 등 긴 라벨 줄바꿈 방지 */
+.emp-detail-modal .detail-label {
+    width: auto;
+    min-width: 80px;
+    white-space: nowrap;
+}
+
 /* 프로필 헤더 영역 */
 .emp-profile-header {
     background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
@@ -1295,6 +1302,11 @@ tr:hover td { background: #fafbfc; }
     gap: 12px;
 }
 
+/* ⭐ v1.0.67: 퇴사자 5열 레이아웃 */
+.profile-stats.cols-5 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
 .profile-stat-item {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
@@ -1322,6 +1334,7 @@ tr:hover td { background: #fafbfc; }
     font-size: 16px;
     font-weight: 700;
     color: white;
+    white-space: nowrap;
 }
 
 .profile-stat-item.highlight .profile-stat-value {
@@ -1443,6 +1456,10 @@ tr:hover td { background: #fafbfc; }
     .profile-stats {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
+    }
+    
+    .profile-stats.cols-5 {
+        grid-template-columns: repeat(2, 1fr);
     }
     
     .profile-stat-item {

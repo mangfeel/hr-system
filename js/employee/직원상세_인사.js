@@ -537,7 +537,7 @@ function _generateProfileHeader(emp, info) {
                 </div>
             </div>
             
-            <div class="profile-stats">
+            <div class="profile-stats${isRetired ? ' cols-5' : ''}">
                 <div class="profile-stat-item">
                     <div class="profile-stat-label">고유번호</div>
                     <div class="profile-stat-value">${uniqueCode}</div>
